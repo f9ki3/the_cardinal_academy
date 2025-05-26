@@ -1,0 +1,21 @@
+.main-screen {
+  background-color: white;
+  display: flex;
+  flex-direction: row;
+}
+
+.sidebar {
+  background-color: rgb(111, 2, 2);
+  width: 20%;
+  height: 100vh;
+}
+
+.active {
+  background-color: white;
+  color: black;
+  border-radius: 20px;
+}
+
+.content {
+  width: 80%;
+}
