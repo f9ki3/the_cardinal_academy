@@ -18,7 +18,7 @@
         <div class="carousel-caption d-flex flex-column justify-content-center align-items-center text-center h-100">
           <h1 class="text-white">Welcome to The Cardinal Academy</h1>
           <p class="text-white">Empowering students with knowledge, values, and skills for the future.</p>
-          <a href="#enroll" class="btn bg-main text-light rounded rounded-4 btn-lg">Enroll Now</a>
+          <a href="enroll.php" class="btn bg-main text-light rounded btn-lg rounded-4 btn-lg">Enroll Now</a>
         </div>
       </div>
 
@@ -52,6 +52,34 @@
       <span class="visually-hidden">Next</span>
     </button>
   </div>
+
+  <div class="container text-muted ">
+  <div class="row pb-5 mt-5">
+
+   <div class="col-12 col-md-3"></div>
+   <div class="col-12 col-md-6 text-center">
+     <h1>The Cardinal Academy</h1>
+     <p class="text-center">The Cardinal Academy (The Cardinal School) is a premier educational institution located in Sullera Pandayan, Bulacan. Our mission is to provide a nurturing and stimulating environment where students can develop academically, emotionally, and socially to reach their full potential. </p>
+   </div>
+   <div class="col-12 col-md-3"></div>
+  </div>
+  
+ <div class="row mt-5">
+    <div class="col-12 col-md-6">
+         <div class="text-muted">
+            <h2>Mission</h2>
+            <p style="text-align: justify">Our mission at The Cardinal Academy is to cultivate a learning environment where students are inspired to achieve academic excellence, develop strong character, and become responsible global citizens through innovative education and community engagement.</p>
+        </div>
+
+    </div>
+    <div class="col-12 col-md-6">
+        <div class="text-muted">
+            <h2>Vision</h2>
+            <p style="text-align: justify">We envision The Cardinal Academy as a premier institution that empowers future leaders by fostering curiosity, creativity, and a passion for lifelong learning in a supportive and inclusive setting.</p>
+        </div>
+    </div>
+ </div>
+</div>
 
   <?php include 'footer.php'; ?>
 </body>

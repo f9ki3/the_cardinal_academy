@@ -1,0 +1,10 @@
+.nav-linked {
+  font-size: 20px;
+  display: flex;
+}
+
+@media (max-width: 768px) {
+  .nav-linked {
+    display: none;
+  }
+}

@@ -13,7 +13,7 @@ body {
 .carousel-item,
 .carousel-item img {
   width: 100vw;
-  height: 50vh;
+  height: 85vh;
 }
 
 .carousel-item img {
@@ -41,6 +41,33 @@ body {
   .carousel-inner,
   .carousel-item,
   .carousel-item img {
-    height: 30vh;
+    height: 40vh;
+  }
+}
+
+.image-gallery {
+  display: flex;
+  gap: 50px;
+  width: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.image-gallery img {
+  flex: 1;
+  height: 200px;
+  object-fit: cover;
+  width: 100%;
+  border-radius: 8px;
+  border-left: 10px solid #b72029;
+}
+
+@media (max-width: 768px) {
+  .image-gallery {
+    flex-direction: column;
+  }
+  .form-box {
+    padding: 0px !important;
+    background-color: transparent !important;
   }
 }
