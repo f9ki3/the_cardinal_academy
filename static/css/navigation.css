@@ -7,4 +7,8 @@
   .nav-linked {
     display: none;
   }
+  .img-cover {
+    width: 15% !important;
+    height: 15% !important;
+  }
 }
