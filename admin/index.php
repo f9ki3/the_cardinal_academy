@@ -4,13 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>AcadeSys Dashboard</title>
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Bootstrap Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-  <link rel="stylesheet" href="styles.css">
-  <!-- Include ApexCharts -->
-  <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <?php include 'header.php'?>
 </head>
 <body>
 
@@ -18,7 +12,7 @@
   <!-- Sidebar -->
   <div class="sidebar p-3 border-end sticky-top" style="min-height: 100vh; width: 250px;">
     <div class="profile-pic mb-3 text-center">
-      <img src="uploads/profile.jpeg" alt="" class="rounded-circle img-fluid" style="width: 80px; height: 80px; object-fit: cover;">
+      <img src="../static/uploads/profile.jpeg" alt="" class="rounded-circle img-fluid" style="width: 80px; height: 80px; object-fit: cover;">
     </div>
     <h5 class="text-center fw-bolder text-light mb-3">Dela Cruz, Juan</h5>
     <hr class="text-light">
@@ -54,7 +48,7 @@
   <div class="content flex-grow-1" >
     <div class="d-flex sticky-top align-items-center justify-content-between px-4 py-3" style="background-color: #b72029;">
     <div class="d-flex align-items-center">
-        <img src="uploads/logo.png" alt="Logo" style="height: 60px; width: auto;" class="me-3">
+        <img src="../static/uploads/logo.png" alt="Logo" style="height: 60px; width: auto;" class="me-3">
         <h3 class="text-light m-0">The Cardinal Academy</h3>
     </div>
     <button class="btn btn-light rounded-4">Logout</button>
@@ -374,8 +368,6 @@
   </div>
 </div>
 
-<!-- Bootstrap JS -->
- <script src="get_grades.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<?php include'footer.php'?>
 </body>
 </html>
