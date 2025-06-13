@@ -16,19 +16,19 @@
 
     <form action="submit_registration.php" method="POST" enctype="multipart/form-data">
       <div class="d-flex justify-content-between align-items-center mb-4">
-      <div class="text-center flex-fill step" id="step1">
-        <i class="bi bi-lock-fill icon-step"></i>
-        <div>Account</div>
-      </div>
-      <div class="text-center flex-fill step" id="step2">
-        <i class="bi bi-person-fill icon-step"></i>
-        <div>Personal</div>
-      </div>
-      <div class="text-center flex-fill step" id="step3">
-        <i class="bi bi-image-fill icon-step"></i>
-        <div>Image</div>
-      </div>
+    <div class="text-center flex-fill step" id="step1">
+      <i class="bi bi-lock-fill icon-step"></i>
+      <div>Account</div>
     </div>
+    <div class="text-center flex-fill step" id="step2">
+      <i class="bi bi-person-fill icon-step"></i>
+      <div>Personal</div>
+    </div>
+    <div class="text-center flex-fill step" id="step3">
+      <i class="bi bi-image-fill icon-step"></i>
+      <div>Image</div>
+    </div>
+  </div>
 
       <!-- Student Profile -->
       <fieldset>
@@ -246,31 +246,3 @@
 <?php include 'footer.php'; ?>
 </body>
 </html>
-
-<script>
-  function setActiveStep(stepNumber) {
-    // Remove active class from all
-    document.querySelectorAll('.step').forEach(step => {
-      step.classList.remove('active');
-    });
-
-    // Add active class to the current step
-    const activeStep = document.getElementById('step' + stepNumber);
-    if (activeStep) {
-      activeStep.classList.add('active');
-    }
-  }
-
-  // Example usage when user clicks "Next"
-  function validateStep1() {
-    setActiveStep(2); // Move to step 2
-  }
-
-  function validateStep2() {
-    setActiveStep(3); // Move to step 3
-  }
-
-  // Default to step 1 on load
-  window.onload = () => setActiveStep(1);
-</script>
-
