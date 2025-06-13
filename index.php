@@ -104,7 +104,21 @@
   </div>
 </div>
 
- 
+ <div class="row mt-5">
+    <div class="col-12 col-md-6">
+         <div class="text-muted">
+            <h2>Mission</h2>
+            <p style="text-align: justify">Our mission at The Cardinal Academy is to cultivate a learning environment where students are inspired to achieve academic excellence, develop strong character, and become responsible global citizens through innovative education and community engagement.</p>
+        </div>
+
+    </div>
+    <div class="col-12 col-md-6">
+        <div class="text-muted">
+            <h2>Vision</h2>
+            <p style="text-align: justify">We envision The Cardinal Academy as a premier institution that empowers future leaders by fostering curiosity, creativity, and a passion for lifelong learning in a supportive and inclusive setting.</p>
+        </div>
+    </div>
+ </div>
 </div>
 
   <?php include 'footer.php'; ?>
