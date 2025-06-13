@@ -11,3 +11,21 @@
     border-radius: 20px;
   }
 }
+
+.step {
+  opacity: 0.5;
+  transition: 0.3s;
+}
+
+.step.active {
+  opacity: 1;
+}
+
+.icon-step {
+  font-size: 32px;
+  color: gray;
+}
+
+.step.active .icon-step {
+  color: red;
+}

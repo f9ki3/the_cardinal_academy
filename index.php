@@ -63,7 +63,47 @@
    </div>
    <div class="col-12 col-md-3"></div>
   </div>
-  
+ <style>
+.image-gallery {
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+}
+
+.image-gallery-track {
+  display: flex;
+  width: fit-content;
+  animation: scroll-left-right 10s linear infinite;
+}
+
+.image-gallery img {
+  height: 200px;
+  margin-right: 20px;
+  flex-shrink: 0;
+}
+
+@keyframes scroll-left-right {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0%);
+  }
+}
+</style>
+
+<div class="image-gallery">
+  <div class="image-gallery-track">
+    <!-- Duplicate set -->
+    <img src="static/images/Classroom Senior High.jpg" alt="Senior High Classroom">
+    <img src="static/images/Sample event 2.jpg" alt="Event">
+    <img src="static/images/Classroom High School.jpg" alt="High School Classroom">
+    <img src="static/images/Classroom Senior High.jpg" alt="Senior High Classroom">
+    <img src="static/images/Sample event 2.jpg" alt="Event">
+    <img src="static/images/Classroom High School.jpg" alt="High School Classroom">
+  </div>
+</div>
+
  <div class="row mt-5">
     <div class="col-12 col-md-6">
          <div class="text-muted">
