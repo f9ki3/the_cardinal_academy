@@ -4,7 +4,7 @@
     <h3 class="text-light ms-3 fw-bolder">The Cardinal Academy</h3>
   </div>
   <div class="nav-linked">
-    <a href="" class="text-white me-3 text-decoration-none">Home</a>
+    <a href="./" class="text-white me-3 text-decoration-none">Home</a>
     <a href="" class="text-white me-3 text-decoration-none">About</a>
     <a href="" class="text-white me-3 text-decoration-none">Enroll</a>
     <a href="" class="text-white me-3 text-decoration-none">Facilities</a>

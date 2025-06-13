@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'db_connection.php'; // make sure this connects to your DB
+include '../db_connection.php'; // make sure this connects to your DB
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $usernameOrEmail = trim($_POST['username']);
@@ -23,23 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['acc_type'] = $user['acc_type'];
 
             // Redirect based on account type (optional)
-            switch ($user['acc_type']) {
-                case 'admin':
-                    header("Location: admin_dashboard.php");
-                    break;
-                case 'teacher':
-                    header("Location: teacher_dashboard.php");
-                    break;
-                case 'parent':
-                    header("Location: parent_dashboard.php");
-                    break;
-                case 'student':
-                    header("Location: student_dashboard.php");
-                    break;
-                default:
-                    header("Location: index.php");
-                    break;
-            }
+            header("Location: dashboard.php");
             exit;
         } else {
             // Wrong password
@@ -50,11 +34,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $_SESSION['error'] = "User not found.";
     }
 
-    header("Location: login.php");
+    header("Location: ../login.php");
     exit;
 } else {
     // Direct access to login_process
-    header("Location: login.php");
+    header("Location: ../login.php");
     exit;
 }
 ?>

@@ -1,3 +1,5 @@
+<?php include 'session_login.php'?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -5,6 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>AcadeSys Dashboard</title>
   <?php include 'header.php'?>
+  
 </head>
 <body>
 
@@ -51,7 +54,7 @@
         <img src="../static/uploads/logo.png" alt="Logo" style="height: 60px; width: auto;" class="me-3">
         <h3 class="text-light m-0">The Cardinal Academy</h3>
     </div>
-    <button class="btn btn-light rounded-4">Logout</button>
+    <a class="btn btn-light rounded-4" href="logout.php">Logout</a>
     </div>
 
     <!-- Main Content Grid -->
