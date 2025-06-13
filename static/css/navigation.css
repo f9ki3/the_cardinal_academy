@@ -1,6 +1,7 @@
 .nav-linked {
   font-size: 20px;
   display: flex;
+  align-items: center;
 }
 
 @media (max-width: 768px) {
@@ -10,5 +11,20 @@
   .img-cover {
     width: 15% !important;
     height: 15% !important;
+  }
+}
+
+.floating-btn {
+  animation: floatUpDown 2s ease-in-out infinite;
+}
+
+/* Floating animation */
+@keyframes floatUpDown {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
   }
 }
