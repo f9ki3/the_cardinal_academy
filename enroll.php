@@ -13,7 +13,7 @@
 <div class="container py-5">
   <div class="bg-white p-4 rounded-4 shadow-sm">
 
-    <form action="submit_registration.php" method="POST" enctype="multipart/form-data">
+    <form action="submit_admission.php" method="POST" enctype="multipart/form-data">
 
 
         <h2>Admission Form</h2>
@@ -268,62 +268,87 @@ document.addEventListener("DOMContentLoaded", function () {
     .then(res => res.json())
     .then(data => {
       data.forEach(region => {
-        regionSelect.innerHTML += `<option value="${region.code}">${region.name}</option>`;
+        regionSelect.innerHTML += `<option value="${region.name}">${region.name}</option>`;
       });
     });
 
   // Load Provinces on Region change
   regionSelect.addEventListener("change", function () {
-    const regionCode = this.value;
+    const regionName = this.value;
     provinceSelect.innerHTML = '<option value="">Select province</option>';
     municipalSelect.innerHTML = '<option value="">Select municipal</option>';
     barangaySelect.innerHTML = '<option value="">Select barangay</option>';
 
-    if (!regionCode) return;
+    if (!regionName) return;
 
-    fetch(`https://psgc.gitlab.io/api/regions/${regionCode}/provinces/`)
+    fetch(`https://psgc.gitlab.io/api/regions/`)
       .then(res => res.json())
       .then(data => {
+        const selectedRegion = data.find(r => r.name === regionName);
+        if (selectedRegion) {
+          return fetch(`https://psgc.gitlab.io/api/regions/${selectedRegion.code}/provinces/`);
+        }
+      })
+      .then(res => res?.json())
+      .then(data => {
+        if (!data) return;
         data.forEach(province => {
-          provinceSelect.innerHTML += `<option value="${province.code}">${province.name}</option>`;
+          provinceSelect.innerHTML += `<option value="${province.name}">${province.name}</option>`;
         });
       });
   });
 
   // Load Municipalities on Province change
   provinceSelect.addEventListener("change", function () {
-    const provinceCode = this.value;
+    const provinceName = this.value;
     municipalSelect.innerHTML = '<option value="">Select municipal</option>';
     barangaySelect.innerHTML = '<option value="">Select barangay</option>';
 
-    if (!provinceCode) return;
+    if (!provinceName) return;
 
-    fetch(`https://psgc.gitlab.io/api/provinces/${provinceCode}/cities-municipalities/`)
+    fetch("https://psgc.gitlab.io/api/provinces/")
       .then(res => res.json())
       .then(data => {
+        const selectedProvince = data.find(p => p.name === provinceName);
+        if (selectedProvince) {
+          return fetch(`https://psgc.gitlab.io/api/provinces/${selectedProvince.code}/cities-municipalities/`);
+        }
+      })
+      .then(res => res?.json())
+      .then(data => {
+        if (!data) return;
         data.forEach(city => {
-          municipalSelect.innerHTML += `<option value="${city.code}">${city.name}</option>`;
+          municipalSelect.innerHTML += `<option value="${city.name}">${city.name}</option>`;
         });
       });
   });
 
   // Load Barangays on Municipal change
   municipalSelect.addEventListener("change", function () {
-    const municipalCode = this.value;
+    const municipalName = this.value;
     barangaySelect.innerHTML = '<option value="">Select barangay</option>';
 
-    if (!municipalCode) return;
+    if (!municipalName) return;
 
-    fetch(`https://psgc.gitlab.io/api/cities-municipalities/${municipalCode}/barangays/`)
+    fetch("https://psgc.gitlab.io/api/cities-municipalities/")
       .then(res => res.json())
       .then(data => {
+        const selectedMunicipal = data.find(m => m.name === municipalName);
+        if (selectedMunicipal) {
+          return fetch(`https://psgc.gitlab.io/api/cities-municipalities/${selectedMunicipal.code}/barangays/`);
+        }
+      })
+      .then(res => res?.json())
+      .then(data => {
+        if (!data) return;
         data.forEach(barangay => {
-          barangaySelect.innerHTML += `<option value="${barangay.code}">${barangay.name}</option>`;
+          barangaySelect.innerHTML += `<option value="${barangay.name}">${barangay.name}</option>`;
         });
       });
   });
 });
 </script>
+
 
 <script>
 function validateStep1() {
