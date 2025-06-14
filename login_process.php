@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../db_connection.php'; // make sure this connects to your DB
+include 'db_connection.php'; // Ensure this file sets $conn correctly
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $usernameOrEmail = trim($_POST['username']);
@@ -14,6 +14,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($result->num_rows === 1) {
         $user = $result->fetch_assoc();
+
         // Check hashed password
         if (password_verify($password, $user['password'])) {
             // Set session variables
@@ -21,26 +22,32 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['username'] = $user['username'];
             $_SESSION['acc_type'] = $user['acc_type'];
 
-            // Redirect based on account type (optional)
-            header("Location: dashboard.php");
+            // Redirect all roles to the same dashboard (can be customized if needed)
+            if ($_SESSION['acc_type'] === 'teacher') {
+                    header("Location: teacher/dashboard.php");
+                } elseif ($_SESSION['acc_type'] === 'parent') {
+                    header("Location: parent/dashboard.php");
+                } elseif ($_SESSION['acc_type'] === 'student') {
+                    header("Location: student/dashboard.php");
+                } else {
+                    header("Location: login.php");
+                }
+
             exit;
         } else {
             // Wrong password
-            $_SESSION['error'] = "Incorrect password.";
-            header("Location: dashboard.php");
-            exit;
+            header("Location: login.php?status=1");
         }
     } else {
         // User not found
-        $_SESSION['error'] = "User not found.";
-        
+        header("Location: login.php?status=1");
     }
 
-    header("Location: index.php?status=1");
+    // Redirect back to login with error
+    header("Location: login.php?status=1");
     exit;
 } else {
-    // Direct access to login_process
-    header("Location: index.php");
+    // Direct access to this script
+    header("Location: login.php?status=1");
     exit;
 }
-?>

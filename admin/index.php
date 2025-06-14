@@ -25,6 +25,18 @@
     </div>
     <h3 class="text-center mb-4">Welcome to Acadesys</h3>
     <form action="login_process.php" method="POST">
+      <?php if (isset($_GET['status']) && $_GET['status'] == 1): ?>
+        <div class="alert alert-danger alert-dismissible fade show d-flex align-items-start" role="alert">
+          <div>
+            <strong>Authentication Failed:</strong>
+            <p class="mb-0">The email, username, or password you entered is incorrect. Please try again.</p>
+          </div>
+          <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      <?php endif; ?>
+
+
+
       <div class="mb-3">
         <label for="username" class="form-label">Username or Email</label>
         <input type="text" name="username" id="username" class="form-control" required />

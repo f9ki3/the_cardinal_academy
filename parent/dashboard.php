@@ -20,7 +20,7 @@
       <div class="row g-4">
         <div class="col-12">
           <div class="card p-3">
-            <h2 class="fw-bold">Welcome to AcadeSys</h2>
+            <h2 class="fw-bold">Welcome, Parent</h2>
             <p class="text-muted">—let's have an awesome year!</p>
           </div>
         </div>
