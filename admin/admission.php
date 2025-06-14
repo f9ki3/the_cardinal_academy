@@ -19,10 +19,11 @@ $total_pages = ceil($total / $limit);
 
 // Fetch paginated data
 $query = "SELECT 
+            id,
             que_code, 
             lrn, 
             CONCAT(firstname, ' ', lastname) AS fullname, 
-            CONCAT(barangay, ', ', city, ', ', province) AS address, 
+            CONCAT(barangay, ', ', municipal, ', ', province) AS address, 
             grade_level,
             status 
           FROM admission_form
@@ -83,7 +84,7 @@ $result = mysqli_query($conn, $query);
                   <tbody>
                     <?php if (mysqli_num_rows($result) > 0): ?>
                       <?php while ($row = mysqli_fetch_assoc($result)): ?>
-                        <tr>
+                        <tr class="clickable-row" data-id="<?= $row['id'] ?>">
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['lrn']) ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['que_code'] ?? '-') ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['fullname']) ?></p></td>
@@ -91,6 +92,7 @@ $result = mysqli_query($conn, $query);
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['grade_level']) ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['status']) ?></p></td>
                         </tr>
+
                       <?php endwhile; ?>
                     <?php else: ?>
                       <tr>
@@ -152,3 +154,15 @@ $result = mysqli_query($conn, $query);
 <?php include 'footer.php'; ?>
 </body>
 </html>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const rows = document.querySelectorAll('.clickable-row');
+    rows.forEach(row => {
+      row.addEventListener('click', () => {
+        const id = row.getAttribute('data-id');
+        window.location.href = `view_admission.php?id=${id}`;
+      });
+    });
+  });
+</script>

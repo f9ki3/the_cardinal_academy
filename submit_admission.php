@@ -1,8 +1,8 @@
 <?php
-// submit_admission.php
+include 'db_connection.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Sanitize helper
+    // Helper function
     function sanitize($data) {
         return htmlspecialchars(trim($data));
     }
@@ -19,11 +19,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $birth_place = sanitize($_POST['birth_place'] ?? '');
     $age = sanitize($_POST['age'] ?? '');
     $religion = sanitize($_POST['religion'] ?? '');
-    $facebook = sanitize($_POST['facebook'] ?? '');
     $region = sanitize($_POST['Region'] ?? '');
     $province = sanitize($_POST['Province'] ?? '');
     $municipal = sanitize($_POST['Municipal'] ?? '');
     $barangay = sanitize($_POST['Barangay'] ?? '');
+    $facebook = sanitize($_POST['facebook'] ?? '');
+    $profile_picture = ''; // Set your logic here if uploading image
+    $admission_status = 'Pending'; // default value
+    $que = uniqid('Q'); // unique que ID
+    $que_code = uniqid('CODE'); // unique que code
 
     // Step 2: Guardian Info
     $father_name = sanitize($_POST['father_name'] ?? '');
@@ -36,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $guardian_occupation = sanitize($_POST['guardian_occupation'] ?? '');
     $guardian_contact = sanitize($_POST['guardian_contact'] ?? '');
 
-    // Optionally: Validate required fields, example:
+    // Validate
     $errors = [];
     if (empty($status)) $errors[] = "Status is required.";
     if (empty($grade_level)) $errors[] = "Grade level is required.";
@@ -53,34 +57,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // --- Save to database or process data ---
-    // Example only: Display collected data
-    echo "<h2>Form Submitted Successfully!</h2>";
-    echo "<h4>Learner Profile</h4>";
-    echo "<ul>";
-    echo "<li>Status: $status</li>";
-    echo "<li>LRN: $lrn</li>";
-    echo "<li>Grade Level: $grade_level</li>";
-    echo "<li>Gender: $gender</li>";
-    echo "<li>Name: $last_name, $first_name $middle_name</li>";
-    echo "<li>Date of Birth: $birth_date</li>";
-    echo "<li>Place of Birth: $birth_place</li>";
-    echo "<li>Age: $age</li>";
-    echo "<li>Religion: $religion</li>";
-    echo "<li>Facebook: $facebook</li>";
-    echo "<li>Address: $barangay, $municipal, $province, $region</li>";
-    echo "</ul>";
 
-    echo "<h4>Guardian Info</h4>";
-    echo "<ul>";
-    echo "<li>Father: $father_name ($father_occupation) - $father_contact</li>";
-    echo "<li>Mother: $mother_name ($mother_occupation) - $mother_contact</li>";
-    echo "<li>Guardian: $guardian_name ($guardian_occupation) - $guardian_contact</li>";
-    echo "</ul>";
+    $stmt = $conn->prepare("INSERT INTO admission_form (
+        que, lrn, firstname, middlename, lastname, status, gender, grade_level, profile_picture,
+        birthday, religion, place_of_birth, age, residential_address, region, province, municipal, barangay,
+        father_name, father_occupation, father_contact, mother_name, mother_occupation, mother_contact,
+        guardian_name, guardian_occupation, guardian_contact, admission_status, que_code
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-    // Example: You can now insert this into your DB using mysqli or PDO.
-    // Optional: Redirect with success message
-    // header("Location: success.php");
+    $residential_address = "$barangay, $municipal, $province, $region";
+
+    $stmt->bind_param("sssssssssssssssssssssssssssss",
+        $que, $lrn, $first_name, $middle_name, $last_name, $status, $gender, $grade_level, $profile_picture,
+        $birth_date, $religion, $birth_place, $age, $residential_address, $region, $province, $municipal, $barangay,
+        $father_name, $father_occupation, $father_contact, $mother_name, $mother_occupation, $mother_contact,
+        $guardian_name, $guardian_occupation, $guardian_contact, $admission_status, $que_code
+    );
+
+    if ($stmt->execute()) {
+        header("Location: success.php");
+        exit();
+    } else {
+        echo "Error: " . $stmt->error;
+    }
+
+    $stmt->close();
+    $conn->close();
 } else {
     echo "Invalid request method.";
 }
