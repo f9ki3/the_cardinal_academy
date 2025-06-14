@@ -8,7 +8,7 @@ if (!isset($_SESSION['acc_type'])) {
 
 // Redirect based on exact acc_type
 if ($_SESSION['acc_type'] === 'admin') {
-    header("Location: index.php");
+    header("Location: admin/dashboard.php");
     exit();
 } elseif ($_SESSION['acc_type'] === 'parent') {
     header("Location: parent/dashboard.php");
