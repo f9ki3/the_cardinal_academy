@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jun 14, 2025 at 02:39 AM
+-- Generation Time: Jun 14, 2025 at 04:48 AM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -29,6 +29,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `admission_form` (
   `id` int(11) NOT NULL,
+  `que` varchar(100) NOT NULL,
   `lrn` varchar(20) NOT NULL,
   `firstname` varchar(50) NOT NULL,
   `middlename` varchar(50) DEFAULT NULL,
@@ -55,24 +56,25 @@ CREATE TABLE `admission_form` (
   `guardian_name` varchar(100) DEFAULT NULL,
   `guardian_occupation` varchar(100) DEFAULT NULL,
   `guardian_contact` varchar(20) DEFAULT NULL,
-  `admission_status` enum('for_verification','approved') DEFAULT 'for_verification'
+  `admission_status` enum('for_verification','approved') DEFAULT 'for_verification',
+  `que_code` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `admission_form`
 --
 
-INSERT INTO `admission_form` (`id`, `lrn`, `firstname`, `middlename`, `lastname`, `status`, `gender`, `grade_level`, `profile_picture`, `birthday`, `religion`, `place_of_birth`, `age`, `residential_address`, `region`, `province`, `city`, `barangay`, `father_name`, `father_occupation`, `father_contact`, `mother_name`, `mother_occupation`, `mother_contact`, `guardian_name`, `guardian_occupation`, `guardian_contact`, `admission_status`) VALUES
-(1, '100000000011', 'Leo', 'G.', 'Fernandez', 'new', 'male', 'Grade 7', 'uploads/leo.jpg', '2012-08-20', 'Catholic', 'Makati', 13, '56 Buendia Street', 'NCR', 'Metro Manila', 'Makati', 'Barangay San Antonio', 'Roberto Fernandez', 'Technician', '09171230011', 'Grace Fernandez', 'Office Clerk', '09181230011', 'Mario Fernandez', 'Freelancer', '09191230011', 'for_verification'),
-(2, '100000000012', 'Isabella', 'M.', 'Torralba', 'old', 'female', 'Grade 10', 'uploads/isabella.jpg', '2009-11-05', 'Christian', 'Quezon City', 15, '789 Mindanao Ave', 'NCR', 'Metro Manila', 'Quezon City', 'Barangay Bahay Toro', 'Martin Torralba', 'Driver', '09171230012', 'Sandra Torralba', 'Cook', '09181230012', 'Rica Torralba', 'Teacher', '09191230012', 'approved'),
-(3, '100000000013', 'Enzo', 'L.', 'Manalo', 'new', 'male', 'Grade 8', 'uploads/enzo.jpg', '2011-01-17', 'Roman Catholic', 'Manila', 13, '32 España Blvd', 'NCR', 'Metro Manila', 'Manila', 'Barangay Sampaloc', 'Eric Manalo', 'Barber', '09171230013', 'Rowena Manalo', 'Laundry Worker', '09181230013', 'Liza Manalo', 'Housekeeper', '09191230013', 'approved'),
-(4, '100000000014', 'Chloe', 'T.', 'Navarro', 'old', 'female', 'Grade 9', 'uploads/chloe.jpg', '2010-03-12', 'Christian', 'Pasig', 14, '123 C. Raymundo Ave', 'NCR', 'Metro Manila', 'Pasig', 'Barangay Rosario', 'Dennis Navarro', 'Security Guard', '09171230014', 'Tricia Navarro', 'Call Center Agent', '09181230014', 'May Navarro', 'Nurse', '09191230014', 'for_verification'),
-(5, '100000000015', 'Nathan', 'B.', 'Garcia', 'new', 'male', 'Grade 7', 'uploads/nathan.jpg', '2012-09-25', 'Born Again', 'Caloocan', 12, '100 Gen. Tinio Street', 'NCR', 'Metro Manila', 'Caloocan', 'Barangay 176', 'Alfred Garcia', 'Mechanic', '09171230015', 'Gina Garcia', 'Seamstress', '09181230015', 'Tito Garcia', 'Teacher', '09191230015', 'for_verification'),
-(6, '100000000016', 'Hannah', 'D.', 'Diaz', 'old', 'female', 'Grade 11', 'uploads/hannah.jpg', '2008-04-19', 'Catholic', 'Taguig', 16, '76 McKinley Road', 'NCR', 'Metro Manila', 'Taguig', 'Barangay Pinagsama', 'Francis Diaz', 'Plumber', '09171230016', 'Lorna Diaz', 'Nanny', '09181230016', 'Paula Diaz', 'Technician', '09191230016', 'approved'),
-(7, '100000000017', 'Jared', 'S.', 'Delgado', 'new', 'male', 'Grade 8', 'uploads/jared.jpg', '2011-06-30', 'Christian', 'Mandaluyong', 13, '15 Shaw Blvd', 'NCR', 'Metro Manila', 'Mandaluyong', 'Barangay Highway Hills', 'Victor Delgado', 'Welder', '09171230017', 'Mira Delgado', 'Grocery Clerk', '09181230017', 'Rona Delgado', 'Nurse', '09191230017', 'for_verification'),
-(8, '100000000018', 'Camille', 'V.', 'Agustin', 'old', 'female', 'Grade 12', 'uploads/camille.jpg', '2007-08-03', 'Catholic', 'Pasay', 17, '60 Tramo Street', 'NCR', 'Metro Manila', 'Pasay', 'Barangay 33', 'Mario Agustin', 'Painter', '09171230018', 'Fely Agustin', 'Market Vendor', '09181230018', 'Celeste Agustin', 'Cashier', '09191230018', 'approved'),
-(9, '100000000019', 'Zachary', 'N.', 'Bautista', 'new', 'male', 'Grade 7', 'uploads/zachary.jpg', '2012-10-22', 'Catholic', 'Makati', 12, '88 Kalayaan Avenue', 'NCR', 'Metro Manila', 'Makati', 'Barangay Pio Del Pilar', 'Ronald Bautista', 'Driver', '09171230019', 'Vivian Bautista', 'Dishwasher', '09181230019', 'Maricel Bautista', 'Cashier', '09191230019', 'for_verification'),
-(10, '100000000020', 'Bea', 'O.', 'Salazar', 'old', 'female', 'Grade 10', 'uploads/bea.jpg', '2009-12-11', 'Iglesia ni Cristo', 'Quezon City', 15, '199 Commonwealth Ave', 'NCR', 'Metro Manila', 'Quezon City', 'Barangay Holy Spirit', 'Julius Salazar', 'Warehouseman', '09171230020', 'Elaine Salazar', 'Clerk', '09181230020', 'Ruby Salazar', 'Supervisor', '09191230020', 'approved');
+INSERT INTO `admission_form` (`id`, `que`, `lrn`, `firstname`, `middlename`, `lastname`, `status`, `gender`, `grade_level`, `profile_picture`, `birthday`, `religion`, `place_of_birth`, `age`, `residential_address`, `region`, `province`, `city`, `barangay`, `father_name`, `father_occupation`, `father_contact`, `mother_name`, `mother_occupation`, `mother_contact`, `guardian_name`, `guardian_occupation`, `guardian_contact`, `admission_status`, `que_code`) VALUES
+(1, 'QR001', '100000000011', 'Leo', 'G.', 'Fernandez', 'new', 'male', 'Grade 7', 'uploads/leo.jpg', '2012-08-20', 'Catholic', 'Makati', 13, '56 Buendia Street', 'NCR', 'Metro Manila', 'Makati', 'Barangay San Antonio', 'Roberto Fernandez', 'Technician', '09171230011', 'Grace Fernandez', 'Office Clerk', '09181230011', 'Mario Fernandez', 'Freelancer', '09191230011', 'for_verification', 'STU001'),
+(2, 'QR002', '100000000012', 'Isabella', 'M.', 'Torralba', 'old', 'female', 'Grade 10', 'uploads/isabella.jpg', '2009-11-05', 'Christian', 'Quezon City', 15, '789 Mindanao Ave', 'NCR', 'Metro Manila', 'Quezon City', 'Barangay Bahay Toro', 'Martin Torralba', 'Driver', '09171230012', 'Sandra Torralba', 'Cook', '09181230012', 'Rica Torralba', 'Teacher', '09191230012', 'approved', 'STU002'),
+(3, 'QR003', '100000000013', 'Enzo', 'L.', 'Manalo', 'new', 'male', 'Grade 8', 'uploads/enzo.jpg', '2011-01-17', 'Roman Catholic', 'Manila', 13, '32 España Blvd', 'NCR', 'Metro Manila', 'Manila', 'Barangay Sampaloc', 'Eric Manalo', 'Barber', '09171230013', 'Rowena Manalo', 'Laundry Worker', '09181230013', 'Liza Manalo', 'Housekeeper', '09191230013', 'approved', 'STU003'),
+(4, 'QR004', '100000000014', 'Chloe', 'T.', 'Navarro', 'old', 'female', 'Grade 9', 'uploads/chloe.jpg', '2010-03-12', 'Christian', 'Pasig', 14, '123 C. Raymundo Ave', 'NCR', 'Metro Manila', 'Pasig', 'Barangay Rosario', 'Dennis Navarro', 'Security Guard', '09171230014', 'Tricia Navarro', 'Call Center Agent', '09181230014', 'May Navarro', 'Nurse', '09191230014', 'for_verification', 'STU004'),
+(5, 'QR005', '100000000015', 'Nathan', 'B.', 'Garcia', 'new', 'male', 'Grade 7', 'uploads/nathan.jpg', '2012-09-25', 'Born Again', 'Caloocan', 12, '100 Gen. Tinio Street', 'NCR', 'Metro Manila', 'Caloocan', 'Barangay 176', 'Alfred Garcia', 'Mechanic', '09171230015', 'Gina Garcia', 'Seamstress', '09181230015', 'Tito Garcia', 'Teacher', '09191230015', 'for_verification', 'STU005'),
+(6, 'QR006', '100000000016', 'Hannah', 'D.', 'Diaz', 'old', 'female', 'Grade 11', 'uploads/hannah.jpg', '2008-04-19', 'Catholic', 'Taguig', 16, '76 McKinley Road', 'NCR', 'Metro Manila', 'Taguig', 'Barangay Pinagsama', 'Francis Diaz', 'Plumber', '09171230016', 'Lorna Diaz', 'Nanny', '09181230016', 'Paula Diaz', 'Technician', '09191230016', 'approved', 'STU006'),
+(7, 'QR007', '100000000017', 'Jared', 'S.', 'Delgado', 'new', 'male', 'Grade 8', 'uploads/jared.jpg', '2011-06-30', 'Christian', 'Mandaluyong', 13, '15 Shaw Blvd', 'NCR', 'Metro Manila', 'Mandaluyong', 'Barangay Highway Hills', 'Victor Delgado', 'Welder', '09171230017', 'Mira Delgado', 'Grocery Clerk', '09181230017', 'Rona Delgado', 'Nurse', '09191230017', 'for_verification', 'STU007'),
+(8, 'QR008', '100000000018', 'Camille', 'V.', 'Agustin', 'old', 'female', 'Grade 12', 'uploads/camille.jpg', '2007-08-03', 'Catholic', 'Pasay', 17, '60 Tramo Street', 'NCR', 'Metro Manila', 'Pasay', 'Barangay 33', 'Mario Agustin', 'Painter', '09171230018', 'Fely Agustin', 'Market Vendor', '09181230018', 'Celeste Agustin', 'Cashier', '09191230018', 'approved', 'STU008'),
+(9, 'QR009', '100000000019', 'Zachary', 'N.', 'Bautista', 'new', 'male', 'Grade 7', 'uploads/zachary.jpg', '2012-10-22', 'Catholic', 'Makati', 12, '88 Kalayaan Avenue', 'NCR', 'Metro Manila', 'Makati', 'Barangay Pio Del Pilar', 'Ronald Bautista', 'Driver', '09171230019', 'Vivian Bautista', 'Dishwasher', '09181230019', 'Maricel Bautista', 'Cashier', '09191230019', 'for_verification', 'STU009'),
+(10, 'QR0010', '100000000020', 'Bea', 'O.', 'Salazar', 'old', 'female', 'Grade 10', 'uploads/bea.jpg', '2009-12-11', 'Iglesia ni Cristo', 'Quezon City', 15, '199 Commonwealth Ave', 'NCR', 'Metro Manila', 'Quezon City', 'Barangay Holy Spirit', 'Julius Salazar', 'Warehouseman', '09171230020', 'Elaine Salazar', 'Clerk', '09181230020', 'Ruby Salazar', 'Supervisor', '09191230020', 'approved', 'STU010');
 
 -- --------------------------------------------------------
 
