@@ -55,7 +55,7 @@ $result = mysqli_query($conn, $query);
           <div class="rounded p-3 bg-white">
             <div class="container my-4">
               <div class="row mb-3">
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-8">
                   <h4>Student Admissions</h4>
                 </div>
                 <div class="col-12 col-md-4">
@@ -66,14 +66,10 @@ $result = mysqli_query($conn, $query);
                     </div>
                   </form>
                 </div>
-                <div class="col-12 col-md-1">
-                  <button class="btn border rounded rounded-4 w-100"> Create
-                  </button>
-                </div>
               </div>
 
               <div class="table-responsive">
-                <table class="table table-striped">
+                <table class="table table-striped table-hover" style="cursor: pointer">
                   <thead>
                     <tr>
                       <th scope="col">LRN</th>
@@ -107,16 +103,44 @@ $result = mysqli_query($conn, $query);
 
               <!-- Pagination -->
               <?php if ($total_pages > 1): ?>
-                <nav aria-label="Page navigation">
-                  <ul class="pagination justify-content-start">
-                    <?php for ($i = 1; $i <= $total_pages; $i++): ?>
-                      <li class="page-item <?= $i == $page ? 'bg-muted' : '' ?>">
-                        <a class="page-link" href="?search=<?= urlencode($search) ?>&page=<?= $i ?>"><?= $i ?></a>
-                      </li>
-                    <?php endfor; ?>
-                  </ul>
-                </nav>
-              <?php endif; ?>
+  <nav aria-label="Page navigation">
+    <ul class="pagination justify-content-start pagination-sm">
+      <!-- Previous Button -->
+      <?php if ($page > 1): ?>
+        <li class="page-item">
+          <a class="page-link text-muted" href="?search=<?= urlencode($search) ?>&page=<?= $page - 1 ?>">Previous</a>
+        </li>
+      <?php endif; ?>
+
+      <?php
+        // Determine the start and end page numbers to show
+        $max_links = 5;
+        $start = max(1, $page - floor($max_links / 2));
+        $end = min($total_pages, $start + $max_links - 1);
+
+        // Adjust start again if we are near the end
+        if ($end - $start < $max_links - 1) {
+          $start = max(1, $end - $max_links + 1);
+        }
+      ?>
+
+      <!-- Page Links -->
+      <?php for ($i = $start; $i <= $end; $i++): ?>
+        <li class="page-item">
+          <a class="page-link text-muted <?= $i == $page ? 'fw-bold' : '' ?>" href="?search=<?= urlencode($search) ?>&page=<?= $i ?>"><?= $i ?></a>
+        </li>
+      <?php endfor; ?>
+
+      <!-- Next Button -->
+      <?php if ($page < $total_pages): ?>
+        <li class="page-item">
+          <a class="page-link text-muted" href="?search=<?= urlencode($search) ?>&page=<?= $page + 1 ?>">Next</a>
+        </li>
+      <?php endif; ?>
+    </ul>
+  </nav>
+<?php endif; ?>
+
             </div>
           </div>
         </div>
