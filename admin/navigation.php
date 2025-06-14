@@ -6,12 +6,12 @@
     <hr class="text-light">
     <ul class="nav flex-column">
       <li class="nav-item">
-        <a class="nav-link text-light" href="#"><i class="bi bi-bar-chart me-2"></i>Grades</a>
+        <a class="nav-link text-light" href="dashboard.php"><i class="bi bi-bar-chart me-2"></i>Dashboard</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-light" href="#"><i class="bi bi-calendar-check me-2"></i>Attendances</a>
+        <a class="nav-link text-light" href="admission.php"><i class="bi bi-calendar-check me-2"></i>Admission</a>
       </li>
-      <li class="nav-item">
+      <!-- <li class="nav-item">
         <a class="nav-link text-light" href="#"><i class="bi bi-chat-left-text me-2"></i>Message Board</a>
       </li>
       <li class="nav-item">
@@ -25,6 +25,6 @@
       </li>
       <li class="nav-item">
         <a class="nav-link text-light" href="#"><i class="bi bi-journal-bookmark me-2"></i>Study Plan</a>
-      </li>
+      </li> -->
     </ul>
   </div>

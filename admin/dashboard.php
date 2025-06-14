@@ -9,7 +9,7 @@
   <?php include 'header.php'?>
 </head>
 <body>
-<div class="d-flex flex-row" style="background-color: white;">
+<div class="d-flex flex-row bg-light">
   <!-- Sidebar -->
   <?php include 'navigation.php'?>
 
@@ -21,7 +21,7 @@
       <!-- Main content goes here -->
       <div class="row g-4">
         <div class="col-12">
-          <div class="card p-3">
+          <div class="rounded rouned-4 p-3" style="background: white">
             <h2 class="fw-bold">Welcome to AcadeSys</h2>
             <p class="text-muted">—let's have an awesome year!</p>
           </div>
