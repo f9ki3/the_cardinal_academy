@@ -179,7 +179,7 @@ if ($admission_id > 0) {
               <input type="text" class="form-control" value="<?= htmlspecialchars($data['guardian_contact'] ?? '') ?>" readonly>
             </div>
             <div class="col-12 col-md-2">
-                <button type="submit" id="submitBtn" class="btn btn-danger text-light rounded-4 mt-3 w-100">Approved</button>
+                <button type="submit" id="submitBtn" class="btn btn-danger text-light rounded-4 mt-3 w-100">Approve</button>
                 </div>
                 <div class="col-12 col-md-2">
                 <button type="submit" id="submitBtn" class="btn btn-outline-danger text-danger border-2 rounded-4 mt-3 w-100">For Review</button>

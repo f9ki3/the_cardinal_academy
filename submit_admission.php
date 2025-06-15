@@ -19,15 +19,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $birth_place = sanitize($_POST['birth_place'] ?? '');
     $age = sanitize($_POST['age'] ?? '');
     $religion = sanitize($_POST['religion'] ?? '');
+    $email = sanitize($_POST['email'] ?? '');
+    $facebook = sanitize($_POST['facebook'] ?? '');
     $region = sanitize($_POST['Region'] ?? '');
     $province = sanitize($_POST['Province'] ?? '');
     $municipal = sanitize($_POST['Municipal'] ?? '');
     $barangay = sanitize($_POST['Barangay'] ?? '');
-    $facebook = sanitize($_POST['facebook'] ?? '');
     $profile_picture = ''; // Set your logic here if uploading image
     $admission_status = 'Pending'; // default value
     $que = uniqid('Q'); // unique que ID
-    $que_code = uniqid('CODE'); // unique que code
+    $que_code = uniqid('Q'); // unique que code
 
     // Step 2: Guardian Info
     $father_name = sanitize($_POST['father_name'] ?? '');
@@ -40,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $guardian_occupation = sanitize($_POST['guardian_occupation'] ?? '');
     $guardian_contact = sanitize($_POST['guardian_contact'] ?? '');
 
-    // Validate
+    // Validation
     $errors = [];
     if (empty($status)) $errors[] = "Status is required.";
     if (empty($grade_level)) $errors[] = "Grade level is required.";
@@ -48,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($last_name)) $errors[] = "Last name is required.";
     if (empty($first_name)) $errors[] = "First name is required.";
     if (empty($birth_date)) $errors[] = "Date of birth is required.";
-    if ((int)$age < 4) $errors[] = "Age must be at least 4.";
+    if (!is_numeric($age) || (int)$age < 4) $errors[] = "Age must be at least 4.";
 
     if (!empty($errors)) {
         echo "<h3>Form submission failed with the following errors:</h3><ul>";
@@ -57,23 +58,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-
-    $stmt = $conn->prepare("INSERT INTO admission_form (
-        que, lrn, firstname, middlename, lastname, status, gender, grade_level, profile_picture,
-        birthday, religion, place_of_birth, age, residential_address, region, province, municipal, barangay,
-        father_name, father_occupation, father_contact, mother_name, mother_occupation, mother_contact,
-        guardian_name, guardian_occupation, guardian_contact, admission_status, que_code
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-
+    // Residential address composition
     $residential_address = "$barangay, $municipal, $province, $region";
 
-    $stmt->bind_param("sssssssssssssssssssssssssssss",
+    // Prepared statement
+    $stmt = $conn->prepare("INSERT INTO admission_form (
+        que, lrn, firstname, middlename, lastname, status, gender, grade_level, profile_picture,
+        birthday, religion, place_of_birth, age, email, facebook, residential_address,
+        region, province, municipal, barangay,
+        father_name, father_occupation, father_contact,
+        mother_name, mother_occupation, mother_contact,
+        guardian_name, guardian_occupation, guardian_contact,
+        admission_status, que_code
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+    $stmt->bind_param("sssssssssssssssssssssssssssssss",
         $que, $lrn, $first_name, $middle_name, $last_name, $status, $gender, $grade_level, $profile_picture,
-        $birth_date, $religion, $birth_place, $age, $residential_address, $region, $province, $municipal, $barangay,
-        $father_name, $father_occupation, $father_contact, $mother_name, $mother_occupation, $mother_contact,
-        $guardian_name, $guardian_occupation, $guardian_contact, $admission_status, $que_code
+        $birth_date, $religion, $birth_place, $age, $email, $facebook, $residential_address,
+        $region, $province, $municipal, $barangay,
+        $father_name, $father_occupation, $father_contact,
+        $mother_name, $mother_occupation, $mother_contact,
+        $guardian_name, $guardian_occupation, $guardian_contact,
+        $admission_status, $que_code
     );
 
+    // Execute and respond
     if ($stmt->execute()) {
         header("Location: success.php");
         exit();

@@ -13,12 +13,12 @@
       <li class="nav-item">
         <a class="nav-link text-light" href="admission.php"><i class="bi bi-calendar-check me-2"></i>Admission</a>
       </li>
-      <!-- <li class="nav-item">
-        <a class="nav-link text-light" href="#"><i class="bi bi-chat-left-text me-2"></i>Message Board</a>
-      </li>
       <li class="nav-item">
-        <a class="nav-link text-light" href="#"><i class="bi bi-wallet2 me-2"></i>Finance</a>
+        <a class="nav-link text-light" href="#"><i class="bi bi-book me-2"></i>Enrollment</a>
       </li>
+      <!-- <li class="nav-item">
+        <a class="nav-link text-light" href="#"><i class="bi bi-wallet2 me-2"></i>Finance</a>
+      </li>s
       <li class="nav-item">
         <a class="nav-link text-light" href="#"><i class="bi bi-heart-pulse me-2"></i>Medical</a>
       </li>
