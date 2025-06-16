@@ -72,7 +72,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         admission_status, que_code
     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-    $stmt->bind_param("sssssssssssssssssssssssssssssss",
+    if (!$stmt) {
+        die("SQL prepare() failed: " . $conn->error);
+    }
+
+    $stmt->bind_param("sssssssssssssssssssssssssssssss", 
         $que, $lrn, $first_name, $middle_name, $last_name, $status, $gender, $grade_level, $profile_picture,
         $birth_date, $religion, $birth_place, $age, $email, $facebook, $residential_address,
         $region, $province, $municipal, $barangay,
