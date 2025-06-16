@@ -11,10 +11,10 @@
         <a class="nav-link text-light" href="dashboard.php"><i class="bi bi-bar-chart me-2"></i>Dashboard</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-light" href="admission.php"><i class="bi bi-calendar-check me-2"></i>Admission</a>
+        <a class="nav-link text-light" href="admission.php"><i class="bi bi-calendar-check me-2"></i>Student Admission</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-light" href="#"><i class="bi bi-book me-2"></i>Enrollment</a>
+        <a class="nav-link text-light" href="enrollment.php"><i class="bi bi-book me-2"></i>Student Enrollment</a>
       </li>
       <!-- <li class="nav-item">
         <a class="nav-link text-light" href="#"><i class="bi bi-wallet2 me-2"></i>Finance</a>

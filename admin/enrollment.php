@@ -10,7 +10,7 @@ $offset = ($page - 1) * $limit;
 
 // Count total results for pagination
 $count_query = "SELECT COUNT(*) as total FROM admission_form 
-                WHERE admission_status = 'pending' AND (
+                WHERE admission_status = 'approved' AND (
                     lrn LIKE '%$search%' 
                     OR que_code LIKE '%$search%' 
                     OR CONCAT(firstname, ' ', lastname) LIKE '%$search%'
@@ -29,7 +29,7 @@ $query = "SELECT
             grade_level,
             status 
           FROM admission_form
-          WHERE admission_status = 'pending' AND (
+          WHERE admission_status = 'approved' AND (
               lrn LIKE '%$search%' 
               OR que_code LIKE '%$search%' 
               OR CONCAT(firstname, ' ', lastname) LIKE '%$search%'
@@ -44,7 +44,7 @@ $result = mysqli_query($conn, $query);
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AcadeSys Admission</title>
+  <title>AcadeSys Enrollment</title>
   <?php include 'header.php' ?>
 </head>
 <body>
@@ -61,7 +61,7 @@ $result = mysqli_query($conn, $query);
             <div class="container my-4">
               <div class="row mb-3">
                 <div class="col-12 col-md-8">
-                  <h4>Student Admissions</h4>
+                  <h4>Student Enrollment</h4>
                 </div>
                 <div class="col-12 col-md-4">
                   <form method="GET" action="">
@@ -192,7 +192,7 @@ $result = mysqli_query($conn, $query);
     rows.forEach(row => {
       row.addEventListener('click', () => {
         const id = row.getAttribute('data-id');
-        window.location.href = `view_admission.php?id=${id}`;
+        window.location.href = `view_enrollment.php?id=${id}`;
       });
     });
   });
