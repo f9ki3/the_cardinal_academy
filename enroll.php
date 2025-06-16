@@ -41,9 +41,9 @@
           </div>
 
           <div class="col-12 col-md-6">
-            <label for="grade_level" class="form-label text-muted">Grade Level</label>
+            <label for="grade_level" class="form-label text-muted">Grade Level </label>
             <select name="grade_level" id="grade_level" class="form-select">
-              <option value="">Select grade level</option>
+              <option value="">Select grade level </option>
               <option>Kinder Garten</option>
               <option>Grade 1</option>
               <option>Grade 2</option>

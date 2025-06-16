@@ -42,7 +42,7 @@ if ($admission_id > 0) {
 
         <!-- Learner Profile -->
         <fieldset>
-          <h4><strong>Learner Profile</strong></h4>
+          <h4><strong>Student Profile</strong></h4>
           <div class="row g-3">
           <input type="hidden" name="admission_id" value="<?= htmlspecialchars($data['id'] ?? '') ?>">
 
@@ -195,15 +195,41 @@ if ($admission_id > 0) {
               <label class="form-label text-muted">Guardian’s Contact</label>
               <input type="text" class="form-control" value="<?= htmlspecialchars($data['guardian_contact'] ?? '') ?>" disabled>
             </div>
-            <div class="col-12 col-md-2">
-              <button type="submit" name="action" value="approved" class="btn btn-danger text-light rounded-4 mt-3 w-100">Approve</button>
-            </div>
-            <div class="col-12 col-md-2">
-              <button type="submit" name="action" value="for_review" class="btn btn-outline-danger text-danger border-2 rounded-4 mt-3 w-100">For Review</button>
-            </div>
 
           </div>
         </fieldset>
+
+        <hr class="my-5">
+        <fieldset>
+          <h4><strong>Payment Plan</strong></h4>
+          <div class="row g-3">
+
+            <div class="col-md-6">
+              <label class="form-label text-muted">Select Payment Plan</label>
+              <select name="payment_plan" class="form-control" required>
+                <option value="">-- Select Payment Plan --</option>
+                <option value="Annual">Annual (1 Year)</option>
+                <option value="Semestral">Semestral (2 months)</option>
+                <option value="Quarterly">Quarterly (4 months)</option>
+                <option value="Monthly">Monthly (9 months)</option>
+              </select>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label text-muted">Downpayment (Registration Fee)</label>
+              <input type="text" class="form-control" value="₱2,500" readonly>
+            </div>
+            <div class="col-12 col-md-2">
+                <button type="submit" name="action" value="enroll" class="btn btn-danger text-light rounded-4 mt-3 w-100">Enroll</button>
+              </div>
+              <div class="col-12 col-md-2">
+                <button type="submit" name="action" value="for_review" class="btn btn-outline-danger text-danger border-2 rounded-4 mt-3 w-100">Cancel</button>
+              </div>
+            </div>
+
+          
+        </fieldset>
+
 
       </div>
       </form>
