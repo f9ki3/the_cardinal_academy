@@ -25,19 +25,10 @@ $profile_image = $user_info['profile_image'];
         <a class="nav-link text-light" href="admission.php"><i class="bi bi-calendar-check me-2"></i>Student Admission</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-light" href="enrollment.php"><i class="bi bi-book me-2"></i>Student Enrollment</a>
-      </li>
-      <!-- <li class="nav-item">
-        <a class="nav-link text-light" href="#"><i class="bi bi-wallet2 me-2"></i>Finance</a>
-      </li>s
-      <li class="nav-item">
-        <a class="nav-link text-light" href="#"><i class="bi bi-heart-pulse me-2"></i>Medical</a>
+        <a class="nav-link text-light" href="enrollment.php"><i class="bi bi-book me-2"></i>Enroll Student</a>
       </li>
       <li class="nav-item">
-        <a class="nav-link text-light" href="#"><i class="bi bi-exclamation-circle me-2"></i>Disciplinary</a>
+        <a class="nav-link text-light" href="tuition.php"><i class="bi bi-bank me-2"></i>Manage Tuition</a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link text-light" href="#"><i class="bi bi-journal-bookmark me-2"></i>Study Plan</a>
-      </li> -->
     </ul>
   </div>

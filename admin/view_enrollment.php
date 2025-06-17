@@ -195,7 +195,9 @@ if ($admission_id > 0) {
               <label class="form-label text-muted">Guardian’s Contact</label>
               <input type="text" class="form-control" value="<?= htmlspecialchars($data['guardian_contact'] ?? '') ?>" disabled>
             </div>
-
+            <div class="col-12 col-md-2">
+              <button type="submit" name="action" value="enroll" class="btn btn-danger text-light rounded-4 mt-3 w-100">Update</button>
+            </div>
           </div>
         </fieldset>
 
