@@ -41,9 +41,9 @@
           </div>
 
           <div class="col-12 col-md-6">
-            <label for="grade_level" class="form-label text-muted">Grade Level</label>
+            <label for="grade_level" class="form-label text-muted">Grade Level </label>
             <select name="grade_level" id="grade_level" class="form-select">
-              <option value="">Select grade level</option>
+              <option value="">Select grade level </option>
               <option>Kinder Garten</option>
               <option>Grade 1</option>
               <option>Grade 2</option>
@@ -116,7 +116,7 @@
           <div class="col-12 col-md-3">
             <label class="form-label text-muted">Facebook Account</label>
             <input type="text" name="facebook" class="form-control" placeholder="Enter Facebook account">
-            <div id="facebook-error" class="invalid-feedback d-none">Facebook Account is required.</div>
+            <div id="facebook-error" class="invalid-feedback d-none">Note: Leave as N/A is not applicable</div>
           </div>
 
           <div class="col-12 col-md-3">

@@ -34,8 +34,9 @@ if ($admission_id > 0) {
     <?php include 'nav_top.php'; ?>
 
     <div class="container py-4">
-      <div class="bg-white p-4 rounded-4 shadow-sm">
-        <h2>View Admission Form</h2>
+     <form action="approved_admission.php" method="POST">
+        <div class="bg-white p-4 rounded-4 shadow-sm">
+        <h2>Student Admission Form</h2>
         <p class="m-0 mb-4">Note: Please review all information from the form.</p>
         <hr>
 
@@ -43,85 +44,101 @@ if ($admission_id > 0) {
         <fieldset>
           <h4><strong>Learner Profile</strong></h4>
           <div class="row g-3">
+          <input type="hidden" name="admission_id" value="<?= htmlspecialchars($data['id'] ?? '') ?>">
+
+          <div class="col-12 col-md-6">
+            <label for="lrn" class="form-label text-muted">Date</label>
+            <input type="text" name="admission_date" class="form-control" value="<?= htmlspecialchars($data['admission_date'] ?? '') ?>" disabled>
+          </div>
+
+          <div class="col-12 col-md-6">
+            <label for="lrn" class="form-label text-muted">QUEUE CODE</label>
+            <input type="text" name="que_code" class="form-control" value="<?= htmlspecialchars($data['que_code'] ?? '') ?>" disabled>
+          </div>
 
             <div class="col-md-6">
               <label class="form-label text-muted">Status</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['status'] ?? '') ?>" readonly>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['status'] ?? '') ?>" disabled>
             </div>
 
             <div class="col-md-6">
               <label class="form-label text-muted">LRN</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['lrn'] ?? '') ?>" readonly>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['lrn'] ?? '') ?>" disabled>
             </div>
 
             <div class="col-md-6">
               <label class="form-label text-muted">Grade Level</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['grade_level'] ?? '') ?>" readonly>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['grade_level'] ?? '') ?>" disabled>
             </div>
 
             <div class="col-md-6">
               <label class="form-label text-muted">Gender</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['gender'] ?? '') ?>" readonly>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['gender'] ?? '') ?>" disabled>
             </div>
 
             <div class="col-md-4">
               <label class="form-label text-muted">Last Name</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['lastname'] ?? '') ?>" readonly>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['lastname'] ?? '') ?>" disabled>
             </div>
 
             <div class="col-md-4">
               <label class="form-label text-muted">First Name</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['firstname'] ?? '') ?>" readonly>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['firstname'] ?? '') ?>" disabled>
             </div>
 
             <div class="col-md-4">
               <label class="form-label text-muted">Middle Name</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['middlename'] ?? '') ?>" readonly>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['middlename'] ?? '') ?>" disabled>
             </div>
 
             <div class="col-md-6">
               <label class="form-label text-muted">Birth Date</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['birthday'] ?? '') ?>" readonly>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['birthday'] ?? '') ?>" disabled>
             </div>
 
             <div class="col-md-6">
               <label class="form-label text-muted">Birth Place</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['place_of_birth'] ?? '') ?>" readonly>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['place_of_birth'] ?? '') ?>" disabled>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-3">
               <label class="form-label text-muted">Age</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['age'] ?? '') ?>" readonly>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['age'] ?? '') ?>" disabled>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-3">
               <label class="form-label text-muted">Religion</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['religion'] ?? '') ?>" readonly>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['religion'] ?? '') ?>" disabled>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-3">
               <label class="form-label text-muted">Facebook Account</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['facebook'] ?? '') ?>" readonly>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['facebook'] ?? '') ?>" disabled>
+            </div>
+
+            <div class="col-md-3">
+              <label class="form-label text-muted">Email</label>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['email'] ?? '') ?>" disabled>
             </div>
 
             <div class="col-md-3">
               <label class="form-label text-muted">Region</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['region'] ?? '') ?>" readonly>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['region'] ?? '') ?>" disabled>
             </div>
 
             <div class="col-md-3">
               <label class="form-label text-muted">Province</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['province'] ?? '') ?>" readonly>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['province'] ?? '') ?>" disabled>
             </div>
 
             <div class="col-md-3">
               <label class="form-label text-muted">Municipal</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['municipal'] ?? '') ?>" readonly>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['municipal'] ?? '') ?>" disabled>
             </div>
 
             <div class="col-md-3">
               <label class="form-label text-muted">Barangay</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['barangay'] ?? '') ?>" readonly>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['barangay'] ?? '') ?>" disabled>
             </div>
 
           </div>
@@ -136,59 +153,60 @@ if ($admission_id > 0) {
 
             <div class="col-md-4">
               <label class="form-label text-muted">Father’s Name</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['father_name'] ?? '') ?>" readonly>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['father_name'] ?? '') ?>" disabled>
             </div>
 
             <div class="col-md-4">
               <label class="form-label text-muted">Father’s Occupation</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['father_occupation'] ?? '') ?>" readonly>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['father_occupation'] ?? '') ?>" disabled>
             </div>
 
             <div class="col-md-4">
               <label class="form-label text-muted">Father’s Contact</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['father_contact'] ?? '') ?>" readonly>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['father_contact'] ?? '') ?>" disabled>
             </div>
 
             <div class="col-md-4">
               <label class="form-label text-muted">Mother’s Name</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['mother_name'] ?? '') ?>" readonly>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['mother_name'] ?? '') ?>" disabled>
             </div>
 
             <div class="col-md-4">
               <label class="form-label text-muted">Mother’s Occupation</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['mother_occupation'] ?? '') ?>" readonly>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['mother_occupation'] ?? '') ?>" disabled>
             </div>
 
             <div class="col-md-4">
               <label class="form-label text-muted">Mother’s Contact</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['mother_contact'] ?? '') ?>" readonly>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['mother_contact'] ?? '') ?>" disabled>
             </div>
 
             <div class="col-md-4">
               <label class="form-label text-muted">Guardian’s Name</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['guardian_name'] ?? '') ?>" readonly>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['guardian_name'] ?? '') ?>" disabled>
             </div>
 
             <div class="col-md-4">
               <label class="form-label text-muted">Guardian’s Occupation</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['guardian_occupation'] ?? '') ?>" readonly>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['guardian_occupation'] ?? '') ?>" disabled>
             </div>
 
             <div class="col-md-4">
               <label class="form-label text-muted">Guardian’s Contact</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['guardian_contact'] ?? '') ?>" readonly>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['guardian_contact'] ?? '') ?>" disabled>
             </div>
             <div class="col-12 col-md-2">
-                <button type="submit" id="submitBtn" class="btn btn-danger text-light rounded-4 mt-3 w-100">Approve</button>
-                </div>
-                <div class="col-12 col-md-2">
-                <button type="submit" id="submitBtn" class="btn btn-outline-danger text-danger border-2 rounded-4 mt-3 w-100">For Review</button>
+              <button type="submit" name="action" value="approved" class="btn btn-danger text-light rounded-4 mt-3 w-100">Approve</button>
+            </div>
+            <div class="col-12 col-md-2">
+              <button type="submit" name="action" value="for_review" class="btn btn-outline-danger text-danger border-2 rounded-4 mt-3 w-100">For Review</button>
             </div>
 
           </div>
         </fieldset>
 
       </div>
+      </form>
     </div>
   </div>
 </div>

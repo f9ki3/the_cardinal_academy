@@ -7,3 +7,5 @@
   <link rel="stylesheet" href="../static/css/landing.css">
   <!-- Include ApexCharts -->
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+  <!-- include alertify script -->
+<script src="{PATH}/alertify.js"></script>

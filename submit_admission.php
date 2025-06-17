@@ -26,9 +26,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $municipal = sanitize($_POST['Municipal'] ?? '');
     $barangay = sanitize($_POST['Barangay'] ?? '');
     $profile_picture = ''; // Set your logic here if uploading image
-    $admission_status = 'Pending'; // default value
-    $que = uniqid('Q'); // unique que ID
-    $que_code = uniqid('Q'); // unique que code
+    $admission_status = 'pending'; // default value
+
+    // Generate que_code as "Q" followed by a 6-digit random number
+    $que_code = 'Q' . str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT);
 
     // Step 2: Guardian Info
     $father_name = sanitize($_POST['father_name'] ?? '');
@@ -63,17 +64,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Prepared statement
     $stmt = $conn->prepare("INSERT INTO admission_form (
-        que, lrn, firstname, middlename, lastname, status, gender, grade_level, profile_picture,
+        lrn, firstname, middlename, lastname, status, gender, grade_level, profile_picture,
         birthday, religion, place_of_birth, age, email, facebook, residential_address,
         region, province, municipal, barangay,
         father_name, father_occupation, father_contact,
         mother_name, mother_occupation, mother_contact,
         guardian_name, guardian_occupation, guardian_contact,
         admission_status, que_code
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
 
-    $stmt->bind_param("sssssssssssssssssssssssssssssss",
-        $que, $lrn, $first_name, $middle_name, $last_name, $status, $gender, $grade_level, $profile_picture,
+    if (!$stmt) {
+        die("SQL prepare() failed: " . $conn->error);
+    }
+
+    $stmt->bind_param("ssssssssssssssssssssssssssssss", 
+        $lrn, $first_name, $middle_name, $last_name, $status, $gender, $grade_level, $profile_picture,
         $birth_date, $religion, $birth_place, $age, $email, $facebook, $residential_address,
         $region, $province, $municipal, $barangay,
         $father_name, $father_occupation, $father_contact,
