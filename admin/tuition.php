@@ -90,7 +90,7 @@ $result = $stmt->get_result();
               </div>
 
               <div class="table-responsive">
-                <table class="table table-striped table-hover">
+                <table class="table table-striped">
                   <thead>
                     <tr>
                       <th scope="col">Grade Level</th>
@@ -109,8 +109,11 @@ $result = $stmt->get_result();
                           <td><?= number_format($row['miscellaneous'], 2) ?></td>
                           <td><?= number_format($row['total'], 2) ?></td>
                           <td>
-                            <a href="update_tuition.php?id=<?= $row['id'] ?>" class="btn btn-sm border rounded-4">Edit</a>
-                          </td>
+                            <a href="update_tuition.php?id=<?= $row['id'] ?>" class="btn btn-sm border rounded-4">
+                                 Edit
+                            </a>
+                           </td>
+
                         </tr>
                       <?php endwhile; ?>
                     <?php else: ?>

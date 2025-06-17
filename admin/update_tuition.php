@@ -69,7 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="col-12">
           <div class="rounded p-3 bg-white">
             <div class="container my-4">
-                <h3>Update Tuition Fee for <?= htmlspecialchars($row['grade_level']) ?></h3>
+                <h4>Update Tuition Fee for <?= htmlspecialchars($row['grade_level']) ?></h4>
 
                 <?php if (!empty($error)): ?>
                     <div class="alert alert-danger"><?= htmlspecialchars($error) ?></div>
@@ -88,7 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label for="miscellaneous" class="form-label">Miscellaneous</label>
                     <input type="number" step="0.01" min="0" id="miscellaneous" name="miscellaneous" class="form-control" value="<?= htmlspecialchars($row['miscellaneous']) ?>" required />
                     </div>
-                    <button type="submit" class="btn btn-primary">Update</button>
+                    <button type="submit" class="btn bg-main text-light">Update</button>
                     <a href="tuition.php" class="btn btn-secondary ms-2">Cancel</a>
                 </form>
                 </div>

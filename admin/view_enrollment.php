@@ -37,7 +37,7 @@ if ($admission_id > 0) {
      <form action="approved_admission.php" method="POST">
         <div class="bg-white p-4 rounded-4 shadow-sm">
         <h2>Student Enrollment Form</h2>
-        <p class="m-0 mb-4">Note: Please review all information from the form.</p>
+        <p class="m-0 mb-4">Note: Please review all information from the form before proceed to payment plan</p>
         <hr>
 
         <!-- Learner Profile -->
@@ -58,87 +58,112 @@ if ($admission_id > 0) {
 
             <div class="col-md-6">
               <label class="form-label text-muted">Status</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['status'] ?? '') ?>" disabled>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['status'] ?? '') ?>" >
             </div>
 
             <div class="col-md-6">
               <label class="form-label text-muted">LRN</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['lrn'] ?? '') ?>" disabled>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['lrn'] ?? '') ?>" >
             </div>
 
             <div class="col-md-6">
               <label class="form-label text-muted">Grade Level</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['grade_level'] ?? '') ?>" disabled>
+              <select class="form-select" name="grade_level" required>
+                <option value="">Select Grade Level</option>
+                <option value="Nursery (with books)" <?= (isset($data['grade_level']) && $data['grade_level'] === 'Nursery (with books)') ? 'selected' : '' ?>>Nursery (with books)</option>
+                <option value="Kinder (with books)" <?= (isset($data['grade_level']) && $data['grade_level'] === 'Kinder (with books)') ? 'selected' : '' ?>>Kinder (with books)</option>
+                
+                <option value="Grade 1" <?= (isset($data['grade_level']) && $data['grade_level'] === 'Grade 1') ? 'selected' : '' ?>>Grade 1</option>
+                <option value="Grade 2" <?= (isset($data['grade_level']) && $data['grade_level'] === 'Grade 2') ? 'selected' : '' ?>>Grade 2</option>
+                <option value="Grade 3" <?= (isset($data['grade_level']) && $data['grade_level'] === 'Grade 3') ? 'selected' : '' ?>>Grade 3</option>
+
+                <option value="Grade 4" <?= (isset($data['grade_level']) && $data['grade_level'] === 'Grade 4') ? 'selected' : '' ?>>Grade 4</option>
+                <option value="Grade 5" <?= (isset($data['grade_level']) && $data['grade_level'] === 'Grade 5') ? 'selected' : '' ?>>Grade 5</option>
+                <option value="Grade 6" <?= (isset($data['grade_level']) && $data['grade_level'] === 'Grade 6') ? 'selected' : '' ?>>Grade 6</option>
+
+                <option value="Grade 7" <?= (isset($data['grade_level']) && $data['grade_level'] === 'Grade 7') ? 'selected' : '' ?>>Grade 7</option>
+                <option value="Grade 8" <?= (isset($data['grade_level']) && $data['grade_level'] === 'Grade 8') ? 'selected' : '' ?>>Grade 8</option>
+                <option value="Grade 9" <?= (isset($data['grade_level']) && $data['grade_level'] === 'Grade 9') ? 'selected' : '' ?>>Grade 9</option>
+
+                <option value="Grade 10" <?= (isset($data['grade_level']) && $data['grade_level'] === 'Grade 10') ? 'selected' : '' ?>>Grade 10</option>
+                <option value="Grade 11" <?= (isset($data['grade_level']) && $data['grade_level'] === 'Grade 11') ? 'selected' : '' ?>>Grade 11</option>
+                <option value="Grade 12" <?= (isset($data['grade_level']) && $data['grade_level'] === 'Grade 12') ? 'selected' : '' ?>>Grade 12</option>
+              </select>
             </div>
+
 
             <div class="col-md-6">
               <label class="form-label text-muted">Gender</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['gender'] ?? '') ?>" disabled>
+              <select class="form-select" name="gender" required>
+                <option value="Male" <?= (isset($data['gender']) && $data['gender'] === 'Male') ? 'selected' : '' ?>>Male</option>
+                <option value="Female" <?= (isset($data['gender']) && $data['gender'] === 'Female') ? 'selected' : '' ?>>Female</option>
+              </select>
             </div>
+
 
             <div class="col-md-4">
               <label class="form-label text-muted">Last Name</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['lastname'] ?? '') ?>" disabled>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['lastname'] ?? '') ?>" >
             </div>
 
             <div class="col-md-4">
               <label class="form-label text-muted">First Name</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['firstname'] ?? '') ?>" disabled>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['firstname'] ?? '') ?>" >
             </div>
 
             <div class="col-md-4">
               <label class="form-label text-muted">Middle Name</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['middlename'] ?? '') ?>" disabled>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['middlename'] ?? '') ?>" >
             </div>
 
             <div class="col-md-6">
               <label class="form-label text-muted">Birth Date</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['birthday'] ?? '') ?>" disabled>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['birthday'] ?? '') ?>" >
             </div>
 
             <div class="col-md-6">
               <label class="form-label text-muted">Birth Place</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['place_of_birth'] ?? '') ?>" disabled>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['place_of_birth'] ?? '') ?>" >
             </div>
 
             <div class="col-md-3">
               <label class="form-label text-muted">Age</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['age'] ?? '') ?>" disabled>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['age'] ?? '') ?>" >
             </div>
 
             <div class="col-md-3">
               <label class="form-label text-muted">Religion</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['religion'] ?? '') ?>" disabled>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['religion'] ?? '') ?>" >
             </div>
 
             <div class="col-md-3">
               <label class="form-label text-muted">Facebook Account</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['facebook'] ?? '') ?>" disabled>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['facebook'] ?? '') ?>" >
             </div>
 
             <div class="col-md-3">
               <label class="form-label text-muted">Email</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['email'] ?? '') ?>" disabled>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['email'] ?? '') ?>" >
             </div>
 
             <div class="col-md-3">
               <label class="form-label text-muted">Region</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['region'] ?? '') ?>" disabled>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['region'] ?? '') ?>" >
             </div>
 
             <div class="col-md-3">
               <label class="form-label text-muted">Province</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['province'] ?? '') ?>" disabled>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['province'] ?? '') ?>" >
             </div>
 
             <div class="col-md-3">
               <label class="form-label text-muted">Municipal</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['municipal'] ?? '') ?>" disabled>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['municipal'] ?? '') ?>" >
             </div>
 
             <div class="col-md-3">
               <label class="form-label text-muted">Barangay</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['barangay'] ?? '') ?>" disabled>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['barangay'] ?? '') ?>" >
             </div>
 
           </div>
@@ -153,85 +178,57 @@ if ($admission_id > 0) {
 
             <div class="col-md-4">
               <label class="form-label text-muted">Father’s Name</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['father_name'] ?? '') ?>" disabled>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['father_name'] ?? '') ?>" >
             </div>
 
             <div class="col-md-4">
               <label class="form-label text-muted">Father’s Occupation</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['father_occupation'] ?? '') ?>" disabled>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['father_occupation'] ?? '') ?>" >
             </div>
 
             <div class="col-md-4">
               <label class="form-label text-muted">Father’s Contact</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['father_contact'] ?? '') ?>" disabled>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['father_contact'] ?? '') ?>" >
             </div>
 
             <div class="col-md-4">
               <label class="form-label text-muted">Mother’s Name</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['mother_name'] ?? '') ?>" disabled>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['mother_name'] ?? '') ?>" >
             </div>
 
             <div class="col-md-4">
               <label class="form-label text-muted">Mother’s Occupation</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['mother_occupation'] ?? '') ?>" disabled>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['mother_occupation'] ?? '') ?>" >
             </div>
 
             <div class="col-md-4">
               <label class="form-label text-muted">Mother’s Contact</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['mother_contact'] ?? '') ?>" disabled>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['mother_contact'] ?? '') ?>" >
             </div>
 
             <div class="col-md-4">
               <label class="form-label text-muted">Guardian’s Name</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['guardian_name'] ?? '') ?>" disabled>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['guardian_name'] ?? '') ?>" >
             </div>
 
             <div class="col-md-4">
               <label class="form-label text-muted">Guardian’s Occupation</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['guardian_occupation'] ?? '') ?>" disabled>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['guardian_occupation'] ?? '') ?>" >
             </div>
 
             <div class="col-md-4">
               <label class="form-label text-muted">Guardian’s Contact</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['guardian_contact'] ?? '') ?>" disabled>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['guardian_contact'] ?? '') ?>" >
             </div>
             <div class="col-12 col-md-2">
-              <button type="submit" name="action" value="enroll" class="btn btn-danger text-light rounded-4 mt-3 w-100">Update</button>
+              <button type="button" onclick="proceedToPayment()" class="btn btn-danger rounded-4 mt-3 w-100">Proceed</button>
+            </div>
+
+            <div class="col-12 col-md-2">
+              <button type="submit" name="action" value="enroll" class="btn btn-outline-danger rounded-4 mt-3 w-100">Update</button>
             </div>
           </div>
         </fieldset>
-
-        <hr class="my-5">
-        <fieldset>
-          <h4><strong>Payment Plan</strong></h4>
-          <div class="row g-3">
-
-            <div class="col-md-6">
-              <label class="form-label text-muted">Select Payment Plan</label>
-              <select name="payment_plan" class="form-control" required>
-                <option value="">-- Select Payment Plan --</option>
-                <option value="Annual">Annual (1 Year)</option>
-                <option value="Semestral">Semestral (2 months)</option>
-                <option value="Quarterly">Quarterly (4 months)</option>
-                <option value="Monthly">Monthly (9 months)</option>
-              </select>
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label text-muted">Downpayment (Registration Fee)</label>
-              <input type="text" class="form-control" value="₱2,500" readonly>
-            </div>
-            <div class="col-12 col-md-2">
-                <button type="submit" name="action" value="enroll" class="btn btn-danger text-light rounded-4 mt-3 w-100">Enroll</button>
-              </div>
-              <div class="col-12 col-md-2">
-                <button type="submit" name="action" value="for_review" class="btn btn-outline-danger text-danger border-2 rounded-4 mt-3 w-100">Cancel</button>
-              </div>
-            </div>
-
-          
-        </fieldset>
-
 
       </div>
       </form>
@@ -242,3 +239,18 @@ if ($admission_id > 0) {
 <?php include 'footer.php'; ?>
 </body>
 </html>
+
+<script>
+function proceedToPayment() {
+    const grade = document.querySelector('select[name="grade_level"]').value;
+    const admissionId = <?= json_encode($admission_id) ?>;
+
+    if (!grade) {
+        alert("Please select a grade level before proceeding.");
+        return;
+    }
+
+    const url = `payment_plan.php?id=${admissionId}&grade=${encodeURIComponent(grade)}`;
+    window.location.href = url;
+}
+</script>
