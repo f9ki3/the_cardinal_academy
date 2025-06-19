@@ -37,7 +37,7 @@
   <!-- Navbar -->
   <nav class="navbar sticky-top navbar-expand-lg px-4">
     <a class="navbar-brand fw-bold text-white" href="index.php">
-      <img src="static/images/TCA logo.jpg" alt="TCA Logo">
+      <img src="static/uploads/logo.png" alt="TCA Logo">
       <h5 class="mt-2 mb-0">The Cardinal Academy</h5>
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" 
