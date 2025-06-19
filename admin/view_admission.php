@@ -47,7 +47,7 @@ if ($admission_id > 0) {
           <input type="hidden" name="admission_id" value="<?= htmlspecialchars($data['id'] ?? '') ?>">
 
           <div class="col-12 col-md-6">
-            <label for="lrn" class="form-label text-muted">Date</label>
+            <label for="lrn" class="form-label text-muted">Admission Date</label>
             <input type="text" name="admission_date" class="form-control" value="<?= htmlspecialchars($data['admission_date'] ?? '') ?>" disabled>
           </div>
 
