@@ -101,27 +101,25 @@ $result = $stmt->get_result();
                     </tr>
                   </thead>
                   <tbody>
-                    <?php if ($result->num_rows > 0): ?>
-                      <?php while ($row = $result->fetch_assoc()): ?>
+                      <?php if ($result->num_rows > 0): ?>
+                        <?php while ($row = $result->fetch_assoc()): ?>
+                          <tr class="text-muted">
+                            <td><p class="text-muted"><?= htmlspecialchars($row['grade_level']) ?></p></td>
+                            <td><p class="text-muted"><?= number_format($row['tuition_fee'], 2) ?></p></td>
+                            <td><p class="text-muted"><?= number_format($row['miscellaneous'], 2) ?></p></td>
+                            <td><p class="text-muted"><?= number_format($row['total'], 2) ?></p></td>
+                            <td>
+                              <a href="update_tuition.php?id=<?= $row['id'] ?>" class="btn btn-sm border rounded-4">Edit</a>
+                            </td>
+                          </tr>
+                        <?php endwhile; ?>
+                      <?php else: ?>
                         <tr>
-                          <td><?= htmlspecialchars($row['grade_level']) ?></td>
-                          <td><?= number_format($row['tuition_fee'], 2) ?></td>
-                          <td><?= number_format($row['miscellaneous'], 2) ?></td>
-                          <td><?= number_format($row['total'], 2) ?></td>
-                          <td>
-                            <a href="update_tuition.php?id=<?= $row['id'] ?>" class="btn btn-sm border rounded-4">
-                                 Edit
-                            </a>
-                           </td>
-
+                          <td colspan="5" class="text-center text-muted">No data available</td>
                         </tr>
-                      <?php endwhile; ?>
-                    <?php else: ?>
-                      <tr>
-                        <td colspan="4" class="text-center text-muted">No data available</td>
-                      </tr>
-                    <?php endif; ?>
-                  </tbody>
+                      <?php endif; ?>
+                    </tbody>
+
                 </table>
               </div>
 
