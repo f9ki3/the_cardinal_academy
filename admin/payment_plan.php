@@ -92,12 +92,17 @@ if (!empty($grade_level)) {
             <div class="col-md-12">
               <div class="border mt-3 rounded-4 p-3" id="payment_breakdown">
                 <p>Payment Plan Breakdown</p>
+                <p class="text-muted">Note: please select payment plan.</p>
               </div>
             </div>
 
             <div class="col-12 col-md-2">
-              <button type="submit" name="action" value="enroll" class="btn btn-danger text-light rounded-4 mt-3 w-100">Enroll</button>
+              <button id="enroll-btn" type="submit" name="action" value="enroll" class="btn btn-danger text-light rounded-4 mt-3 w-100" disabled>
+                <span class="btn-text">Enroll</span>
+                <span class="spinner-border spinner-border-sm ms-2 d-none" role="status" aria-hidden="true"></span>
+              </button>
             </div>
+
             <div class="col-12 col-md-2">
               <a href="admission_list.php" class="btn btn-outline-danger text-danger border-2 rounded-4 mt-3 w-100">Back</a>
             </div>
@@ -119,6 +124,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const discountTypeSelect = document.getElementById("discount_type");
     const discountValueInput = document.getElementById("discount_value");
     const breakdownContainer = document.getElementById("payment_breakdown");
+    const enrollBtn = document.getElementById("enroll-btn");
 
     const tuition = parseFloat(<?= json_encode($tuition_fee) ?>);
     const misc = parseFloat(<?= json_encode($miscellaneous) ?>);
@@ -138,7 +144,8 @@ document.addEventListener("DOMContentLoaded", function () {
             case 'Quarterly': installmentCount = 4; label = 'per Quarter'; break;
             case 'Monthly':   installmentCount = 9; label = 'per Month'; break;
             default:
-                breakdownContainer.innerHTML = '<p>Payment Plan Breakdown</p>';
+                breakdownContainer.innerHTML = '<p>Payment Plan Breakdown</p><p class="text-muted">Note: please select payment plan.</p>';
+                enrollBtn.disabled = true;
                 return;
         }
 
@@ -166,10 +173,18 @@ document.addEventListener("DOMContentLoaded", function () {
             <hr>
             <p><strong>${installmentCount} ${label} Payment${installmentCount > 1 ? 's' : ''}:</strong> ₱${installmentAmount.toLocaleString(undefined, { minimumFractionDigits: 2 })}</p>
         `;
+
+        enrollBtn.disabled = plan === '';
     }
 
     paymentPlanSelect.addEventListener("change", updateBreakdown);
     discountTypeSelect.addEventListener("change", updateBreakdown);
     discountValueInput.addEventListener("input", updateBreakdown);
+
+    enrollBtn.addEventListener('click', function () {
+        enrollBtn.querySelector('.spinner-border').classList.remove('d-none');
+    });
+
+    updateBreakdown();
 });
 </script>
