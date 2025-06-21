@@ -44,6 +44,7 @@
             <label for="grade_level" class="form-label text-muted">Grade Level </label>
             <select name="grade_level" id="grade_level" class="form-select">
               <option value="">Select grade level </option>
+              <option>Nursery</option>
               <option>Kinder Garten</option>
               <option>Grade 1</option>
               <option>Grade 2</option>
@@ -380,7 +381,7 @@ function validateStep1() {
   ];
 
   // Only include LRN in validation if not Kinder Garten
-  if (gradeLevel !== 'kinder garten') {
+  if (gradeLevel !== 'nursery') {
     fields.push({ id: 'lrn', message: 'LRN must be a 12-digit number', pattern: /^\d{12}$/ });
   }
 
@@ -437,7 +438,7 @@ document.getElementById('grade_level').addEventListener('change', function () {
   const lrnInput = document.getElementById('lrn');
   const errorDiv = document.getElementById('lrn-error');
 
-  if (grade === 'kinder garten') {
+  if (grade === 'nursery') {
     lrnInput.disabled = true;
     lrnInput.value = '';
     lrnInput.classList.remove('is-invalid');

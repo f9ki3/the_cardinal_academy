@@ -34,6 +34,7 @@ $query = "SELECT
               OR que_code LIKE '%$search%' 
               OR CONCAT(firstname, ' ', lastname) LIKE '%$search%'
           )
+          ORDER BY admission_date DESC
           LIMIT $limit OFFSET $offset";
 
 $result = mysqli_query($conn, $query);
@@ -116,7 +117,7 @@ $result = mysqli_query($conn, $query);
                     <?php if (mysqli_num_rows($result) > 0): ?>
                       <?php while ($row = mysqli_fetch_assoc($result)): ?>
                         <tr class="clickable-row" data-id="<?= $row['id'] ?>">
-                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['lrn']) ?></p></td>
+                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= !empty($row['lrn']) ? htmlspecialchars($row['lrn']) : 'N/A' ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['que_code'] ?? '-') ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['fullname']) ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['address']) ?></p></td>
