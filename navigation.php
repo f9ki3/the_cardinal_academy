@@ -1,24 +1,32 @@
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sticky Combined Navbar</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
   <style>
-    .navbar {
+    .navbar-sticky-wrapper {
+      position: sticky;
+      top: 0;
+      z-index: 1030;
+    }
+
+    .main-navbar {
       background-color: #b72029;
     }
 
-    .navbar .navbar-nav .nav-link {
+    .main-navbar .nav-link,
+    .main-navbar .navbar-brand {
       color: #fff !important;
     }
 
-    .navbar .navbar-nav .nav-link:hover {
+    .main-navbar .nav-link:hover {
       text-decoration: underline;
-      color: #fff !important;
-    }
-
-    .navbar-brand {
-      color: #fff !important;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
     }
 
     .navbar-brand img {
@@ -30,34 +38,109 @@
     .navbar-toggler-icon {
       background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='%23ffffff' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
     }
+
+    .sub-navbar {
+      background-color: #8e1c21;
+      padding-top: 2px;
+      padding-bottom: 2px;
+      min-height: 20px;
+    }
+
+    .sub-navbar .nav-link {
+      color: #f8f9fa !important;
+      font-size: 0.875rem;
+      line-height: 1.2;
+      padding-top: 4px;
+      padding-bottom: 4px;
+    }
+
+    .sub-navbar .nav-link:hover {
+      color: #fff !important;
+    }
+
+    .contact-btn {
+      color: #000000;
+      padding: 8px 16px;
+      text-decoration: none;
+    }
+
+    .contact-btn .underline-text {
+      text-decoration: none;
+    }
+
+    .contact-btn:hover .underline-text {
+      text-decoration: underline;
+    }
+
+    .contact-btn .no-underline {
+      text-decoration: none !important;
+    }
+
+    .contact-btn i {
+      margin-left: 4px;
+    }
   </style>
 </head>
 <body>
 
-  <!-- Navbar -->
-  <nav class="navbar sticky-top navbar-expand-lg px-4">
-    <a class="navbar-brand fw-bold text-white" href="index.php">
-      <img src="static/uploads/logo.png" alt="TCA Logo">
-      <h5 class="mt-2 mb-0">The Cardinal Academy</h5>
-    </a>
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" 
-            aria-controls="navbarContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
-      <ul class="navbar-nav align-items-center me-2">
-        <li class="nav-item"><a class="nav-link" href="index.php">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
-        <li class="nav-item"><a class="nav-link" href="#facilities">Facilities</a></li>
-        <li class="nav-item"><a class="nav-link" href="#organization">Organization</a></li>
-        <li class="nav-item"><a class="nav-link" href="contact.php">Contact</a></li>
-      </ul>
-      <button class="btn text-light ms-2" style="background-color: #da3030; box-shadow: 0 4px 8px rgba(0,0,0,0.3);">
-        Log In
+  <div class="navbar-sticky-wrapper">
+    <!-- Main Navbar -->
+    <nav class="navbar navbar-expand-lg main-navbar px-4">
+      <a class="navbar-brand fw-bold d-flex align-items-center" href="index.php">
+        <img src="static/uploads/logo.png" alt="TCA Logo" />
+        <span class="ms-2">The Cardinal Academy</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain"
+              aria-controls="navbarMain" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
       </button>
-    </div>
-  </nav>
 
-  <!-- Bootstrap JS (Must be placed at the end of body) -->
+      <div class="collapse navbar-collapse justify-content-end" id="navbarMain">
+        <ul class="navbar-nav me-3 mb-2 mb-lg-0">
+          <?php if (empty($hideHome)): ?>
+            <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+            <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+            <li class="nav-item"><a class="nav-link" href="#courses">Courses</a></li>
+            <li class="nav-item"><a class="nav-link" href="contact.php">Contact</a></li>
+          <?php endif; ?>
+        </ul>
+        <a href="login.php" class="btn text-light ms-2" style="background-color: #da3030; box-shadow: 0 4px 8px rgba(0,0,0,0.3);">
+          Log In
+        </a>
+      </div>
+    </nav>
+
+    <!-- Sub Navbar -->
+    <?php if (empty($hideSubNav)): ?>
+      <nav class="navbar sub-navbar px-4">
+        <div class="container-fluid justify-content-end">
+          <ul class="navbar-nav flex-row">
+            <?php if (empty($hideContact)): ?>
+              <li class="nav-item">
+                <a href="index.php" class="contact-btn nav-link">
+                  <span class="underline-text">Contact Us</span>
+                  <span class="no-underline"> &gt; </span>
+                  <i class="fas fa-home no-underline"></i>
+                </a>
+              </li>
+            <?php endif; ?>
+            <?php if (empty($hideEnroll)): ?>
+              <li class="nav-item">
+                <a href="index.php" class="contact-btn nav-link">
+                  <span class="underline-text">Enroll Now</span>
+                  <span class="no-underline"> &gt; </span>
+                  <i class="fas fa-home no-underline"></i>
+                </a>
+              </li>
+            <?php endif; ?>
+          </ul>
+        </div>
+      </nav>
+    <?php endif; ?>
+  </div>
+
+  <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

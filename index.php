@@ -1,4 +1,8 @@
 <?php include 'session_login.php'?>
+<?php
+  $hideSubNav = true;
+
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -28,9 +32,7 @@
       min-height: 28vh;
     }
 
-    #organization {
-      min-height: 50vh;
-    }
+ 
     #about {
       min-height: 80vh;
     }
@@ -42,7 +44,7 @@
   </style>
 <?php include 'navigation.php'; ?>
 
-<body class="bg-light">
+<body id="home" class="bg-light">
  <section id="home">
     <div id="enrollCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4000">
       <div class="carousel-inner">
@@ -66,7 +68,7 @@
   </section>
 
   <!-- 2nd Section -->
-  <section id="nothing" class="bg-white py-5">
+  <section  class="bg-white py-5">
     <div class="container">
       <?php include '2ndSection.php'; ?>
     </div>
@@ -88,7 +90,7 @@
 
 
   <!-- Facilities Section -->
-  <section id="facilities" class="bg-white py-5">
+  <section id="courses" class="bg-white py-5">
     <div class="container">
       <?php include '5thSection.php'; ?>
     </div>
