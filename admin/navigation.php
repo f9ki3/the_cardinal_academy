@@ -35,6 +35,11 @@ $profile_image = isset($user_info['profile_image']) ? $user_info['profile_image'
                 <i class="bi bi-bank me-2"></i>Manage Tuition
             </a>
         </li>
+        <li class="nav-item border-white">
+            <a class="nav-link text-light" href="students.php">
+                <i class="bi bi-person me-2"></i>Student Accounts
+            </a>
+        </li>
     </ul>
 
     
