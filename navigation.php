@@ -40,7 +40,7 @@
     }
 
     .sub-navbar {
-      background-color: #8e1c21;
+      background-color: #da3030;
       padding-top: 2px;
       padding-bottom: 2px;
       min-height: 20px;
@@ -104,9 +104,11 @@
             <li class="nav-item"><a class="nav-link" href="contact.php">Contact</a></li>
           <?php endif; ?>
         </ul>
-        <a href="login.php" class="btn text-light ms-2" style="background-color: #da3030; box-shadow: 0 4px 8px rgba(0,0,0,0.3);">
+        <?php if (empty($hideLogInButton)): ?>
+          <a href="login.php" class="btn text-light ms-2" style="background-color: #da3030; box-shadow: 0 4px 8px rgba(0,0,0,0.3);">
           Log In
-        </a>
+          </a>
+        <?php endif; ?>
       </div>
     </nav>
 
@@ -127,7 +129,16 @@
             <?php if (empty($hideEnroll)): ?>
               <li class="nav-item">
                 <a href="index.php" class="contact-btn nav-link">
-                  <span class="underline-text">Enroll Now</span>
+                  <span class="underline-text">Enroll Now!</span>
+                  <span class="no-underline"> &gt; </span>
+                  <i class="fas fa-home no-underline"></i>
+                </a>
+              </li>
+            <?php endif; ?>
+            <?php if (empty($hideLogin)): ?>
+              <li class="nav-item">
+                <a href="index.php" class="contact-btn nav-link">
+                  <span class="underline-text">Log in</span>
                   <span class="no-underline"> &gt; </span>
                   <i class="fas fa-home no-underline"></i>
                 </a>

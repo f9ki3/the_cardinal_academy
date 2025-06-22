@@ -1,4 +1,11 @@
-<?php include 'session_login.php'?>
+<?php 
+include 'session_login.php';
+
+$hideHome = true;
+$hideEnroll = true;
+$hideContact = true;
+$hideLogInButton = true;
+?>
 
 <!DOCTYPE html>
 <html lang="en">

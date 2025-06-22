@@ -1,7 +1,6 @@
-<?php include 'session_login.php'?>
-<?php
-  $hideSubNav = true;
-
+<?php 
+include 'session_login.php';
+$hideSubNav = true;
 ?>
 
 <!DOCTYPE html>

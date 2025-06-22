@@ -1,6 +1,7 @@
 <?php
   $hideHome = true;
   $hideEnroll = true;
+  $hideLogin = true;
 
 ?>
 
