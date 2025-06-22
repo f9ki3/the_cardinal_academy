@@ -41,7 +41,7 @@ if ($user_id > 0 && $conn) {
     <?php include 'nav_top.php'; ?>
 
     <div class="container py-4">
-      <form action="update_student.php" method="POST" enctype="multipart/form-data">
+      <form action="update_teacher.php" method="POST" enctype="multipart/form-data">
         <div class="bg-white p-4 rounded-4 shadow-sm">
           <h2>View Teacher Account</h2>
           <p class="m-0 mb-4">Note: Please review all information from the form.</p>
@@ -55,7 +55,7 @@ if ($user_id > 0 && $conn) {
                         // Display Bootstrap alert based on the status
                         if ($status === 'success') {
                             echo '<div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    ✅ Updated student account successfully!
+                                    ✅ Updated teacher account successfully!
                                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                   </div>';
                         } elseif ($status === 'error') {

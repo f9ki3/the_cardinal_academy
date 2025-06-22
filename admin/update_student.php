@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Handle profile image upload
     $profile_path = '';
     if ($profile_file && $profile_file['error'] === UPLOAD_ERR_OK) {
-        $upload_dir = '../uploads/profiles/';
+        $upload_dir = '../static/uploads/';
         if (!is_dir($upload_dir)) {
             mkdir($upload_dir, 0755, true);
         }
@@ -33,7 +33,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $target    = $upload_dir . $new_name;
 
         if (move_uploaded_file($profile_file['tmp_name'], $target)) {
-            $profile_path = 'uploads/profiles/' . $new_name;
+            $profile_path = $new_name;
         } else {
             die("❌ Failed to upload profile image.");
         }
