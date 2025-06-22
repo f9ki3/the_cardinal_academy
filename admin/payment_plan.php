@@ -104,7 +104,7 @@ if (!empty($grade_level)) {
             </div>
 
             <div class="col-12 col-md-2">
-              <a href="admission_list.php" class="btn btn-outline-danger text-danger border-2 rounded-4 mt-3 w-100">Back</a>
+              <a href="view_enrollment.php" class="btn btn-outline-danger text-danger border-2 rounded-4 mt-3 w-100">Back</a>
             </div>
           </div>
         </fieldset>

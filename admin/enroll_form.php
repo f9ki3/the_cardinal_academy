@@ -115,8 +115,57 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         );
 
         if ($insert->execute()) {
-            echo "<p style='color:green;'>Student successfully enrolled and data inserted into 'enroll' table.</p>";
-        } else {
+                echo "<p style='color:green;'>Student successfully enrolled and data inserted into 'enroll' table.</p>";
+
+                // Generate 8-character random password
+                function generateRandomPassword($length = 8) {
+                    $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                    return substr(str_shuffle($chars), 0, $length);
+                }
+
+                $raw_password = generateRandomPassword(8);
+                $hashed_password = password_hash($raw_password, PASSWORD_DEFAULT);
+
+                // Prepare user insert
+                $user_stmt = $conn->prepare("INSERT INTO users (
+                    acc_type, username, email, password, first_name, last_name,
+                    gender, birthdate, phone_number, address, profile, rfid, enroll_id
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+                if (!$user_stmt) {
+                    die("<p style='color:red;'>Prepare failed (USER INSERT): " . $conn->error . "</p>");
+                }
+
+                $acc_type   = 'student';
+                $username = strtolower($firstname . '_' . $lastname . '.student');
+                $profile    = $profile_picture ?: 'dummy.png'; // fallback profile
+                $rfid       = null; // you can change this if available
+
+                $user_stmt->bind_param(
+                    "ssssssssssssi",
+                    $acc_type,
+                    $username,
+                    $email,
+                    $hashed_password,
+                    $firstname,
+                    $lastname,
+                    $gender,
+                    $birthday,
+                    $facebook,
+                    $residential_address,
+                    $profile,
+                    $rfid,
+                    $id // enroll_id
+                );
+
+                if ($user_stmt->execute()) {
+                    echo "<p style='color:green;'>User account created for student. <br> Username: <strong>$username</strong> <br> Password: <strong>$raw_password</strong></p>";
+                } else {
+                    echo "<p style='color:red;'>User insert failed: " . $user_stmt->error . "</p>";
+                }
+
+                $user_stmt->close();
+            } else {
             echo "<p style='color:red;'>Insert failed: " . $insert->error . "</p>";
         }
 
