@@ -84,7 +84,7 @@ if (!$result) {
                   </form>
 
                   <!-- Create Button -->
-                  <a href="create_user.php" class="btn bg-main text-light rounded rounded-4 px-4">
+                  <a href="create_teacher.php" class="btn bg-main text-light rounded rounded-4 px-4">
                     + Create
                   </a>
                 </div>
@@ -92,9 +92,9 @@ if (!$result) {
 
                 <div class="col-12 pt-3">
                   <?php if (isset($_GET['status'])): ?>
-                    <?php if ($_GET['status'] === 'success'): ?>
+                    <?php if ($_GET['status'] === 'created'): ?>
                       <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        ✅ Admission updated successfully!
+                        ✅ Created account successfully!
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                       </div>
                     <?php elseif ($_GET['status'] === 'error'): ?>
@@ -102,9 +102,9 @@ if (!$result) {
                         ❌ Something went wrong. Please try again.
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                       </div>
-                    <?php elseif ($_GET['status'] === 'review'): ?>
+                    <?php elseif ($_GET['status'] === 'deleted'): ?>
                       <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                        ⚠️ Application is under review.
+                        ⚠️ Remove account successfully.
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                       </div>
                     <?php endif; ?>
@@ -121,6 +121,7 @@ if (!$result) {
                       <th>Username</th>
                       <th>Enroll ID</th>
                       <th>Created At</th>
+                      <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -132,7 +133,14 @@ if (!$result) {
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['username']) ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['enroll_id']) ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['created_at']) ?></p></td>
-                        </tr>
+                          <td>
+                            <a href="delete_teacher.php?id=<?= urlencode($row['user_id']) ?>" 
+                              class="btn border rounded rounded-4" 
+                              onclick="return confirm('Are you sure you want to remove this teacher?');">
+                              Remove
+                            </a>
+                          </td>
+                          </tr>
                       <?php endwhile; ?>
                     <?php else: ?>
                       <tr>
