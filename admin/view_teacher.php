@@ -43,7 +43,7 @@ if ($user_id > 0 && $conn) {
     <div class="container py-4">
       <form action="update_student.php" method="POST" enctype="multipart/form-data">
         <div class="bg-white p-4 rounded-4 shadow-sm">
-          <h2>View Student Account</h2>
+          <h2>View Teacher Account</h2>
           <p class="m-0 mb-4">Note: Please review all information from the form.</p>
           <hr>
 
@@ -155,8 +155,7 @@ if ($user_id > 0 && $conn) {
             <div class="col-12 text-start pt-2">
               <button type="submit" class="btn bg-main text-light">Save User</button>
               <a href="students.php" class="btn btn-secondary ms-2">Back</a>
-              <a href="change_password.php?id=<?= urlencode($data['user_id']) ?>" class="btn btn-secondary ms-2">Change Password</a>
-              <a href="#" class="btn btn-secondary ms-2">Student Information</a>
+              <a href="change_password_teacher.php?id=<?= urlencode($data['user_id']) ?>" class="btn btn-secondary ms-2">Change Password</a>
             </div>
           </div>
         </div>
