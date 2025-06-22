@@ -72,7 +72,7 @@ if ($user_id > 0 && $conn) {
                     }
                     ?>
 
-          <h4><strong>Learner Profile</strong></h4>
+          <h4><strong>Account Information</strong></h4>
           <div class="row g-3">
             <input type="hidden" name="user_id" value="<?= htmlspecialchars($data['user_id'] ?? '') ?>">
 
@@ -152,10 +152,11 @@ if ($user_id > 0 && $conn) {
               <input type="text" name="acc_status" id="acc_status" class="form-control" value="<?= htmlspecialchars($data['acc_status'] ?? 'active') ?>" readonly>
             </div>
 
-            <div class="col-12 text-end">
+            <div class="col-12 text-start pt-2">
               <button type="submit" class="btn bg-main text-light">Save User</button>
               <a href="students.php" class="btn btn-secondary ms-2">Back</a>
               <a href="change_password.php?id=<?= urlencode($data['user_id']) ?>" class="btn btn-secondary ms-2">Change Password</a>
+              <a href="#" class="btn btn-secondary ms-2">Student Information</a>
             </div>
           </div>
         </div>
