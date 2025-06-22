@@ -103,18 +103,18 @@ $result = $stmt->get_result();
                   <tbody>
                     <?php if ($result->num_rows > 0): ?>
                       <?php while ($row = $result->fetch_assoc()): ?>
-                        <tr>
-                          <td><?= htmlspecialchars($row['grade_level']) ?></td>
-                          <td><?= number_format($row['tuition_fee'], 2) ?></td>
-                          <td><?= number_format($row['miscellaneous'], 2) ?></td>
-                          <td><?= number_format($row['total'], 2) ?></td>
+                       <tr>
+                          <td><p class="text-muted mb-0 pt-3 pb-3"><?= htmlspecialchars($row['grade_level']) ?></p></td>
+                          <td><p class="text-muted mb-0 pt-3 pb-3"><?= number_format($row['tuition_fee'], 2) ?></p></td>
+                          <td><p class="text-muted mb-0 pt-3 pb-3"><?= number_format($row['miscellaneous'], 2) ?></p></td>
+                          <td><p class="text-muted mb-0 pt-3 pb-3"><?= number_format($row['total'], 2) ?></p></td>
                           <td>
                             <a href="update_tuition.php?id=<?= $row['id'] ?>" class="btn btn-sm border rounded-4">
-                                 Edit
+                              Edit
                             </a>
-                           </td>
-
+                          </td>
                         </tr>
+
                       <?php endwhile; ?>
                     <?php else: ?>
                       <tr>

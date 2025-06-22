@@ -30,5 +30,8 @@ $profile_image = $user_info['profile_image'];
       <li class="nav-item">
         <a class="nav-link text-light" href="tuition.php"><i class="bi bi-bank me-2"></i>Manage Tuition</a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link text-light" href="students.php"><i class="bi bi-person me-2"></i>Student Account</a>
+      </li>
     </ul>
   </div>
