@@ -28,3 +28,9 @@
     transform: translateY(-10px);
   }
 }
+
+@media print {
+  .d-print-none {
+    display: none !important;
+  }
+}

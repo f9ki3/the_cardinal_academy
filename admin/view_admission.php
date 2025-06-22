@@ -195,12 +195,34 @@ if ($admission_id > 0) {
               <label class="form-label text-muted">Guardian’s Contact</label>
               <input type="text" class="form-control" value="<?= htmlspecialchars($data['guardian_contact'] ?? '') ?>" disabled>
             </div>
-            <div class="col-12 col-md-2">
-              <button type="submit" name="action" value="approved" class="btn btn-danger text-light rounded-4 mt-3 w-100">Approve</button>
-            </div>
-            <div class="col-12 col-md-2">
-              <button type="submit" name="action" value="for_review" class="btn btn-outline-danger text-danger border-2 rounded-4 mt-3 w-100">For Review</button>
-            </div>
+             <div class="col-12 col-md-2">
+                <button id="approve-btn" type="submit" name="action" value="approved" class="btn btn-danger text-light rounded-4 mt-3 w-100">
+                  <span class="btn-text">Approve</span>
+                  <span class="spinner-border spinner-border-sm ms-2 d-none" role="status" aria-hidden="true"></span>
+                </button>
+              </div>
+
+              <div class="col-12 col-md-2">
+                <button id="review-btn" type="submit" name="action" value="for_review" class="btn btn-outline-danger text-danger border-2 rounded-4 mt-3 w-100">
+                  <span class="btn-text">For Review</span>
+                  <span class="spinner-border spinner-border-sm ms-2 d-none" role="status" aria-hidden="true"></span>
+                </button>
+              </div>
+
+              <script>
+                // Select both buttons
+                const approveBtn = document.getElementById('approve-btn');
+                const reviewBtn = document.getElementById('review-btn');
+
+                // Add a click listener to each
+                [approveBtn, reviewBtn].forEach(btn => {
+                  btn.addEventListener('click', () => {
+                    // Show spinner inside the clicked button
+                    btn.querySelector('.spinner-border').classList.remove('d-none');
+                    // Optionally disable both buttons to prevent multiple submits
+                  });
+                });
+              </script>
 
           </div>
         </fieldset>
