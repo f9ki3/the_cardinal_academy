@@ -2,6 +2,7 @@
 <?php
   $hideContact = true;
   $hideHome = true;
+  $hideLogin = true;
 
 ?>
 
