@@ -1,3 +1,10 @@
+<?php
+  $hideHome = true;
+  $hideEnroll = true;
+  $hideLogin = true;
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -61,12 +68,19 @@
       font-size: 0.9rem; /* Reduced text size */
       margin-bottom: 12px;
     }
+    .nav-link{
+      color:#da3030;
+      
+
+    }
   </style>
 </head>
 <body>
 
   <!-- Header -->
 <?php include 'navigation.php'; ?>
+
+
 <header>
   <img src="static/images/Front gate.jpg" class="img-fluid" alt="Main gate of The Cardinal Academy Inc.">
 </header>

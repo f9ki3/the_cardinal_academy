@@ -1,3 +1,10 @@
+
+<?php
+  $hideContact = true;
+  $hideHome = true;
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
