@@ -1,6 +1,9 @@
 <?php
-include 'user_info.php'; // adjust path as needed
+include 'header.php';
+?>
 
+<?php
+include 'user_info.php'; // adjust path as needed
 $user_info = getUserInfo();
 
 $full_name = isset($user_info['full_name']) ? $user_info['full_name'] : 'Guest';
@@ -36,16 +39,58 @@ $profile_image = isset($user_info['profile_image']) ? $user_info['profile_image'
             </a>
         </li>
         <li class="nav-item border-white">
-            <a class="nav-link text-light" href="students.php">
-                <i class="bi bi-person me-2"></i>Students Account
+            <a class="dropdown-btn text-light nav-link d-flex justify-content-between align-items-center" href="javascript:void(0);">
+                <span><i class="bi bi-person-lines-fill me-2"></i>Maintenance</span><span>▼</span>
             </a>
-        </li>
-        <li class="nav-item border-white">
-            <a class="nav-link text-light" href="teacher.php">
-                <i class="bi bi-person-lines-fill me-2"></i>Teachers Account
-            </a>
+            <div class="dropdown-container ps-4">
+                <a class="nav-link text-light" href="students.php"><i class="bi bi-person me-2"></i>Students Account</a>
+                <a class="nav-link text-light" href="#"><i class="bi bi-bank me-2"></i>Parent Management</a>
+                <a class="dropdown-btn text-light nav-link d-flex justify-content-between align-items-center" href="javascript:void(0);">
+                    <span><i class="bi bi-person-lines-fill me-2"></i>Class Management</span>
+                    <span>▼</span>
+                </a>
+                <div class="dropdown-container ps-4">
+                    <a class="nav-link text-light" href="students.php"><i class="bi bi-person me-2"></i>Students Account</a>
+                    <a class="nav-link text-light" href="#"><i class="bi bi-bank me-2"></i>Parent Management</a>
+                    <a class="nav-link text-light" href="teacher.php"><i class="bi bi-person-lines-fill me-2"></i>Teachers Account</a>
+                    <a class="nav-link text-light" href="tuition.php"><i class="bi bi-bank me-2"></i>Manage Tuition</a>
+                    <a class="nav-link text-light" href="tuition.php"><i class="bi bi-bank me-2"></i>Class Management</a>
+                </div>
+                <a class="nav-link text-light" href="teacher.php"><i class="bi bi-person-lines-fill me-2"></i>Teachers Account</a>
+                <a class="nav-link text-light" href="tuition.php"><i class="bi bi-bank me-2"></i>Manage Tuition</a>
+            </div>
         </li>
     </ul>
-
-    
 </div>
+
+<!-- script for dropdown -->
+<style>
+    .dropdown-container {
+  display: none;
+  flex-direction: column;
+  padding-left: 10px;
+}
+
+.dropdown-container a {
+  font-size: 14px;
+  padding: 5px 0;
+}
+
+.dropdown-btn.active + .dropdown-container {
+  display: flex;
+}
+
+
+  
+  </style>
+<script>
+  document.querySelectorAll('.dropdown-btn').forEach(button => {
+    button.addEventListener('click', function () {
+      const dropdown = this.nextElementSibling;
+      dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+    });
+  });
+</script>
+
+
+
