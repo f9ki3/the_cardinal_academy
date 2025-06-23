@@ -26,6 +26,9 @@ $profile_image = !empty($user['profile']) ? '../static/uploads/' . htmlspecialch
         <li class="nav-item">
             <a class="nav-link text-light" href="dashboard.php"><i class="bi bi-bar-chart me-2"></i>Dashboard</a>
         </li>
+
+        <li class="nav-item">
+            <a class="nav-link text-light" href="attendance_list.php"><i class="bi bi-book me-2"></i>Attendance</a>
         </li>
     </ul>
 </div>

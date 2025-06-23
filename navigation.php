@@ -106,7 +106,7 @@
         </ul>
         <?php if (empty($hideLogInButton)): ?>
           <a href="login.php" class="btn text-light ms-2" style="background-color: #da3030; box-shadow: 0 4px 8px rgba(0,0,0,0.3);">
-          Log In
+            Log In
           </a>
         <?php endif; ?>
       </div>

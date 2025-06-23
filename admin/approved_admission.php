@@ -71,6 +71,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 ' . $visit_msg_html . '
                                 <br>
                                 <p style="font-size:16px;">Thank you,<br><strong>The Cardinal Academy</strong></p>
+                                <br>
+                                <p style="font-size:16px;">Note: please bring php 2,500 for the registration fee</p>
                             </td>
                         </tr>
                         </table>';
