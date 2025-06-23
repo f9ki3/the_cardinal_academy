@@ -33,6 +33,11 @@ $profile_image = isset($user_info['profile_image']) ? $user_info['profile_image'
                 <i class="bi bi-book me-2"></i>Enroll Student
             </a>
         </li>
+        <li class="nav-item border-white">
+            <a class="nav-link text-light" href="enrollment.php">
+                <i class="bi bi-book me-2"></i>COR Issuance
+            </a>
+        </li>
 
         <li class="nav-item border-white">
             <a class="dropdown-btn text-light nav-link d-flex justify-content-between align-items-center" href="javascript:void(0);">
@@ -51,8 +56,8 @@ $profile_image = isset($user_info['profile_image']) ? $user_info['profile_image'
                     <a class="nav-link text-light" href="#"><i class="bi bi-bank me-2"></i>Class Scheduling</a>
                                         
                 </div>
-                <a class="nav-link text-light" href="teacher.php"><i class="bi bi-person-lines-fill me-2"></i>Teachers Account</a>
-                <a class="nav-link text-light" href="tuition.php"><i class="bi bi-bank me-2"></i>Manage Tuition</a>
+                <a class="nav-link text-light" href="teacher.php"><i class="bi bi-person-lines-fill me-2"></i>Teachers Management</a>
+                <a class="nav-link text-light" href="tuition.php"><i class="bi bi-bank me-2"></i>Tuition Management</a>
             </div>
         </li>
     </ul>
