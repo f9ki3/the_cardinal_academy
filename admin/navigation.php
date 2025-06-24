@@ -14,54 +14,102 @@ $profile_image = isset($user_info['profile_image']) ? $user_info['profile_image'
     <div class="profile-pic mb-3 text-center">
         <img src="<?= htmlspecialchars($profile_image) ?>" alt="Profile" class="rounded-circle img-fluid" style="width: 80px; height: 80px; object-fit: cover;">
     </div>
-    <h5 class="text-center fw-bolder text-light mb-3"><?= htmlspecialchars($full_name) ?></h5>
-    <hr class="text-light">
+    <h5 class="text-center fw-bolder text-dark mb-3"><?= htmlspecialchars($full_name) ?></h5>
+    <hr class="text-dark">
     
     <ul class="nav flex-column">
         <li class="nav-item">
-            <a class="nav-link text-light" href="dashboard.php">
-                <i class="bi bi-bar-chart me-2"></i>Dashboard
+            <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="dashboard.php">
+                <i class="bi bi-speedometer2 me-2"></i>Dashboard
             </a>
         </li>
         <li class="nav-item border-white">
-            <a class="nav-link text-light" href="admission.php">
-                <i class="bi bi-calendar-check me-2"></i>Student Admission
+            <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="admission.php">
+                <i class="bi bi-journal-plus me-2"></i>Student Admission
             </a>
         </li>
         <li class="nav-item border-white">
-            <a class="nav-link text-light" href="enrollment.php">
-                <i class="bi bi-book me-2"></i>Enroll Student
+            <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="enrollment.php">
+                <i class="bi bi-person-plus me-2"></i>Enroll Student
             </a>
         </li>
         <li class="nav-item border-white">
-            <a class="nav-link text-light" href="enrollment.php">
-                <i class="bi bi-book me-2"></i>COR Issuance
+            <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="enrollment.php">
+                <i class="bi bi-file-earmark-text me-2"></i>COR Issuance
             </a>
         </li>
 
         <li class="nav-item border-white">
-            <a class="dropdown-btn text-light nav-link d-flex justify-content-between align-items-center" href="javascript:void(0);">
-                <span><i class="bi bi-person-lines-fill me-2"></i>Maintenance</span><span>▼</span>
+            <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="enrollment.php">
+                <i class="bi bi-credit-card-2-front me-2"></i>Billing and Payment
             </a>
-            <div class="dropdown-container ps-4">
-                <a class="nav-link text-light" href="students.php"><i class="bi bi-person me-2"></i>Students Account</a>
-                <a class="nav-link text-light" href="#"><i class="bi bi-bank me-2"></i>Parent Management</a>
-                <a class="dropdown-btn text-light nav-link d-flex justify-content-between align-items-center" href="javascript:void(0);">
-                    <span><i class="bi bi-person-lines-fill me-2"></i>Class Management</span>
-                    <span>▼</span>
+        </li>
+
+        <li class="nav-item">
+            <a id="maintenanceDropdown" class="dropdown-btn nav-link text-dark d-flex justify-content-between align-items-center py-2 fs-6" href="javascript:void(0);">
+                <span><i class="bi bi-tools me-2"></i>Maintenance</span>
+                <span id="arrow-icon">▼</span>
+            </a>
+            <div id="maintenanceMenu" class="dropdown-container border p-3 bg-light rounded rounded-4" style="display: none;">
+                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="students.php?nav_drop=true">
+                    <i class="bi bi-people-fill me-2"></i>Students Account
                 </a>
-                <div class="dropdown-container ps-4">
-                    <a class="nav-link text-light" href="#"><i class="bi bi-person-lines-fill me-2"></i>Subject & Teacher Assignment</a>
-                    <a class="nav-link text-light" href="#"><i class="bi bi-bank me-2"></i>Class Sectioning</a>
-                    <a class="nav-link text-light" href="#"><i class="bi bi-bank me-2"></i>Class Scheduling</a>
-                                        
-                </div>
-                <a class="nav-link text-light" href="teacher.php"><i class="bi bi-person-lines-fill me-2"></i>Teachers Management</a>
-                <a class="nav-link text-light" href="tuition.php"><i class="bi bi-bank me-2"></i>Tuition Management</a>
+                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
+                    <i class="bi bi-house-heart me-2"></i>Parent Account
+                </a>
+                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="teacher.php?nav_drop=true">
+                    <i class="bi bi-person-video2 me-2"></i>Teachers Account
+                </a>
+                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="tuition.php?nav_drop=true">
+                    <i class="bi bi-currency-dollar me-2"></i>Manage Tuition
+                </a>
+                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
+                    <i class="bi bi-diagram-3 me-2"></i>Class Sectioning
+                </a>
+                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
+                    <i class="bi bi-calendar-range me-2"></i>Class Scheduling
+                </a>
+                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="subject_unit.php?nav_drop=true">
+                    <i class="bi bi-journal-bookmark me-2"></i>Subjects and Units
+                </a>
             </div>
         </li>
+
+        <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const dropdownBtn = document.getElementById("maintenanceDropdown");
+            const dropdownMenu = document.getElementById("maintenanceMenu");
+            const arrowIcon = document.getElementById("arrow-icon");
+
+            let isOpen = false;
+
+            function toggleDropdown(forceOpen = null) {
+                if (forceOpen !== null) {
+                    isOpen = forceOpen;
+                } else {
+                    isOpen = !isOpen;
+                }
+
+                dropdownMenu.style.display = isOpen ? "block" : "none";
+                arrowIcon.textContent = isOpen ? "▲" : "▼";
+            }
+
+            // Click toggle
+            dropdownBtn.addEventListener("click", () => toggleDropdown());
+
+            // Auto open if nav_drop=true
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get("nav_drop") === "true") {
+                toggleDropdown(true);
+            }
+        });
+        </script>
+
+
+
     </ul>
 </div>
+
 
 <!-- script for dropdown -->
 <style>
