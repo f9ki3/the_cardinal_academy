@@ -43,7 +43,7 @@
 
           <div class="col-12 col-md-6">
             <label for="lrn" class="form-label text-muted">Learner Reference Number (LRN)</label>
-            <input type="text" name="lrn" id="lrn" placeholder="Note: For kinder that has no LRN leave empty." class="form-control">
+            <input type="text" name="lrn" id="lrn" placeholder="Note: For nursery that has no LRN leave empty." class="form-control">
             <div id="lrn-error" class="invalid-feedback d-none">LRN must be a 12-digit number.</div>
           </div>
 
