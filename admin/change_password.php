@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="password" name="confirm_password" id="confirm_password" class="form-control" required />
               </div>
               <button type="submit" class="btn bg-main text-light">Save Password</button>
-              <a href="view_user.php?id=<?= urlencode($user_id) ?>" class="btn btn-secondary ms-2">Cancel</a>
+              <a href="view_user.php?id=<?= urlencode($user_id) ?>&nav_drop=true" class="btn btn-secondary ms-2">Cancel</a>
             </form>
           </div>
         </div>

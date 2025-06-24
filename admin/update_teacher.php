@@ -6,6 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Get and sanitize inputs
     $user_id      = isset($_POST['user_id']) ? intval($_POST['user_id']) : 0;
     $email        = trim($_POST['email'] ?? '');
+    $subject        = trim($_POST['subject'] ?? '');
     $first_name   = trim($_POST['first_name'] ?? '');
     $last_name    = trim($_POST['last_name'] ?? '');
     $gender       = $_POST['gender'] ?? null;
@@ -40,9 +41,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Build the SQL update
-    $fields = "email = ?, first_name = ?, last_name = ?, gender = ?, birthdate = ?, phone_number = ?, address = ?, rfid = ?, acc_status = ?";
-    $types  = "sssssssss";
-    $params = [$email, $first_name, $last_name, $gender, $birthdate, $phone_number, $address, $rfid, $acc_status];
+    $fields = "email = ?, first_name = ?, last_name = ?, gender = ?, birthdate = ?, phone_number = ?, address = ?, rfid = ?, acc_status = ?, subject = ?";
+    $types  = "ssssssssss";
+    $params = [$email, $first_name, $last_name, $gender, $birthdate, $phone_number, $address, $rfid, $acc_status, $subject];
 
     if (!empty($profile_path)) {
         $fields .= ", profile = ?";

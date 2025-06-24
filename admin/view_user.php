@@ -154,8 +154,8 @@ if ($user_id > 0 && $conn) {
 
             <div class="col-12 text-start pt-2">
               <button type="submit" class="btn bg-main text-light">Save User</button>
-              <a href="students.php" class="btn btn-secondary ms-2">Back</a>
-              <a href="change_password.php?id=<?= urlencode($data['user_id']) ?>" class="btn btn-secondary ms-2">Change Password</a>
+              <a href="students.php?nav_drop=true" class="btn btn-secondary ms-2">Back</a>
+              <a href="change_password.php?id=<?= urlencode($data['user_id']) ?>&nav_drop=true" class="btn btn-secondary ms-2">Change Password</a>
               <a href="#" class="btn btn-secondary ms-2">Student Information</a>
             </div>
           </div>

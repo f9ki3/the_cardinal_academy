@@ -1,5 +1,11 @@
 <?php include 'session_login.php'; ?>
 <?php include '../db_connection.php'; ?>
+<?php 
+$subjects_result = mysqli_query($conn, "SELECT id, subject_code, description FROM subjects");
+if (!$subjects_result) {
+    die("Error fetching subjects: " . mysqli_error($conn));
+}
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -34,6 +40,51 @@
                 <option value="student" <?= ($data['acc_type'] ?? '') === 'student' ? 'selected' : '' ?>>Student</option>
               </select>
             </div>
+
+           <div class="col-md-6">
+  <label for="subject_title" class="form-label">Subject</label>
+  <input 
+    class="form-control" 
+    list="subjects" 
+    name="subject_title" 
+    id="subject_title" 
+    placeholder="Type or select subject..."
+    value="<?= htmlspecialchars($data['subject_title'] ?? '') ?>" 
+    required
+  >
+  <datalist id="subjects">
+    <?php 
+    mysqli_data_seek($subjects_result, 0);
+    while ($subject = mysqli_fetch_assoc($subjects_result)): 
+      $display = $subject['subject_code'] . ' - ' . $subject['description'];
+    ?>
+      <option data-id="<?= $subject['id'] ?>" value="<?= htmlspecialchars($display) ?>"></option>
+    <?php endwhile; ?>
+  </datalist>
+
+  <!-- Hidden input to store selected subject ID -->
+  <input type="hidden" name="subject_id" id="subject_id" value="<?= htmlspecialchars($data['subject_id'] ?? '') ?>">
+</div>
+
+<script>
+document.getElementById('subject_title').addEventListener('input', function() {
+  const input = this.value;
+  const options = document.getElementById('subjects').options;
+  let subjectId = '';
+
+  for (let i = 0; i < options.length; i++) {
+    if (options[i].value === input) {
+      subjectId = options[i].dataset.id;
+      break;
+    }
+  }
+
+  document.getElementById('subject_id').value = subjectId;
+});
+</script>
+
+
+
 
             <div class="col-md-6">
               <label for="username" class="form-label">Username</label>
@@ -75,14 +126,14 @@
               <input type="text" name="phone_number" id="phone_number" class="form-control" value="<?= htmlspecialchars($data['phone_number'] ?? '') ?>">
             </div>
 
-            <div class="col-12">
-              <label for="address" class="form-label">Address</label>
-              <textarea name="address" id="address" class="form-control" rows="3"><?= htmlspecialchars($data['address'] ?? '') ?></textarea>
-            </div>
-
             <div class="col-md-6">
               <label for="profile" class="form-label">Profile Picture</label>
               <input type="file" name="profile" id="profile" class="form-control">
+            </div>
+
+            <div class="col-12">
+              <label for="address" class="form-label">Address</label>
+              <textarea name="address" id="address" class="form-control" rows="3"><?= htmlspecialchars($data['address'] ?? '') ?></textarea>
             </div>
 
 

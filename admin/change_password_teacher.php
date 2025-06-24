@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($update_stmt) {
             $update_stmt->bind_param("si", $hashed_password, $user_id);
             if ($update_stmt->execute()) {
-                header("Location: view_user.php?id=$user_id&status=password_changed");
+                header("Location: view_user.php?id=$user_id&status=password_changed&nav_drop=true");
                 exit;
             } else {
                 $error = "❌ Failed to update password. MySQL Error: " . $update_stmt->error;
@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="password" name="confirm_password" id="confirm_password" class="form-control" required />
               </div>
               <button type="submit" class="btn bg-main text-light">Save Password</button>
-              <a href="view_user.php?id=<?= urlencode($user_id) ?>" class="btn btn-secondary ms-2">Cancel</a>
+              <a href="view_teacher.php?id=<?= urlencode($user_id) ?>&nav_drop=true" class="btn btn-secondary ms-2">Cancel</a>
             </form>
           </div>
         </div>
