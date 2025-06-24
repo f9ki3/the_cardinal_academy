@@ -45,12 +45,20 @@ $profile_image = isset($user_info['profile_image']) ? $user_info['profile_image'
             </a>
         </li>
 
+        <li class="nav-item border-white">
+            <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
+                <i class="bi bi-calendar-range me-2"></i>Class Scheduling
+            </a>
+        </li>
+
         <li class="nav-item">
             <a id="maintenanceDropdown" class="dropdown-btn nav-link text-dark d-flex justify-content-between align-items-center py-2 fs-6" href="javascript:void(0);">
                 <span><i class="bi bi-tools me-2"></i>Maintenance</span>
                 <span id="arrow-icon">▼</span>
             </a>
-            <div id="maintenanceMenu" class="dropdown-container border p-3 bg-light rounded rounded-4" style="display: none;">
+            <div id="maintenanceMenu" class="dropdown-container shadow border p-3 bg-light rounded rounded-4" style="display: none;">
+                <h6 class="fw-bolder">Maintenance</h6>
+                <hr class="m-0 py-1">
                 <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="students.php?nav_drop=true">
                     <i class="bi bi-people-fill me-2"></i>Students Account
                 </a>
@@ -63,11 +71,8 @@ $profile_image = isset($user_info['profile_image']) ? $user_info['profile_image'
                 <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="tuition.php?nav_drop=true">
                     <i class="bi bi-currency-dollar me-2"></i>Manage Tuition
                 </a>
-                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
-                    <i class="bi bi-diagram-3 me-2"></i>Class Sectioning
-                </a>
-                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
-                    <i class="bi bi-calendar-range me-2"></i>Class Scheduling
+                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="sectioning.php?nav_drop=true">
+                    <i class="bi bi-diagram-3 me-2"></i>Manage Sections
                 </a>
                 <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="subject_unit.php?nav_drop=true">
                     <i class="bi bi-journal-bookmark me-2"></i>Subjects and Units

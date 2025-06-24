@@ -5,6 +5,7 @@ include '../db_connection.php';
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Sanitize input
     $acc_type     = 'teacher';
+    $subject_title     = trim($_POST['subject_title']);
     $username     = trim($_POST['username']);
     $email        = trim($_POST['email']);
     $first_name   = trim($_POST['first_name']);
@@ -34,6 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (move_uploaded_file($_FILES['profile']['tmp_name'], $destination)) {
             $profile_path = '../static/uploads/' . $filename;
+
         } else {
             die("❌ Failed to upload profile image.");
         }
@@ -48,21 +50,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             acc_type, username, email, password,
             first_name, last_name, gender, birthdate,
             phone_number, address, profile, rfid,
-            enroll_id, acc_status
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            enroll_id, acc_status, subject
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
 
     if ($stmt) {
         $stmt->bind_param(
-            "sssssssssssiss",
+            "sssssssssssisss",
             $acc_type, $username, $email, $default_pass,
             $first_name, $last_name, $gender, $birthdate,
             $phone_number, $address, $profile_path, $rfid,
-            $enroll_id, $acc_status
+            $enroll_id, $acc_status, $subject_title
         );
 
         if ($stmt->execute()) {
-            header("Location: teacher.php?status=created");
+            header("Location: teacher.php?status=created&nav_drop=true");
             exit;
         } else {
             die("❌ Failed to create account: " . $stmt->error);

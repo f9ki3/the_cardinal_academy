@@ -8,12 +8,12 @@ $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int) $_GET['page'] 
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 $offset = ($page - 1) * $limit;
 
-// Count total student users
-// Count total subjects
-$count_query = "SELECT COUNT(*) as total FROM subjects 
-                WHERE subject_code LIKE '%$search%' 
-                OR description LIKE '%$search%' 
-                OR grade_level LIKE '%$search%'";
+// Count total sections
+$count_query = "SELECT COUNT(*) as total FROM sections 
+                WHERE section_name LIKE '%$search%' 
+                OR grade_level LIKE '%$search%' 
+                OR room LIKE '%$search%' 
+                OR school_year LIKE '%$search%'";
 
 $count_result = mysqli_query($conn, $count_query);
 if (!$count_result) {
@@ -23,12 +23,21 @@ if (!$count_result) {
 $total = mysqli_fetch_assoc($count_result)['total'];
 $total_pages = ceil($total / $limit);
 
-// Fetch subjects
-$query = "SELECT id, subject_code, description, grade_level, hours 
-          FROM subjects 
-          WHERE subject_code LIKE '%$search%' 
-            OR description LIKE '%$search%' 
-            OR grade_level LIKE '%$search%' 
+
+$query = "SELECT 
+            sections.section_id,
+            sections.section_name,
+            sections.grade_level,
+            sections.room,
+            sections.capacity,
+            sections.school_year,
+            CONCAT(users.first_name, ' ', users.last_name) AS teacher_name
+          FROM sections
+          LEFT JOIN users ON sections.teacher_id = users.user_id
+          WHERE section_name LIKE '%$search%' 
+             OR grade_level LIKE '%$search%' 
+             OR room LIKE '%$search%' 
+             OR school_year LIKE '%$search%' 
           ORDER BY grade_level ASC
           LIMIT $limit OFFSET $offset";
 
@@ -44,7 +53,7 @@ if (!$result) {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AcadeSys - Manage Teachers</title>
+  <title>AcadeSys - Manage Sections</title>
   <?php include 'header.php'; ?>
 </head>
 <body>
@@ -61,7 +70,7 @@ if (!$result) {
             <div class="container my-4">
               <div class="row mb-3">
                 <div class="col-12 col-md-5">
-                  <h4>Subjects and Units</h4>
+                  <h4>Class Sections</h4>
                 </div>
                 <div class="col-12 col-md-7 d-flex justify-content-between align-items-center flex-wrap gap-2">
                   <!-- Search Form -->
@@ -73,7 +82,7 @@ if (!$result) {
                         type="text" 
                         name="search" 
                         value="<?= htmlspecialchars($search ?? '') ?>" 
-                        placeholder="Search Username or Fullname"
+                        placeholder="Search by Section, Grade, Room, or Year"
                         >
                         <button class="btn border ms-2 rounded rounded-4" type="submit">Search</button>
                     </div>
@@ -81,7 +90,7 @@ if (!$result) {
 
 
                   <!-- Create Button -->
-                  <a href="create_subjects.php?nav_drop=true" class="btn bg-main text-light rounded rounded-4 px-4">
+                  <a href="create_sections.php?nav_drop=true" class="btn bg-main text-light rounded rounded-4 px-4">
                     + Create
                 </a>
 
@@ -92,17 +101,17 @@ if (!$result) {
                   <?php if (isset($_GET['status'])): ?>
                     <?php if ($_GET['status'] === 'created'): ?>
                       <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        ✅ Created subject successfully!
+                        ✅ Created sections successfully!
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                       </div>
                     <?php elseif ($_GET['status'] === 'updated'): ?>
                       <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        ✅  Updated subject successfully.
+                        ✅  Updated sections successfully.
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                       </div>
                     <?php elseif ($_GET['status'] === 'deleted'): ?>
                       <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        ⚠️ Remove account successfully.
+                        ⚠️ Remove sections successfully.
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                       </div>
                     <?php endif; ?>
@@ -115,42 +124,41 @@ if (!$result) {
                   <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Subject Code</th>
-                        <th>Description</th>
+                        <th>Section Name</th>
                         <th>Grade Level</th>
-                        <th>Hour(s)</th>
+                        <th>Teacher</th>
+                        <th>Room</th>
+                        <th>Capacity</th>
+                        <th>School Year</th>
                         <th>Action</th>
                     </tr>
-                    </thead>
+                  </thead>
+
                     <tbody>
                     <?php if (mysqli_num_rows($result) > 0): ?>
-                        <?php while ($row = mysqli_fetch_assoc($result)): ?>
-                        <tr class="clickable-row" data-id="<?= $row['id'] ?>">
-                            <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['id']) ?></p></td>
-                            <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['subject_code']) ?></p></td>
-                            <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['description']) ?></p></td>
-                            <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['grade_level']) ?></p></td>
-                            <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['hours']) ?></p></td>
-                            <td>
-                            <a href="delete_subject.php?id=<?= urlencode($row['id']) ?>&nav_drop=true" 
-                            class="btn border rounded rounded-4" 
-                            onclick="return confirm('Are you sure you want to delete this subject?');">
-                            Remove
+                      <?php while ($row = mysqli_fetch_assoc($result)): ?>
+                        <tr class="clickable-row" data-id="<?= $row['section_id'] ?>">
+                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['section_id']) ?></p></td>
+                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['section_name']) ?></p></td>
+                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['grade_level']) ?></p></td>
+                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['teacher_name'] ?? 'Unassigned') ?></p></td>
+                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['room']) ?></p></td>
+                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['capacity']) ?></p></td>
+                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['school_year']) ?></p></td>
+                          <td>
+                            <a href="edit_section.php?id=<?= urlencode($row['section_id']) ?>&nav_drop=true" class="btn border rounded rounded-4">Edit</a>
+                            <a href="delete_section.php?id=<?= urlencode($row['section_id']) ?>&nav_drop=true"
+                              class="btn border rounded rounded-4"
+                              onclick="return confirm('Are you sure you want to delete this section?');">
+                              Remove
                             </a>
-
-
-                           <a href="edit_subject.php?id=<?= urlencode($row['id']) ?>&nav_drop=true" 
-                            class="btn border rounded rounded-4">
-                            Edit
-                            </a>
-
-                            </td>
+                          </td>
                         </tr>
-                        <?php endwhile; ?>
+                      <?php endwhile; ?>
                     <?php else: ?>
-                        <tr>
-                        <td colspan="6"><p class="text-muted text-center pt-3 pb-3 mb-0">No subject data available</p></td>
-                        </tr>
+                      <tr>
+                        <td colspan="8"><p class="text-muted text-center pt-3 pb-3 mb-0">No section data available</p></td>
+                      </tr>
                     <?php endif; ?>
                     </tbody>
 

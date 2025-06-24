@@ -29,7 +29,7 @@ $query = "SELECT
             CONCAT(first_name, ' ', last_name) AS fullname, 
             username, 
             created_at, 
-            enroll_id 
+            subject 
           FROM users 
           WHERE acc_type = 'teacher' AND (
               username LIKE '%$search%' 
@@ -84,7 +84,7 @@ if (!$result) {
                   </form>
 
                   <!-- Create Button -->
-                  <a href="create_teacher.php" class="btn bg-main text-light rounded rounded-4 px-4">
+                  <a href="create_teacher.php?nav_drop=true" class="btn bg-main text-light rounded rounded-4 px-4">
                     + Create
                   </a>
                 </div>
@@ -119,7 +119,7 @@ if (!$result) {
                       <th>ID</th>
                       <th>Fullname</th>
                       <th>Username</th>
-                      <th>Enroll ID</th>
+                      <th>Subject</th>
                       <th>Created At</th>
                       <th>Action</th>
                     </tr>
@@ -131,7 +131,12 @@ if (!$result) {
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['user_id']) ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['fullname']) ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['username']) ?></p></td>
-                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['enroll_id']) ?></p></td>
+                          <td>
+  <p class="text-muted pt-3 pb-3 mb-0">
+    <?= !empty($row['subject']) ? htmlspecialchars($row['subject']) : 'No Subject Assign' ?>
+  </p>
+</td>
+
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['created_at']) ?></p></td>
                           <td>
                             <a href="delete_teacher.php?id=<?= urlencode($row['user_id']) ?>" 
