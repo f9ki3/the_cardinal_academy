@@ -32,6 +32,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $insert->bind_param("isss", $section_id, $student['first_name'], $student['last_name'], $student['gender']);
 
         if ($insert->execute()) {
+            // ✅ Update the section_id in users table
+            $update = $conn->prepare("UPDATE users SET section_id = ? WHERE user_id = ?");
+            $update->bind_param("ii", $section_id, $student_id);
+            $update->execute();
+
             header("Location: view_section.php?status=success&nav_drop=true&id=" . $section_id);
             exit;
         } else {
