@@ -234,7 +234,7 @@ if (!$section) {
                                                         <input type="hidden" name="firstname" value="<?= htmlspecialchars($row['firstname']) ?>">
                                                         <input type="hidden" name="lastname" value="<?= htmlspecialchars($row['lastname']) ?>">
                                                         <input type="hidden" name="gender" value="Male">
-                                                        <button type="submit" class="btn d-print-none btn-sm btn-link text-danger p-0">Remove</button>
+                                                        <button type="submit" class="btn d-print-none btn-sm rounded border rounded-4">Remove</button>
                                                     </form>
                                                 </div>
                                             </td>
@@ -285,7 +285,7 @@ if (!$section) {
                                                     <input type="hidden" name="lastname"   value="<?= htmlspecialchars($row['lastname']) ?>">
                                                     <input type="hidden" name="gender"     value="Female">  <!-- fixed -->
                                                     <button type="submit"
-                                                            class="btn d-print-none btn-sm btn-link text-danger p-0">
+                                                            class="btn d-print-none btn-sm rounded border rounded-4">
                                                         Remove
                                                     </button>
                                                 </form>
