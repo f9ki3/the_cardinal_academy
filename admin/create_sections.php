@@ -13,6 +13,7 @@ if (!$teachers_result) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $section_name = trim($_POST['section_name']);
     $grade_level = trim($_POST['grade_level']);
+    $strand = trim($_POST['strand'] ?? 'N/A');
     $teacher_id = intval($_POST['teacher_id']);
     $room = trim($_POST['room']);
     $capacity = intval($_POST['capacity']);
@@ -22,8 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($section_name === '' || $grade_level === '' || $teacher_id <= 0 || $capacity <= 0) {
         $error = "Please fill in all required fields correctly.";
     } else {
-        $stmt = $conn->prepare("INSERT INTO sections (section_name, grade_level, teacher_id, room, capacity, school_year) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("ssisis", $section_name, $grade_level, $teacher_id, $room, $capacity, $school_year);
+        $stmt = $conn->prepare("INSERT INTO sections (section_name, grade_level, strand, teacher_id, room, capacity, school_year) VALUES (?, ?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("sssisis", $section_name, $grade_level, $strand, $teacher_id, $room, $capacity, $school_year);
 
         if ($stmt->execute()) {
             header('Location: sectioning.php?status=created&nav_drop=true');
@@ -35,10 +36,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $selected_grade = $_POST['grade_level'] ?? '';
+$selected_strand = $_POST['strand'] ?? '';
 function isSelected($value, $selected) {
     return $value === $selected ? 'selected' : '';
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -71,6 +74,29 @@ function isSelected($value, $selected) {
                   <label for="section_name" class="form-label">Section Name</label>
                   <input type="text" id="section_name" name="section_name" class="form-control" required value="<?= htmlspecialchars($_POST['section_name'] ?? '') ?>" />
                 </div>
+
+               <div class="mb-3">
+                  <label for="strand" class="form-label">Strand</label>
+                  <select name="strand" id="strand" class="form-select" required>
+                    <?php
+                      $strands = [
+                        'N/A',
+                        'GAS (General Academic Strand)',
+                        'HUMMS (Humanities and Social Sciences)',
+                        'STEM (Science, Technology, Engineering and Mathematics)',
+                        'ABM (Accountancy, Business and Management)',
+                        'TVL (Technical-Vocational-Livelihood)',
+                        'SPORTS',
+                        'ARTS and DESIGN'
+                      ];
+                      foreach ($strands as $strand_option) {
+                          echo "<option value=\"" . htmlspecialchars($strand_option) . "\" " . isSelected($strand_option, $selected_strand) . ">" . htmlspecialchars($strand_option) . "</option>";
+                      }
+                    ?>
+                  </select>
+                </div>
+
+
 
                 <div class="mb-3">
                   <label for="grade_level" class="form-label">Grade Level</label>

@@ -117,7 +117,7 @@ if (!$result) {
                         <th>ID</th>
                         <th>Subject Code</th>
                         <th>Description</th>
-                        <th>Grade Level</th>
+                        <!-- <th>Grade Level</th> -->
                         <th>Hour(s)</th>
                         <th>Action</th>
                     </tr>
@@ -129,7 +129,7 @@ if (!$result) {
                             <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['id']) ?></p></td>
                             <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['subject_code']) ?></p></td>
                             <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['description']) ?></p></td>
-                            <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['grade_level']) ?></p></td>
+                            <!-- <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['grade_level']) ?></p></td> -->
                             <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['hours']) ?></p></td>
                             <td>
                             <a href="delete_subject.php?id=<?= urlencode($row['id']) ?>&nav_drop=true" 

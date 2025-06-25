@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->bind_param("sssi", $subject_code, $description, $grade_level, $hours);
 
         if ($stmt->execute()) {
-            header('Location: subject_unit.php?status=created');
+            header('Location: subject_unit.php?status=created&nav_drop=true');
             exit;
         } else {
             $error = "Failed to create subject. " . $stmt->error;
