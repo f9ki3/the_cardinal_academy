@@ -23,7 +23,6 @@ if (!$count_result) {
 $total = mysqli_fetch_assoc($count_result)['total'];
 $total_pages = ceil($total / $limit);
 
-
 $query = "SELECT 
             sections.section_id,
             sections.section_name,
@@ -45,7 +44,6 @@ $result = mysqli_query($conn, $query);
 if (!$result) {
     die("<p style='color:red;'>Data Query Failed: " . mysqli_error($conn) . "</p>");
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -86,16 +84,13 @@ if (!$result) {
                         >
                         <button class="btn border ms-2 rounded rounded-4" type="submit">Search</button>
                     </div>
-                   </form>
-
+                  </form>
 
                   <!-- Create Button -->
                   <a href="create_sections.php?nav_drop=true" class="btn bg-main text-light rounded rounded-4 px-4">
                     + Create
-                </a>
-
+                  </a>
                 </div>
-
 
                 <div class="col-12 pt-3">
                   <?php if (isset($_GET['status'])): ?>
@@ -106,12 +101,12 @@ if (!$result) {
                       </div>
                     <?php elseif ($_GET['status'] === 'updated'): ?>
                       <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        ✅  Updated sections successfully.
+                        ✅ Updated sections successfully.
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                       </div>
                     <?php elseif ($_GET['status'] === 'deleted'): ?>
                       <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        ⚠️ Remove sections successfully.
+                        ⚠️ Removed section successfully.
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                       </div>
                     <?php endif; ?>
@@ -120,24 +115,25 @@ if (!$result) {
               </div>
 
               <div class="table-responsive">
-                <table class="table table-striped" style="cursor: pointer">
+                <table class="table table-hover table-striped" style="cursor: pointer">
                   <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Section Name</th>
-                        <th>Grade Level</th>
-                        <th>Teacher</th>
-                        <th>Room</th>
-                        <th>Capacity</th>
-                        <th>School Year</th>
-                        <th>Action</th>
+                      <th>ID</th>
+                      <th>Section Name</th>
+                      <th>Grade Level</th>
+                      <th>Adviser</th>
+                      <th>Room</th>
+                      <th>Capacity</th>
+                      <th>School Year</th>
+                      <th>Action</th>
                     </tr>
                   </thead>
-
-                    <tbody>
+                  <tbody>
                     <?php if (mysqli_num_rows($result) > 0): ?>
                       <?php while ($row = mysqli_fetch_assoc($result)): ?>
-                        <tr class="clickable-row" data-id="<?= $row['section_id'] ?>">
+                        <tr class="clickable-row" 
+                            data-id="<?= $row['section_id'] ?>" 
+                            data-grade="<?= htmlspecialchars($row['grade_level']) ?>">
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['section_id']) ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['section_name']) ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['grade_level']) ?></p></td>
@@ -157,48 +153,48 @@ if (!$result) {
                       <?php endwhile; ?>
                     <?php else: ?>
                       <tr>
-                        <td colspan="8"><p class="text-muted text-center pt-3 pb-3 mb-0">No section data available</p></td>
+                        <td colspan="8">
+                          <p class="text-muted text-center pt-3 pb-3 mb-0">No section data available</p>
+                        </td>
                       </tr>
                     <?php endif; ?>
-                    </tbody>
-
+                  </tbody>
                 </table>
               </div>
 
               <!-- Pagination -->
-                <?php if ($total_pages > 1): ?>
-                <nav aria-label="Page navigation">
-                    <ul class="pagination justify-content-start pagination-sm">
-                    <?php if ($page > 1): ?>
-                        <li class="page-item">
-                        <a class="page-link text-muted" href="?search=<?= urlencode($search) ?>&page=<?= $page - 1 ?>&nav_drop=true">Previous</a>
-                        </li>
-                    <?php endif; ?>
+              <?php if ($total_pages > 1): ?>
+              <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-start pagination-sm">
+                  <?php if ($page > 1): ?>
+                  <li class="page-item">
+                    <a class="page-link text-muted" href="?search=<?= urlencode($search) ?>&page=<?= $page - 1 ?>&nav_drop=true">Previous</a>
+                  </li>
+                  <?php endif; ?>
 
-                    <?php
-                        $max_links = 5;
-                        $start = max(1, $page - floor($max_links / 2));
-                        $end = min($total_pages, $start + $max_links - 1);
-                        if ($end - $start < $max_links - 1) {
+                  <?php
+                    $max_links = 5;
+                    $start = max(1, $page - floor($max_links / 2));
+                    $end = min($total_pages, $start + $max_links - 1);
+                    if ($end - $start < $max_links - 1) {
                         $start = max(1, $end - $max_links + 1);
-                        }
-                    ?>
+                    }
+                  ?>
 
-                    <?php for ($i = $start; $i <= $end; $i++): ?>
-                        <li class="page-item">
-                        <a class="page-link text-muted <?= $i == $page ? 'fw-bold' : '' ?>" href="?search=<?= urlencode($search) ?>&page=<?= $i ?>&nav_drop=true"><?= $i ?></a>
-                        </li>
-                    <?php endfor; ?>
+                  <?php for ($i = $start; $i <= $end; $i++): ?>
+                  <li class="page-item">
+                    <a class="page-link text-muted <?= $i == $page ? 'fw-bold' : '' ?>" href="?search=<?= urlencode($search) ?>&page=<?= $i ?>&nav_drop=true"><?= $i ?></a>
+                  </li>
+                  <?php endfor; ?>
 
-                    <?php if ($page < $total_pages): ?>
-                        <li class="page-item">
-                        <a class="page-link text-muted" href="?search=<?= urlencode($search) ?>&page=<?= $page + 1 ?>&nav_drop=true">Next</a>
-                        </li>
-                    <?php endif; ?>
-                    </ul>
-                </nav>
-                <?php endif; ?>
-
+                  <?php if ($page < $total_pages): ?>
+                  <li class="page-item">
+                    <a class="page-link text-muted" href="?search=<?= urlencode($search) ?>&page=<?= $page + 1 ?>&nav_drop=true">Next</a>
+                  </li>
+                  <?php endif; ?>
+                </ul>
+              </nav>
+              <?php endif; ?>
 
             </div>
           </div>
@@ -212,3 +208,15 @@ if (!$result) {
 </body>
 </html>
 
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const rows = document.querySelectorAll('.clickable-row');
+  rows.forEach(row => {
+    row.addEventListener('click', () => {
+      const id = row.getAttribute('data-id');
+      const grade = row.getAttribute('data-grade');
+      window.location.href = `view_section.php?id=${id}&grade_level=${encodeURIComponent(grade)}&nav_drop=true`;
+    });
+  });
+});
+</script>

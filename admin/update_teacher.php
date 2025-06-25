@@ -64,7 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param($types, ...$params);
     if ($stmt->execute()) {
         // ✅ Redirect to view_student.php with user ID
-        header("Location: view_teacher.php?id=" . $user_id . "&status=success");
+        header("Location: view_teacher.php?nav_drop=true&id=" . $user_id . "&status=success");
         exit;
     } else {
         die("❌ Update failed: " . $stmt->error);

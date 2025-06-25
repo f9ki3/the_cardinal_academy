@@ -208,7 +208,7 @@ if (!$result) {
     rows.forEach(row => {
       row.addEventListener('click', () => {
         const id = row.getAttribute('data-id');
-        window.location.href = `view_teacher.php?id=${id}`;
+        window.location.href = `view_teacher.php?id=${id}&nav_drop=true`;
       });
     });
   });

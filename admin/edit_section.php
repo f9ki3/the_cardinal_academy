@@ -32,6 +32,7 @@ if (!$teachers_result) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $section_name = trim($_POST['section_name']);
     $grade_level = trim($_POST['grade_level']);
+    $strand = trim($_POST['strand'] ?? 'N/A');
     $teacher_id = intval($_POST['teacher_id']);
     $room = trim($_POST['room']);
     $capacity = intval($_POST['capacity']);
@@ -40,8 +41,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($section_name === '' || $grade_level === '' || $teacher_id <= 0 || $capacity <= 0) {
         $error = "Please fill in all required fields correctly.";
     } else {
-        $update_stmt = $conn->prepare("UPDATE sections SET section_name = ?, grade_level = ?, teacher_id = ?, room = ?, capacity = ?, school_year = ? WHERE section_id = ?");
-        $update_stmt->bind_param("ssisssi", $section_name, $grade_level, $teacher_id, $room, $capacity, $school_year, $id);
+        $update_stmt = $conn->prepare("UPDATE sections SET section_name = ?, grade_level = ?, strand = ?, teacher_id = ?, room = ?, capacity = ?, school_year = ? WHERE section_id = ?");
+        $update_stmt->bind_param("sssisssi", $section_name, $grade_level, $strand, $teacher_id, $room, $capacity, $school_year, $id);
 
         if ($update_stmt->execute()) {
             header('Location: sectioning.php?status=updated&nav_drop=true');
@@ -52,7 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Function to preselect values
+// Helper
 function isSelected($value, $selected) {
     return $value === $selected ? 'selected' : '';
 }
@@ -88,6 +89,32 @@ function isSelected($value, $selected) {
                 <div class="mb-3">
                   <label for="section_name" class="form-label">Section Name</label>
                   <input type="text" id="section_name" name="section_name" class="form-control" required value="<?= htmlspecialchars($row['section_name']) ?>" />
+                </div>
+
+                <div class="mb-3">
+                  <label for="strand" class="form-label">Strand</label>
+                  <select name="strand" id="strand" class="form-select" required>
+                    <option value="">Select strand</option>
+                    <?php
+                      $strands = [
+                        'N/A',
+                        'GAS (General Academic Strand)',
+                        'HUMMS (Humanities and Social Sciences)',
+                        'STEM (Science, Technology, Engineering and Mathematics)',
+                        'ABM (Accountancy, Business and Management)',
+                        'TVL (Technical-Vocational-Livelihood)',
+                        'SPORTS',
+                        'ARTS and DESIGN'
+                      ];
+
+                      $current_strand = $row['strand'] ?? 'N/A';
+
+                      foreach ($strands as $strand) {
+                          $selected = ($strand === $current_strand) ? 'selected' : '';
+                          echo "<option value=\"" . htmlspecialchars($strand) . "\" $selected>" . htmlspecialchars($strand) . "</option>";
+                      }
+                    ?>
+                  </select>
                 </div>
 
                 <div class="mb-3">
@@ -137,7 +164,7 @@ function isSelected($value, $selected) {
                 </div>
 
                 <button type="submit" class="btn bg-main text-light">Update</button>
-                <a href="sectioning.php" class="btn btn-secondary ms-2">Cancel</a>
+                <a href="sectioning.php?nav_drop=true" class="btn btn-secondary ms-2">Cancel</a>
               </form>
 
             </div>
