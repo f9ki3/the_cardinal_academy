@@ -1,8 +1,13 @@
 
 <?php
-  $hideContact = true;
+
   $hideHome = true;
-  $hideLogin = true;
+
+
+  $pageTitle = 'Services';
+  $breadcrumbs = [
+  ['label' => 'Home', 'url' => 'index.php'],
+  ['label' => 'Enroll']];
 
 ?>
 

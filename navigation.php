@@ -39,25 +39,6 @@
       background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='%23ffffff' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
     }
 
-    .sub-navbar {
-      background-color: #da3030;
-      padding-top: 2px;
-      padding-bottom: 2px;
-      min-height: 20px;
-    }
-
-    .sub-navbar .nav-link {
-      color: #f8f9fa !important;
-      font-size: 0.875rem;
-      line-height: 1.2;
-      padding-top: 4px;
-      padding-bottom: 4px;
-    }
-
-    .sub-navbar .nav-link:hover {
-      color: #fff !important;
-    }
-
     .contact-btn {
       color: #000000;
       padding: 8px 16px;
@@ -102,6 +83,7 @@
             <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
             <li class="nav-item"><a class="nav-link" href="#courses">Courses</a></li>
             <li class="nav-item"><a class="nav-link" href="contact.php">Contact</a></li>
+            <li class="nav-item"><a class="nav-link" href="enroll.php">Enroll</a></li>
           <?php endif; ?>
         </ul>
         <?php if (empty($hideLogInButton)): ?>
@@ -113,41 +95,9 @@
     </nav>
 
     <!-- Sub Navbar -->
-    <?php if (empty($hideSubNav)): ?>
-      <nav class="navbar sub-navbar px-4">
-        <div class="container-fluid justify-content-end">
-          <ul class="navbar-nav flex-row">
-            <?php if (empty($hideContact)): ?>
-              <li class="nav-item">
-                <a href="index.php" class="contact-btn nav-link">
-                  <span class="underline-text">Contact Us</span>
-                  <span class="no-underline"> &gt; </span>
-                  <i class="fas fa-home no-underline"></i>
-                </a>
-              </li>
-            <?php endif; ?>
-            <?php if (empty($hideEnroll)): ?>
-              <li class="nav-item">
-                <a href="index.php" class="contact-btn nav-link">
-                  <span class="underline-text">Enroll Now!</span>
-                  <span class="no-underline"> &gt; </span>
-                  <i class="fas fa-home no-underline"></i>
-                </a>
-              </li>
-            <?php endif; ?>
-            <?php if (empty($hideLogin)): ?>
-              <li class="nav-item">
-                <a href="index.php" class="contact-btn nav-link">
-                  <span class="underline-text">Log in</span>
-                  <span class="no-underline"> &gt; </span>
-                  <i class="fas fa-home no-underline"></i>
-                </a>
-              </li>
-            <?php endif; ?>
-          </ul>
-        </div>
-      </nav>
-    <?php endif; ?>
+    <?php
+    include 'breadcrumb_nav.php'; 
+    ?>
   </div>
 
   <!-- Bootstrap JS -->

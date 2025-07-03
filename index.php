@@ -1,6 +1,9 @@
 <?php 
 include 'session_login.php';
 $hideSubNav = true;
+$pageTitle = 'Home';
+$breadcrumbs = []; // No breadcrumbs on homepage
+
 ?>
 
 <!DOCTYPE html>
