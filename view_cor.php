@@ -1,6 +1,5 @@
 <?php
-include 'session_login.php';
-include '../db_connection.php';
+include 'db_connection.php';
 
 $studentName    = isset($_GET['fullname'])        ? urldecode($_GET['fullname'])        : 'N/A';
 $lrn            = isset($_GET['lrn'])             ? urldecode($_GET['lrn'])             : 'N/A';
@@ -65,9 +64,7 @@ $schedule = $sched_stmt->get_result();
 </head>
 <body>
 <div class="d-flex flex-row bg-white">
-  <?php include 'navigation.php'; ?>
   <div class="content flex-grow-1">
-    <?php include 'nav_top.php'; ?>
     <div class="container my-4">
       <div class="row g-4">
         <div class="col-12">
@@ -78,16 +75,6 @@ $schedule = $sched_stmt->get_result();
                 <h4 class="mb-0 d-print-none">Certificate of Registration</h4>
               </div>
               <div class="col-md-8 d-flex flex-wrap gap-2 justify-content-md-end d-print-none">
-                <button class="btn btn-sm border text-muted rounded-4" id="sendEmailBtn">
-                  <i class="bi bi-envelope me-1"></i> Send Email
-                </button>
-
-
-                <form id="sendCorForm" action="send_cor.php" method="POST" class="d-none">
-                  <input type="hidden" name="cor_link" id="corLinkInput">
-                </form>
-
-
                 <button class="btn btn-sm border text-muted rounded-4" onclick="window.print()">
                     <i class="bi bi-printer me-1"></i> Print
                 </button>
@@ -95,7 +82,7 @@ $schedule = $sched_stmt->get_result();
             </div>
             <div class="d-none d-print-flex justify-content-center">
                 <div class="d-flex align-items-center mb-4">
-                  <img src="../static/uploads/logo.png" alt="Logo" style="height: 70px; width: auto;" class="me-3">
+                  <img src="static/uploads/logo.png" alt="Logo" style="height: 70px; width: auto;" class="me-3">
                   <div>
                     <h5 class="mb-0 fw-bold text-center">The Cardinal Academy, Inc.</h5>
                     <small class="d-block text-center">Sullera Street in Pandayan, Meycauayan, Bulacan </small>
@@ -283,16 +270,3 @@ $schedule = $sched_stmt->get_result();
 <?php include 'footer.php'; ?>
 </body>
 </html>
-
-<script>
-  document.getElementById('sendEmailBtn').addEventListener('click', function () {
-    const currentParams = new URLSearchParams(window.location.search);
-    const targetUrl = 'https://acadesys.site/view_cor?' + currentParams.toString();
-
-    // Set the URL to hidden input
-    document.getElementById('corLinkInput').value = targetUrl;
-
-    // Submit the form
-    document.getElementById('sendCorForm').submit();
-  });
-</script>
