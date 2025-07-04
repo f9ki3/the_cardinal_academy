@@ -4,7 +4,7 @@ include '../db_connection.php';
 
 // Get the student's full name from the URL
 $studentName = isset($_GET['fullname']) ? urldecode($_GET['fullname']) : 'N/A';
-
+$lrn = isset($_GET['lrn']) ? urldecode($_GET['lrn']) : 'N/A';
 
 // Fetch teachers
 $teachers_result = mysqli_query($conn, "SELECT user_id, CONCAT(first_name, ' ', last_name) AS full_name FROM users WHERE acc_type = 'teacher'");
@@ -59,7 +59,7 @@ $schedule = $sched_stmt->get_result();
   <?php include 'header.php'; ?>
 </head>
 <body>
-<div class="d-flex flex-row bg-light">
+<div class="d-flex flex-row bg-white">
   <?php include 'navigation.php'; ?>
   <div class="content flex-grow-1">
     <?php include 'nav_top.php'; ?>
@@ -70,7 +70,7 @@ $schedule = $sched_stmt->get_result();
 
             <div class="row mt-4 align-items-center mb-4">
               <div class="col-md-4 mb-2">
-                <h4 class="mb-0">Certificate of Registration</h4>
+                <h4 class="mb-0 d-print-none">Certificate of Registration</h4>
               </div>
               <div class="col-md-8 d-flex flex-wrap gap-2 justify-content-md-end d-print-none">
                 <button class="btn btn-sm border text-muted rounded-4" onclick="sendEmail()">
@@ -81,6 +81,17 @@ $schedule = $sched_stmt->get_result();
                 </button>
                 </div>
             </div>
+            <div class="d-none d-print-flex justify-content-center">
+                <div class="d-flex align-items-center mb-4">
+                  <img src="../static/uploads/logo.png" alt="Logo" style="height: 70px; width: auto;" class="me-3">
+                  <div>
+                    <h5 class="mb-0 fw-bold text-center">The Cardinal Academy, Inc.</h5>
+                    <small class="d-block text-center">Sullera Street in Pandayan, Meycauayan, Bulacan </small>
+                    <small class="d-block text-center">Phone: (0912) 345-6789 | Email: info@cardinalacademy.edu.ph</small>
+                  </div>
+                </div>
+              </div>
+
 
             <!-- Modal -->
             <div class="modal fade" id="addSchedule" tabindex="-1" aria-labelledby="addScheduleLabel" aria-hidden="true">
@@ -156,14 +167,16 @@ $schedule = $sched_stmt->get_result();
             </script>
 
             <hr>
-            <div class="row">
-              <div class="col-md-4 mb-2"><strong>Student Name:</strong> <?= htmlspecialchars($studentName) ?></div>
-              <div class="col-md-4 mb-2"><strong>Adviser:</strong> <?= htmlspecialchars($section['adviser'] ?? 'N/A') ?></div>
-              <div class="col-md-4 mb-2"><strong>Section Name:</strong> <?= htmlspecialchars($section['section_name']) ?></div>
-              <div class="col-md-4 mb-2"><strong>Grade Level:</strong> <?= htmlspecialchars($section['grade_level']) ?></div>
-              <div class="col-md-4 mb-2"><strong>School Year:</strong> <?= htmlspecialchars($section['school_year']) ?></div>
-              <div class="col-md-4 mb-2"><strong>Room:</strong> <?= htmlspecialchars($section['room'] ?: '—') ?></div>
-            </div>
+           <div class="row" style="font-size: 12px;">
+            <div class="col-md-4"><strong>Student Name:</strong> <?= htmlspecialchars($studentName) ?></div>
+            <div class="col-md-4"><strong>LRN:</strong> <?= htmlspecialchars($lrn) ?></div>
+            <div class="col-md-4"><strong>Adviser:</strong> <?= htmlspecialchars($section['adviser'] ?? 'N/A') ?></div>
+            <div class="col-md-4"><strong>Section Name:</strong> <?= htmlspecialchars($section['section_name']) ?></div>
+            <div class="col-md-4"><strong>Grade Level:</strong> <?= htmlspecialchars($section['grade_level']) ?></div>
+            <div class="col-md-4"><strong>School Year:</strong> <?= htmlspecialchars($section['school_year']) ?></div>
+            <div class="col-md-4"><strong>Room:</strong> <?= htmlspecialchars($section['room'] ?: '—') ?></div>
+          </div>
+
             <hr>
 
             <div class="table-responsive">
@@ -178,7 +191,7 @@ $schedule = $sched_stmt->get_result();
                     <th>Room</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody style="font-size: 12px">
                   <?php if ($schedule->num_rows): ?>
                     <?php $i = 1; while ($row = $schedule->fetch_assoc()): ?>
                       <tr class="text-muted">
@@ -200,6 +213,53 @@ $schedule = $sched_stmt->get_result();
 
 
             </div>
+            <div class="row">
+              <div class="col-12 col-md-4 mb-3" style="font-size: 12px;">
+                <div style="background-color: #b72029;" class="p-2 mb-3">
+                  <h6 class="mb-1 fw-bolder text-light text-center">School Expense</h6>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                  <span><strong>Payment Plan</strong></span>
+                  <span>Full Payment</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <span><strong>Tuition Fee</strong></span>
+                  <span>₱15,000.00</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <span><strong>Registration Fee</strong></span>
+                  <span>₱1,000.00</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <span><strong>Miscellaneous</strong></span>
+                  <span>₱3,000.00</span>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <span><strong>Discount</strong></span>
+                  <span>-₱2,000.00</span>
+                </div>
+              </div>
+
+            <div class="col-12 col-md-8 d-flex justify-content-end" style="font-size: 12px;">
+              <div class="d-flex align-items-center flex-column" style="font-size: 12px; width: 50%">
+                <p class="mb-0 mb-3 mt-3"><strong>Approved by:</strong></p>
+                <h6 class="mb-0 fw-bolder text-uppercase">MR. CJ A. Escalora</h6>
+                <p class="mb-0">______________________________________</p>
+                <p class="mb-0 fw-bolder">Head Registrar</p>
+              </div>
+
+
+            </div>
+
+            </div>
+
+            <div class="d-flex justify-content-center" style="background-color: #b72029;" >
+              <div class="p-2 text-center text-light" >
+                <p class="mb-0">Keep this certificate. you will be required to present this on your class. thank you.</p>
+              </div>
+            </div>
+
 
           </div>
         </div>
