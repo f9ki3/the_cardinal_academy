@@ -1,34 +1,108 @@
 <?php
-include '../db_connection.php';
+include 'header.php';
+include 'user_info.php';
 
-$user_id = $_SESSION['user_id'];
-
-$sql = "SELECT first_name, last_name, profile FROM users WHERE user_id = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
-
-$user = $result->fetch_assoc();
-
-$full_name = htmlspecialchars($user['first_name'] . ', ' . $user['last_name']);
-$profile_image = !empty($user['profile']) ? '../static/uploads/' . htmlspecialchars($user['profile']) : '../static/uploads/default_profile.jpg';
+$user_info = getUserInfo();
+$full_name = isset($user_info['full_name']) ? $user_info['full_name'] : 'Guest';
+$profile_image = isset($user_info['profile_image']) ? $user_info['profile_image'] : 'default.png';
 ?>
 
-<!-- HTML starts here -->
-<div id="nav_side" class="sidebar p-3 border-end sticky-top d-none d-md-block" style="min-height: 100vh; width: 250px;">
+<div id="nav_side" class="d-print-none sidebar p-3 border-end sticky-top d-none d-md-block" style="min-height: 100vh; width: 250px; overflow: hidden;">
     <div class="profile-pic mb-3 text-center">
-        <img src="<?= $profile_image ?>" alt="Profile Picture" class="rounded-circle img-fluid" style="width: 80px; height: 80px; object-fit: cover;">
+        <img src="<?= htmlspecialchars($profile_image) ?>" alt="Profile" class="rounded-circle img-fluid" style="width: 80px; height: 80px; object-fit: cover;">
     </div>
-    <h5 class="text-center fw-bolder text-light mb-3"><?= $full_name ?></h5>
-    <hr class="text-light">
-    <ul class="nav flex-column">
-        <li class="nav-item">
-            <a class="nav-link text-light" href="dashboard.php"><i class="bi bi-bar-chart me-2"></i>Dashboard</a>
-        </li>
+    <h5 class="text-center fw-bolder text-dark mb-3"><?= htmlspecialchars($full_name) ?></h5>
+    <hr class="text-dark">
 
-        <li class="nav-item">
-            <a class="nav-link text-light" href="attendance_list.php"><i class="bi bi-book me-2"></i>Attendance</a>
-        </li>
-    </ul>
+    <!-- Scrollable navigation -->
+    <div style="overflow-y: auto; max-height: calc(100vh - 200px); padding-right: 5px;">
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="dashboard.php">
+                    <i class="bi bi-speedometer2 me-2"></i>Dashboard
+                </a>
+            </li>
+            <li class="nav-item border-white">
+                <a href="attendance_list.php" class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
+                    <i class="bi bi-calendar-range me-2"></i>Attendance
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a id="maintenanceDropdown" class="dropdown-btn nav-link text-dark d-flex justify-content-between align-items-center py-2 fs-6" href="javascript:void(0);">
+                    <span><i class="bi bi-tools me-2"></i>Maintenance</span>
+                    <span id="arrow-icon">▼</span>
+                </a>
+                <div id="maintenanceMenu" class="dropdown-container shadow border p-3 bg-light rounded rounded-4" style="display: none;">
+                    <h6 class="fw-bolder">Maintenance</h6>
+                    <hr class="m-0 py-1">
+                    <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="students.php?nav_drop=true">
+                        <i class="bi bi-people-fill me-2"></i>Students Account
+                    </a>
+                    <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
+                        <i class="bi bi-house-heart me-2"></i>Parent Account
+                    </a>
+                    <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="teacher.php?nav_drop=true">
+                        <i class="bi bi-person-video2 me-2"></i>Teachers Account
+                    </a>
+                    <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="tuition.php?nav_drop=true">
+                        <i class="bi bi-currency-dollar me-2"></i>Manage Tuition
+                    </a>
+                    <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="sectioning.php?nav_drop=true">
+                        <i class="bi bi-diagram-3 me-2"></i>Manage Sections
+                    </a>
+                    <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="subject_unit.php?nav_drop=true">
+                        <i class="bi bi-journal-bookmark me-2"></i>Subjects and Units
+                    </a>
+                </div>
+            </li>
+        </ul>
+    </div>
 </div>
+
+<!-- Maintenance dropdown script -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const dropdownBtn = document.getElementById("maintenanceDropdown");
+        const dropdownMenu = document.getElementById("maintenanceMenu");
+        const arrowIcon = document.getElementById("arrow-icon");
+
+        let isOpen = false;
+
+        function toggleDropdown(forceOpen = null) {
+            if (forceOpen !== null) {
+                isOpen = forceOpen;
+            } else {
+                isOpen = !isOpen;
+            }
+
+            dropdownMenu.style.display = isOpen ? "block" : "none";
+            arrowIcon.textContent = isOpen ? "▲" : "▼";
+        }
+
+        dropdownBtn.addEventListener("click", () => toggleDropdown());
+
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.get("nav_drop") === "true") {
+            toggleDropdown(true);
+        }
+    });
+</script>
+
+<!-- Optional CSS -->
+<style>
+    .dropdown-container {
+        display: none;
+        flex-direction: column;
+        padding-left: 10px;
+    }
+
+    .dropdown-container a {
+        font-size: 14px;
+        padding: 5px 0;
+    }
+
+    .dropdown-btn.active + .dropdown-container {
+        display: flex;
+    }
+</style>
