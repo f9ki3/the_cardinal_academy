@@ -1,40 +1,4 @@
-<?php
-$breadcrumbs = $breadcrumbs ?? []; // ✅ Prevent warning
-?>
 
-<style>
-  .sub-navbar {
-    background-color: #da3030;
-    padding-top: 2px;
-    padding-bottom: 2px;
-    min-height: 20px;
-  }
-
-  /* Remove Bootstrap's default slash separator */
-  .breadcrumb-item + .breadcrumb-item::before {
-    content: none !important;
-  }
-
-  /* Breadcrumb links: keep color, underline only on hover */
-.breadcrumb a {
-  font-weight: bold;           /* Bold */
-  font-family: 'Segoe UI', sans-serif; /* Change font style */
-  text-decoration: none;
-  color: #f8f9fa !important;
-  font-size: 0.875rem;
-  line-height: 1.2;
-  padding-top: 4px;
-  padding-bottom: 4px;
-}
-
-.breadcrumb a:hover {
-  text-decoration: underline;
-}
-  /* Optional: Force Contact breadcrumb always white */
-  .breadcrumb a.breadcrumb-contact {
-    color: white !important;
-  }
-</style>
 <?php
 $breadcrumbs = $breadcrumbs ?? []; // ✅ Prevent warning
 ?>
@@ -65,9 +29,7 @@ $breadcrumbs = $breadcrumbs ?? []; // ✅ Prevent warning
     margin-right: 6px; /* space after link */
   }
 
-  .breadcrumb a:hover {
-    text-decoration: underline;
-  }
+ 
 
   /* Breadcrumb icon styling */
   .breadcrumb .bi-chevron-left {
@@ -81,30 +43,11 @@ $breadcrumbs = $breadcrumbs ?? []; // ✅ Prevent warning
   .breadcrumb-item.active {
     font-weight: bold;
     font-family: 'Segoe UI', sans-serif;
-    color: #fff;
-  }
-
-</style>
-
-<?php
-$breadcrumbs = $breadcrumbs ?? []; // ✅ Prevent warning
-?>
-
-<style>
-  .sub-navbar {
-    background-color: #da3030;
-    padding-top: 2px;
-    padding-bottom: 2px;
-    min-height: 20px;
-  }
-
-  /* Remove Bootstrap's default slash separator */
-  .breadcrumb-item + .breadcrumb-item::before {
-    content: none !important;
+  
   }
 
   /* Shared breadcrumb style */
-  .breadcrumb a,
+  /* .breadcrumb a, */
   .breadcrumb-item.active {
     font-weight: bold;
     font-family: 'Segoe UI', sans-serif;
@@ -121,7 +64,7 @@ $breadcrumbs = $breadcrumbs ?? []; // ✅ Prevent warning
   /* Icon style */
   .breadcrumb .bi-chevron-double-left {
     font-weight: bold;
-    font-size: 1rem;
+    font-size: 0.7rem;
     margin-right:-4px;
     color: #fff;
   }
