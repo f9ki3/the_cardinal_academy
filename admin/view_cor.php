@@ -41,7 +41,7 @@ $stmt->execute();
 $section = $stmt->get_result()->fetch_assoc();
 
 if (!$section) {
-    echo '<div class="alert alert-warning">Section not found.</div>';
+    header("Location: sections_not_found.php");
     exit;
 }
 // Get the student's full name from the URL
@@ -53,6 +53,13 @@ $sched_stmt = $conn->prepare("SELECT * FROM class_schedule WHERE section_id = ? 
 $sched_stmt->bind_param('i', $sectionId);
 $sched_stmt->execute();
 $schedule = $sched_stmt->get_result();
+
+if ($schedule->num_rows === 0) {
+    // Redirect to a custom "no schedule" page or back to sectioning
+    header("Location: sections_not_found.php");
+    exit;
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -93,6 +100,8 @@ $schedule = $sched_stmt->get_result();
                 </button>
                 </div>
             </div>
+
+
             <div class="d-none d-print-flex justify-content-center">
                 <div class="d-flex align-items-center mb-4">
                   <img src="../static/uploads/logo.png" alt="Logo" style="height: 70px; width: auto;" class="me-3">
@@ -103,7 +112,11 @@ $schedule = $sched_stmt->get_result();
                   </div>
                 </div>
               </div>
+              
 
+              <div class="d-none d-print-flex justify-content-center">
+               <h3>Certificate of Registration</h3>
+              </div>
 
             <!-- Modal -->
             <div class="modal fade" id="addSchedule" tabindex="-1" aria-labelledby="addScheduleLabel" aria-hidden="true">
@@ -187,6 +200,10 @@ $schedule = $sched_stmt->get_result();
             <div class="col-md-4"><strong>Grade Level:</strong> <?= htmlspecialchars($section['grade_level']) ?></div>
             <div class="col-md-4"><strong>School Year:</strong> <?= htmlspecialchars($section['school_year']) ?></div>
             <div class="col-md-4"><strong>Room:</strong> <?= htmlspecialchars($section['room'] ?: '—') ?></div>
+            <?php if ($section['strand'] !== 'N/A'): ?>
+                <div class="col-md-4"><strong>Strand:</strong> <?= htmlspecialchars($section['strand']) ?></div>
+            <?php endif; ?>
+
           </div>
 
             <hr>

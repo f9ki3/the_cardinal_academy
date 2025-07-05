@@ -96,20 +96,70 @@ function isSelected($value, $selected) {
                   </select>
                 </div>
 
-
-
                 <div class="mb-3">
                   <label for="grade_level" class="form-label">Grade Level</label>
                   <select name="grade_level" id="grade_level" class="form-select" required>
                     <option value="">Select grade level</option>
                     <?php
-                    $grades = ["Nursery", "Kinder Garten", "Grade 1", "Grade 2", "Grade 3", "Grade 4", "Grade 5", "Grade 6", "Grade 7", "Grade 8", "Grade 9", "Grade 10", "Grade 11", "Grade 12"];
-                    foreach ($grades as $grade) {
-                        echo "<option " . isSelected($grade, $selected_grade) . ">$grade</option>";
-                    }
+                      $grades = ["Nursery", "Kinder Garten", "Grade 1", "Grade 2", "Grade 3", "Grade 4", "Grade 5", "Grade 6", "Grade 7", "Grade 8", "Grade 9", "Grade 10", "Grade 11", "Grade 12"];
+                      foreach ($grades as $grade) {
+                          echo "<option value=\"$grade\" " . isSelected($grade, $selected_grade) . ">$grade</option>";
+                      }
                     ?>
                   </select>
                 </div>
+
+                <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                  const strandSelect = document.getElementById('strand');
+                  const gradeLevelSelect = document.getElementById('grade_level');
+
+                  function filterGradeOptions() {
+                    const selectedStrand = strandSelect.value;
+                    const options = gradeLevelSelect.querySelectorAll('option');
+
+                    if (selectedStrand === 'N/A') {
+                      // Show all options except Grade 11 and Grade 12
+                      options.forEach(option => {
+                        if (option.value === 'Grade 11' || option.value === 'Grade 12') {
+                          option.style.display = 'none';
+                          // If currently selected option is hidden, reset select
+                          if (gradeLevelSelect.value === option.value) {
+                            gradeLevelSelect.value = '';
+                          }
+                        } else {
+                          option.style.display = '';
+                        }
+                      });
+                    } else {
+                      // Show only Grade 11 and Grade 12, hide others (except the empty "Select grade level")
+                      options.forEach(option => {
+                        if (option.value === '' || option.value === 'Grade 11' || option.value === 'Grade 12') {
+                          option.style.display = '';
+                        } else {
+                          option.style.display = 'none';
+                          // If currently selected option is hidden, reset select
+                          if (gradeLevelSelect.value === option.value) {
+                            gradeLevelSelect.value = '';
+                          }
+                        }
+                      });
+
+                      // If no grade selected or grade selected is hidden, auto-select Grade 11
+                      if (gradeLevelSelect.value !== 'Grade 11' && gradeLevelSelect.value !== 'Grade 12') {
+                        gradeLevelSelect.value = 'Grade 11';
+                      }
+                    }
+                  }
+
+                  // Run on page load
+                  filterGradeOptions();
+
+                  // Run when strand changes
+                  strandSelect.addEventListener('change', filterGradeOptions);
+                });
+                </script>
+
 
                 <div class="mb-3">
                   <label for="teacher_id" class="form-label">Advisory Class</label>

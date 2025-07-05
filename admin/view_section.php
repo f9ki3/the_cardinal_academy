@@ -62,7 +62,7 @@ if (!$section) {
   <?php include 'header.php'; ?>
 </head>
 <body>
-<div class="d-flex flex-row bg-light">
+<div class="d-flex flex-row ">
   <?php include 'navigation.php'; ?>
 
   <div class="content flex-grow-1">
@@ -78,7 +78,7 @@ if (!$section) {
         <div class="row align-items-center mb-4">
             
             <div class="col-12 col-md-4 mb-2 mb-md-0">
-                <h4 class="mb-0">Class Masterlist</h4>
+                <h4 class="mb-0 d-print-none">Class Masterlist</h4>
             </div>
 
             <div class="col-12 col-md-8 d-flex flex-wrap gap-2 justify-content-md-end d-print-none">
@@ -100,6 +100,22 @@ if (!$section) {
                 </button>
 
             </div>
+
+            <div class="d-none d-print-flex justify-content-center">
+                <div class="d-flex align-items-center mb-4">
+                  <img src="../static/uploads/logo.png" alt="Logo" style="height: 70px; width: auto;" class="me-3">
+                  <div>
+                    <h5 class="mb-0 fw-bold text-center">The Cardinal Academy, Inc.</h5>
+                    <small class="d-block text-center">Sullera Street in Pandayan, Meycauayan, Bulacan </small>
+                    <small class="d-block text-center">Phone: (0912) 345-6789 | Email: info@cardinalacademy.edu.ph</small>
+                  </div>
+                </div>
+              </div>
+
+
+              <div class="d-none d-print-flex justify-content-center">
+               <h3>Class Masterlist</h3>
+              </div>
 
             </div>
             <!-- Modal -->
@@ -190,121 +206,114 @@ if (!$section) {
                     </script>
 
         <hr>
-        <div class="row">
-            <!-- Row 1 -->
-            <div class="col-md-4 mb-2"><strong>Adviser:</strong> <?= htmlspecialchars($section['adviser'] ?? 'N/A') ?></div>
-            <div class="col-md-4 mb-2"><strong>Section Name:</strong> <?= htmlspecialchars($section['section_name']) ?></div>
-            <div class="col-md-4 mb-2"><strong>Grade Level:</strong> <?= htmlspecialchars($section['grade_level']) ?></div>
+        <div style="font-size:12px;">
+  <div class="row">
+    <!-- Row 1 -->
+    <div class="col-md-4 mb-2"><strong>Adviser:</strong> <?= htmlspecialchars($section['adviser'] ?? 'N/A') ?></div>
+    <div class="col-md-4 mb-2"><strong>Section Name:</strong> <?= htmlspecialchars($section['section_name']) ?></div>
+    <div class="col-md-4 mb-2"><strong>Grade Level:</strong> <?= htmlspecialchars($section['grade_level']) ?></div>
+     <?php if ($section['strand'] !== 'N/A'): ?>
+        <div class="col-md-4"><strong>Strand:</strong> <?= htmlspecialchars($section['strand']) ?></div>
+    <?php endif; ?>
 
-            <!-- Row 2 -->
-            <div class="col-md-4 mb-2"><strong>School Year:</strong> <?= htmlspecialchars($section['school_year']) ?></div>
-            <div class="col-md-4 mb-2"><strong>Room:</strong> <?= htmlspecialchars($section['room'] ?: '—') ?></div>
-            <div class="col-md-4 mb-2"><strong>Capacity:</strong> <?= htmlspecialchars($section['capacity']) ?></div>
-            </div>
-        <hr>
-        </div>
+    <!-- Row 2 -->
+    <div class="col-md-4 mb-2"><strong>School Year:</strong> <?= htmlspecialchars($section['school_year']) ?></div>
+    <div class="col-md-2 mb-2"><strong>Room:</strong> <?= htmlspecialchars($section['room'] ?: '—') ?></div>
+    <div class="col-md-2 mb-2"><strong>Capacity:</strong> <?= htmlspecialchars($section['capacity']) ?></div>
+  </div>
+  <hr>
+</div>
 
+<!-- Student Lists -->
+<div class="row text-muted" style="font-size:12px;">
+  <!-- Male Students -->
+  <div class="col-md-6 mb-4">
+    <h5 class="mb-3">Male Students</h5>
+    <table class="table table-sm table-striped align-middle">
+      <thead class="text-center">
+        <tr class="text-muted">
+          <th style="width: 60px;">#</th>
+          <th>Name</th>
+          <th class="d-print-none">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php
+        $counter = 1;
+        if ($male_result->num_rows > 0):
+          while ($row = $male_result->fetch_assoc()):
+        ?>
+          <tr class="text-muted">
+            <td class="text-center"><?= $counter++ ?></td>
+            <td><?= htmlspecialchars($row['firstname'] . ' ' . $row['lastname']) ?></td>
+            <td class="text-center">
+              <div class="d-flex justify-content-center">
+                <form method="POST" action="remove_student_from_list.php" class="d-inline">
+                  <input type="hidden" name="section_id" value="<?= $sectionId ?>">
+                  <input type="hidden" name="firstname" value="<?= htmlspecialchars($row['firstname']) ?>">
+                  <input type="hidden" name="lastname" value="<?= htmlspecialchars($row['lastname']) ?>">
+                  <input type="hidden" name="gender" value="Male">
+                  <button type="submit" class="btn d-print-none btn-sm rounded border rounded-4">Remove</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        <?php
+          endwhile;
+        else:
+        ?>
+          <tr class="text-muted">
+            <td colspan="3" class="text-center fst-italic">No male students found.</td>
+          </tr>
+        <?php endif; ?>
+      </tbody>
+    </table>
+  </div>
 
-        <!-- Student Lists -->
-            <div class="row text-muted">
-                    <!-- Male Students -->
-                    <div class="col-md-6 mb-4">
-                        <h5 class="mb-3">Male Students</h5>
-                        <table class="table table-sm table-striped align-middle">
-                            <thead class="text-center">
-                                <tr class="text-muted">
-                                    <th style="width: 60px;">#</th>
-                                    <th>Name</th>
-                                    <th class="d-print-none">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                $counter = 1;
-                                if ($male_result->num_rows > 0):
-                                    while ($row = $male_result->fetch_assoc()):
-                                ?>
-                                        <tr class="text-muted">
-                                            <td class="text-center"><?= $counter++ ?></td>
-                                            <td><?= htmlspecialchars($row['firstname'] . ' ' . $row['lastname']) ?></td>
-                                            <td class="text-center">
-                                                <div class="d-flex justify-content-center">
-                                                    <form method="POST" action="remove_student_from_list.php" class="d-inline">
-                                                        <input type="hidden" name="section_id" value="<?= $sectionId ?>">
-                                                        <input type="hidden" name="firstname" value="<?= htmlspecialchars($row['firstname']) ?>">
-                                                        <input type="hidden" name="lastname" value="<?= htmlspecialchars($row['lastname']) ?>">
-                                                        <input type="hidden" name="gender" value="Male">
-                                                        <button type="submit" class="btn d-print-none btn-sm rounded border rounded-4">Remove</button>
-                                                    </form>
-                                                </div>
-                                            </td>
-
-                                        </tr>
-                                <?php
-                                    endwhile;
-                                else:
-                                ?>
-                                    <tr class="text-muted">
-                                        <td colspan="3" class="text-center fst-italic">No male students found.</td> <!-- colspan fixed -->
-                                    </tr>
-
-                                <?php endif; ?>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <!-- Female Students -->
-                    <div class="col-md-6 mb-4">
-                        <h5 class="mb-3">Female Students</h5>
-                        <table class="table table-sm table-striped align-middle">
-                            <thead class="text-center">
-                                <tr class="text-muted">
-                                    <th style="width: 60px;">#</th>
-                                    <th>Name</th>
-                                    <th class="d-print-none">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                $counter = 1;
-                                if ($female_result->num_rows > 0):
-                                    while ($row = $female_result->fetch_assoc()):
-                                ?>
-                                    <tr class="text-muted">
-                                        <td class="text-center"><?= $counter++ ?></td>
-                                        <td><?= htmlspecialchars($row['firstname'] . ' ' . $row['lastname']) ?></td>
-
-                                        <!-- centred Remove button -->
-                                        <td class="text-center">
-                                            <div class="d-flex justify-content-center">
-                                                <form method="POST"
-                                                    action="remove_student_from_list.php"
-                                                    class="d-inline">
-                                                    <input type="hidden" name="section_id" value="<?= $sectionId ?>">
-                                                    <input type="hidden" name="firstname"  value="<?= htmlspecialchars($row['firstname']) ?>">
-                                                    <input type="hidden" name="lastname"   value="<?= htmlspecialchars($row['lastname']) ?>">
-                                                    <input type="hidden" name="gender"     value="Female">  <!-- fixed -->
-                                                    <button type="submit"
-                                                            class="btn d-print-none btn-sm rounded border rounded-4">
-                                                        Remove
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                <?php
-                                    endwhile;
-                                else:
-                                ?>
-                                    <tr class="text-muted">
-                                        <td colspan="3" class="text-center fst-italic">No female students found.</td> <!-- colspan fixed -->
-                                    </tr>
-                                <?php endif; ?>
-                            </tbody>
-
-                        </table>
-                    </div>
-                </div>
+  <!-- Female Students -->
+  <div class="col-md-6 mb-4">
+    <h5 class="mb-3">Female Students</h5>
+    <table class="table table-sm table-striped align-middle">
+      <thead class="text-center">
+        <tr class="text-muted">
+          <th style="width: 60px;">#</th>
+          <th>Name</th>
+          <th class="d-print-none">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <?php
+        $counter = 1;
+        if ($female_result->num_rows > 0):
+          while ($row = $female_result->fetch_assoc()):
+        ?>
+          <tr class="text-muted">
+            <td class="text-center"><?= $counter++ ?></td>
+            <td><?= htmlspecialchars($row['firstname'] . ' ' . $row['lastname']) ?></td>
+            <td class="text-center">
+              <div class="d-flex justify-content-center">
+                <form method="POST" action="remove_student_from_list.php" class="d-inline">
+                  <input type="hidden" name="section_id" value="<?= $sectionId ?>">
+                  <input type="hidden" name="firstname" value="<?= htmlspecialchars($row['firstname']) ?>">
+                  <input type="hidden" name="lastname" value="<?= htmlspecialchars($row['lastname']) ?>">
+                  <input type="hidden" name="gender" value="Female">
+                  <button type="submit" class="btn d-print-none btn-sm rounded border rounded-4">Remove</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        <?php
+          endwhile;
+        else:
+        ?>
+          <tr class="text-muted">
+            <td colspan="3" class="text-center fst-italic">No female students found.</td>
+          </tr>
+        <?php endif; ?>
+      </tbody>
+    </table>
+  </div>
+</div>
 
   </div>
 </div>

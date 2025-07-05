@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Jun 25, 2025 at 05:41 AM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- Generation Time: Jul 04, 2025 at 08:55 PM
+-- Server version: 10.4.28-MariaDB
+-- PHP Version: 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -77,7 +77,7 @@ INSERT INTO `admission_form` (`id`, `lrn`, `firstname`, `middlename`, `lastname`
 (9, '334455667788', 'Ella', 'Rose', 'Garcia', 'Old Student', 'female', 'Grade 5', '', '2014-12-01', 'Catholic', 'Plaridel, Bulacan', 10, 'Banga I, Plaridel, Bulacan', 'Central Luzon', 'Bulacan', 'Plaridel', 'Banga I', 'Roberto Garcia', 'Salesman', '09178881238', 'Elena Garcia', 'Housewife', '09178883460', 'Roberto Garcia', 'Salesman', '09178881238', 'pending', 'Q123987', 'ella.garcia@email.com', 'N/A', '2025-06-16 00:20:00'),
 (10, '667788990011', 'Lucas', 'Andrei', 'Rivera', 'New Student', 'male', 'Grade 1', '', '2020-01-18', 'Christian', 'Angat, Bulacan', 5, 'Sta. Cruz, Angat, Bulacan', 'Central Luzon', 'Bulacan', 'Angat', 'Sta. Cruz', 'Arturo Rivera', 'Farmer', '09178881239', 'Divina Rivera', 'Housewife', '09178883461', 'Divina Rivera', 'Housewife', '09178883461', 'pending', 'Q990011', 'lucas.rivera@email.com', 'N/A', '2025-06-16 00:25:00'),
 (11, '445566778899', 'Chloe', 'Anne', 'Perez', 'Old Student', 'female', 'Grade 2', '', '2016-09-09', 'Catholic', 'Meycauayan, Bulacan', 8, 'Calvario, Meycauayan, Bulacan', 'Central Luzon', 'Bulacan', 'Meycauayan', 'Calvario', 'Jonathan Perez', 'Electrician', '09178881240', 'Melanie Perez', 'Housewife', '09178883462', 'Melanie Perez', 'Housewife', '09178883462', 'enrolled', 'Q112233', 'chloe.perez@email.com', 'N/A', '2025-06-25 01:38:37'),
-(12, '221133445599', 'Liam', 'David', 'Cruz', 'New Student', 'male', 'Grade 4', '', '2014-05-12', 'Catholic', 'Malolos, Bulacan', 10, 'San Vicente, Malolos, Bulacan', 'Central Luzon', 'Bulacan', 'Malolos', 'San Vicente', 'Carlos Cruz', 'Driver', '09178881241', 'Emma Cruz', 'Vendor', '09178883463', 'Carlos Cruz', 'Driver', '09178881241', 'pending', 'Q998877', 'liam.cruz@email.com', 'N/A', '2025-06-16 06:31:57'),
+(12, '221133445599', 'Liam', 'David', 'Cruz', 'New Student', 'male', 'Grade 4', '', '2014-05-12', 'Catholic', 'Malolos, Bulacan', 10, 'San Vicente, Malolos, Bulacan', 'Central Luzon', 'Bulacan', 'Malolos', 'San Vicente', 'Carlos Cruz', 'Driver', '09178881241', 'Emma Cruz', 'Vendor', '09178883463', 'Carlos Cruz', 'Driver', '09178881241', 'enrolled', 'Q998877', 'liam.cruz@email.com', 'N/A', '2025-07-03 18:54:21'),
 (13, '991122334455', 'Isabella', 'Faye', 'Navarro', 'Old Student', 'female', 'Grade 5', '', '2013-03-08', 'Catholic', 'San Rafael, Bulacan', 11, 'Poblacion, San Rafael, Bulacan', 'Central Luzon', 'Bulacan', 'San Rafael', 'Poblacion', 'Dennis Navarro', 'Salesman', '09178881242', 'Clarisse Navarro', 'Clerk', '09178883464', 'Clarisse Navarro', 'Clerk', '09178883464', 'enrolled', 'Q556677', 'isabella.navarro@email.com', 'N/A', '2025-06-25 01:37:50'),
 (14, '889977665544', 'Noah', 'Enzo', 'Domingo', 'New Student', 'male', 'Grade 3', '', '2016-11-20', 'INC', 'Balagtas, Bulacan', 8, 'Borol 2nd, Balagtas, Bulacan', 'Central Luzon', 'Bulacan', 'Balagtas', 'Borol 2nd', 'Mario Domingo', 'Technician', '09178881243', 'Ellen Domingo', 'N/A', '09178883465', 'Mario Domingo', 'Technician', '09178881243', 'approved', 'Q443322', 'noah.domingo@email.com', 'N/A', '2025-06-22 04:33:33'),
 (15, '778899112233', 'Ava', 'Joy', 'Flores', 'Old Student', 'female', 'Grade 6', '', '2012-08-10', 'Catholic', 'Pulilan, Bulacan', 12, 'Longos, Pulilan, Bulacan', 'Central Luzon', 'Bulacan', 'Pulilan', 'Longos', 'Erwin Flores', 'Driver', '09178881244', 'Linda Flores', 'Teacher', '09178883466', 'Linda Flores', 'Teacher', '09178883466', 'enrolled', 'Q334455', 'ava.flores@email.com', 'N/A', '2025-06-22 03:43:53'),
@@ -106,10 +106,8 @@ CREATE TABLE `attendance` (
 --
 
 INSERT INTO `attendance` (`id`, `date`, `time_in`, `time_out`, `teacher_id`, `student_id`) VALUES
-(7, '2025-06-18', '18:08:01', '18:09:21', 2, 4),
 (8, '2025-06-18', '18:10:54', '18:11:15', 2, 12),
 (10, '2025-06-18', '18:15:40', '18:16:15', 2, 13),
-(11, '2025-06-22', '18:30:10', '18:31:27', 2, 4),
 (12, '2025-06-22', '18:30:21', '18:31:13', 2, 12),
 (13, '2025-06-22', '18:30:39', '18:30:58', 2, 13);
 
@@ -137,7 +135,17 @@ INSERT INTO `class_schedule` (`id`, `section_id`, `subject_code`, `description`,
 (3, 5, 'Core 9', '21st Century Literature from the Philippines and the World', '7:00 AM - 8:30 AM', 'Stephany Gandula', '301'),
 (4, 5, 'Spec 4', 'Displine and Ideas in the Social Science', '8:30 AM - 9:30 AM ', 'Mika Salamanca', '304'),
 (5, 5, 'Core 4', 'Earth and Life Science', '9:30 AM - 10:30 AM', 'Mac Gilbert Jabat', '304'),
-(6, 5, 'Applied 1', 'Research in Daily Life 1', '10:30 AM - 12:00 PM', 'Sarah Labati', '301');
+(6, 5, 'Applied 1', 'Research in Daily Life 1', '10:30 AM - 12:00 PM', 'Sarah Labati', '301'),
+(7, 10, 'Core 9', '21st Century Literature from the Philippines and the World', '8:00 AM - 9:00 AM', 'Stephany Gandula', '304'),
+(8, 10, 'Core 4', 'Earth and Life Science', '9:00 AM - 10:00 PM', 'Mac Gilbert Jabat', '304'),
+(9, 10, 'Applied 3', 'English for Academic and Professional Purposes', '10:00 AM - 11:00 AM', 'Stephany Gandula', '304'),
+(10, 10, 'Core 3', 'General Mathematics', '11:00 AM -12:00PM', 'Juan Dela Cruz', '301'),
+(11, 11, 'Spec 4', 'Displine and Ideas in the Social Science', '08:00 AM - 09:00 AM', 'Juan Dela Cruz', '304'),
+(12, 11, 'Core 9', '21st Century Literature from the Philippines and the World', '9:00 AM - 10:00 PM', 'Sarah Labati', '301'),
+(13, 13, 'Core 9', '21st Century Literature from the Philippines and the World', '08:00 AM - 09:00 AM', 'Stephany Gandula', '303'),
+(14, 13, 'Core 7', 'Contemporary Philippine Arts from the Filipino Region', '09:00 AM - 10:00AM', 'Juan Dela Cruz', '303'),
+(15, 13, 'Spec 2', 'Introduction to World Religion and Belief System', '10:00 AM - 11:00 AM', 'Stephany Gandula', '303'),
+(16, 13, 'Spec 5', 'Philippine Politics and Governance', '11:00 AM -12:00PM', 'Mac Gilbert Jabat', '303');
 
 -- --------------------------------------------------------
 
@@ -199,6 +207,7 @@ INSERT INTO `enroll_form` (`id`, `lrn`, `firstname`, `middlename`, `lastname`, `
 (7, '112233445566', 'Sophia', 'Mae', 'Santos', 'New Student', 'female', 'Grade 2', '', '2017-11-05', 'Christian', '0', 7, 'Tabang, Guiguinto, Bulacan', 'Central Luzon', 'Bulacan', 'Guiguinto', 'Tabang', 'Mario Santos', 'Mechanic', '09178881236', 'Julia Santos', 'Teacher', '09178883458', 'Mario Santos', 'Mechanic', '09178881236', 'approved', 'Q456789', 'sophia.santos@email.com', 'N/A', '2025-06-24 10:49:32', 'Quarterly', 2500, 24200.75, 15635.25, '', 0, 0),
 (8, '998877665544', 'Daniel', 'Lee', 'Tan', 'Old Student', 'male', 'Grade 6', '', '2013-06-25', 'Buddhist', '0', 11, 'Tikay, Malolos, Bulacan', 'Central Luzon', 'Bulacan', 'Malolos', 'Tikay', 'Edward Tan', 'Engineer', '09178881237', 'Maria Tan', 'Nurse', '09178883459', 'Maria Tan', 'Nurse', '09178883459', 'approved', 'Q678901', 'daniel.tan@email.com', 'N/A', '2025-06-22 11:49:53', 'Quarterly', 2500, 24752.75, 15635.25, '', 0, 0),
 (11, '445566778899', 'Chloe', 'Anne', 'Perez', 'Old Student', 'female', 'Grade 2', '', '2016-09-09', 'Catholic', '0', 8, 'Calvario, Meycauayan, Bulacan', 'Central Luzon', 'Bulacan', 'Meycauayan', 'Calvario', 'Jonathan Perez', 'Electrician', '09178881240', 'Melanie Perez', 'Housewife', '09178883462', 'Melanie Perez', 'Housewife', '09178883462', 'approved', 'Q112233', 'chloe.perez@email.com', 'N/A', '2025-06-25 09:38:37', 'Semestral', 2500, 24200.75, 15635.25, '', 0, 0),
+(12, '221133445599', 'Liam', 'David', 'Cruz', 'New Student', 'male', 'Grade 4', '', '2014-05-12', 'Catholic', '0', 10, 'San Vicente, Malolos, Bulacan', 'Central Luzon', 'Bulacan', 'Malolos', 'San Vicente', 'Carlos Cruz', 'Driver', '09178881241', 'Emma Cruz', 'Vendor', '09178883463', 'Carlos Cruz', 'Driver', '09178881241', 'approved', 'Q998877', 'liam.cruz@email.com', 'N/A', '2025-07-04 02:54:21', 'Semestral', 2500, 24752.75, 15635.25, '', 0, 0),
 (13, '991122334455', 'Isabella', 'Faye', 'Navarro', 'Old Student', 'female', 'Grade 5', '', '2013-03-08', 'Catholic', '0', 11, 'Poblacion, San Rafael, Bulacan', 'Central Luzon', 'Bulacan', 'San Rafael', 'Poblacion', 'Dennis Navarro', 'Salesman', '09178881242', 'Clarisse Navarro', 'Clerk', '09178883464', 'Clarisse Navarro', 'Clerk', '09178883464', 'approved', 'Q556677', 'isabella.navarro@email.com', 'N/A', '2025-06-25 09:37:50', 'Semestral', 2500, 24752.75, 15635.25, '', 0, 0),
 (15, '778899112233', 'Ava', 'Joy', 'Flores', 'Old Student', 'female', 'Grade 6', '', '2012-08-10', 'Catholic', '0', 12, 'Longos, Pulilan, Bulacan', 'Central Luzon', 'Bulacan', 'Pulilan', 'Longos', 'Erwin Flores', 'Driver', '09178881244', 'Linda Flores', 'Teacher', '09178883466', 'Linda Flores', 'Teacher', '09178883466', 'approved', 'Q334455', 'ava.flores@email.com', 'N/A', '2025-06-22 11:43:53', 'Semestral', 2500, 24752.75, 15635.25, '', 0, 0),
 (16, '998866554433', 'Ethan', 'Kyle', 'De Guzman', 'New Student', 'male', 'Grade 2', '', '2018-04-22', 'Christian', '0', 7, 'San Pedro, Hagonoy, Bulacan', 'Central Luzon', 'Bulacan', 'Hagonoy', 'San Pedro', 'George De Guzman', 'Fisherman', '09178881245', 'Rowena De Guzman', 'Vendor', '09178883467', 'Rowena De Guzman', 'Vendor', '09178883467', 'approved', 'Q223344', 'ethan.guzman@email.com', 'N/A', '2025-06-25 09:38:52', 'Semestral', 2500, 24200.75, 15635.25, '', 0, 0),
@@ -229,9 +238,35 @@ INSERT INTO `master_list` (`id`, `section_id`, `firstname`, `lastname`, `gender`
 (14, 7, 'Mia', 'Salazar', 'Female'),
 (16, 5, 'Ava', 'Flores', 'Female'),
 (17, 5, 'Daniel', 'Tan', 'Male'),
-(18, 5, 'Dave', 'Bergania', 'Male'),
 (20, 5, 'Mary', 'Espinosa', 'Female'),
-(21, 5, 'Sophia', 'Santos', 'Female');
+(21, 5, 'Sophia', 'Santos', 'Female'),
+(22, 5, 'Dave', 'Bergania', 'Male'),
+(23, 10, 'Ava', 'Flores', 'Female'),
+(24, 10, 'Chloe', 'Perez', 'Female'),
+(25, 10, 'Daniel', 'Tan', 'Male'),
+(26, 10, 'Dave', 'Bergania', 'Male'),
+(27, 10, 'Ethan', 'De Guzman', 'Male'),
+(28, 10, 'Isabella', 'Navarro', 'Female'),
+(29, 10, 'Juan', 'Dela Cruz', 'Male'),
+(30, 10, 'Mary', 'Espinosa', 'Female'),
+(32, 11, 'Ava', 'Flores', 'Female'),
+(33, 11, 'Chloe', 'Perez', 'Female'),
+(34, 11, 'Isabella', 'Navarro', 'Female'),
+(35, 11, 'Dave', 'Bergania', 'Male'),
+(36, 12, 'Chloe', 'Perez', 'Female'),
+(37, 12, 'Ethan', 'De Guzman', 'Male'),
+(38, 12, 'Mia', 'Salazar', 'Female'),
+(39, 12, 'Sophia', 'Santos', 'Female'),
+(40, 12, 'Daniel', 'Tan', 'Male'),
+(41, 13, 'Ava', 'Flores', 'Female'),
+(42, 13, 'Chloe', 'Perez', 'Female'),
+(43, 13, 'Daniel', 'Tan', 'Male'),
+(45, 13, 'Isabella', 'Navarro', 'Female'),
+(47, 13, 'Mary', 'Espinosa', 'Female'),
+(48, 13, 'Mia', 'Salazar', 'Female'),
+(51, 13, 'Sophia', 'Santos', 'Female'),
+(52, 13, 'Ethan', 'De Guzman', 'Male'),
+(53, 13, 'Liam', 'Cruz', 'Male');
 
 -- --------------------------------------------------------
 
@@ -274,8 +309,7 @@ CREATE TABLE `sections` (
 --
 
 INSERT INTO `sections` (`section_id`, `section_name`, `grade_level`, `teacher_id`, `room`, `strand`, `capacity`, `school_year`, `created_at`) VALUES
-(5, 'Ametyst', 'Grade 11', 2, '100', 'GAS (General Academic Strand)', 30, '2025-2026', '2025-06-24 10:19:46'),
-(7, 'Sapphire', 'Grade 12', 16, '102', 'GAS (General Academic Strand)', 50, '2025-2026', '2025-06-24 11:31:19');
+(13, 'Ametyst', 'Grade 11', 2, '303', 'GAS (General Academic Strand)', 25, '2025-2026', '2025-07-04 17:59:56');
 
 -- --------------------------------------------------------
 
@@ -395,21 +429,21 @@ INSERT INTO `users` (`user_id`, `acc_type`, `username`, `email`, `password`, `fi
 (1, 'admin', 'stephani.admin', 'stephani.candado@example.com', '$2y$10$KEek95Y7gfl.7WplR9kPI.jOp2mGx/daQXe4zjOITFv7DkgpHdJX.', 'Stephani', 'Candado', 'female', '1990-03-15', '09170000001', '101 Admin Ave, Cityville', '2025-06-13 16:58:26', '2025-06-16 11:08:44', 'dummy.png', NULL, 0, 'active', NULL, 0),
 (2, 'teacher', 'stephany.teacher', 'stephany.gandula@example.com', '$2y$10$KEek95Y7gfl.7WplR9kPI.jOp2mGx/daQXe4zjOITFv7DkgpHdJX.', 'Stephany', 'Gandula', 'female', '1988-06-22', '09170000002', '102 Teacher St, Cityville', '2025-06-13 16:58:26', '2025-06-24 15:46:42', 'user_2_1750571232.jpeg', NULL, 0, 'active', 'Earth and Life Science', 0),
 (3, 'parent', 'cj.parent', 'cj.escalora@example.com', '$2y$10$KEek95Y7gfl.7WplR9kPI.jOp2mGx/daQXe4zjOITFv7DkgpHdJX.', 'CJ', 'Escalora', 'male', '1982-11-05', '09170000003', '103 Parent Rd, Cityville', '2025-06-13 16:58:26', '2025-06-16 11:08:49', 'dummy.png', NULL, 0, 'active', NULL, 0),
-(4, 'student', 'dave.student', 'dave.bergania@example.com', '$2y$10$KEek95Y7gfl.7WplR9kPI.jOp2mGx/daQXe4zjOITFv7DkgpHdJX.', 'Dave', 'Bergania', 'male', '2008-09-12', '09170000004', '104 Student Blvd, Cityville', '2025-06-13 16:58:26', '2025-06-25 01:42:18', 'user_4_1750571065.jpeg', 1224955173, 0, 'active', NULL, 5),
-(9, 'student', 'juan_dela cruz.student', 'floterina@gmail.com', '$2y$10$OzMw33GKYHDce/7lG/JejejRtr0u4uuNd7TMc2dwWavhJLgwBEHoO', 'Juan', 'Dela Cruz', 'male', '2017-02-12', 'N/A', 'Loma de Gato, Marilao, Bulacan, Central Luzon', '2025-06-22 03:15:59', '2025-06-22 03:15:59', 'dummy.png', NULL, 2, 'active', NULL, 0),
-(10, 'student', 'mary_espinosa.student', 'mary@gmail.com', '$2y$10$sHr9GU2ss3aao42JdpYBAeC8f3.tHIDS4oI2hY6/4nuBF1ZlvDlPa', 'Mary', 'Espinosa', 'female', '2000-02-22', 'N/A', 'Bundukan, Bocaue, Bulacan, Central Luzon', '2025-06-22 03:19:52', '2025-06-25 01:42:36', 'dummy.png', NULL, 3, 'active', NULL, 5),
-(12, 'student', 'ava_flores.student', 'ava.flores@email.com', '$2y$10$Rk9RsPBzi7Tl5W0ipMR9Re/Ym8UzrmHTYhIX22ekpiEAvp3tuGb3i', 'Ava', 'Flores', 'female', '2012-08-10', 'N/A', 'Longos, Pulilan, Bulacan', '2025-06-22 03:43:53', '2025-06-25 01:42:43', 'dummy.png', 1224955174, 15, 'active', NULL, 5),
-(13, 'student', 'daniel_tan.student', 'daniel.tan@email.com', '$2y$10$Yt5ZH.lgNtQA57Ys92IM1uUP76aeHWlMmnC0OfvHrvxsgO90sca/q', 'Daniel', 'Tan', 'male', '2013-06-25', 'N/A', 'Tikay, Malolos, Bulacan', '2025-06-22 03:49:53', '2025-06-22 08:07:43', 'dummy.png', 1224955175, 8, 'active', NULL, 0),
-(16, 'teacher', 'juan.student', 'juan@gmail.com', '$2y$10$LFUQuDoRXM6N9CIqSDxJBekKb/1iMID/UPBAQlYpLK4GvP/0vLrnm', 'Juan', 'Dela Cruz', 'male', '2000-02-24', '091208129821', 'Marilao, Bulacan', '2025-06-22 06:13:32', '2025-06-24 15:46:51', '../static/uploads/user_68579f0cc7232.jpeg', NULL, 0, 'active', 'Contemporary Philippine Arts from the Filipino Region', 0),
-(17, 'student', 'sophia_santos.student', 'sophia.santos@email.com', '$2y$10$651WILFBo3236x48Z2lepejcfMdKf2s.9i/OiWW6qGd3yRBrxjtPS', 'Sophia', 'Santos', 'female', '2017-11-05', 'N/A', 'Tabang, Guiguinto, Bulacan', '2025-06-24 02:49:33', '2025-06-25 01:43:17', 'dummy.png', NULL, 7, 'active', NULL, 5),
+(10, 'student', 'mary_espinosa.student', 'mary@gmail.com', '$2y$10$sHr9GU2ss3aao42JdpYBAeC8f3.tHIDS4oI2hY6/4nuBF1ZlvDlPa', 'Mary', 'Espinosa', 'female', '2000-02-22', 'N/A', 'Bundukan, Bocaue, Bulacan, Central Luzon', '2025-06-22 03:19:52', '2025-07-04 18:00:36', 'dummy.png', NULL, 3, 'active', NULL, 13),
+(12, 'student', 'ava_flores.student', 'ava.flores@email.com', '$2y$10$Rk9RsPBzi7Tl5W0ipMR9Re/Ym8UzrmHTYhIX22ekpiEAvp3tuGb3i', 'Ava', 'Flores', 'female', '2012-08-10', 'N/A', 'Longos, Pulilan, Bulacan', '2025-06-22 03:43:53', '2025-07-04 18:00:04', 'dummy.png', 1224955174, 15, 'active', NULL, 13),
+(13, 'student', 'daniel_tan.student', 'daniel.tan@email.com', '$2y$10$Yt5ZH.lgNtQA57Ys92IM1uUP76aeHWlMmnC0OfvHrvxsgO90sca/q', 'Daniel', 'Tan', 'male', '2013-06-25', 'N/A', 'Tikay, Malolos, Bulacan', '2025-06-22 03:49:53', '2025-07-04 18:00:14', 'dummy.png', 1224955175, 8, 'active', NULL, 13),
+(16, 'teacher', 'juan.student', 'juan@gmail.com', '$2y$10$LFUQuDoRXM6N9CIqSDxJBekKb/1iMID/UPBAQlYpLK4GvP/0vLrnm', 'Juan', 'Dela Cruz', 'male', '2000-02-24', '091208129821', 'Marilao, Bulacan', '2025-06-22 06:13:32', '2025-07-03 20:05:59', '../static/uploads/user_68579f0cc7232.jpeg', NULL, 0, 'active', 'Contemporary Philippine Arts from the Filipino Region', 11),
+(17, 'student', 'sophia_santos.student', 'sophia.santos@email.com', '$2y$10$651WILFBo3236x48Z2lepejcfMdKf2s.9i/OiWW6qGd3yRBrxjtPS', 'Sophia', 'Santos', 'female', '2017-11-05', 'N/A', 'Tabang, Guiguinto, Bulacan', '2025-06-24 02:49:33', '2025-07-04 18:00:45', 'dummy.png', NULL, 7, 'active', NULL, 13),
 (20, 'teacher', 'sarah.teacher', 'sarah@gmail.com', '$2y$10$CZ1LMCUyzSy1JjRf6iIms.q6KO8B7m/O8T9Fb7gizzTG/O6MMAr/2', 'Sarah', 'Labati', 'male', '2000-02-24', '09120912091', 'Marilao, Bulacan', '2025-06-24 13:42:53', '2025-06-24 17:42:53', 'dummy.jpg', NULL, 0, 'active', 'General Mathematics', 0),
-(21, 'student', 'isabella_navarro.student', 'isabella.navarro@email.com', '$2y$10$yZ/m1QREMDYg2ZUW/PmHhe4AbtCMNe2.P.bBsdSZVJOzmbZK/KI2i', 'Isabella', 'Navarro', 'female', '2013-03-08', 'N/A', 'Poblacion, San Rafael, Bulacan', '2025-06-25 01:37:50', '2025-06-25 01:43:26', 'dummy.png', NULL, 13, 'active', NULL, 7),
-(22, 'student', 'mia_salazar.student', 'mia.salazar@email.com', '$2y$10$vYoAj4ApyumEBqYMxD0OhOijyRIrK6qgVf9xfmt6YomYL6X4nC3Z6', 'Mia', 'Salazar', 'female', '2019-02-17', 'N/A', 'Pag-asa, Obando, Bulacan', '2025-06-25 01:38:01', '2025-06-25 01:43:28', 'dummy.png', NULL, 17, 'active', NULL, 7),
-(23, 'student', 'chloe_perez.student', 'chloe.perez@email.com', '$2y$10$YlqqMHKXHEn4R5C21NjHa.SjRIW4WxYLgGIVhQj8mmBskyNnQ75M2', 'Chloe', 'Perez', 'female', '2016-09-09', 'N/A', 'Calvario, Meycauayan, Bulacan', '2025-06-25 01:38:37', '2025-06-25 01:43:30', 'dummy.png', NULL, 11, 'active', NULL, 7),
-(24, 'student', 'ethan_de guzman.student', 'ethan.guzman@email.com', '$2y$10$DB0gVJBYB0bI/.4A25sqxO3yCu9CxziD8NZlansOmmuh8n3KNmauy', 'Ethan', 'De Guzman', 'male', '2018-04-22', 'N/A', 'San Pedro, Hagonoy, Bulacan', '2025-06-25 01:38:52', '2025-06-25 01:43:34', 'dummy.png', NULL, 16, 'active', NULL, 7),
+(21, 'student', 'isabella_navarro.student', 'isabella.navarro@email.com', '$2y$10$yZ/m1QREMDYg2ZUW/PmHhe4AbtCMNe2.P.bBsdSZVJOzmbZK/KI2i', 'Isabella', 'Navarro', 'female', '2013-03-08', 'N/A', 'Poblacion, San Rafael, Bulacan', '2025-06-25 01:37:50', '2025-07-04 18:00:24', 'dummy.png', NULL, 13, 'active', NULL, 13),
+(22, 'student', 'mia_salazar.student', 'mia.salazar@email.com', '$2y$10$vYoAj4ApyumEBqYMxD0OhOijyRIrK6qgVf9xfmt6YomYL6X4nC3Z6', 'Mia', 'Salazar', 'female', '2019-02-17', 'N/A', 'Pag-asa, Obando, Bulacan', '2025-06-25 01:38:01', '2025-07-04 18:00:41', 'dummy.png', NULL, 17, 'active', NULL, 13),
+(23, 'student', 'chloe_perez.student', 'floterina@gmail.com', '$2y$10$YlqqMHKXHEn4R5C21NjHa.SjRIW4WxYLgGIVhQj8mmBskyNnQ75M2', 'Chloe', 'Perez', 'female', '2016-09-09', 'N/A', 'Calvario, Meycauayan, Bulacan', '2025-06-25 01:38:37', '2025-07-04 18:00:08', 'dummy.png', NULL, 11, 'active', NULL, 13),
+(24, 'student', 'ethan_de guzman.student', 'ethan.guzman@email.com', '$2y$10$DB0gVJBYB0bI/.4A25sqxO3yCu9CxziD8NZlansOmmuh8n3KNmauy', 'Ethan', 'De Guzman', 'male', '2018-04-22', 'N/A', 'San Pedro, Hagonoy, Bulacan', '2025-06-25 01:38:52', '2025-07-04 18:15:53', 'dummy.png', NULL, 16, 'active', NULL, 13),
 (25, 'teacher', 'mac_gilbert.teacher', 'gilbert@gmail.com', '$2y$10$h2s2xF3zTchST47JuAbuVu4A4jGRA1v90k4q9xfRMbkPttXNr8Es2', 'Mac Gilbert', 'Jabat', 'male', '2000-04-24', '09120912091', 'Marilao, Bulacan', '2025-06-25 02:30:51', '2025-06-25 02:30:51', 'dummy.jpg', NULL, 0, 'active', 'Core 4 - Earth and Life Science', NULL),
 (26, 'teacher', 'mika.teacher', 'mika@gmail.com', '$2y$10$c2nQwH6VM2mJszrOnNw5LuVLB1ACRLQ.LdK/KojmayF6PAzkNwbgK', 'Mika', 'Salamanca', 'female', '2000-03-25', '09876778677', 'Sta. Maria, Bulacan', '2025-06-25 02:31:49', '2025-06-25 02:31:49', 'dummy.jpg', NULL, 0, 'active', 'Core 8 - Understanding Culture, Society, and Politics', NULL),
-(27, 'teacher', 'alexander.teacher', 'alexander@gmail.com', '$2y$10$o1iK.pL4kQbIILTKF9vo4usGUCDV74EJ1RgFqMR8L0ZhVA3G6cfPO', 'Alexander', 'Dele Cruz', 'male', '2000-09-21', '09126512651', 'Meycuayan, Bulacan', '2025-06-25 02:33:07', '2025-06-25 02:33:07', 'dummy.jpg', NULL, 0, 'active', 'Applied 1 - Research in Daily Life 1', NULL);
+(27, 'teacher', 'alexander.teacher', 'alexander@gmail.com', '$2y$10$o1iK.pL4kQbIILTKF9vo4usGUCDV74EJ1RgFqMR8L0ZhVA3G6cfPO', 'Alexander', 'Dele Cruz', 'male', '2000-09-21', '09126512651', 'Meycuayan, Bulacan', '2025-06-25 02:33:07', '2025-06-25 02:33:07', 'dummy.jpg', NULL, 0, 'active', 'Applied 1 - Research in Daily Life 1', NULL),
+(28, 'teacher', 'jane.teacher', 'jane@gmail.com', '$2y$10$hIA26paNemdKhfoicVLn9ugPFOY3yq4eWPG8NZw86sjYslvtQBJSG', 'jane', 'alejo', 'female', '2000-03-11', '09120987676', 'Loma De Gato, Marilao, Bulacan', '2025-06-25 03:49:25', '2025-06-25 03:49:25', 'dummy.jpg', NULL, 0, 'active', 'Core 2 - Reading and Writing Skills', NULL),
+(29, 'student', 'liam_cruz.student', 'liam.cruz@email.com', '$2y$10$3HOkXhZsZ9kExFqixs3m5erACjzIfyht17T/8doDQ4xZlibL/gcjS', 'Liam', 'Cruz', 'male', '2014-05-12', 'N/A', 'San Vicente, Malolos, Bulacan', '2025-07-03 18:54:21', '2025-07-04 18:15:57', 'dummy.png', NULL, 12, 'active', NULL, 13);
 
 --
 -- Indexes for dumped tables
@@ -500,13 +534,13 @@ ALTER TABLE `attendance`
 -- AUTO_INCREMENT for table `class_schedule`
 --
 ALTER TABLE `class_schedule`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `master_list`
 --
 ALTER TABLE `master_list`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=54;
 
 --
 -- AUTO_INCREMENT for table `payment`
@@ -518,7 +552,7 @@ ALTER TABLE `payment`
 -- AUTO_INCREMENT for table `sections`
 --
 ALTER TABLE `sections`
-  MODIFY `section_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `section_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT for table `subjects`
@@ -536,7 +570,7 @@ ALTER TABLE `tuition_fees`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- Constraints for dumped tables

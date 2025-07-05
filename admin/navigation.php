@@ -42,11 +42,6 @@ $profile_image = isset($user_info['profile_image']) ? $user_info['profile_image'
                     <i class="bi bi-credit-card-2-front me-2"></i>Billing and Payment
                 </a>
             </li>
-            <li class="nav-item border-white">
-                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
-                    <i class="bi bi-calendar-range me-2"></i>Class Scheduling
-                </a>
-            </li>
 
             <li class="nav-item">
                 <a id="maintenanceDropdown" class="dropdown-btn nav-link text-dark d-flex justify-content-between align-items-center py-2 fs-6" href="javascript:void(0);">

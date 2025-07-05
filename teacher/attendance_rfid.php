@@ -5,144 +5,183 @@ include '../db_connection.php';
 // Set Philippine Standard Time
 date_default_timezone_set('Asia/Manila');
 
+/* ➊ Helper: push one JSON‑like line to the Arduino’s serial port */
+function sendToArduinoSerial(string $phone, string $msg, string $port = '/dev/tty.usbmodem14101', int $baud = 9600): string
+{
+    // Set baud rate for macOS
+    exec("stty -f {$port} {$baud}", $out, $status);
+    if ($status !== 0) {
+        return "❌ Failed to configure serial port: {$port}";
+    }
+
+    // Open serial port in read+write mode
+    $fp = @fopen($port, 'w+');
+    if (!$fp) {
+        return "❌ Failed to open serial port: {$port}";
+    }
+
+    // Format expected by Arduino
+    $payload = sprintf('{phone:"%s", message:"%s"}' . "\r\n", $phone, addslashes($msg));
+    fwrite($fp, $payload);
+    fflush($fp);            // Ensure buffer is flushed
+    usleep(100000);         // Wait briefly (100ms)
+
+    // Read response for up to 10 seconds
+    $response = '';
+    $start = microtime(true);
+    stream_set_blocking($fp, true); // Block until data available
+    while ((microtime(true) - $start) < 10) {
+        $line = fgets($fp);
+        if ($line !== false) {
+            $response .= $line;
+        }
+    }
+
+    fclose($fp);
+
+    return trim($response) ?: "⚠️ No response from Arduino.";
+}
+
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $rfid = trim($_POST['rfid_code']);
-    $type = $_POST['attendance_type'];
+
+    $rfid      = trim($_POST['rfid_code']);
+    $type      = $_POST['attendance_type'];               // 'time_in' | 'time_out'
     $teacher_id = $_POST['teacher_id'] ?? null;
 
-    if (!empty($rfid) && in_array($type, ['time_in', 'time_out'])) {
-        // 1. Find student by RFID
-        $query = "SELECT user_id AS student_id, CONCAT(first_name, ' ', last_name) AS fullname FROM users WHERE rfid = ?";
-        $stmt = $conn->prepare($query);
-        if (!$stmt) {
-            die("<div class='alert alert-danger alert-dismissible fade show' role='alert'>
-                    Prepare failed: " . $conn->error . "
-                    <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
-                 </div>");
-        }
-        $stmt->bind_param("i", $rfid);
+    if ($rfid !== '' && in_array($type, ['time_in', 'time_out'], true)) {
+
+        /* ➋  Look‑up student & guardian contact */
+        $query = "
+            SELECT 
+                enroll_form.guardian_contact,
+                users.user_id            AS student_id,
+                CONCAT(users.first_name, ' ', users.last_name) AS fullname
+            FROM users
+            JOIN enroll_form ON users.enroll_id = enroll_form.id
+            WHERE users.rfid = ?
+        ";
+        $stmt = $conn->prepare($query) or die('Prepare failed: ' . $conn->error);
+        $stmt->bind_param("s", $rfid);                    // ‘s’ in case RFID is alphanumeric
         $stmt->execute();
         $result = $stmt->get_result();
 
-        if ($result && $result->num_rows > 0) {
-            $user = $result->fetch_assoc();
-            $student_id = $user['student_id'];
-            $fullname = $user['fullname'];
+        if ($row = $result->fetch_assoc()) {
 
-            $current_date = date('Y-m-d');
-            $current_time = date('H:i:s');
+            $student_id = (int)$row['student_id'];
+            $fullname   = $row['fullname'];
 
+            /* ➌  Convert 09xxxxxxxxx → +639xxxxxxxxx */
+            $contact = preg_replace('/^0/', '+63', $row['guardian_contact']);
+
+            $today = date('Y-m-d');
+            $now   = date('H:i:s');
+
+            /* ➍  Build a one‑liner SMS message */
+            $sms_message = sprintf(
+                'TCA Alert: %s %s on %s at %s.',
+                $fullname,
+                $type === 'time_in' ? 'timed‑IN' : 'timed‑OUT',
+                date('M j, Y'),       // e.g., Jul 5, 2025
+                date('g:i A')         // e.g., 3:42 PM
+            );
+
+            /* ===== TIME‑IN FLOW ===== */
             if ($type === 'time_in') {
-                // 2. Check if already has a time_in for today
-                $check = $conn->prepare("SELECT id FROM attendance WHERE student_id = ? AND date = ?");
-                $check->bind_param("is", $student_id, $current_date);
+
+                $check = $conn->prepare("
+                    SELECT id FROM attendance
+                    WHERE student_id = ? AND date = ?
+                ");
+                $check->bind_param("is", $student_id, $today);
                 $check->execute();
-                $check_result = $check->get_result();
+                $hasTimeIn = $check->get_result()->num_rows > 0;
 
-                if ($check_result->num_rows > 0) {
-                    $message = "<div class='alert alert-warning alert-dismissible fade show' role='alert'>
-                                    ⚠️ Time In already recorded for <strong>$fullname</strong> today.
-                                    <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
-                                </div>";
-                    header("Location: attendance.php?message=" . urlencode($message));
-                    exit;
+                if ($hasTimeIn) {
+                    $alert = "⚠️ Time In already recorded for <strong>$fullname</strong> today.";
                 } else {
-                    // 3. Insert Time In
-                    $insert = $conn->prepare("INSERT INTO attendance (`date`, `time_in`, `teacher_id`, `student_id`) VALUES (?, ?, ?, ?)");
-                    if (!$insert) {
-                        die("<div class='alert alert-danger alert-dismissible fade show' role='alert'>
-                                Insert prepare failed: " . $conn->error . "
-                                <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
-                             </div>");
-                    }
+                    $ins = $conn->prepare("
+                        INSERT INTO attendance (`date`,`time_in`,`teacher_id`,`student_id`)
+                        VALUES (?,?,?,?)
+                    ") or die('Insert prepare failed: ' . $conn->error);
+                    $ins->bind_param("ssii", $today, $now, $teacher_id, $student_id);
+                    $ins->execute();
 
-                    $insert->bind_param("ssii", $current_date, $current_time, $teacher_id, $student_id);
-                    $insert->execute();
-
-                    if ($insert->affected_rows > 0) {
-                        $message = "<div class='alert alert-success alert-dismissible fade show' role='alert'>
-                                        ✅ Time In recorded for <strong>$fullname</strong> at $current_time.
-                                        <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
-                                    </div>";
-                        header("Location: attendance.php?message=" . urlencode($message));
-                        exit;
+                    if ($ins->affected_rows) {
+                        $alert = "✅ Time In recorded for <strong>$fullname</strong> at $now.";
+                        /* ➎  Push SMS payload to Arduino */
+                        sendToArduinoSerial($contact, $sms_message);
                     } else {
-                        $message = "<div class='alert alert-warning alert-dismissible fade show' role='alert'>
-                                        ⚠️ Failed to record Time In.
-                                        <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
-                                    </div>";
-                        header("Location: attendance.php?message=" . urlencode($message));
-                        exit;
+                        $alert = "⚠️ Failed to record Time In.";
                     }
                 }
 
-            } elseif ($type === 'time_out') {
-                // 4. Check if there's an open time_in with NULL time_out
-                $check = $conn->prepare("SELECT id FROM attendance WHERE student_id = ? AND date = ? AND time_out IS NULL");
-                $check->bind_param("is", $student_id, $current_date);
+            /* ===== TIME‑OUT FLOW ===== */
+            } else { /* time_out */
+
+                $check = $conn->prepare("
+                    SELECT id FROM attendance
+                    WHERE student_id = ? AND date = ? AND time_out IS NULL
+                ");
+                $check->bind_param("is", $student_id, $today);
                 $check->execute();
-                $check_result = $check->get_result();
+                $rowOpen = $check->get_result()->fetch_assoc();
 
-                if ($check_result->num_rows > 0) {
-                    // 5. Update Time Out
-                    $update = $conn->prepare("UPDATE attendance SET time_out = ? WHERE student_id = ? AND date = ? AND time_out IS NULL");
-                    if (!$update) {
-                        die("<div class='alert alert-danger alert-dismissible fade show' role='alert'>
-                                Update prepare failed: " . $conn->error . "
-                                <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
-                             </div>");
-                    }
+                if ($rowOpen) {
+                    $upd = $conn->prepare("
+                        UPDATE attendance
+                        SET time_out = ?
+                        WHERE id = ?
+                    ") or die('Update prepare failed: ' . $conn->error);
+                    $upd->bind_param("si", $now, $rowOpen['id']);
+                    $upd->execute();
 
-                    $update->bind_param("sis", $current_time, $student_id, $current_date);
-                    $update->execute();
-
-                    if ($update->affected_rows > 0) {
-                        $message = "<div class='alert alert-success alert-dismissible fade show' role='alert'>
-                                        ✅ Time Out recorded for <strong>$fullname</strong> at $current_time.
-                                        <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
-                                    </div>";
-                        header("Location: attendance.php?message=" . urlencode($message));
-                        exit;
+                    if ($upd->affected_rows) {
+                        $alert = "✅ Time Out recorded for <strong>$fullname</strong> at $now.";
+                        /* ➎  Push SMS payload */
+                        sendToArduinoSerial($contact, $sms_message);
                     } else {
-                        $message = "<div class='alert alert-warning alert-dismissible fade show' role='alert'>
-                                        ⚠️ Failed to update Time Out.
-                                        <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
-                                    </div>";
-                        header("Location: attendance.php?message=" . urlencode($message));
-                        exit;
+                        $alert = "⚠️ Failed to update Time Out.";
                     }
                 } else {
-                    $message = "<div class='alert alert-warning alert-dismissible fade show' role='alert'>
-                                    ⚠️ No Time In found or already Timed Out for <strong>$fullname</strong> today.
-                                    <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
-                                </div>";
-                    header("Location: attendance.php?message=" . urlencode($message));
-                    exit;
+                    $alert = "⚠️ No Time In found or already Timed Out for <strong>$fullname</strong> today.";
                 }
             }
 
+            /* ➏  Wrap alert HTML once, append guardian number */
+            $message = "
+                <div class='alert alert-info alert-dismissible fade show' role='alert'>
+                    {$alert}<br>📞 Guardian Contact: <strong>{$contact}</strong>
+                    <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+                </div>";
+            header('Location: attendance.php?message=' . urlencode($message));
+            exit;
+
         } else {
-            $message = "<div class='alert alert-danger alert-dismissible fade show' role='alert'>
-                            ❌ RFID not recognized. Student not found.
-                            <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
-                        </div>";
-            header("Location: attendance.php?message=" . urlencode($message));
+            /* RFID not found */
+            $err = "<div class='alert alert-danger alert-dismissible fade show' role='alert'>
+                        ❌ RFID not recognized. Student not found.
+                        <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+                    </div>";
+            header('Location: attendance.php?message=' . urlencode($err));
             exit;
         }
     } else {
-        $message = "<div class='alert alert-warning alert-dismissible fade show' role='alert'>
-                        ⚠️ Missing or invalid data. Please check the form.
-                        <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
-                    </div>";
-        header("Location: attendance.php?message=" . urlencode($message));
+        /* Missing or invalid POST fields */
+        $err = "<div class='alert alert-warning alert-dismissible fade show' role='alert'>
+                    ⚠️ Missing or invalid data. Please check the form.
+                    <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+                </div>";
+        header('Location: attendance.php?message=' . urlencode($err));
         exit;
     }
 } else {
-    $message = "<div class='alert alert-danger alert-dismissible fade show' role='alert'>
-                    ❌ Invalid request method.
-                    <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
-                </div>";
-    header("Location: attendance.php?message=" . urlencode($message));
+    /* Not POST */
+    $err = "<div class='alert alert-danger alert-dismissible fade show' role='alert'>
+                ❌ Invalid request method.
+                <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+            </div>";
+    header('Location: attendance.php?message=' . urlencode($err));
     exit;
 }
 ?>
