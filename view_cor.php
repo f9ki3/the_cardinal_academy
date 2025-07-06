@@ -64,7 +64,7 @@ $schedule = $sched_stmt->get_result();
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-    
+
 </head>
 <body>
 <div class="d-flex flex-row bg-white">
@@ -76,7 +76,7 @@ $schedule = $sched_stmt->get_result();
 
             <div class="row mt-4 align-items-center mb-4">
               <div class="col-md-4 mb-2">
-                <h4 class="mb-0 d-print-none">Certificate of Registration</h4>
+                <h4 class="mb-0">Certificate of Registration</h4>
               </div>
               <div class="col-md-8 d-flex flex-wrap gap-2 justify-content-md-end d-print-none">
                 <button class="btn btn-sm border text-muted rounded-4" onclick="window.print()">
@@ -178,6 +178,9 @@ $schedule = $sched_stmt->get_result();
             <div class="col-md-4"><strong>Grade Level:</strong> <?= htmlspecialchars($section['grade_level']) ?></div>
             <div class="col-md-4"><strong>School Year:</strong> <?= htmlspecialchars($section['school_year']) ?></div>
             <div class="col-md-4"><strong>Room:</strong> <?= htmlspecialchars($section['room'] ?: '—') ?></div>
+            <?php if ($section['strand'] !== 'N/A'): ?>
+                <div class="col-md-4"><strong>Strand:</strong> <?= htmlspecialchars($section['strand']) ?></div>
+            <?php endif; ?>
           </div>
 
             <hr>
