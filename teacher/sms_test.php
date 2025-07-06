@@ -1,5 +1,5 @@
 <?php
-$port = '/dev/cu.usbmodem14101';
+$port = '/dev/cu.usbmodem14301';
 $baud = 9600;
 
 exec("stty -f $port $baud", $out, $status);
