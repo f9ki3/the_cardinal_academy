@@ -1,5 +1,5 @@
 <?php
-include 'db_connection.php';
+$mysqli = new mysqli("localhost", "u429904263_tca", "UsKA?M[7", "u429904263_tca");
 $result = $mysqli->query("SELECT heading, paragraph, visible FROM announcement WHERE id = 1");
 $row = $result->fetch_assoc();
 ?>
