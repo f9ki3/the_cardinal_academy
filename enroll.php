@@ -1,10 +1,10 @@
-
 <?php
-  $hideContact = true;
   $hideHome = true;
-
+  $pageTitle = 'Services';
+  $breadcrumbs = [
+  ['label' => 'Home', 'url' => 'index.php'],
+  ['label' => 'Enroll']];
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>

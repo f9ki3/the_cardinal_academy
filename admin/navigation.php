@@ -77,6 +77,9 @@ $profile_image = isset($user_info['profile_image']) ? $user_info['profile_image'
                 <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="subject_unit.php?nav_drop=true">
                     <i class="bi bi-journal-bookmark me-2"></i>Subjects and Units
                 </a>
+                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="banner_edit.php?nav_drop=true">
+                    <i class="bi bi-journal-bookmark me-2"></i>Announcement
+                </a>
             </div>
         </li>
 
