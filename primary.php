@@ -24,25 +24,65 @@
       <!-- Student Profile -->
       <fieldset id="step1">
         <h4 class="text-center"><strong>Step 2</strong>: Learner Profile</h4>
-        <p class="text-center m-0 mb-4">Note: please fill up this form for admission to school.</p>
-        <hr>
+        <p class="text-center m-0 mb-4">Status: please choose status if your new or old student.</p>
+        
+        <style>
+            .tab-buttons {
+              display: flex;
+              margin-bottom: 15px;
+            }
+
+            .tab-btn {
+              flex: 1;
+              padding: 10px;
+              background-color: #f1f1f1;
+              border: none;
+              text-align: center;
+              font-weight: bold;
+              cursor: pointer;
+              transition: 0.3s;
+            }
+
+            .tab-btn.active {
+              background-color: #b72029;
+              color: white;
+            }
+          </style>
+
+          <div class="tab-buttons">
+            <button type="button" class="tab-btn active" onclick="switchTab('old')">Old Student</button>
+            <button type="button" class="tab-btn" onclick="switchTab('new')">New Student</button>
+          </div>
+
+         <script>
+            function switchTab(tab) {
+              const buttons = document.querySelectorAll('.tab-btn');
+              buttons.forEach(btn => btn.classList.remove('active'));
+
+              const statusSelect = document.getElementById('status');
+
+              if (tab === 'old') {
+                buttons[0].classList.add('active');
+                statusSelect.value = 'Old Student';
+              } else {
+                buttons[1].classList.add('active');
+                statusSelect.value = 'New Student';
+              }
+            }
+          </script>
+
+
         <div class="row g-3">
 
-          <div class="col-12 col-md-6">
+          <div class="col-12 d-none col-md-6">
             <label for="status" class="form-label text-muted">Status</label>
             <select name="status" id="status" class="form-select">
-              <option value="">Select student status</option>
-              <option>Old Student</option>
+              <option selected>Old Student</option>
               <option>New Student</option>
             </select>
             <div id="status-error" class="invalid-feedback d-none">Status is required.</div>
           </div>
 
-          <div class="col-12 col-md-6">
-            <label for="lrn" class="form-label text-muted">Learner Reference Number (LRN)</label>
-            <input type="text" name="lrn" id="lrn" placeholder="Note: For nursery that has no LRN leave empty." class="form-control">
-            <div id="lrn-error" class="invalid-feedback d-none">LRN must be a 12-digit number.</div>
-          </div>
 
           <div class="col-12 col-md-6">
             <label for="grade_level" class="form-label text-muted">Grade Level </label>
@@ -61,6 +101,13 @@
           </div>
 
           <div class="col-12 col-md-6">
+            <label for="lrn" class="form-label text-muted">Learner Reference Number (LRN)</label>
+            <input type="text" name="lrn" id="lrn" placeholder="Note: For nursery that has no LRN leave empty." class="form-control">
+            <div id="lrn-error" class="invalid-feedback d-none">LRN must be a 12-digit number.</div>
+          </div>
+
+
+          <div class="col-12 col-md-6">
             <label for="gender" class="form-label text-muted">Gender</label>
             <select name="gender" id="gender" class="form-select">
               <option value="">Select gender</option>
@@ -68,6 +115,13 @@
               <option>Female</option>
             </select>
             <div id="gender-error" class="invalid-feedback d-none">Gender is required.</div>
+          </div>
+
+
+          <div class="col-12 col-md-6">
+            <label class="form-label text-muted">Phone Number</label>
+            <input type="text" name="phone" id="phone" class="form-control" placeholder="e.g. 09123456789" pattern="\d{11}">
+            <div id="phone-error" class="invalid-feedback d-none">Phone number must be exactly 11 digits.</div>
           </div>
 
           <div class="col-12 col-md-4">
@@ -83,10 +137,10 @@
           </div>
 
           <div class="col-12 col-md-4">
-            <label class="form-label text-muted">Middle Name</label>
-            <input type="text" name="middle_name" class="form-control" placeholder="Enter middle name">
-            <div id="middle_name-error" class="invalid-feedback d-none">Middle Name is required.</div>
+            <label class="form-label text-muted">Middle Name <small class="text-muted">(optional)</small></label>
+            <input type="text" name="middle_name" id="middle_name" class="form-control" placeholder="Enter middle name (optional)">
           </div>
+
 
           <div class="col-12 col-md-6">
             <label class="form-label text-muted">Date of Birth</label>
@@ -100,25 +154,19 @@
             <div id="birth_place-error" class="invalid-feedback d-none">Place of Birth is required.</div>
           </div>
 
-          <div class="col-12 col-md-3">
+          <div class="col-12 col-md-4">
             <label class="form-label text-muted">Age</label>
             <input type="number" name="age" class="form-control" placeholder="Enter age">
             <div id="age-error" class="invalid-feedback d-none">Age must be at least 4.</div>
           </div>
 
-          <div class="col-12 col-md-3">
+          <div class="col-12 col-md-4">
             <label class="form-label text-muted">Religion</label>
             <input type="text" name="religion" class="form-control" placeholder="Enter religion">
             <div id="religion-error" class="invalid-feedback d-none">Religion is required.</div>
           </div>
 
-          <div class="col-12 col-md-3">
-            <label class="form-label text-muted">Facebook Account</label>
-            <input type="text" name="facebook" class="form-control" placeholder="Enter Facebook account">
-            <div id="facebook-error" class="invalid-feedback d-none">Note: Leave as N/A is not applicable</div>
-          </div>
-
-          <div class="col-12 col-md-3">
+          <div class="col-12 col-md-4">
             <label class="form-label text-muted">Email</label>
             <input type="email" name="email" class="form-control" placeholder="Note: active email for queue number">
             <div id="email-error" class="invalid-feedback d-none">Email is required.</div>
@@ -161,9 +209,9 @@
           </div>
 
           <div class="col-12">
-            <label class="form-label text-muted">Complete Residential Address</label>
-            <input type="text" class="form-control" placeholder="e.g., Block No., Lot No., Street Name, Subdivision">
-            <div id="Specific_error" class="invalid-feedback d-none">Complete address is required.</div>
+            <label for="residential_address" class="form-label text-muted">Complete Residential Address</label>
+            <input type="text" id="residential_address" name="residential_address" class="form-control" placeholder="e.g., Block No., Lot No., Street Name, Subdivision">
+            <div id="residential_address-error" class="invalid-feedback d-none">Complete residential address is required.</div>
           </div>
 
 
@@ -176,7 +224,7 @@
       </fieldset>
       <!-- Guardian Profile -->
       <fieldset id="step2" style="display: none">
-        <h4><strong>Step 2</strong>: Learner Profile</h4>
+        <h4><strong>Step 3</strong>: Parents and Guardian Profile</h4>
         <div class="row g-3">
 
           <div class="col-12 col-md-4">
@@ -368,24 +416,28 @@ document.addEventListener("DOMContentLoaded", function () {
 function validateStep1() {
   const gradeLevel = document.getElementById('grade_level').value.trim().toLowerCase();
 
-  const fields = [
-    { id: 'status', message: 'Status is required' },
-    { id: 'grade_level', message: 'Grade Level is required' },
-    { id: 'gender', message: 'Gender is required' },
-    { id: 'last_name', message: 'Last Name is required' },
-    { id: 'first_name', message: 'First Name is required' },
-    { id: 'middle_name', message: 'Middle Name is required' },
-    { id: 'birth_date', message: 'Date of Birth is required' },
-    { id: 'birth_place', message: 'Place of Birth is required' },
-    { id: 'age', message: 'Age must be at least 4', min: 4 },
-    { id: 'religion', message: 'Religion is required' },
-    { id: 'facebook', message: 'Facebook Account is required' },
-    { id: 'email', message: 'Email is required' },
-    { id: 'Region', message: 'Region is required' },
-    { id: 'Province', message: 'Province is required' },
-    { id: 'Municipal', message: 'Municipal is required' },
-    { id: 'Barangay', message: 'Barangay is required' }
-  ];
+const fields = [
+  { id: 'grade_level', message: 'Grade Level is required' },
+  { id: 'gender', message: 'Gender is required' },
+  { id: 'last_name', message: 'Last Name is required' },
+  { id: 'first_name', message: 'First Name is required' },
+  { id: 'birth_date', message: 'Date of Birth is required' },
+  { id: 'birth_place', message: 'Place of Birth is required' },
+  { id: 'age', message: 'Age must be at least 4', min: 4 },
+  { id: 'religion', message: 'Religion is required' },
+  { id: 'phone', message: 'Phone number must be exactly 11 digits', pattern: /^\d{11}$/ },
+  { id: 'email', message: 'Email is required' },
+  { id: 'Region', message: 'Region is required' },
+  { id: 'Province', message: 'Province is required' },
+  { id: 'Municipal', message: 'Municipal is required' },
+  { id: 'Barangay', message: 'Barangay is required' },
+  { id: 'residential_address', message: 'Residential address is required' }
+];
+
+// Only include LRN in validation if not nursery or kinder
+if (gradeLevel !== 'nursery' && gradeLevel !== 'kinder garten') {
+  fields.push({ id: 'lrn', message: 'LRN must be a 12-digit number', pattern: /^\d{12}$/ });
+}
 
   // Only include LRN in validation if not Kinder Garten
   if (gradeLevel !== 'nursery') {
