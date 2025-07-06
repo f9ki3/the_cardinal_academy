@@ -116,11 +116,8 @@ if ($admission_id > 0) {
     </div>
 
     <div class="col-md-6">
-      <label class="form-label text-muted">Gender</label>
-      <select class="form-select" name="gender" required>
-        <option value="male" <?= (isset($data['gender']) && $data['gender'] === 'male') ? 'selected' : '' ?>>Male</option>
-        <option value="female" <?= (isset($data['gender']) && $data['gender'] === 'female') ? 'selected' : '' ?>>Female</option>
-      </select>
+      <label class="form-label text-muted">Strand</label>
+      <input type="text" name="lastname" class="form-control" value="<?= htmlspecialchars(!empty($data['strand']) ? $data['strand'] : 'N/A') ?>">
     </div>
 
     <div class="col-md-4">
@@ -136,6 +133,19 @@ if ($admission_id > 0) {
     <div class="col-md-4">
       <label class="form-label text-muted">Middle Name</label>
       <input type="text" name="middlename" class="form-control" value="<?= htmlspecialchars($data['middlename'] ?? '') ?>">
+    </div>
+
+    <div class="col-md-6">
+      <label class="form-label text-muted">Complete Residential Address</label>
+      <input type="text" class="form-control" value="<?= htmlspecialchars($data['residential_address'] ?? '') ?>" >
+    </div>
+
+    <div class="col-md-6">
+      <label class="form-label text-muted">Gender</label>
+      <select class="form-select" name="gender" required>
+        <option value="male" <?= (isset($data['gender']) && $data['gender'] === 'male') ? 'selected' : '' ?>>Male</option>
+        <option value="female" <?= (isset($data['gender']) && $data['gender'] === 'female') ? 'selected' : '' ?>>Female</option>
+      </select>
     </div>
 
     <div class="col-md-6">
@@ -159,8 +169,8 @@ if ($admission_id > 0) {
     </div>
 
     <div class="col-md-3">
-      <label class="form-label text-muted">Facebook Account</label>
-      <input type="text" name="facebook" class="form-control" value="<?= htmlspecialchars($data['facebook'] ?? '') ?>">
+      <label class="form-label text-muted">Phone</label>
+      <input type="text" name="facebook" class="form-control" value="<?= htmlspecialchars($data['phone'] ?? '') ?>">
     </div>
 
     <div class="col-md-3">
@@ -168,25 +178,6 @@ if ($admission_id > 0) {
       <input type="email" name="email" class="form-control" value="<?= htmlspecialchars($data['email'] ?? '') ?>">
     </div>
 
-    <div class="col-md-3">
-      <label class="form-label text-muted">Region</label>
-      <input type="text" name="region" class="form-control" value="<?= htmlspecialchars($data['region'] ?? '') ?>">
-    </div>
-
-    <div class="col-md-3">
-      <label class="form-label text-muted">Province</label>
-      <input type="text" name="province" class="form-control" value="<?= htmlspecialchars($data['province'] ?? '') ?>">
-    </div>
-
-    <div class="col-md-3">
-      <label class="form-label text-muted">Municipal</label>
-      <input type="text" name="municipal" class="form-control" value="<?= htmlspecialchars($data['municipal'] ?? '') ?>">
-    </div>
-
-    <div class="col-md-3">
-      <label class="form-label text-muted">Barangay</label>
-      <input type="text" name="barangay" class="form-control" value="<?= htmlspecialchars($data['barangay'] ?? '') ?>">
-    </div>
   </div>
 </fieldset>
 
