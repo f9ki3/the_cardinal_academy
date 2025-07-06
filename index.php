@@ -66,6 +66,12 @@ $hideSubNav = true;
     </div>
   </section>
 
+  <section  class="bg-white py-1">
+    <div class="container">
+      <?php include 'banner.php'; ?>
+    </div>
+  </section>
+
   <!-- 2nd Section -->
   <section  class="bg-white py-5">
     <div class="container">

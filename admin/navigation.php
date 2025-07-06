@@ -14,7 +14,6 @@ $profile_image = isset($user_info['profile_image']) ? $user_info['profile_image'
     <h5 class="text-center fw-bolder text-dark mb-3"><?= htmlspecialchars($full_name) ?></h5>
     <hr class="text-dark">
 
-    <!-- Scrollable navigation -->
     <div style="overflow-y: auto; max-height: calc(100vh - 200px); padding-right: 5px;">
         <ul class="nav flex-column">
             <li class="nav-item">
@@ -22,27 +21,38 @@ $profile_image = isset($user_info['profile_image']) ? $user_info['profile_image'
                     <i class="bi bi-speedometer2 me-2"></i>Dashboard
                 </a>
             </li>
-            <li class="nav-item border-white">
+            <li class="nav-item">
                 <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="admission.php">
                     <i class="bi bi-journal-plus me-2"></i>Student Admission
                 </a>
             </li>
-            <li class="nav-item border-white">
+            <li class="nav-item">
                 <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="enrollment.php">
                     <i class="bi bi-person-plus me-2"></i>Enroll Student
                 </a>
             </li>
-            <li class="nav-item border-white">
+            <li class="nav-item">
                 <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="cor_issuance.php">
                     <i class="bi bi-file-earmark-text me-2"></i>COR Issuance
                 </a>
             </li>
-            <li class="nav-item border-white">
-                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="enrollment.php">
+            <li class="nav-item">
+                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="billing.php">
                     <i class="bi bi-credit-card-2-front me-2"></i>Billing and Payment
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="scheduling.php">
+                    <i class="bi bi-calendar-range me-2"></i>Class Scheduling
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="banner_edit.php?nav_drop=true">
+                    <i class="bi bi-journal-bookmark me-2"></i>Announcement
+                </a>
+            </li>
 
+            <!-- Maintenance dropdown -->
             <li class="nav-item">
                 <a id="maintenanceDropdown" class="dropdown-btn nav-link text-dark d-flex justify-content-between align-items-center py-2 fs-6" href="javascript:void(0);">
                     <span><i class="bi bi-tools me-2"></i>Maintenance</span>
@@ -54,7 +64,7 @@ $profile_image = isset($user_info['profile_image']) ? $user_info['profile_image'
                     <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="students.php?nav_drop=true">
                         <i class="bi bi-people-fill me-2"></i>Students Account
                     </a>
-                    <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
+                    <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="parents.php">
                         <i class="bi bi-house-heart me-2"></i>Parent Account
                     </a>
                     <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="teacher.php?nav_drop=true">
@@ -75,7 +85,6 @@ $profile_image = isset($user_info['profile_image']) ? $user_info['profile_image'
     </div>
 </div>
 
-<!-- Maintenance dropdown script -->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const dropdownBtn = document.getElementById("maintenanceDropdown");
@@ -104,20 +113,9 @@ $profile_image = isset($user_info['profile_image']) ? $user_info['profile_image'
     });
 </script>
 
-<!-- Optional CSS -->
 <style>
-    .dropdown-container {
-        display: none;
-        flex-direction: column;
-        padding-left: 10px;
-    }
-
     .dropdown-container a {
         font-size: 14px;
         padding: 5px 0;
-    }
-
-    .dropdown-btn.active + .dropdown-container {
-        display: flex;
     }
 </style>

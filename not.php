@@ -33,6 +33,7 @@
     <img src="static/images/Classroom Senior High.jpg" alt="Senior High Classroom">
     <img src="static/images/Sample event 2.jpg" alt="Event">
     <img src="static/images/Classroom High School.jpg" alt="High School Classroom">
+    <img src="static/images/jann.jpg" alt="High School Classroom">
     <!-- Duplicate for loop effect -->
     <img src="static/images/Classroom Senior High.jpg" alt="Senior High Classroom">
     <img src="static/images/Sample event 2.jpg" alt="Event">

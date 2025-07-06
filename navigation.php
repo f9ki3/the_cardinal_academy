@@ -102,6 +102,8 @@
             <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
             <li class="nav-item"><a class="nav-link" href="#courses">Courses</a></li>
             <li class="nav-item"><a class="nav-link" href="contact.php">Contact</a></li>
+            <li class="nav-item"><a class="nav-link" href="enroll.php">Enroll</a></li>
+            
           <?php endif; ?>
         </ul>
         <?php if (empty($hideLogInButton)): ?>
@@ -113,42 +115,9 @@
     </nav>
 
     <!-- Sub Navbar -->
-    <?php if (empty($hideSubNav)): ?>
-      <nav class="navbar sub-navbar px-4">
-        <div class="container-fluid justify-content-end">
-          <ul class="navbar-nav flex-row">
-            <?php if (empty($hideContact)): ?>
-              <li class="nav-item">
-                <a href="index.php" class="contact-btn nav-link">
-                  <span class="underline-text">Contact Us</span>
-                  <span class="no-underline"> &gt; </span>
-                  <i class="fas fa-home no-underline"></i>
-                </a>
-              </li>
-            <?php endif; ?>
-            <?php if (empty($hideEnroll)): ?>
-              <li class="nav-item">
-                <a href="index.php" class="contact-btn nav-link">
-                  <span class="underline-text">Enroll Now!</span>
-                  <span class="no-underline"> &gt; </span>
-                  <i class="fas fa-home no-underline"></i>
-                </a>
-              </li>
-            <?php endif; ?>
-            <?php if (empty($hideLogin)): ?>
-              <li class="nav-item">
-                <a href="index.php" class="contact-btn nav-link">
-                  <span class="underline-text">Log in</span>
-                  <span class="no-underline"> &gt; </span>
-                  <i class="fas fa-home no-underline"></i>
-                </a>
-              </li>
-            <?php endif; ?>
-          </ul>
-        </div>
-      </nav>
-    <?php endif; ?>
-  </div>
+    <?php 
+      include 'breadcrumb_nav.php';
+    ?>
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
