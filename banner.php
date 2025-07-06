@@ -1,8 +1,4 @@
-<?php
-$mysqli = new mysqli("localhost", "root", "", "tca");
-$result = $mysqli->query("SELECT heading, paragraph, visible FROM announcement WHERE id = 1");
-$row = $result->fetch_assoc();
-?>
+<?php include 'db_connection.php'?>
 
 <!DOCTYPE html>
 <html lang="en">
