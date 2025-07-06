@@ -21,14 +21,11 @@
   <div class="bg-white p-4 rounded-4 shadow-sm">
 
     <form action="submit_admission.php" method="POST" enctype="multipart/form-data">
-
-
-        <h2>Admission Form</h2>
-        <p class="m-0 mb-4">Note: please fill up this form for admission to school.</p>
-        <hr>
       <!-- Student Profile -->
       <fieldset id="step1">
-        <h4><strong>Step 1</strong>: Learner Profile</h4>
+        <h4 class="text-center"><strong>Step 2</strong>: Learner Profile</h4>
+        <p class="text-center m-0 mb-4">Note: please fill up this form for admission to school.</p>
+        <hr>
         <div class="row g-3">
 
           <div class="col-12 col-md-6">
@@ -59,12 +56,6 @@
               <option>Grade 4</option>
               <option>Grade 5</option>
               <option>Grade 6</option>
-              <option>Grade 7</option>
-              <option>Grade 8</option>
-              <option>Grade 9</option>
-              <option>Grade 10</option>
-              <option>Grade 11</option>
-              <option>Grade 12</option>
             </select>
             <div id="grade_level-error" class="invalid-feedback d-none">Grade Level is required.</div>
           </div>
@@ -169,9 +160,17 @@
             <div id="Barangay-error" class="invalid-feedback d-none">Barangay is required.</div>
           </div>
 
-          <div class="col-12 col-md-2">
-            <button type="button" class="btn btn-danger text-light mt-3 rounded-4 w-100" onclick="validateStep1()">Next</button>
+          <div class="col-12">
+            <label class="form-label text-muted">Complete Residential Address</label>
+            <input type="text" class="form-control" placeholder="e.g., Block No., Lot No., Street Name, Subdivision">
+            <div id="Specific_error" class="invalid-feedback d-none">Complete address is required.</div>
           </div>
+
+
+         <div class="col-12 text-center">
+          <button type="button" class="btn btn-danger text-light mt-3 rounded-4 px-5" onclick="validateStep1()">Next</button>
+        </div>
+
 
         </div>
       </fieldset>
@@ -224,6 +223,7 @@
             <label class="form-label text-muted">Guardian’s Contact Number</label>
             <input type="text" required name="guardian_contact" class="form-control" placeholder="Enter contact number">
           </div>
+
           <div class="mt-4">
             <p class="text-muted" style="font-size: 15px; text-align: justify; line-height: 1.6;">
               As a student of The Cardinal Academy and as the parent/guardian of the above-named student, we affirm our commitment to abide by all school rules, acknowledge and support them, commit to respecting them, and accept full responsibility for upholding them.
@@ -446,6 +446,14 @@ document.getElementById('grade_level').addEventListener('change', function () {
   const errorDiv = document.getElementById('lrn-error');
 
   if (grade === 'nursery') {
+    lrnInput.disabled = true;
+    lrnInput.value = '';
+    lrnInput.classList.remove('is-invalid');
+    if (errorDiv) {
+      errorDiv.classList.add('d-none');
+      errorDiv.style.display = 'none';
+    }
+  } else if (grade === 'kinder garten') {
     lrnInput.disabled = true;
     lrnInput.value = '';
     lrnInput.classList.remove('is-invalid');
