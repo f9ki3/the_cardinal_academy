@@ -35,6 +35,64 @@
     .circle-img-container img { width:100%; height:auto; }
     .circle-text-svg text { fill:#fff; font-size:0.82rem; font-weight:600; letter-spacing:1px; }
   </style>
+  <style>
+  .enroll-title {
+    font-family: "PT Sans Narrow", sans-serif;
+    font-weight: bold;
+    font-size: 1.8rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-top: 1rem;
+  }
+
+  /* ---------- circle & title ---------- */
+  .circle-wrapper {
+    position: relative;
+    width: 250px;
+    height: 250px;
+    margin: 0 auto 1rem;
+  }
+
+  .circle-img-container {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: #dc3545;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .circle-img-container img {
+    width: 100%;
+    height: auto;
+    transition: transform 0.4s ease;
+  }
+
+  .circle-text-svg text {
+    fill: #fff;
+    font-size: 0.82rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+  }
+
+  /* ---------- Hover animations ---------- */
+  .hover-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+  }
+
+  .hover-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15) !important;
+  }
+
+  .hover-card:hover .circle-img-container img {
+    transform: scale(1.1);
+  }
+</style>
+
 </head>
 
 <?php include 'navigation.php'; ?>
@@ -51,7 +109,7 @@
 
       <!-- ------------- Primary ------------- -->
       <div class="col-md-4 mb-4">
-       <div class="shadow p-3 rounded rounded-4">
+       <div class="shadow p-3 hover-card rounded rounded-4">
          <a href="primary.php" class="text-decoration-none text-dark">
           <div class="circle-wrapper">
             <!-- red circle with image -->
@@ -62,7 +120,7 @@
             <svg viewBox="0 0 250 250" class="circle-text-svg position-absolute top-0 start-0" width="250" height="250">
               <defs>
                 <!-- radius = 110 px so the text hugs the edge; needs unique id per circle -->
-                <path id="textPath-primary" d="M125 125 m-110 0 a110 110 0 1 1 220 0 a110 110 0 1 1 -220 0" />
+                <path id="textPath-primary" d="M125 125 m-110 0 a110 110 0 1å 1 220 0 a110 110 0 1 1 -220 0" />
               </defs>
               <text>
                 <textPath href="#textPath-primary" startOffset="50%" text-anchor="middle">
@@ -82,7 +140,7 @@
 
       <!-- ------------- Junior High ------------- -->
       <div class="col-md-4 mb-4">
-         <div class="shadow p-3 rounded rounded-4">
+         <div class="shadow p-3 hover-card rounded rounded-4">
             <a href="junior.php" class="text-decoration-none text-dark">
           <div class="circle-wrapper">
             <div class="circle-img-container">
@@ -110,7 +168,7 @@
 
       <!-- ------------- Senior High ------------- -->
       <div class="col-md-4 mb-4">
-        <div class="shadow p-3 rounded rounded-4">
+        <div class="shadow p-3 hover-card rounded rounded-4">
         <a href="senior.php" class="text-decoration-none text-dark">
           <div class="circle-wrapper">
             <div class="circle-img-container">
@@ -137,8 +195,12 @@
       </div>
 
     </div>
+
   </div>
 </div>
+<footer class="bg-dark text-white mt-4">
+    <?php include 'footer1.php'; ?>
+  </footer>
 
 <?php include 'footer.php'; ?>
 </body>
