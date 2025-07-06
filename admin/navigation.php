@@ -22,32 +22,38 @@ $profile_image = isset($user_info['profile_image']) ? $user_info['profile_image'
                     <i class="bi bi-speedometer2 me-2"></i>Dashboard
                 </a>
             </li>
-            <li class="nav-item border-white">
+            <li class="nav-item">
                 <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="admission.php">
                     <i class="bi bi-journal-plus me-2"></i>Student Admission
                 </a>
             </li>
-            <li class="nav-item border-white">
+            <li class="nav-item">
                 <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="enrollment.php">
                     <i class="bi bi-person-plus me-2"></i>Enroll Student
                 </a>
             </li>
-            <li class="nav-item border-white">
+            <li class="nav-item">
                 <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="cor_issuance.php">
                     <i class="bi bi-file-earmark-text me-2"></i>COR Issuance
                 </a>
             </li>
-            <li class="nav-item border-white">
+            <li class="nav-item">
                 <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="enrollment.php">
                     <i class="bi bi-credit-card-2-front me-2"></i>Billing and Payment
                 </a>
             </li>
-            <li class="nav-item border-white">
+            <li class="nav-item">
                 <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
                     <i class="bi bi-calendar-range me-2"></i>Class Scheduling
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="banner_edit.php?nav_drop=true">
+                    <i class="bi bi-journal-bookmark me-2"></i>Announcement
+                </a>
+            </li>
 
+            <!-- Dropdown Menu for Maintenance -->
             <li class="nav-item">
                 <a id="maintenanceDropdown" class="dropdown-btn nav-link text-dark d-flex justify-content-between align-items-center py-2 fs-6" href="javascript:void(0);">
                     <span><i class="bi bi-tools me-2"></i>Maintenance</span>
