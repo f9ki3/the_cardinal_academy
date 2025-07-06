@@ -34,22 +34,31 @@ $total_pages  = ceil($total / $limit);
 // --- Fetch student user rows -------------------------------------------------
 $query = "
     SELECT
-        user_id,
-        CONCAT(first_name, ' ', last_name) AS fullname,
-        username,
-        created_at,
-        enroll_id,
-        section_id
+        users.user_id,
+        CONCAT(users.first_name, ' ', users.last_name) AS fullname,
+        users.username,
+        users.created_at,
+        users.enroll_id,
+        users.section_id,
+        users.email,
+        enroll_form.lrn,
+        enroll_form.payment_plan,
+        enroll_form.downpayment,
+        enroll_form.tuition_fee,
+        enroll_form.miscellaneous,
+        enroll_form.discount
     FROM users
-    WHERE acc_type = 'student'
-      AND section_id IS NOT NULL                 -- ✨ exclude NULL section_id
+    JOIN enroll_form ON users.enroll_id = enroll_form.id
+    WHERE users.acc_type = 'student'
+      AND users.section_id IS NOT NULL
       AND (
-          username LIKE '%$searchEsc%'
-          OR CONCAT(first_name, ' ', last_name) LIKE '%$searchEsc%'
+          users.username LIKE '%$searchEsc%'
+          OR CONCAT(users.first_name, ' ', users.last_name) LIKE '%$searchEsc%'
       )
-    ORDER BY created_at DESC
+    ORDER BY users.created_at DESC
     LIMIT $limit OFFSET $offset
 ";
+
 
 $result = mysqli_query($conn, $query);
 if (!$result) {
@@ -120,18 +129,29 @@ if (!$result) {
                       <th>ID</th>
                       <th>Fullname</th>
                       <th>Username</th>
-                      <th>Enroll ID</th>
+                      <th>LRN</th>
                       <th>Created At</th>
                     </tr>
                   </thead>
                   <tbody>
                     <?php if (mysqli_num_rows($result) > 0): ?>
                       <?php while ($row = mysqli_fetch_assoc($result)): ?>
-                       <tr class="clickable-row" data-id="<?= $row['section_id'] ?>" data-fullname="<?= htmlspecialchars($row['fullname'], ENT_QUOTES) ?>">
+                       <tr class="clickable-row"
+                          data-id="<?= $row['section_id'] ?>"
+                          data-email="<?= $row['email'] ?>"
+                          data-fullname="<?= htmlspecialchars($row['fullname'], ENT_QUOTES) ?>"
+                          data-lrn="<?= htmlspecialchars($row['lrn'], ENT_QUOTES) ?>"
+                          data-payment_plan="<?= htmlspecialchars($row['payment_plan'], ENT_QUOTES) ?>"
+                          data-downpayment="<?= htmlspecialchars($row['downpayment'], ENT_QUOTES) ?>"
+                          data-tuition_fee="<?= htmlspecialchars($row['tuition_fee'], ENT_QUOTES) ?>"
+                          data-miscellaneous="<?= htmlspecialchars($row['miscellaneous'], ENT_QUOTES) ?>"
+                          data-discount="<?= htmlspecialchars($row['discount'], ENT_QUOTES) ?>">
+
+
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['user_id']) ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['fullname']) ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['username']) ?></p></td>
-                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['enroll_id']) ?></p></td>
+                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['lrn']) ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['created_at']) ?></p></td>
                         </tr>
                       <?php endwhile; ?>
@@ -191,15 +211,40 @@ if (!$result) {
 </html>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const rows = document.querySelectorAll('.clickable-row');
-    rows.forEach(row => {
-      row.addEventListener('click', () => {
-        const sectionId = row.getAttribute('data-id');
-        const fullName = row.getAttribute('data-fullname');
-        const encodedName = encodeURIComponent(fullName);
-        window.location.href = `view_cor.php?id=${sectionId}&fullname=${encodedName}&nav_drop=true`;
+document.addEventListener('DOMContentLoaded', function () {
+  const rows = document.querySelectorAll('.clickable-row');
+
+  rows.forEach(row => {
+    row.addEventListener('click', () => {
+      const data = {
+        id: row.dataset.id,
+        fullname: row.dataset.fullname || '',
+        email: row.dataset.email || '',
+        lrn: row.dataset.lrn || '',
+        payment_plan: row.dataset.payment_plan || '',
+        downpayment: row.dataset.downpayment || '',
+        tuition_fee: row.dataset.tuition_fee || '',
+        miscellaneous: row.dataset.miscellaneous || '',
+        discount: row.dataset.discount || ''
+      };
+
+      // Encode all parameters
+      const queryParams = new URLSearchParams({
+        id: data.id,
+        fullname: data.fullname,
+        email: data.email,
+        lrn: data.lrn,
+        payment_plan: data.payment_plan,
+        downpayment: data.downpayment,
+        tuition_fee: data.tuition_fee,
+        miscellaneous: data.miscellaneous,
+        discount: data.discount,
+        nav_drop: 'true' // fixed param
       });
+
+      // Navigate with all query parameters
+      window.location.href = `view_cor.php?${queryParams.toString()}`;
     });
   });
+});
 </script>
