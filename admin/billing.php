@@ -29,9 +29,9 @@ $query = "SELECT
             CONCAT(first_name, ' ', last_name) AS fullname, 
             username, 
             created_at, 
-            subject 
+            enroll_id 
           FROM users 
-          WHERE acc_type = 'teacher' AND (
+          WHERE acc_type = 'student' AND (
               username LIKE '%$search%' 
               OR CONCAT(first_name, ' ', last_name) LIKE '%$search%'
           )
@@ -49,7 +49,7 @@ if (!$result) {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AcadeSys - Manage Teachers</title>
+  <title>AcadeSys - Tuition Payment</title>
   <?php include 'header.php'; ?>
 </head>
 <body>
@@ -65,37 +65,23 @@ if (!$result) {
           <div class="rounded p-3 bg-white">
             <div class="container my-4">
               <div class="row mb-3">
-                <div class="col-12 col-md-5">
+                <div class="col-12 col-md-8">
                   <h4>Tuition Payment</h4>
                 </div>
-                <div class="col-12 col-md-7 d-flex justify-content-between align-items-center flex-wrap gap-2">
-                  <!-- Search Form -->
-                  <form method="GET" action="" class="flex-grow-1">
+                <div class="col-12 col-md-4">
+                  <form method="GET" action="">
                     <div class="input-group">
-                      <input 
-                        class="form-control rounded rounded-4" 
-                        type="text" 
-                        name="search" 
-                        value="<?= htmlspecialchars($search ?? '') ?>" 
-                        placeholder="Search Username or Fullname"
-                      >
+                      <input class="form-control rounded rounded-4" type="text" name="search" value="<?= htmlspecialchars($search) ?>" placeholder="Search Username or Fullname">
                       <button class="btn border ms-2 rounded rounded-4" type="submit">Search</button>
                     </div>
                   </form>
-
-                  <!-- Create Button -->
-                 <a href="pay_bill.php?nav_drop=true" class="btn bg-main text-light rounded rounded-4 px-4">
-                    <i class="bi bi-cash me-2"></i> Pay
-                </a>
-
                 </div>
-
 
                 <div class="col-12 pt-3">
                   <?php if (isset($_GET['status'])): ?>
-                    <?php if ($_GET['status'] === 'created'): ?>
+                    <?php if ($_GET['status'] === 'success'): ?>
                       <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        ✅ Created account successfully!
+                        ✅ Admission updated successfully!
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                       </div>
                     <?php elseif ($_GET['status'] === 'error'): ?>
@@ -103,9 +89,9 @@ if (!$result) {
                         ❌ Something went wrong. Please try again.
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                       </div>
-                    <?php elseif ($_GET['status'] === 'deleted'): ?>
+                    <?php elseif ($_GET['status'] === 'review'): ?>
                       <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                        ⚠️ Remove account successfully.
+                        ⚠️ Application is under review.
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                       </div>
                     <?php endif; ?>
@@ -120,9 +106,8 @@ if (!$result) {
                       <th>ID</th>
                       <th>Fullname</th>
                       <th>Username</th>
-                      <th>Subject</th>
+                      <th>Enroll ID</th>
                       <th>Created At</th>
-                      <th>Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -132,21 +117,9 @@ if (!$result) {
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['user_id']) ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['fullname']) ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['username']) ?></p></td>
-                          <td>
-  <p class="text-muted pt-3 pb-3 mb-0">
-    <?= !empty($row['subject']) ? htmlspecialchars($row['subject']) : 'No Subject Assign' ?>
-  </p>
-</td>
-
+                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['enroll_id']) ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['created_at']) ?></p></td>
-                          <td>
-                            <a href="delete_teacher.php?id=<?= urlencode($row['user_id']) ?>" 
-                              class="btn border rounded rounded-4" 
-                              onclick="return confirm('Are you sure you want to remove this teacher?');">
-                              Remove
-                            </a>
-                          </td>
-                          </tr>
+                        </tr>
                       <?php endwhile; ?>
                     <?php else: ?>
                       <tr>
@@ -209,7 +182,7 @@ if (!$result) {
     rows.forEach(row => {
       row.addEventListener('click', () => {
         const id = row.getAttribute('data-id');
-        window.location.href = `view_teacher.php?id=${id}&nav_drop=true`;
+        window.location.href = `view_tuition.php?id=${id}&nav_drop=true`;
       });
     });
   });
