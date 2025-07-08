@@ -26,6 +26,7 @@ $query = "SELECT
             lrn, 
             CONCAT(firstname, ' ', lastname) AS fullname, 
             CONCAT(barangay, ', ', municipal, ', ', province) AS address, 
+            residential_address,
             grade_level,
             status 
           FROM admission_form
@@ -119,7 +120,7 @@ $result = mysqli_query($conn, $query);
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['lrn']) ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['que_code'] ?? '-') ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['fullname']) ?></p></td>
-                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['address']) ?></p></td>
+                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['residential_address']) ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['grade_level']) ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['status']) ?></p></td>
                         </tr>
