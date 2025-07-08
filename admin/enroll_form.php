@@ -2,6 +2,9 @@
 include 'session_login.php';
 include '../db_connection.php';
 
+// Throw exceptions instead of fatal errors
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+
 if (!$conn) {
     die("<p style='color:red;'>Database connection failed: " . mysqli_connect_error() . "</p>");
 }
@@ -114,70 +117,79 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
             $discount_type, $discount, $discount_value
         );
 
-        if ($insert->execute()) {
-            // Generate 8-character random password
-            function generateRandomPassword($length = 8) {
-                $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-                return substr(str_shuffle($chars), 0, $length);
+        // 🔄 Wrap the insert in try...catch to handle duplicate errors
+        try {
+            if ($insert->execute()) {
+                // Generate 8-character random password
+                function generateRandomPassword($length = 8) {
+                    $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+                    return substr(str_shuffle($chars), 0, $length);
+                }
+
+                $raw_password = generateRandomPassword(8);
+                $hashed_password = password_hash($raw_password, PASSWORD_DEFAULT);
+
+                $acc_type   = 'student';
+                $username = strtolower($firstname . '_' . $lastname . '.student');
+                $profile    = $profile_picture ?: 'dummy.png';
+                $rfid       = null;
+
+                $user_stmt = $conn->prepare("INSERT INTO users (
+                    acc_type, username, email, password, first_name, last_name,
+                    gender, birthdate, phone_number, address, profile, rfid, enroll_id
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+
+                if (!$user_stmt) {
+                    die("<p style='color:red;'>Prepare failed (USER INSERT): " . $conn->error . "</p>");
+                }
+
+                $user_stmt->bind_param(
+                    "ssssssssssssi",
+                    $acc_type,
+                    $username,
+                    $email,
+                    $hashed_password,
+                    $firstname,
+                    $lastname,
+                    $gender,
+                    $birthday,
+                    $facebook,
+                    $residential_address,
+                    $profile,
+                    $rfid,
+                    $id
+                );
+
+                if ($user_stmt->execute()) {
+                    // ✅ Auto-submit to receipt.php with needed data
+                    echo '<form id="receiptForm" method="POST" action="receipt.php">';
+                    echo '<input type="hidden" name="student_name" value="' . htmlspecialchars($firstname . ' ' . $lastname) . '">';
+                    echo '<input type="hidden" name="grade_level" value="' . htmlspecialchars($grade_level) . '">';
+                    echo '<input type="hidden" name="tuition_fee" value="' . htmlspecialchars($tuition_fee) . '">';
+                    echo '<input type="hidden" name="miscellaneous" value="' . htmlspecialchars($miscellaneous) . '">';
+                    echo '<input type="hidden" name="total" value="' . htmlspecialchars($total) . '">';
+                    echo '<input type="hidden" name="discount_type" value="' . htmlspecialchars($discount_type) . '">';
+                    echo '<input type="hidden" name="discount_value" value="' . htmlspecialchars($discount_value) . '">';
+                    echo '<input type="hidden" name="final_amount" value="' . htmlspecialchars($discounted_total) . '">';
+                    echo '<input type="hidden" name="downpayment" value="' . htmlspecialchars($downpayment) . '">';
+                    echo '<input type="hidden" name="balance" value="' . htmlspecialchars($balance) . '">';
+                    echo '<input type="hidden" name="payment_plan" value="' . htmlspecialchars($payment_plan) . '">';
+                    echo '</form>';
+                    echo '<script>document.getElementById("receiptForm").submit();</script>';
+                } else {
+                    echo "<p style='color:red;'>User insert failed: " . $user_stmt->error . "</p>";
+                }
+
+                $user_stmt->close();
             }
-
-            $raw_password = generateRandomPassword(8);
-            $hashed_password = password_hash($raw_password, PASSWORD_DEFAULT);
-
-            $acc_type   = 'student';
-            $username = strtolower($firstname . '_' . $lastname . '.student');
-            $profile    = $profile_picture ?: 'dummy.png';
-            $rfid       = null;
-
-            $user_stmt = $conn->prepare("INSERT INTO users (
-                acc_type, username, email, password, first_name, last_name,
-                gender, birthdate, phone_number, address, profile, rfid, enroll_id
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-
-            if (!$user_stmt) {
-                die("<p style='color:red;'>Prepare failed (USER INSERT): " . $conn->error . "</p>");
-            }
-
-            $user_stmt->bind_param(
-                "ssssssssssssi",
-                $acc_type,
-                $username,
-                $email,
-                $hashed_password,
-                $firstname,
-                $lastname,
-                $gender,
-                $birthday,
-                $facebook,
-                $residential_address,
-                $profile,
-                $rfid,
-                $id
-            );
-
-            if ($user_stmt->execute()) {
-                // ✅ Auto-submit to receipt.php with needed data
-                echo '<form id="receiptForm" method="POST" action="receipt.php">';
-                echo '<input type="hidden" name="student_name" value="' . htmlspecialchars($firstname . ' ' . $lastname) . '">';
-                echo '<input type="hidden" name="grade_level" value="' . htmlspecialchars($grade_level) . '">';
-                echo '<input type="hidden" name="tuition_fee" value="' . htmlspecialchars($tuition_fee) . '">';
-                echo '<input type="hidden" name="miscellaneous" value="' . htmlspecialchars($miscellaneous) . '">';
-                echo '<input type="hidden" name="total" value="' . htmlspecialchars($total) . '">';
-                echo '<input type="hidden" name="discount_type" value="' . htmlspecialchars($discount_type) . '">';
-                echo '<input type="hidden" name="discount_value" value="' . htmlspecialchars($discount_value) . '">';
-                echo '<input type="hidden" name="final_amount" value="' . htmlspecialchars($discounted_total) . '">';
-                echo '<input type="hidden" name="downpayment" value="' . htmlspecialchars($downpayment) . '">';
-                echo '<input type="hidden" name="balance" value="' . htmlspecialchars($balance) . '">';
-                echo '<input type="hidden" name="payment_plan" value="' . htmlspecialchars($payment_plan) . '">';
-                echo '</form>';
-                echo '<script>document.getElementById("receiptForm").submit();</script>';
+        } catch (mysqli_sql_exception $e) {
+            if ($e->getCode() == 1062) {
+                header("Location: enroll_form.php?error=duplicate");
+                exit;
             } else {
-                echo "<p style='color:red;'>User insert failed: " . $user_stmt->error . "</p>";
+                echo "<p style='color:red;'>Insert failed: " . $e->getMessage() . "</p>";
             }
-
-            $user_stmt->close();
         }
-
 
         $insert->close();
 

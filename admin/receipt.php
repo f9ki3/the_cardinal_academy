@@ -43,7 +43,9 @@ $payment_plan = $_POST['payment_plan'] ?? '';
               <div class="row">
                 <div class="col-12">
                   <div class="rounded">
-                   <div class="d-flex align-items-center mb-4">
+                   <div class="row">
+                    <div class="col-12 col-md-6">
+                      <div class="d-flex align-items-center mb-4">
                       <img src="../static/uploads/logo.png" alt="Logo" style="height: 70px; width: auto;" class="me-3">
                       <div>
                         <h5 class="mb-0 fw-bold">The Cardinal Academy</h5>
@@ -52,6 +54,16 @@ $payment_plan = $_POST['payment_plan'] ?? '';
                       </div>
                     </div>
 
+                    </div>
+                    <div class="col-12 col-md-6">
+
+                    <div class="text-end mt-4 d-print-none">
+                      <button class="btn btn-sm border text-muted rounded-4" onclick="window.print()">
+                          <i class="bi bi-printer me-1"></i> Print
+                      </button>
+                    </div>
+                    </div>
+                   </div>
                     <hr>
 
                     <div class="mb-3 p-2">
@@ -105,11 +117,6 @@ $payment_plan = $_POST['payment_plan'] ?? '';
                       </tbody>
                     </table>
 
-                    <div class="text-end mt-4 d-print-none">
-                      <button onclick="window.print()" class="btn btn-primary">
-                        <i class="bi bi-printer"></i> Print Receipt
-                      </button>
-                    </div>
 
                   </div>
                 </div>

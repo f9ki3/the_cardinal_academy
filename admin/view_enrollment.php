@@ -137,7 +137,7 @@ if ($admission_id > 0) {
 
     <div class="col-md-6">
       <label class="form-label text-muted">Complete Residential Address</label>
-      <input type="text" class="form-control" value="<?= htmlspecialchars($data['residential_address'] ?? '') ?>" >
+      <input type="text" class="form-control" name="residential_address" value="<?= htmlspecialchars($data['residential_address'] ?? '') ?>" >
     </div>
 
     <div class="col-md-6">
@@ -170,7 +170,7 @@ if ($admission_id > 0) {
 
     <div class="col-md-3">
       <label class="form-label text-muted">Phone</label>
-      <input type="text" name="facebook" class="form-control" value="<?= htmlspecialchars($data['phone'] ?? '') ?>">
+      <input type="text" name="phone" class="form-control" value="<?= htmlspecialchars($data['phone'] ?? '') ?>">
     </div>
 
     <div class="col-md-3">
