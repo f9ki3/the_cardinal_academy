@@ -298,7 +298,7 @@ if ($result->num_rows > 0) {
                         if ($result->num_rows > 0) {
                             while ($row = $result->fetch_assoc()) {
                                 $formatted_invoice = 'INV-' . str_pad($row['invoice_number'], 4, '0', STR_PAD_LEFT);
-                                echo "<tr class='clickable-row' data-id='{$row['invoice_number']}'>";
+                                echo "<tr class='clickable-row' data-id='{$row['invoice_number']}' data-student='{$student_id}'>";
                                 echo "<td class='py-3'>{$formatted_invoice}</td>";
                                 echo "<td class='py-3'>" . $row['date'] . "</td>";
                                 echo "<td class='py-3'>₱" . number_format($row['amount'], 2) . "</td>";
@@ -324,12 +324,13 @@ if ($result->num_rows > 0) {
                               document.querySelectorAll('.clickable-row').forEach(function(row) {
                                   row.addEventListener('click', function() {
                                       const invoiceId = this.getAttribute('data-id');
-                                      // Redirect or handle the ID as needed
-                                      window.location.href = 'view_invoice.php?id=' + invoiceId;
+                                      const studentId = this.getAttribute('data-student');
+                                      window.location.href = 'view_invoice.php?invoice_id=' + encodeURIComponent(invoiceId) + '&student_id=' + encodeURIComponent(studentId);
                                   });
                               });
                           });
                           </script>
+
 
                     </table>
                     </div>

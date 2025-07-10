@@ -2,7 +2,8 @@
 include 'session_login.php';
 include '../db_connection.php';
 
-$id = (int) $_GET['id'];
+$id = (int) $_GET['invoice_id'];
+$student_id = (int) $_GET['student_id'];
 
 // Fetch payment details
 $stmt = $conn->prepare("SELECT *
@@ -58,6 +59,10 @@ $type = $data['payment_type'];
                 <button class="btn btn-sm border text-muted rounded-4" onclick="window.print()">
                   <i class="bi bi-printer me-1"></i> Print
                 </button>
+                <a href="view_tuition.php?id=<?php echo urlencode($student_id); ?>" class="btn btn-sm border text-muted rounded-4">
+                  <i class="bi bi-arrow-left me-1"></i> Go Back
+                </a>
+
               </div>
             </div>
 

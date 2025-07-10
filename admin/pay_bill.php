@@ -41,8 +41,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($stmt->execute()) {
         // success
-        header("Location: view_tuition.php?id=" . urlencode($student_id) . "&nav_drop=true");
+        header("Location: view_invoice.php?invoice_id=" . urlencode($invoice_number) . "&student_id=" . urlencode($student_id));
         exit();
+
     } else {
         echo "Error: " . $stmt->error;
     }
