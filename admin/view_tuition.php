@@ -85,8 +85,8 @@ if ($result->num_rows > 0) {
                           <span class="me-3 text-muted">Residential_address: <?php echo $residential_address; ?></span>
                       </div>
                       <div class="col-12 d-flex flex-column col-md-6">
-                          <span class="me-3 text-muted">Admission_date: <?php echo $admission_date; ?></span>
-                          <span class="me-3 text-muted">Tuition Fee: <?php echo $balance; ?></span>
+                          <span class="me-3 text-muted">Admission_date: <?php echo $admission_date; ?>
+                          </span><span class="me-3 text-muted">Tuition Fee: PHP <?php echo number_format($balance, 2); ?></span>
                       </div>
 
                      </div>
@@ -100,11 +100,11 @@ if ($result->num_rows > 0) {
                         <h6 class="mb-0 text-muted">Recent Payments - <?php echo $payment_plan?></h6>
                         <!-- Button trigger modal -->
                          <?php if (number_format($remaining_balance, 2) == 0): ?>
-                          <a href="#" class="btn btn-sm rounded rounded-4 px-4 disabled">
+                          <a href="#" class="btn btn-danger btn-sm rounded rounded-4 px-4 disabled">
                             <i class="bi bi-check-circle me-2"></i> Paid
                           </a>
                         <?php else: ?>
-                          <a href="#" class="btn btn-sm rounded rounded-4 px-4" data-bs-toggle="modal" data-bs-target="#payModal">
+                          <a href="#" class="btn btn-danger btn-sm border rounded rounded-4 px-4" data-bs-toggle="modal" data-bs-target="#payModal">
                             <i class="bi bi-cash me-2"></i> Pay
                           </a>
                         <?php endif; ?>
@@ -146,7 +146,7 @@ if ($result->num_rows > 0) {
                                 <!-- Transaction Fee Field -->
                                 <input type="hidden" id="transaction_fee_input" name="transaction_fee" value="0">
 
-                                <div class="">
+                                <div class="mt-3">
                                   <h5>Payment Computation</h5>
                                   <input type="hidden" name="student_id" value="<?php echo $id;?>">
                                   
@@ -298,7 +298,7 @@ if ($result->num_rows > 0) {
                         if ($result->num_rows > 0) {
                             while ($row = $result->fetch_assoc()) {
                                 $formatted_invoice = 'INV-' . str_pad($row['invoice_number'], 4, '0', STR_PAD_LEFT);
-                                echo "<tr>";
+                                echo "<tr class='clickable-row' data-id='{$row['invoice_number']}'>";
                                 echo "<td class='py-3'>{$formatted_invoice}</td>";
                                 echo "<td class='py-3'>" . $row['date'] . "</td>";
                                 echo "<td class='py-3'>₱" . number_format($row['amount'], 2) . "</td>";
@@ -319,6 +319,18 @@ if ($result->num_rows > 0) {
                         $conn->close();
                         ?>
                         </tbody>
+                        <script>
+                          document.addEventListener('DOMContentLoaded', function () {
+                              document.querySelectorAll('.clickable-row').forEach(function(row) {
+                                  row.addEventListener('click', function() {
+                                      const invoiceId = this.getAttribute('data-id');
+                                      // Redirect or handle the ID as needed
+                                      window.location.href = 'view_invoice.php?id=' + invoiceId;
+                                  });
+                              });
+                          });
+                          </script>
+
                     </table>
                     </div>
                     </div>
@@ -326,7 +338,7 @@ if ($result->num_rows > 0) {
                         <div class="row">
                         <div class="col-12 mb-3">
                             <div class=" p-3 rounded shadow rounded-4" style="background-color: accentgreen">
-                            <p class="text-muted">Balance</p>
+                            <p class="text-muted">Remaining Balance</p>
                             <h2 class="fw-bolder">PHP <?php echo number_format($remaining_balance, 2); ?></h2>
                             </div>
                         </div>
