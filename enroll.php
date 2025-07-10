@@ -65,7 +65,7 @@
   }
 
   .circle-img-container img {
-    width: 100%;
+    width: 70%;
     height: auto;
     transition: transform 0.4s ease;
   }
@@ -105,96 +105,144 @@
       Choose your child's upcoming grade level to proceed with the enrollment process. Click on an option below.
     </p>
 
-    <div class="row text-center">
-
-      <!-- ------------- Primary ------------- -->
+   <div class="row text-center justify-content-center">
+      <!-- Preschool -->
       <div class="col-md-4 mb-4">
-       <div class="shadow p-3 hover-card rounded rounded-4">
-         <a href="primary.php" class="text-decoration-none text-dark">
-          <div class="circle-wrapper">
-            <!-- red circle with image -->
-            <div class="circle-img-container">
-              <img src="static/images/rm3.png" alt="Primary">
+        <div class="shadow p-3 hover-card rounded rounded-4">
+          <a href="preschool.php" class="text-decoration-none text-dark">
+            <div class="circle-wrapper">
+              <div class="circle-img-container">
+                <img src="static/images/rm1.png" alt="Preschool">
+              </div>
+              <svg viewBox="0 0 250 250" class="circle-text-svg position-absolute top-0 start-0" width="250" height="250">
+                <defs>
+                  <path id="textPath-preschool" d="M125 125 m-110 0 a110 110 0 1 1 220 0 a110 110 0 1 1 -220 0" />
+                </defs>
+                <text>
+                  <textPath href="#textPath-preschool" startOffset="50%" text-anchor="middle">
+                    Nursery&nbsp;and&nbsp;Kinder
+                  </textPath>
+                </text>
+              </svg>
             </div>
-            <!-- curved text -->
-            <svg viewBox="0 0 250 250" class="circle-text-svg position-absolute top-0 start-0" width="250" height="250">
-              <defs>
-                <!-- radius = 110 px so the text hugs the edge; needs unique id per circle -->
-                <path id="textPath-primary" d="M125 125 m-110 0 a110 110 0 1å 1 220 0 a110 110 0 1 1 -220 0" />
-              </defs>
-              <text>
-                <textPath href="#textPath-primary" startOffset="50%" text-anchor="middle">
-                  Nursery&nbsp;to&nbsp;Grade&nbsp;6
-                </textPath>
-              </text>
-            </svg>
-          </div>
-          <h2 class="enroll-title">Primary</h2>
-          <p class="text-muted">
-            For students entering from Nursery up to Grade 6. This includes early childhood education and the foundational elementary years to prepare students academically and socially.
-          </p>
-
-        </a>
-       </div>
-      </div>
-
-      <!-- ------------- Junior High ------------- -->
-      <div class="col-md-4 mb-4">
-         <div class="shadow p-3 hover-card rounded rounded-4">
-            <a href="junior.php" class="text-decoration-none text-dark">
-          <div class="circle-wrapper">
-            <div class="circle-img-container">
-              <img src="static/images/rm2.png" alt="Junior High">
-            </div>
-            <svg viewBox="0 0 250 250" class="circle-text-svg position-absolute top-0 start-0" width="250" height="250">
-              <defs>
-                <path id="textPath-junior" d="M125 125 m-110 0 a110 110 0 1 1 220 0 a110 110 0 1 1 -220 0" />
-              </defs>
-              <text>
-                <textPath href="#textPath-junior" startOffset="50%" text-anchor="middle">
-                  Grade&nbsp;7&nbsp;to&nbsp;Grade&nbsp;10
-                </textPath>
-              </text>
-            </svg>
-          </div>
-          <h2 class="enroll-title">Junior High</h2>
-          <p class="text-muted">
-            For students progressing to Grades 7 to 10. This level builds on core subjects while developing critical thinking, collaboration, and independence in preparation for senior high.
-          </p>
-
-        </a>
+            <h2 class="enroll-title">Preschool</h2>
+            <p class="text-muted">
+              Designed for toddlers and early learners to develop foundational literacy, numeracy, and social skills through play-based learning.
+            </p>
+          </a>
         </div>
       </div>
 
-      <!-- ------------- Senior High ------------- -->
+      <!-- Primary -->
       <div class="col-md-4 mb-4">
         <div class="shadow p-3 hover-card rounded rounded-4">
-        <a href="senior.php" class="text-decoration-none text-dark">
-          <div class="circle-wrapper">
-            <div class="circle-img-container">
-              <img src="static/images/rm1.png" alt="Senior High">
+          <a href="primary.php" class="text-decoration-none text-dark">
+            <div class="circle-wrapper">
+              <div class="circle-img-container">
+                <img src="static/images/rm5.png" alt="Primary">
+              </div>
+              <svg viewBox="0 0 250 250" class="circle-text-svg position-absolute top-0 start-0" width="250" height="250">
+                <defs>
+                  <path id="textPath-primary" d="M125 125 m-110 0 a110 110 0 1 1 220 0 a110 110 0 1 1 -220 0" />
+                </defs>
+                <text>
+                  <textPath href="#textPath-primary" startOffset="50%" text-anchor="middle">
+                    Grade 1 to Grade 3
+                  </textPath>
+                </text>
+              </svg>
             </div>
-            <svg viewBox="0 0 250 250" class="circle-text-svg position-absolute top-0 start-0" width="250" height="250">
-              <defs>
-                <path id="textPath-senior" d="M125 125 m-110 0 a110 110 0 1 1 220 0 a110 110 0 1 1 -220 0" />
-              </defs>
-              <text>
-                <textPath href="#textPath-senior" startOffset="50%" text-anchor="middle">
-                  Grade&nbsp;11&nbsp;to&nbsp;Grade&nbsp;12
-                </textPath>
-              </text>
-            </svg>
-          </div>
-          <h2 class="enroll-title">Senior High</h2>
+            <h2 class="enroll-title">Primary</h2>
             <p class="text-muted">
-              For students entering Grades 11 and 12. This level offers academic and technical-vocational tracks to prepare learners for college, employment, or entrepreneurship.
+              For students entering Grades 1 to 3. This stage focuses on basic academic skills and character formation.
             </p>
+          </a>
+        </div>
+      </div>
 
-        </a>
+      <!-- Intermediate -->
+      <div class="col-md-4 mb-4">
+        <div class="shadow p-3 hover-card rounded rounded-4">
+          <a href="intermediate.php" class="text-decoration-none text-dark">
+            <div class="circle-wrapper">
+              <div class="circle-img-container">
+                <img src="static/images/rm4.png" alt="Intermediate">
+              </div>
+              <svg viewBox="0 0 250 250" class="circle-text-svg position-absolute top-0 start-0" width="250" height="250">
+                <defs>
+                  <path id="textPath-intermediate" d="M125 125 m-110 0 a110 110 0 1 1 220 0 a110 110 0 1 1 -220 0" />
+                </defs>
+                <text>
+                  <textPath href="#textPath-intermediate" startOffset="50%" text-anchor="middle">
+                    Grade 4 to Grade 6
+                  </textPath>
+                </text>
+              </svg>
+            </div>
+            <h2 class="enroll-title">Intermediate</h2>
+            <p class="text-muted">
+              Focuses on Grades 4 to 6. Builds a stronger foundation in core subjects and prepares students for high school.
+            </p>
+          </a>
+        </div>
+      </div>
+
+      <!-- Junior High -->
+      <div class="col-md-4 mb-4">
+        <div class="shadow p-3 hover-card rounded rounded-4">
+          <a href="junior.php" class="text-decoration-none text-dark">
+            <div class="circle-wrapper">
+              <div class="circle-img-container">
+                <img src="static/images/rm2.png" alt="Junior High">
+              </div>
+              <svg viewBox="0 0 250 250" class="circle-text-svg position-absolute top-0 start-0" width="250" height="250">
+                <defs>
+                  <path id="textPath-junior" d="M125 125 m-110 0 a110 110 0 1 1 220 0 a110 110 0 1 1 -220 0" />
+                </defs>
+                <text>
+                  <textPath href="#textPath-junior" startOffset="50%" text-anchor="middle">
+                    Grade 7 to Grade 10
+                  </textPath>
+                </text>
+              </svg>
+            </div>
+            <h2 class="enroll-title">Junior High</h2>
+            <p class="text-muted">
+              Covers Grades 7 to 10. Encourages critical thinking and problem-solving in preparation for senior high.
+            </p>
+          </a>
+        </div>
+      </div>
+
+      <!-- Senior High -->
+      <div class="col-md-4 mb-4">
+        <div class="shadow p-3 hover-card rounded rounded-4">
+          <a href="senior.php" class="text-decoration-none text-dark">
+            <div class="circle-wrapper">
+              <div class="circle-img-container">
+                <img src="static/images/rm3.png" alt="Senior High">
+              </div>
+              <svg viewBox="0 0 250 250" class="circle-text-svg position-absolute top-0 start-0" width="250" height="250">
+                <defs>
+                  <path id="textPath-senior" d="M125 125 m-110 0 a110 110 0 1 1 220 0 a110 110 0 1 1 -220 0" />
+                </defs>
+                <text>
+                  <textPath href="#textPath-senior" startOffset="50%" text-anchor="middle">
+                    Grade 11 to Grade 12
+                  </textPath>
+                </text>
+              </svg>
+            </div>
+            <h2 class="enroll-title">Senior High</h2>
+            <p class="text-muted">
+              For Grades 11 and 12. Offers specialized academic or technical-vocational tracks for future readiness.
+            </p>
+          </a>
         </div>
       </div>
 
     </div>
+
 
   </div>
 </div>

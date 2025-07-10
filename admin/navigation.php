@@ -54,11 +54,11 @@ $profile_image = isset($user_info['profile_image']) ? $user_info['profile_image'
 
             <!-- Maintenance dropdown -->
             <li class="nav-item">
-                <a id="maintenanceDropdown" class="dropdown-btn nav-link text-dark d-flex justify-content-between align-items-center py-2 fs-6" href="javascript:void(0);">
+                <!-- <a id="maintenanceDropdown" class="dropdown-btn nav-link text-dark d-flex justify-content-between align-items-center py-2 fs-6" href="javascript:void(0);">
                     <span><i class="bi bi-tools me-2"></i>Maintenance</span>
                     <span id="arrow-icon">▼</span>
-                </a>
-                <div id="maintenanceMenu" class="dropdown-container border p-3 bg-light rounded rounded-4" style="display: none;">
+                </a> -->
+                <div id="maintenanceMenu" class="dropdown-container border p-3 bg-light rounded rounded-4" >
                     <h6 class="fw-bolder">Maintenance</h6>
                     <hr class="m-0 py-1">
                     <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="students.php?nav_drop=true">
@@ -84,7 +84,7 @@ $profile_image = isset($user_info['profile_image']) ? $user_info['profile_image'
         </ul>
     </div>
 </div>
-
+<!-- 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const dropdownBtn = document.getElementById("maintenanceDropdown");
@@ -111,7 +111,7 @@ $profile_image = isset($user_info['profile_image']) ? $user_info['profile_image'
             toggleDropdown(true);
         }
     });
-</script>
+</script> -->
 
 <style>
     .dropdown-container a {

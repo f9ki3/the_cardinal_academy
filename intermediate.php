@@ -88,22 +88,22 @@
             <label for="grade_level" class="form-label text-muted">Grade Level </label>
             <select name="grade_level" id="grade_level" class="form-select">
               <option value="">Select grade level </option>
-              <option>Grade 1</option>
-              <option>Grade 2</option>
-              <option>Grade 3</option>
+              <option>Grade 4</option>
+              <option>Grade 5</option>
+              <option>Grade 6</option>
             </select>
             <div id="grade_level-error" class="invalid-feedback d-none">Grade Level is required.</div>
           </div>
 
-          <div class="col-12 col-md-6">
-            <label for="lrn" class="form-label text-muted">Learner Reference Number (LRN)</label>
-            <input type="text" name="lrn" id="lrn" 
-                  placeholder="Note: For nursery that has no LRN leave empty." 
-                  class="form-control"
-                  maxlength="12"
-                  oninput="this.value = this.value.replace(/\D/g, '').slice(0, 12)">
-            <div id="lrn-error" class="invalid-feedback d-none">LRN must be a 12-digit number.</div>
-          </div>
+        <div class="col-12 col-md-6">
+        <label for="lrn" class="form-label text-muted">Learner Reference Number (LRN)</label>
+        <input type="text" name="lrn" id="lrn" 
+                placeholder="Note: For nursery that has no LRN leave empty." 
+                class="form-control"
+                maxlength="12"
+                oninput="this.value = this.value.replace(/\D/g, '').slice(0, 12)">
+        <div id="lrn-error" class="invalid-feedback d-none">LRN must be a 12-digit number.</div>
+        </div>
 
 
 
@@ -117,6 +117,7 @@
             <div id="gender-error" class="invalid-feedback d-none">Gender is required.</div>
           </div>
 
+
         <div class="col-12 col-md-6">
         <label for="phone" class="form-label text-muted">Phone Number</label>
         <input type="text" name="phone" id="phone" class="form-control" 
@@ -126,7 +127,6 @@
                 required>
         <div id="phone-error" class="invalid-feedback d-none">Phone number must be exactly 11 digits.</div>
         </div>
-
 
           <div class="col-12 col-md-4">
             <label class="form-label text-muted">Last Name</label>
