@@ -1,133 +1,54 @@
-<?php include 'session_login.php'; ?>
-<?php include '../db_connection.php'; ?>
+<?php
+include '../db_connection.php'; // make sure you include your DB connection
+session_start();
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Student Billing</title>
-  <?php include 'header.php'; ?>
-</head>
-<body>
-<div class="d-flex flex-row bg-light">
-  <?php include 'navigation.php'; ?>
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $reference = $_POST['reference'] ?? '';
+    $payment_type = $_POST['payment_type'] ?? '';
+    $payment = floatval($_POST['payment'] ?? 0);
+    $transaction_fee = floatval($_POST['transaction_fee'] ?? 0);
+    $balance = floatval($_POST['balance'] ?? 0);
+    $change = $payment - ($balance + $transaction_fee);
 
-  <div class="content flex-grow-1">
-    <?php include 'nav_top.php'; ?>
+    $amount = $balance; // Assuming amount is the balance to be paid
+    $student_id = $_POST['student_id'] ?? '';
+    $registar_id = $_SESSION['user_id'] ?? 0;
+    $invoice_number = mt_rand(1000000, 9999999);
+    $proof = ''; // Add this if needed from file upload
 
-    <div class="container py-4">
-      <form action="process_payment.php" method="POST">
-        <div class="bg-white p-4 rounded-4 shadow-sm">
-          <h2>Student Billing Statement</h2>
-          <p class="text-muted">Review all billing information before submitting.</p>
-          <hr>
+    // Generate a unique reference number if empty
+    if (empty($reference)) {
+        do {
+            $generated_reference = mt_rand(1000000000, 9999999999); // 10-digit number
+            $check_stmt = $conn->prepare("SELECT COUNT(*) FROM payment WHERE reference_number = ?");
+            $check_stmt->bind_param("i", $generated_reference);
+            $check_stmt->execute();
+            $check_stmt->bind_result($count);
+            $check_stmt->fetch();
+            $check_stmt->close();
+        } while ($count > 0);
 
-          <!-- STUDENT INFO SECTION -->
-          <h5 class="mt-3">Student Information</h5>
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label for="student_name" class="form-label">Full Name</label>
-              <input type="text" name="student_name" id="student_name" class="form-control" value="<?= htmlspecialchars($data['full_name'] ?? '') ?>" required>
-            </div>
+        $reference_number = $generated_reference;
+    } else {
+        $reference_number = intval($reference);
+    }
 
-            <div class="col-md-6">
-              <label for="student_id" class="form-label">Student ID</label>
-              <input type="text" name="student_id" id="student_id" class="form-control" value="<?= htmlspecialchars($data['student_id'] ?? '') ?>" required>
-            </div>
+    // ✅ Insert with transaction_fee field
+    $stmt = $conn->prepare("INSERT INTO payment (amount, payment, `change`, transaction_fee, payment_type, proof, student_id, registar_id, `date`, invoice_number, reference_number) 
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?, ?)");
 
-            <div class="col-md-6">
-              <label for="grade_level" class="form-label">Grade Level</label>
-              <input type="text" name="grade_level" id="grade_level" class="form-control" value="<?= htmlspecialchars($data['grade_level'] ?? '') ?>">
-            </div>
+    $stmt->bind_param("ddddssiiii", $amount, $payment, $change, $transaction_fee, $payment_type, $proof, $student_id, $registar_id, $invoice_number, $reference_number);
 
-            <div class="col-md-6">
-              <label for="billing_date" class="form-label">Billing Date</label>
-              <input type="date" name="billing_date" id="billing_date" class="form-control" value="<?= date('Y-m-d') ?>">
-            </div>
-          </div>
+    if ($stmt->execute()) {
+        // success
+        header("Location: view_invoice.php?invoice_id=" . urlencode($invoice_number) . "&student_id=" . urlencode($student_id));
+        exit();
 
-          <!-- BILLING ITEMS SECTION -->
-          <h5 class="mt-4">Billing Items</h5>
-          <div class="table-responsive">
-            <table class="table table-bordered align-middle">
-              <thead class="table-light">
-                <tr>
-                  <th>Description</th>
-                  <th class="text-end">Amount (₱)</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Tuition Fee</td>
-                  <td class="text-end"><input type="number" name="tuition_fee" class="form-control text-end" value="0" required></td>
-                </tr>
-                <tr>
-                  <td>Miscellaneous Fees</td>
-                  <td class="text-end"><input type="number" name="misc_fee" class="form-control text-end" value="0" required></td>
-                </tr>
-                <tr>
-                  <td>Books & Materials</td>
-                  <td class="text-end"><input type="number" name="books_fee" class="form-control text-end" value="0" required></td>
-                </tr>
-              </tbody>
-              <tfoot>
-                <tr>
-                  <th>Total</th>
-                  <th class="text-end text-success">
-                    <span id="total_amount">₱0.00</span>
-                  </th>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
+    } else {
+        echo "Error: " . $stmt->error;
+    }
 
-          <!-- PAYMENT STATUS -->
-          <div class="row g-3 mt-3">
-            <div class="col-md-6">
-              <label for="status" class="form-label">Payment Status</label>
-              <select name="status" id="status" class="form-control" required>
-                <option value="">Select status...</option>
-                <option value="unpaid">Unpaid</option>
-                <option value="partial">Partially Paid</option>
-                <option value="paid">Fully Paid</option>
-              </select>
-            </div>
-            <div class="col-md-6">
-              <label for="remarks" class="form-label">Remarks</label>
-              <textarea name="remarks" id="remarks" rows="2" class="form-control"></textarea>
-            </div>
-          </div>
-
-          <!-- SUBMIT -->
-          <div class="col-12 text-start pt-4">
-            <button type="submit" class="btn bg-main text-light">Submit Payment</button>
-            <a href="billing.php" class="btn btn-secondary ms-2">Back</a>
-          </div>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-
-<?php include 'footer.php'; ?>
-
-<script>
-  function updateTotal() {
-    const tuition = parseFloat(document.querySelector('[name="tuition_fee"]').value) || 0;
-    const misc = parseFloat(document.querySelector('[name="misc_fee"]').value) || 0;
-    const books = parseFloat(document.querySelector('[name="books_fee"]').value) || 0;
-    const total = tuition + misc + books;
-    document.getElementById('total_amount').innerText = '₱' + total.toFixed(2);
-  }
-
-  document.querySelectorAll('[name="tuition_fee"], [name="misc_fee"], [name="books_fee"]').forEach(input => {
-    input.addEventListener('input', updateTotal);
-  });
-
-  // Initialize total
-  updateTotal();
-</script>
-
-</body>
-</html>
+    $stmt->close();
+    $conn->close();
+}
+?>
