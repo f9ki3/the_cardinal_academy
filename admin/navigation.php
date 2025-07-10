@@ -119,3 +119,4 @@ $profile_image = isset($user_info['profile_image']) ? $user_info['profile_image'
         padding: 5px 0;
     }
 </style>
+

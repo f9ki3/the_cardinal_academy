@@ -15,7 +15,7 @@ $total_amount = $total_row['total_amount'] ?? 0; // fallback to 0
 $total_stmt->close();
 
 // ✅ Get balance and enrollment info
-$sql = "SELECT enroll_form.tuition_fee, enroll_form.miscellaneous, enroll_form.payment_plan 
+$sql = "SELECT enroll_form.tuition_fee, enroll_form.miscellaneous, enroll_form.payment_plan , enroll_form.firstname, enroll_form.middlename, enroll_form.lastname,  enroll_form.residential_address,  enroll_form.admission_date
         FROM users 
         JOIN enroll_form ON users.enroll_id = enroll_form.id 
         WHERE users.acc_type = 'student' AND users.user_id = ?";
@@ -32,6 +32,10 @@ if ($result->num_rows > 0) {
     $misc = (float) $data['miscellaneous'];
     $balance = $tuition_fee + $misc;
     $payment_plan = $data['payment_plan'];
+    $fullname = $data['firstname'] . ' ' . $data['lastname'];
+    $residential_address = $data['residential_address'];
+    $admission_date = $data['admission_date'];
+
 
     $amount_pay = 0;
 
@@ -71,45 +75,36 @@ if ($result->num_rows > 0) {
         <div class="row g-4">
         <div class="col-12">
           <div class="rounded p-3 bg-white">
-            <div class="container my-4">
-              <div class="row mb-3">
-                <div class="col-12 col-md-10">
-                  <h4>Tuition Transaction</h4>
-                </div>
-
-              </div>
+            <div class="container ">
 
               <div class="row">
-                    <div class="col-12 col-md-4">
-                        <div class="row">
-                        <div class="col-12 mb-3">
-                            <div class="border shadow p-3 rounded rounded-4" style="background-color: accentgreen">
-                            <p class="text-muted">Balance</p>
-                            <h2 class="fw-bolder">PHP <?php echo number_format($remaining_balance, 2); ?></h2>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <!-- Radial Percentage Donut -->
-                            <div class="border p-3 shadow rounded rounded-4">
-                            <h6 class="mb-3 text-muted">Payment Completion</h6>
-                            <div id="radialChart"></div>
-                            </div>
-                        </div>
-                        </div>
+                    <div class="col-12 col-md-12">
+                     <div class="row pb-3">
+                      <div class="col-12 d-flex flex-column col-md-6">
+                          <span class="me-3 text-muted">Student: <?php echo $fullname; ?></span>
+                          <span class="me-3 text-muted">Residential_address: <?php echo $residential_address; ?></span>
+                      </div>
+                      <div class="col-12 d-flex flex-column col-md-6">
+                          <span class="me-3 text-muted">Admission_date: <?php echo $admission_date; ?></span>
+                          <span class="me-3 text-muted">Tuition Fee: <?php echo $balance; ?></span>
+                      </div>
+
+                     </div>
                     </div>
 
+                    <hr>
                     <div class="col-12 col-md-8">
                         <!-- Table Area -->
-                        <div class="border p-3 rounded shadow rounded-4">
+                        <div class=" rounded rounded-4">
                       <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h6 class="mb-0 text-muted">Recent Payments</h6>
+                        <h6 class="mb-0 text-muted">Recent Payments - <?php echo $payment_plan?></h6>
                         <!-- Button trigger modal -->
                          <?php if (number_format($remaining_balance, 2) == 0): ?>
                           <a href="#" class="btn btn-sm rounded rounded-4 px-4 disabled">
                             <i class="bi bi-check-circle me-2"></i> Paid
                           </a>
                         <?php else: ?>
-                          <a href="#" class="btn btn-sm border rounded rounded-4 px-4" data-bs-toggle="modal" data-bs-target="#payModal">
+                          <a href="#" class="btn btn-sm rounded rounded-4 px-4" data-bs-toggle="modal" data-bs-target="#payModal">
                             <i class="bi bi-cash me-2"></i> Pay
                           </a>
                         <?php endif; ?>
@@ -117,7 +112,7 @@ if ($result->num_rows > 0) {
                         <!-- Modal -->
                         <div class="modal fade" id="payModal" tabindex="-1" aria-labelledby="payModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content rounded-4 shadow">
+                            <div class="modal-content rounded-4 ">
                             <div class="modal-header">
                                 <h5 class="modal-title" id="payModalLabel">Enter Payment Details</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -151,7 +146,7 @@ if ($result->num_rows > 0) {
                                 <!-- Transaction Fee Field -->
                                 <input type="hidden" id="transaction_fee_input" name="transaction_fee" value="0">
 
-                                <div class="mt-3">
+                                <div class="">
                                   <h5>Payment Computation</h5>
                                   <input type="hidden" name="student_id" value="<?php echo $id;?>">
                                   
@@ -279,10 +274,11 @@ if ($result->num_rows > 0) {
                         </div>
 
                     </div>
-                       <table class="table table-sm table-striped pt-3 pb-3 text-muted" style="font-size: 12px">
+                       <table class="table table-hover table-sm table-striped pt-3 pb-3 text-muted" style="font-size: 12px; cursor: pointer">
                         <thead>
                             <tr>
                                 <th>Invoice No.</th>
+                                <th>Date</th>
                                 <th>Amount</th>
                                 <th>Payment</th>
                                 <th>Fee</th>
@@ -294,7 +290,7 @@ if ($result->num_rows > 0) {
                         <?php
                         $student_id = $id; // or use from session
 
-                        $stmt = $conn->prepare("SELECT invoice_number, amount, payment, `change`, transaction_fee, payment_type FROM payment WHERE student_id = ? ORDER BY date DESC");
+                        $stmt = $conn->prepare("SELECT invoice_number, date, amount, payment, `change`, transaction_fee, payment_type FROM payment WHERE student_id = ? ORDER BY date DESC");
                         $stmt->bind_param("i", $student_id);
                         $stmt->execute();
                         $result = $stmt->get_result();
@@ -304,6 +300,7 @@ if ($result->num_rows > 0) {
                                 $formatted_invoice = 'INV-' . str_pad($row['invoice_number'], 4, '0', STR_PAD_LEFT);
                                 echo "<tr>";
                                 echo "<td class='py-3'>{$formatted_invoice}</td>";
+                                echo "<td class='py-3'>" . $row['date'] . "</td>";
                                 echo "<td class='py-3'>₱" . number_format($row['amount'], 2) . "</td>";
                                 echo "<td class='py-3'>₱" . number_format($row['payment'], 2) . "</td>";
                                 echo "<td class='py-3'>₱" . number_format($row['transaction_fee'], 2) . "</td>";
@@ -312,19 +309,37 @@ if ($result->num_rows > 0) {
                                 echo "</tr>";
                             }
                         } else {
-                            echo "<tr><td colspan='6' class='text-center py-3 text-muted'>No data found</td></tr>";
+                            echo "<tr><td colspan='6' class='text-center py-3 text-muted'>
+                            <img src='../static/artnotfound.svg'class='mt-3' style='width: 50%; opacity: 70%'>
+                            <p>No data found</p>
+                            </td></tr>";
                         }
 
                         $stmt->close();
                         $conn->close();
                         ?>
                         </tbody>
-
                     </table>
-
+                    </div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <div class="row">
+                        <div class="col-12 mb-3">
+                            <div class=" p-3 rounded shadow rounded-4" style="background-color: accentgreen">
+                            <p class="text-muted">Balance</p>
+                            <h2 class="fw-bolder">PHP <?php echo number_format($remaining_balance, 2); ?></h2>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <!-- Radial Percentage Donut -->
+                            <div class="p-3 shadow rounded rounded-4">
+                            <h6 class="mb-3 text-muted">Payment Completion</h6>
+                            <div id="radialChart"></div>
+                            </div>
+                        </div>
                         </div>
                     </div>
-                    </div>
+
 
             </div>
           </div>
@@ -387,7 +402,7 @@ if ($result->num_rows > 0) {
     },
     series: [percentage], // dynamic percentage
     labels: [chartLabel],
-    colors: ['green']
+    colors: ['#b72029']
   };
 
   // Render chart
