@@ -8,6 +8,27 @@
   <title>AcadeSys Dashboard</title>
   <?php include 'header.php'?>
 </head>
+<style>
+  .chat-icon {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #007bff;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      color: white;
+      font-size: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+      cursor: pointer;
+    }
+    .chat-icon:hover {
+      background-color: #0056b3;
+    }
+</style>
 <body>
 <div class="d-flex flex-row" style="background-color: white;">
   <!-- Sidebar -->
@@ -31,7 +52,10 @@
     </div>
   </div>
 </div>
+  <div class="chat-icon" title="Message Support">
+    💬
+  </div>
 
-<?php include'footer.php'?>
+<?php include 'footer.php'?>
 </body>
 </html>
