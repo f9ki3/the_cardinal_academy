@@ -46,6 +46,9 @@ $hideSubNav = true;
 <?php include 'navigation.php'; ?>
 
 <body id="home" class="bg-light">
+  <section class="bg-white ">
+    <?php include 'banner.php'; ?>
+  </section>
 
   <!-- Carousel -->
   <section id="home">
@@ -72,9 +75,7 @@ $hideSubNav = true;
   </section>
 
   <!-- Banner -->
-  <section class="bg-white py-3">
-    <?php include 'banner.php'; ?>
-  </section>
+  
   <!-- 2nd Section -->
   <section class="bg-white py-5">
       <?php include '2ndSection.php'; ?>
