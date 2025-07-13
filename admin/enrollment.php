@@ -33,7 +33,7 @@ $query = "SELECT
             CONCAT(barangay, ', ', municipal, ', ', province) AS address, 
             residential_address,
             grade_level,
-            status 
+            admission_status 
           FROM admission_form
           WHERE (admission_status = 'approved' OR admission_status = 'for_review') 
             AND (
@@ -129,7 +129,7 @@ $result = mysqli_query($conn, $query);
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['fullname']) ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['residential_address']) ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['grade_level']) ?></p></td>
-                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['status']) ?></p></td>
+                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['admission_status']) ?></p></td>
                         </tr>
 
                       <?php endwhile; ?>
