@@ -4,8 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Cardinal Academy Legacy</title>
+
+  <!-- Bootstrap & Fonts -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto&display=swap" rel="stylesheet" />
+
   <style>
     :root {
       --color-cardinal-red: #b62e34;
@@ -18,6 +21,8 @@
       background-color: var(--color-bg);
       font-family: var(--font-secondary);
       color: #333;
+      margin: 0;
+      padding: 0;
     }
 
     .header-title {
@@ -30,8 +35,6 @@
       font-style: italic;
       font-size: 1.125rem;
     }
-
-
 
     .cardinal-image {
       width: 20%;
@@ -71,6 +74,13 @@
       text-align: center;
     }
 
+    .future-heading {
+      font-family: var(--font-primary);
+      font-size: 3rem;
+      color: var(--color-cardinal-red);
+      text-align: center;
+    }
+
     @media (max-width: 768px) {
       .float-right,
       .float-left {
@@ -83,9 +93,11 @@
     }
   </style>
 </head>
-<body>
+<body class="m-0 p-0">
 
-  <div class="container py-4">
+
+  <!-- Tracing the Legacy Header -->
+  <div class="w-100 py-4 px-0">
     <div class="text-center mb-4">
       <p class="header-title fs-1">Tracing the Legacy:</p>
       <p class="header-subtitle fs-3">The History and Growth of The Cardinal Academy, Inc.</p>
@@ -104,7 +116,6 @@
           The word <strong style="color: var(--color-cardinal-red);">CARDINAL</strong> means “prime, chief, principal,” or etymologically, <em>cardo</em>—translated as hinge, meaning that which others depend upon. A hinge also serves as a connector or a bridge. From its name alone, The Cardinal Academy, Inc.’s mission, vision, and philosophy may be derived.
         </p>
       </div>
-
       <img
         src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/0feb84da-1af7-471d-901a-e5901527503e.png"
         alt="Aerial view left side"

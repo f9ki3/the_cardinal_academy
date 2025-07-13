@@ -4,13 +4,12 @@ $breadcrumbs = $breadcrumbs ?? []; // ✅ Prevent warning
 ?>
 
 <style>
-  .sub-navbar {
-    background-color: #da3030;
-    padding-top: 2px;
-    padding-bottom: 2px;
-    min-height: 20px;
-  }
-
+    .sub-navbar {
+      background-color: #da3030;
+      padding-top: 2px;
+      padding-bottom: 2px;
+      min-height: 20px;
+    }
   /* Remove Bootstrap's default slash separator */
   .breadcrumb-item + .breadcrumb-item::before {
     content: none !important;
