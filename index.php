@@ -8,43 +8,50 @@ $hideSubNav = true;
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
   <title>AcadeSys</title>
 
+  <!-- Bootstrap & Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet" />
 </head>
+
 <style>
+  .carousel-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media (max-width: 768px) {
     .carousel-img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+      height: 45vh;
     }
+  }
 
-    @media (max-width: 768px) {
-      .carousel-img {
-        height: 45vh;
-      }
-    }
+  #not {
+    border: none;
+    width: 100%;
+    min-height: 28vh;
+  }
 
-    #not{
-      border: none;
-      width: 100%;
-      min-height: 28vh;
-    }
+  #about {
+    min-height: 80vh;
+  }
 
- 
-    #about {
-      min-height: 80vh;
-    }
+  footer iframe {
+    height: 120px;
+  }
+</style>
 
-    footer iframe {
-      height: 120px;
-    }
-    
-  </style>
 <?php include 'navigation.php'; ?>
 
 <body id="home" class="bg-light">
- <section id="home">
+  <section class="bg-white ">
+    <?php include 'banner.php'; ?>
+  </section>
+
+  <!-- Carousel -->
+  <section id="home">
     <div id="enrollCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="4000">
       <div class="carousel-inner">
         <div class="carousel-item active">
@@ -64,49 +71,34 @@ $hideSubNav = true;
         <span class="carousel-control-next-icon"></span>
       </button>
     </div>
+
   </section>
 
-  <section  class="bg-white py-1">
-    <div class="container">
-      <?php include 'banner.php'; ?>
-    </div>
-  </section>
-
-  <!-- 2nd Section -->
-  <section  class="bg-white py-5">
-    <div class="container">
-      <?php include '2ndSection.php'; ?>
-    </div>
-  </section>
-
-  <!-- About Section -->
-  <section id="about" class=" py-5">
-    <div class="container">
-      <?php include '3rdSection.php'; ?>
-    </div>
-  </section>
-
- <section class="section1 py-5" >
-  <div class="container">
-    <h1 class="text-center">Your Future Awaits</h1>
-    <?php include 'not.php'; ?>
-  </div>
-</section>
-
-
-  <!-- Facilities Section -->
-  <section id="courses" class="bg-white py-5">
-    <div class="container">
-      <?php include '5thSection.php'; ?>
-    </div>
-  </section>
+  <!-- Banner -->
   
+  <!-- 2nd Section -->
+  <section class="bg-white py-5">
+      <?php include '2ndSection.php'; ?>
+  </section>
+  <!-- About -->
+  <section id="about" class="py-5">
+      <?php include '3rdSection.php'; ?>
+  </section>
+  <!-- Notable Section -->
+  <section class="section1 py-5">
+        <!-- "Your Future Awaits" Section -->
+  <section class="py-5 bg-white">
+    <div class="container">
+      <h1 class="future-heading">Your Future Awaits</h1>
+    </div>
+  </section>
 
-
-
-  <!-- Organization Section -->
- 
-
+      <?php include '4thSection.php'; ?>
+  </section>
+  <!-- Facilities -->
+ <section id="courses" class="bg-white py-5 px-0">
+    <?php include '5thSection.php'; ?>
+  </section>
   <!-- Footer -->
   <footer class="bg-dark text-white mt-4">
     <?php include 'footer1.php'; ?>
@@ -114,6 +106,5 @@ $hideSubNav = true;
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
 </body>
 </html>
