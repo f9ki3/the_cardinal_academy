@@ -237,7 +237,12 @@
 
           <div class="col-12 col-md-4">
             <label class="form-label text-muted">Father’s Contact Number</label>
-            <input type="text" name="father_contact" class="form-control" placeholder="Enter contact number">
+            <input type="text" name="father_contact" class="form-control" 
+                placeholder="e.g. 09123456789" 
+                maxlength="11"
+                oninput="this.value = this.value.replace(/\D/g, '').slice(0, 11)" 
+                required
+            >
           </div>
 
           <div class="col-12 col-md-4">
@@ -252,7 +257,12 @@
 
           <div class="col-12 col-md-4">
             <label class="form-label text-muted">Mother’s Contact Number</label>
-            <input type="text" name="mother_contact" class="form-control" placeholder="Enter contact number">
+            <input type="text" name="mother_contact" class="form-control" 
+                placeholder="e.g. 09123456789" 
+                maxlength="11"
+                oninput="this.value = this.value.replace(/\D/g, '').slice(0, 11)" 
+                required
+            >
           </div>
 
           <div class="col-12 col-md-4">
@@ -267,7 +277,12 @@
 
           <div class="col-12 col-md-4">
             <label class="form-label text-muted">Guardian’s Contact Number</label>
-            <input type="text" required name="guardian_contact" class="form-control" placeholder="Enter contact number">
+            <input type="text" required name="guardian_contact" class="form-control" 
+                placeholder="e.g. 09123456789" 
+                maxlength="11"
+                oninput="this.value = this.value.replace(/\D/g, '').slice(0, 11)" 
+                required
+            >
           </div>
 
           <div class="mt-4">
