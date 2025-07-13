@@ -25,52 +25,52 @@ $profile_image = $user_info['profile_image'];
             </li>
             <li class="nav-item">
                 <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
-                    <i class="bi bi-speedometer2 me-2"></i>Profile
+                    <i class="bi bi-person me-2"></i>Profile
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
-                    <i class="bi bi-speedometer2 me-2"></i>Child Profile
+                    <i class="bi bi-person me-2"></i>Child Profile
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
-                    <i class="bi bi-speedometer2 me-2"></i>Attendance
+                    <i class="bi bi-calendar4-week me-2"></i>Attendance
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
-                    <i class="bi bi-speedometer2 me-2"></i>Grades
+                    <i class="bi bi-card-text me-2"></i>Grades
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
-                    <i class="bi bi-speedometer2 me-2"></i>Assignment
+                    <i class="bi bi-card-checklist me-2"></i>Assignment
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
-                    <i class="bi bi-speedometer2 me-2"></i>Disciplinary
+                    <i class="bi bi-people me-2"></i>Disciplinary
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
-                    <i class="bi bi-speedometer2 me-2"></i>Medical
+                    <i class="bi bi-capsule me-2"></i>Medical
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
-                    <i class="bi bi-speedometer2 me-2"></i>Announcement
+                    <i class="bi bi-megaphone me-2"></i>Announcement
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
-                    <i class="bi bi-speedometer2 me-2"></i>Schedule
+                    <i class="bi bi-calendar-event me-2"></i>Schedule
                 </a>
             </li>
             <li class="nav-item">
                 <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
-                    <i class="bi bi-speedometer2 me-2"></i>Finance
+                    <i class="bi bi-cash-coin me-2"></i>Finance
                 </a>
             </li>
     
