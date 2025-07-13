@@ -81,7 +81,7 @@
     <!-- Main Navbar -->
     <nav class="navbar navbar-expand-lg main-navbar px-4">
       <a class="navbar-brand fw-bold d-flex align-items-center" href="index.php">
-        <img src="static/uploads/logo.png" alt="TCA Logo" />
+        <img src="static/images/logo.png" alt="TCA Logo" />
         <span class="ms-2">The Cardinal Academy</span>
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain"
@@ -90,32 +90,17 @@
       </button>
 
       <div class="collapse navbar-collapse justify-content-end" id="navbarMain">
-
-        <?php
-        // Avoid undefined variable warnings
-        $hideHome = $hideHome ?? false;
-        $isMainNav = $isMainNav ?? true;
-        $hideLogInButton = $hideLogInButton ?? false;
-        ?>
-
         <ul class="navbar-nav me-3 mb-2 mb-lg-0">
-          <?php if ($isMainNav || !$hideHome): ?>
             <li class="nav-item"><a class="nav-link" href="index.php">Home</a></li>
-          <?php endif; ?>
-
-          <?php if (!$hideHome): ?>
             <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
             <li class="nav-item"><a class="nav-link" href="#courses">Courses</a></li>
             <li class="nav-item"><a class="nav-link" href="contact.php">Contact</a></li>
             <li class="nav-item"><a class="nav-link" href="enroll.php">Enroll</a></li>
-          <?php endif; ?>
         </ul>
 
-        <?php if (!$hideLogInButton): ?>
           <a href="login.php" class="btn text-light ms-2" style="background-color: #da3030; box-shadow: 0 4px 8px rgba(0,0,0,0.3);">
             Log In
           </a>
-        <?php endif; ?>
       </div>
     </nav>
 
