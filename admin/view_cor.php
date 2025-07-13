@@ -304,7 +304,7 @@ if ($schedule->num_rows === 0) {
 <script>
   document.getElementById('sendEmailBtn').addEventListener('click', function () {
     const currentParams = new URLSearchParams(window.location.search);
-    const targetUrl = 'https://acadesys.site/view_cor?' + currentParams.toString();
+    const targetUrl = 'https://acadesys.site/view_cor.php?' + currentParams.toString();
 
     // Set the URL to hidden input
     document.getElementById('corLinkInput').value = targetUrl;
