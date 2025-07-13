@@ -16,8 +16,8 @@ $count_query = "SELECT COUNT(*) as total
                     lrn LIKE '%$search%' 
                     OR que_code LIKE '%$search%' 
                     OR CONCAT(firstname, ' ', lastname) LIKE '%$search%'
-                  )
-                )";
+                  )";
+                  
 $count_result = mysqli_query($conn, $count_query);
 $total = mysqli_fetch_assoc($count_result)['total'];
 $total_pages = ceil($total / $limit);
