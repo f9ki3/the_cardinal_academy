@@ -63,7 +63,7 @@ $schedule = $sched_stmt->get_result();
 
             <div class="row mt-4 align-items-center mb-4">
               <div class="col-md-4 mb-2">
-                <h4 class="mb-0">Class Schedule</h4>
+                <h4 class="mb-0 d-print-none">Class Schedule</h4>
               </div>
               <div class="col-md-8 d-flex flex-wrap gap-2 justify-content-md-end d-print-none">
                 <a href="view_section.php?id=<?= $sectionId ?>&nav_drop=true" class="btn btn-sm text-muted border rounded rounded-4">
@@ -80,6 +80,21 @@ $schedule = $sched_stmt->get_result();
                 </button>
               </div>
             </div>
+
+             <div class="d-none d-print-flex justify-content-center">
+                <div class="d-flex align-items-center mb-4">
+                  <img src="../static/uploads/logo.png" alt="Logo" style="height: 70px; width: auto;" class="me-3">
+                  <div>
+                    <h5 class="mb-0 fw-bold text-center">The Cardinal Academy, Inc.</h5>
+                    <small class="d-block text-center">Sullera Street in Pandayan, Meycauayan, Bulacan </small>
+                    <small class="d-block text-center">Phone: (0912) 345-6789 | Email: info@cardinalacademy.edu.ph</small>
+                  </div>
+                </div>
+              </div>
+
+              <div class="d-none d-print-flex justify-content-center">
+               <h3>Class Schedule</h3>
+              </div>
 
             <!-- Modal -->
             <div class="modal fade" id="addSchedule" tabindex="-1" aria-labelledby="addScheduleLabel" aria-hidden="true">
@@ -155,57 +170,59 @@ $schedule = $sched_stmt->get_result();
             </script>
 
             <hr>
-            <div class="row">
-              <div class="col-md-4 mb-2"><strong>Adviser:</strong> <?= htmlspecialchars($section['adviser'] ?? 'N/A') ?></div>
-              <div class="col-md-4 mb-2"><strong>Section Name:</strong> <?= htmlspecialchars($section['section_name']) ?></div>
-              <div class="col-md-4 mb-2"><strong>Grade Level:</strong> <?= htmlspecialchars($section['grade_level']) ?></div>
-              <div class="col-md-4 mb-2"><strong>School Year:</strong> <?= htmlspecialchars($section['school_year']) ?></div>
-              <div class="col-md-4 mb-2"><strong>Room:</strong> <?= htmlspecialchars($section['room'] ?: '—') ?></div>
-              <div class="col-md-4 mb-2"><strong>Capacity:</strong> <?= htmlspecialchars($section['capacity']) ?></div>
-            </div>
-            <hr>
+              <div class="row" style="font-size: 12px;">
+                <div class="col-md-4 mb-2"><strong>Adviser:</strong> <?= htmlspecialchars($section['adviser'] ?? 'N/A') ?></div>
+                <div class="col-md-4 mb-2"><strong>Section Name:</strong> <?= htmlspecialchars($section['section_name']) ?></div>
+                <div class="col-md-4 mb-2"><strong>Grade Level:</strong> <?= htmlspecialchars($section['grade_level']) ?></div>
+                <?php if ($section['strand'] !== 'N/A'): ?>
+                    <div class="col-md-4"><strong>Strand:</strong> <?= htmlspecialchars($section['strand']) ?></div>
+                <?php endif; ?>
+                <div class="col-md-4 mb-2"><strong>School Year:</strong> <?= htmlspecialchars($section['school_year']) ?></div>
+                <div class="col-md-2 mb-2"><strong>Room:</strong> <?= htmlspecialchars($section['room'] ?: '—') ?></div>
+                <div class="col-md-2 mb-2"><strong>Capacity:</strong> <?= htmlspecialchars($section['capacity']) ?></div>
+              </div>
+              <hr>
 
-            <div class="table-responsive">
-             <table class="table table-sm table-striped align-middle">
-                <thead class="text-start text-muted">
-                  <tr>
-                    <th>#</th>
-                    <th>Subject&nbsp;Code</th>
-                    <th>Description</th>
-                    <th>Time</th>
-                    <th>Teacher</th>
-                    <th>Room</th>
-                    <th class="d-print-none">Action</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <?php if ($schedule->num_rows): ?>
-                    <?php $i = 1; while ($row = $schedule->fetch_assoc()): ?>
-                      <tr class="text-muted">
-                        <td><?= $i++ ?></td>
-                        <td><?= htmlspecialchars($row['subject_code']) ?></td>
-                        <td><?= htmlspecialchars($row['description']) ?></td>
-                        <td><?= htmlspecialchars($row['time']) ?></td>
-                        <td><?= htmlspecialchars($row['teacher']) ?></td>
-                        <td><?= htmlspecialchars($row['room']) ?></td>
-                        <td>
-                          <form action="remove_schedule.php" method="POST" onsubmit="return confirm('Are you sure you want to remove this schedule?');">
-                            <input type="hidden" name="schedule_id" value="<?= $row['id'] ?>">
-                            <button type="submit" class="d-print-none btn btn-sm btn-sm rounded rounded-4 border">Remove</button>
-                          </form>
-                        </td>
-                      </tr>
-                    <?php endwhile; ?>
-                  <?php else: ?>
-                    <tr class="text-muted">
-                      <td colspan="7" class="text-start fst-italic">No schedule entries yet.</td>
+              <div class="table-responsive" style="font-size: 12px;">
+                <table class="table table-sm table-striped align-middle">
+                  <thead class="text-start text-muted">
+                    <tr>
+                      <th>#</th>
+                      <th>Subject&nbsp;Code</th>
+                      <th>Description</th>
+                      <th>Time</th>
+                      <th>Teacher</th>
+                      <th>Room</th>
+                      <th class="d-print-none">Action</th>
                     </tr>
-                  <?php endif; ?>
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    <?php if ($schedule->num_rows): ?>
+                      <?php $i = 1; while ($row = $schedule->fetch_assoc()): ?>
+                        <tr class="text-muted">
+                          <td><?= $i++ ?></td>
+                          <td><?= htmlspecialchars($row['subject_code']) ?></td>
+                          <td><?= htmlspecialchars($row['description']) ?></td>
+                          <td><?= htmlspecialchars($row['time']) ?></td>
+                          <td><?= htmlspecialchars($row['teacher']) ?></td>
+                          <td><?= htmlspecialchars($row['room']) ?></td>
+                          <td>
+                            <form action="remove_schedule.php" method="POST" onsubmit="return confirm('Are you sure you want to remove this schedule?');">
+                              <input type="hidden" name="schedule_id" value="<?= $row['id'] ?>">
+                              <button type="submit" class="d-print-none btn btn-sm btn-sm rounded rounded-4 border">Remove</button>
+                            </form>
+                          </td>
+                        </tr>
+                      <?php endwhile; ?>
+                    <?php else: ?>
+                      <tr class="text-muted">
+                        <td colspan="7" class="text-start fst-italic">No schedule entries yet.</td>
+                      </tr>
+                    <?php endif; ?>
+                  </tbody>
+                </table>
+              </div>
 
-
-            </div>
 
           </div>
         </div>

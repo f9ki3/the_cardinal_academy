@@ -72,8 +72,8 @@ if ($admission_id > 0) {
             </div>
 
             <div class="col-md-6">
-              <label class="form-label text-muted">Gender</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['gender'] ?? '') ?>" disabled>
+              <label class="form-label text-muted">Strand</label>
+              <input type="text" class="form-control" value="<?= htmlspecialchars(!empty($data['strand']) ? $data['strand'] : 'N/A') ?>" disabled>
             </div>
 
             <div class="col-md-4">
@@ -89,6 +89,16 @@ if ($admission_id > 0) {
             <div class="col-md-4">
               <label class="form-label text-muted">Middle Name</label>
               <input type="text" class="form-control" value="<?= htmlspecialchars($data['middlename'] ?? '') ?>" disabled>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label text-muted">Complete Residential Address</label>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['residential_address'] ?? '') ?>" disabled>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label text-muted">Gender</label>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['gender'] ?? '') ?>" disabled>
             </div>
 
             <div class="col-md-6">
@@ -112,33 +122,13 @@ if ($admission_id > 0) {
             </div>
 
             <div class="col-md-3">
-              <label class="form-label text-muted">Facebook Account</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['facebook'] ?? '') ?>" disabled>
+              <label class="form-label text-muted">Phone number</label>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['phone'] ?? '') ?>" disabled>
             </div>
 
             <div class="col-md-3">
               <label class="form-label text-muted">Email</label>
               <input type="text" class="form-control" value="<?= htmlspecialchars($data['email'] ?? '') ?>" disabled>
-            </div>
-
-            <div class="col-md-3">
-              <label class="form-label text-muted">Region</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['region'] ?? '') ?>" disabled>
-            </div>
-
-            <div class="col-md-3">
-              <label class="form-label text-muted">Province</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['province'] ?? '') ?>" disabled>
-            </div>
-
-            <div class="col-md-3">
-              <label class="form-label text-muted">Municipal</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['municipal'] ?? '') ?>" disabled>
-            </div>
-
-            <div class="col-md-3">
-              <label class="form-label text-muted">Barangay</label>
-              <input type="text" class="form-control" value="<?= htmlspecialchars($data['barangay'] ?? '') ?>" disabled>
             </div>
 
           </div>

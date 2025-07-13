@@ -44,7 +44,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $mail->AltBody = 'Hi! View your COR here: ' . $corLink;
 
             $mail->send();
-            echo 'Message has been sent successfully to ' . htmlspecialchars($email);
+            $email = $_POST['email']; // or wherever you get the email from
+
+            // Sanitize email for output (optional for redirect)
+            $clean_email = urlencode($email);
+
+            // Redirect to another page and pass email
+            header("Location: success_email.php");
+            exit;
+
         } catch (Exception $e) {
             echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
         }

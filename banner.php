@@ -1,7 +1,13 @@
 <?php
-$mysqli = new mysqli("localhost", "root", "", "tca");
-$result = $mysqli->query("SELECT heading, paragraph FROM announcement WHERE visible = 1 ORDER BY id DESC");
-$announcements = $result->fetch_all(MYSQLI_ASSOC);
+
+// $mysqli = new mysqli("localhost", "root", "", "tca");
+// $result = $mysqli->query("SELECT heading, paragraph FROM announcement WHERE visible = 1 ORDER BY id DESC");
+// $announcements = $result->fetch_all(MYSQLI_ASSOC);
+
+$mysqli = new mysqli("localhost", "u429904263_tca", "UsKA?M[7", "u429904263_tca");
+$result = $mysqli->query("SELECT heading, paragraph, visible FROM announcement WHERE id = 1");
+$row = $result->fetch_assoc();
+
 ?>
 
 <!DOCTYPE html>
