@@ -81,7 +81,7 @@
     <!-- Main Navbar -->
     <nav class="navbar navbar-expand-lg main-navbar px-4">
       <a class="navbar-brand fw-bold d-flex align-items-center" href="index.php">
-        <img src="static/images/logo.png" alt="TCA Logo" />
+        <img src="static/uploads/logo.png" alt="TCA Logo" />
         <span class="ms-2">The Cardinal Academy</span>
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarMain"
