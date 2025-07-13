@@ -9,18 +9,12 @@ $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 $offset = ($page - 1) * $limit;
 
 // Count total results for pagination
-$count_query = "SELECT COUNT(*) as total 
-                FROM admission_form 
-                WHERE (
-                    admission_status = 'approved' 
-                    OR admission_status = 'for_review'
-                ) 
-                AND (
+$count_query = "SELECT COUNT(*) as total FROM admission_form 
+                WHERE admission_status = 'for_review' AND (
                     lrn LIKE '%$search%' 
                     OR que_code LIKE '%$search%' 
                     OR CONCAT(firstname, ' ', lastname) LIKE '%$search%'
                 )";
-                
 $count_result = mysqli_query($conn, $count_query);
 $total = mysqli_fetch_assoc($count_result)['total'];
 $total_pages = ceil($total / $limit);
