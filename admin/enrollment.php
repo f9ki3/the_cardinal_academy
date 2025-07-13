@@ -1,22 +1,27 @@
 <?php include 'session_login.php'; ?>
-<?php  include '../db_connection.php'; // assumes $conn is defined here?>
+<?php include '../db_connection.php'; // assumes $conn is defined here ?>
+
 <?php
 // Search and Pagination
 $limit = 10;
 $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int) $_GET['page'] : 1;
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 
+$search_safe = mysqli_real_escape_string($conn, $search); // sanitize search
 $offset = ($page - 1) * $limit;
 
 // Count total results for pagination
-$count_query = "SELECT COUNT(*) as total FROM admission_form 
-                WHERE admission_status = 'for_review' AND (
-                    lrn LIKE '%$search%' 
-                    OR que_code LIKE '%$search%' 
-                    OR CONCAT(firstname, ' ', lastname) LIKE '%$search%'
-                )";
+$count_query = "SELECT COUNT(*) as total 
+                FROM admission_form 
+                WHERE (admission_status = 'approved' OR admission_status = 'for_review') 
+                  AND (
+                    lrn LIKE '%$search_safe%' 
+                    OR que_code LIKE '%$search_safe%' 
+                    OR CONCAT(firstname, ' ', lastname) LIKE '%$search_safe%'
+                  )";
+
 $count_result = mysqli_query($conn, $count_query);
-$total = mysqli_fetch_assoc($count_result)['total'];
+$total = mysqli_fetch_assoc($count_result)['total'] ?? 0;
 $total_pages = ceil($total / $limit);
 
 // Fetch paginated data
@@ -30,15 +35,17 @@ $query = "SELECT
             grade_level,
             status 
           FROM admission_form
-          WHERE admission_status = 'approved' AND (
-              lrn LIKE '%$search%' 
-              OR que_code LIKE '%$search%' 
-              OR CONCAT(firstname, ' ', lastname) LIKE '%$search%'
-          )
+          WHERE (admission_status = 'approved' OR admission_status = 'for_review') 
+            AND (
+              lrn LIKE '%$search_safe%' 
+              OR que_code LIKE '%$search_safe%' 
+              OR CONCAT(firstname, ' ', lastname) LIKE '%$search_safe%'
+            )
           LIMIT $limit OFFSET $offset";
 
 $result = mysqli_query($conn, $query);
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
