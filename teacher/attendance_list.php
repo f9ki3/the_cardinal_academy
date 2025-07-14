@@ -82,7 +82,7 @@
                     <?php endwhile; ?>
                   <?php else: ?>
                     <tr>
-                      <td colspan="2">
+                      <td class="d-flex flex-center" colspan="2">
                         <p class="text-center text-muted my-3">No attendance records found.</p>
                         <img src="../static/images/art7.svg" alt="">
                       </td>
