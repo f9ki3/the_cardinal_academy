@@ -10,7 +10,7 @@ $offset = ($page - 1) * $limit;
 
 // Count total student users
 $count_query = "SELECT COUNT(*) as total FROM users 
-                WHERE acc_type = 'student' AND (
+                WHERE acc_type = 'teacher' AND (
                     username LIKE '%$search%' 
                     OR CONCAT(first_name, ' ', last_name) LIKE '%$search%'
                 )";
