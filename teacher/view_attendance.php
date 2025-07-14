@@ -51,13 +51,13 @@ if (!$result) {
         <div class="col-12">
           <div class="rounded p-4">
             <div class="row mb-3">
-              <div class="col-md-10">
+              <div class="col-md-11">
                 <h4 class="d-print-none">Attendance Records</h4>
               </div>
 
-              <div class="col-12 d-print-none col-md-2">
+              <div class="col-12 d-print-none col-md-1">
                 <button class="btn btn-sm border text-muted rounded-4" onclick="window.print()">
-                    <i class="bi bi-printer me-1"></i> Print
+                    <i class="bi bi-printer w-100 me-1"></i> Print
                 </button>
               </div>
             </div>
