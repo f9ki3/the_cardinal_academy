@@ -113,7 +113,7 @@ $result = mysqli_query($conn, $sql);
                         <?php endwhile; ?>
                     <?php else: ?>
                       <tr>
-                        <td colspan="2">
+                        <td colspan="4">
                           <div class="d-flex flex-column justify-content-center align-items-center py-4">
                             <p class="text-center text-muted mb-3">No attendance records found.</p>
                             <img src="../static/images/art7.svg" alt="No records" style="max-width: 300px; opacity: 70%">
