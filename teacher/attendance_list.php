@@ -82,10 +82,11 @@
                     <?php endwhile; ?>
                   <?php else: ?>
                     <tr>
-                      <td class="d-flex flex-center" colspan="2">
-                        <p class="text-center text-muted my-3">No attendance records found.</p>
-                        <img src="../static/images/art7.svg" alt="">
+                     <td colspan="2" class="d-flex flex-column justify-content-center align-items-center py-4">
+                        <p class="text-center text-muted mb-3">No attendance records found.</p>
+                        <img src="../static/images/art7.svg" alt="No records" style="max-width: 200px;">
                       </td>
+
                     </tr>
                   <?php endif; ?>
 
