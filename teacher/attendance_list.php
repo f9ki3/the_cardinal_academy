@@ -47,21 +47,22 @@
               </div>
 
               <?php
-              // Get the search value if available
+              // Get the search value
               $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 
-              // Prepare SQL with or without search
+              // Prepare SQL
               if ($search !== '') {
-                  $sql = "SELECT DISTINCT date FROM attendance WHERE date LIKE ? ORDER BY date DESC";
+                  $sql = "SELECT DISTINCT date, teacher_id FROM attendance WHERE date LIKE ? ORDER BY date DESC";
                   $stmt = mysqli_prepare($conn, $sql);
                   $search_param = "%$search%";
                   mysqli_stmt_bind_param($stmt, "s", $search_param);
                   mysqli_stmt_execute($stmt);
                   $result = mysqli_stmt_get_result($stmt);
               } else {
-                  $sql = "SELECT DISTINCT date FROM attendance ORDER BY date DESC";
+                  $sql = "SELECT DISTINCT date, teacher_id FROM attendance ORDER BY date DESC";
                   $result = mysqli_query($conn, $sql);
               }
+
               ?>
 
               <div class="table-responsive">
@@ -69,16 +70,21 @@
                   <thead>
                     <tr>
                       <th>Date</th>
-                      <th>Action</th>
+                      <th>Teacher</th>
                     </tr>
                   </thead>
                   <tbody>
                     <?php if (mysqli_num_rows($result) > 0): ?>
                       <?php while ($row = mysqli_fetch_assoc($result)): ?>
-                        <tr>
+                        <tr 
+                          class="clickable-row" 
+                          data-date="<?= htmlspecialchars($row['date']) ?>" 
+                          data-teacher-id="<?= htmlspecialchars($row['teacher_id']) ?>" 
+                          style="cursor: pointer;"
+                        >
                           <td class="align-middle text-muted"><?= htmlspecialchars($row['date']) ?></td>
                           <td class="align-middle">
-                            <button class="btn border rounded rounded-4">Print</button>
+                             <p><?= htmlspecialchars($full_name) ?></p>
                           </td>
                         </tr>
                       <?php endwhile; ?>
@@ -92,18 +98,31 @@
                         </td>
                       </tr>
                     <?php endif; ?>
-
                   </tbody>
                 </table>
               </div>
 
-            </div> <!-- end inner container -->
+            </div> <!-- inner container -->
           </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<!-- Moved script here outside of loop -->
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const rows = document.querySelectorAll('.clickable-row');
+    rows.forEach(row => {
+      row.addEventListener('click', function () {
+        const date = this.getAttribute('data-date');
+        const teacherId = this.getAttribute('data-teacher-id');
+        window.location.href = `view_attendance.php?date=${encodeURIComponent(date)}&teacher_id=${encodeURIComponent(teacherId)}`;
+      });
+    });
+  });
+</script>
 
 <?php include 'footer.php'; ?>
 </body>

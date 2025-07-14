@@ -34,6 +34,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $today = date('Y-m-d');
             $now   = date('H:i:s');
+            $attendance_id = 0;
 
             $sms_message = sprintf(
                 'TCA Alert: %s %s on %s at %s.',
@@ -63,6 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $ins->execute();
 
                     if ($ins->affected_rows) {
+                        $attendance_id = $ins->insert_id; // 👈 Capture new attendance ID
                         $alert = "✅ Time In recorded for <strong>$fullname</strong> at $now.";
                     } else {
                         $alert = "⚠️ Failed to record Time In.";
@@ -79,12 +81,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $rowOpen = $check->get_result()->fetch_assoc();
 
                 if ($rowOpen) {
+                    $attendance_id = $rowOpen['id']; // 👈 Capture attendance ID to update
                     $upd = $conn->prepare("
                         UPDATE attendance
                         SET time_out = ?
                         WHERE id = ?
                     ") or die('Update prepare failed: ' . $conn->error);
-                    $upd->bind_param("si", $now, $rowOpen['id']);
+                    $upd->bind_param("si", $now, $attendance_id);
                     $upd->execute();
 
                     if ($upd->affected_rows) {
@@ -97,12 +100,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 }
             }
 
+            // ✅ Append attendance_id and type as 1 (in) or 0 (out)
+            $attendance_type_flag = $type === 'time_in' ? 1 : 0;
+
             $message = "
                 <div class='alert alert-info alert-dismissible fade show' role='alert'>
                     {$alert}<br>📞 Guardian Contact: <strong>{$contact}</strong>
                     <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
                 </div>";
-            header('Location: attendance.php?message=' . urlencode($message) . '&sms_message=' . urlencode($sms_message) . '&phone=' . urlencode($contact));
+            header('Location: attendance.php?message=' . urlencode($message) . '&sms_message=' . urlencode($sms_message) . '&phone=' . urlencode($contact) . '&attendance_id=' . $attendance_id . '&attendance_type=' . $attendance_type_flag);
             exit;
 
         } else {
