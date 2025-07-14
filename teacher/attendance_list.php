@@ -73,22 +73,25 @@
                     </tr>
                   </thead>
                   <tbody>
-                  <?php if (mysqli_num_rows($result) > 0): ?>
-                    <?php while ($row = mysqli_fetch_assoc($result)): ?>
+                    <?php if (mysqli_num_rows($result) > 0): ?>
+                      <?php while ($row = mysqli_fetch_assoc($result)): ?>
+                        <tr>
+                          <td class="align-middle text-muted"><?= htmlspecialchars($row['date']) ?></td>
+                          <td class="align-middle">
+                            <button class="btn border rounded rounded-4">Print</button>
+                          </td>
+                        </tr>
+                      <?php endwhile; ?>
+                    <?php else: ?>
                       <tr>
-                        <td><p class="text-muted my-3"><?= htmlspecialchars($row['date']) ?></p></td>
-                        <td><p class="text-muted my-3"><button class="btn border rounded rounded rounded-4">Print</button></td>
+                        <td colspan="2">
+                          <div class="d-flex flex-column justify-content-center align-items-center py-4">
+                            <p class="text-center text-muted mb-3">No attendance records found.</p>
+                            <img src="../static/images/art7.svg" alt="No records" style="max-width: 200px;">
+                          </div>
+                        </td>
                       </tr>
-                    <?php endwhile; ?>
-                  <?php else: ?>
-                    <tr>
-                     <td colspan="2" class="d-flex flex-column justify-content-center align-items-center py-4">
-                        <p class="text-center text-muted mb-3">No attendance records found.</p>
-                        <img src="../static/images/art7.svg" alt="No records" style="max-width: 200px;">
-                      </td>
-
-                    </tr>
-                  <?php endif; ?>
+                    <?php endif; ?>
 
                   </tbody>
                 </table>
