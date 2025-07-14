@@ -181,10 +181,56 @@ if ($admission_id > 0) {
   </div>
 </fieldset>
 
-<hr class="my-5">
-
 <!-- Guardian Profile -->
 <fieldset>
+  <h4 class="mt-5 mb-5"><strong> Requirements</strong></h4>
+ 
+  <div class="row g-3">
+    <!-- Student Requirements Checkboxes -->
+    <div class="col-md-4">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="requirements[]" value="birth_cert" id="birth_cert"
+              <?= !empty($data['birth_cert']) ? 'checked' : '' ?>>
+        <label class="form-check-label" for="birth_cert">Birth Certificate (PSA Copy)</label>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="requirements[]" value="report_card" id="report_card"
+              <?= !empty($data['report_card']) ? 'checked' : '' ?>>
+        <label class="form-check-label" for="report_card">Original Report Card (Form 137)</label>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="requirements[]" value="good_moral" id="good_moral"
+              <?= !empty($data['good_moral']) ? 'checked' : '' ?>>
+        <label class="form-check-label" for="good_moral">Good Moral Certificate</label>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="requirements[]" value="id_pic" id="id_pic"
+              <?= !empty($data['id_pic']) ? 'checked' : '' ?>>
+        <label class="form-check-label" for="id_pic">2x2 ID Picture (White Background)</label>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="requirements[]" value="esc_cert" id="esc_cert"
+              <?= !empty($data['esc_cert']) ? 'checked' : '' ?>>
+        <label class="form-check-label" for="esc_cert">ESC Certification (Grade 11 and 12)</label>
+      </div>
+    </div>
+  </div>
+
+
+
+<hr class="my-5">
   <h4><strong>Guardian Profile</strong></h4>
   <div class="row g-3">
     <div class="col-md-4">
