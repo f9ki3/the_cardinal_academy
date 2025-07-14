@@ -73,18 +73,19 @@
                     </tr>
                   </thead>
                   <tbody>
-                    <?php if (mysqli_num_rows($result) > 0): ?>
-                      <?php while ($row = mysqli_fetch_assoc($result)): ?>
-                        <tr>
-                          <td><p class="text-muted my-3"><?= htmlspecialchars($row['date']) ?></p></td>
-                          <td><p class="text-muted my-3"><button class="btn border rounded rounded rounded-4">Print</button></td>
-                        </tr>
-                      <?php endwhile; ?>
-                    <?php else: ?>
+                  <?php if (mysqli_num_rows($result) > 0): ?>
+                    <?php while ($row = mysqli_fetch_assoc($result)): ?>
                       <tr>
-                        <td ><p class="text-center text-muted my-3">No dates found.</p></td>
+                        <td><p class="text-muted my-3"><?= htmlspecialchars($row['date']) ?></p></td>
+                        <td><p class="text-muted my-3"><button class="btn border rounded rounded rounded-4">Print</button></td>
                       </tr>
-                    <?php endif; ?>
+                    <?php endwhile; ?>
+                  <?php else: ?>
+                    <tr>
+                      <td colspan="2"><p class="text-center text-muted my-3">No attendance records found.</p></td>
+                    </tr>
+                  <?php endif; ?>
+
                   </tbody>
                 </table>
               </div>
