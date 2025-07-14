@@ -8,9 +8,9 @@ $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int) $_GET['page'] 
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 $offset = ($page - 1) * $limit;
 
-// Count total student users
+// ✅ MODIFIED: Count total parent users
 $count_query = "SELECT COUNT(*) as total FROM users 
-                WHERE acc_type = 'student' AND (
+                WHERE acc_type = 'parent' AND (
                     username LIKE '%$search%' 
                     OR CONCAT(first_name, ' ', last_name) LIKE '%$search%'
                 )";
@@ -23,7 +23,7 @@ if (!$count_result) {
 $total = mysqli_fetch_assoc($count_result)['total'];
 $total_pages = ceil($total / $limit);
 
-// Fetch student users
+// ✅ MODIFIED: Fetch parent users
 $query = "SELECT 
             user_id, 
             CONCAT(first_name, ' ', last_name) AS fullname, 
@@ -43,6 +43,9 @@ if (!$result) {
     die("<p style='color:red;'>Data Query Failed: " . mysqli_error($conn) . "</p>");
 }
 ?>
+
+<!-- The rest of your HTML code remains unchanged -->
+
 
 <!DOCTYPE html>
 <html lang="en">
