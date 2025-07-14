@@ -18,8 +18,8 @@ $profile_image = !empty($user['profile']) ? '../static/uploads/' . htmlspecialch
 <!-- HTML starts here -->
 
 <div id="nav_side" class="d-print-none sidebar p-3 border-end sticky-top d-none d-md-block" style="min-height: 100vh; width: 250px; overflow: hidden;">
-    <div class="profile-pic mb-3 text-center">
-        <img src="<?= htmlspecialchars($profile_image) ?>" alt="Profile" class="rounded-circle img-fluid" style="width: 80px; height: 80px; object-fit: cover;">
+    <div class="profile-pic mb-3  text-center">
+        <img src="<?= htmlspecialchars($profile_image) ?>" alt="Profile" class="rounded-circle img-fluid" style="width: 80px; height: 80px; margin: auto; object-fit: cover;">
     </div>
     <h5 class="text-center fw-bolder text-dark mb-3"><?= htmlspecialchars($full_name) ?></h5>
     <hr class="text-dark">
@@ -32,40 +32,34 @@ $profile_image = !empty($user['profile']) ? '../static/uploads/' . htmlspecialch
                     <i class="bi bi-speedometer2 me-2"></i>Dashboard
                 </a>
             </li>
-           
-            <li class="nav-item border-white">
-                <a href="#" class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
-                    <i class="bi bi-person me-2"></i>Profile
-                </a>
-            </li>
 
             <li class="nav-item border-white">
-                <a href="attendance_list.php" class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
+                <a href="attendance.php" class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
                     <i class="bi bi-calendar4-week me-2"></i>Attendance
                 </a>
             </li>
             <li class="nav-item border-white">
-                <a href="attendance_list.php" class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
+                <a href="grades.php" class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
                     <i class="bi bi-card-text me-2"></i>Grades
                 </a>
             </li>
             <li class="nav-item border-white">
-                <a href="attendance_list.php" class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
+                <a href="assignment.php" class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
                     <i class="bi bi-card-checklist me-2"></i>Assignment
                 </a>
             </li>
             <li class="nav-item border-white">
-                <a href="attendance_list.php" class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
+                <a href="disciplinary.php" class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
                     <i class="bi bi-people me-2"></i>Disciplinary
                 </a>
             </li>
             <li class="nav-item border-white">
-                <a href="attendance_list.php" class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
+                <a href="medical.php" class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
                     <i class="bi bi-capsule me-2"></i>Medical
                 </a>
             </li>
             <li class="nav-item border-white">
-                <a href="attendance_list.php" class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
+                <a href="announcement.php" class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
                     <i class="bi bi-megaphone me-2"></i>Announcement
                 </a>
             </li>
