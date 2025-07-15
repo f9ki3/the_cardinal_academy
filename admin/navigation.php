@@ -48,8 +48,15 @@ $profile_image = isset($user_info['profile_image']) ? $user_info['profile_image'
             </li> -->
             <li class="nav-item">
                 <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="banner_edit.php?nav_drop=true">
-                    <i class="bi bi-journal-bookmark me-2"></i>Announcement
+                    <i class="bi bi-journal-bookmark me-2"></i>Banner
                 </a>
+            </li>
+
+            <li class="nav-item">
+                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="announcement.php">
+                    <i class="bi bi-megaphone me-2"></i>Announcement
+                </a>
+
             </li>
 
             <!-- Maintenance dropdown -->
