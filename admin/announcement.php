@@ -89,7 +89,6 @@
                   while ($row = mysqli_fetch_assoc($result)):
                 ?>
                 <tr>
-                  <td><?= htmlspecialchars($row['id']) ?></td>
                   <td><?= htmlspecialchars(ucfirst($row['acc_type'])) ?></td>
                   <td><?= htmlspecialchars($row['message']) ?></td>
                   <td><?= htmlspecialchars($row['date']) ?></td>
