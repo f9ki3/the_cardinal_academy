@@ -17,6 +17,7 @@
 
     <div class="container my-4">
       <div class="row g-4">
+        <!-- Announcement Form -->
         <div class="col-12">
           <div class="rounded p-4 bg-white">
             <h4 class="mb-3">Add Announcement</h4>
@@ -40,49 +41,48 @@
           </div>
         </div>
 
+        <!-- Announcements Table -->
         <div class="col-12">
           <div class="rounded p-4 bg-white mt-4">
             <h4 class="mb-3">All Announcements</h4>
             <table class="table table-bordered">
               <thead>
                 <tr>
-                  <th>Heading</th>
-                  <th>Visible</th>
+                  <th>#</th>
+                  <th>Account Type</th>
+                  <th>Message</th>
+                  <th>Date</th>
                   <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
+                <?php
+                $sql = "SELECT * FROM notifications ORDER BY date DESC";
+                $result = mysqli_query($conn, $sql);
+
+                if (mysqli_num_rows($result) > 0):
+                  while ($row = mysqli_fetch_assoc($result)):
+                ?>
                 <tr>
-                  <td>Parent-Teacher Meeting on July 22</td>
-                  <td>Yes</td>
+                  <td><?= htmlspecialchars($row['id']) ?></td>
+                  <td><?= htmlspecialchars(ucfirst($row['acc_type'])) ?></td>
+                  <td><?= htmlspecialchars($row['message']) ?></td>
+                  <td><?= htmlspecialchars($row['date']) ?></td>
                   <td>
-                    <a href="#" class="btn btn-sm btn-warning">Edit</a>
-                    <a href="#" class="btn btn-sm btn-secondary">Hide</a>
-                    <a href="#" class="btn btn-sm btn-danger" onclick="return confirm('Delete this announcement?')">Delete</a>
+                    <a href="announcement_edit.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-warning">Edit</a>
+                    <a href="announcement_delete.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('Delete this announcement?')">Delete</a>
                   </td>
                 </tr>
+                <?php endwhile; else: ?>
                 <tr>
-                  <td>System Maintenance Scheduled</td>
-                  <td>No</td>
-                  <td>
-                    <a href="#" class="btn btn-sm btn-warning">Edit</a>
-                    <a href="#" class="btn btn-sm btn-secondary">Show</a>
-                    <a href="#" class="btn btn-sm btn-danger" onclick="return confirm('Delete this announcement?')">Delete</a>
-                  </td>
+                  <td colspan="5" class="text-center">No announcements found.</td>
                 </tr>
-                <tr>
-                  <td>Family Day on August 3</td>
-                  <td>Yes</td>
-                  <td>
-                    <a href="#" class="btn btn-sm btn-warning">Edit</a>
-                    <a href="#" class="btn btn-sm btn-secondary">Hide</a>
-                    <a href="#" class="btn btn-sm btn-danger" onclick="return confirm('Delete this announcement?')">Delete</a>
-                  </td>
-                </tr>
+                <?php endif; ?>
               </tbody>
             </table>
           </div>
         </div>
+
       </div>
     </div>
   </div>
