@@ -10,7 +10,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $sql = "INSERT INTO notification (acc_type, message, date) VALUES ('$acc_type', '$message', '$date')";
 
     if (mysqli_query($conn, $sql)) {
-        header("Location: announcements.php"); // Replace with actual filename
+        header("Location: announcement.php"); // Replace with actual filename
         exit();
     } else {
         echo "Error: " . mysqli_error($conn);
