@@ -20,6 +20,7 @@ $profile_image = !empty($user['profile']) ? '../static/uploads/' . htmlspecialch
     <div class="profile-pic mb-3 text-center">
         <img src="<?= htmlspecialchars($profile_image) ?>" alt="Profile" class="rounded-circle img-fluid" style="width: 80px; height: 80px; object-fit: cover;">
     </div>
+
     <h5 class="text-center fw-bolder text-dark mb-3"><?= htmlspecialchars($full_name) ?></h5>
     <hr class="text-dark">
 
