@@ -45,7 +45,7 @@
         <div class="col-12">
           <div class="rounded p-4 bg-white mt-4">
             <h4 class="mb-3">All Announcements</h4>
-            <table class="table table-bordered">
+            <table class="table">
               <thead>
                 <tr>
                   <th>#</th>
