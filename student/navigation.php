@@ -13,6 +13,8 @@ $user = $result->fetch_assoc();
 
 $full_name = htmlspecialchars($user['first_name'] . ', ' . $user['last_name']);
 $profile_image = !empty($user['profile']) ? '../static/uploads/' . htmlspecialchars($user['profile']) : '../static/uploads/default_profile.jpg';
+
+echo $profile_image;
 ?>
 
 <!-- HTML starts here -->
