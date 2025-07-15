@@ -20,6 +20,31 @@
         <!-- Announcement Form -->
         <div class="col-12">
           <div class="rounded p-4 bg-white">
+             <?php
+                // Check if 'status' parameter exists in the URL
+                if (isset($_GET['status'])) {
+                    $status = $_GET['status'];
+
+                    // Display Bootstrap alert based on the status
+                    if ($status === 'success') {
+                        echo '<div class="alert alert-success alert-dismissible fade show" role="alert">
+                                ✅ Added announcement successfully!
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                              </div>';
+                    } elseif ($status === 'deleted') {
+                        echo '<div class="alert alert-success alert-dismissible fade show" role="alert">
+                                🗑️ Deleted announcement successfully!
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                              </div>';
+                    } elseif ($status === 'error') {
+                        echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                ❌ Something went wrong. Please try again.
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                              </div>';
+                    }
+                }
+                ?>
+
             <h4 class="mb-3">Add Announcement</h4>
             <form method="POST" action="announcement_save.php">
               <div class="mb-3">

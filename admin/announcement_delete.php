@@ -11,7 +11,7 @@ if (isset($_GET['id'])) {
 
     if (mysqli_query($conn, $sql)) {
         // Redirect back to the announcement page with a success message (optional)
-        header("Location: announcements.php");
+        header("Location: announcements.php?status=deleted");
         exit();
     } else {
         echo "Error deleting record: " . mysqli_error($conn);
