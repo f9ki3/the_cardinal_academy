@@ -1,17 +1,5 @@
 <?php include 'session_login.php'; ?>
-<?php include '../db_connection.php'; 
-
-$user_id = $_SESSION['user_id'];
-
-$sql = "SELECT first_name, last_name, profile FROM users WHERE user_id = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$user = $result->fetch_assoc();
-$full_name = htmlspecialchars($user['first_name'] . ', ' . $user['last_name']);
-
-?>
+<?php include '../db_connection.php'; ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -49,7 +37,7 @@ $full_name = htmlspecialchars($user['first_name'] . ', ' . $user['last_name']);
         <!-- Header Section -->
         <header class="flex flex-col md:flex-row justify-between items-center ">
             <div class="mb-4 md:mb-0">
-                <h1 class="text-3xl font-bold text-gray-800">Attendance Record</h1>
+                <h1 class="text-3xl font-bold text-gray-800">Child Attendance Record</h1>
             </div>
             
         </header>

@@ -1,5 +1,16 @@
 <?php include 'session_login.php'; ?>
-<?php include '../db_connection.php'; ?>
+<?php include '../db_connection.php'; 
+
+$user_id = $_SESSION['user_id'];
+
+$sql = "SELECT first_name, last_name, profile FROM users WHERE user_id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
+$full_name = htmlspecialchars($user['first_name'] . ', ' . $user['last_name']);
+?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -95,7 +106,7 @@
                 <!-- Profile Card -->
                 <div class="card">
                     <div class="card-body text-center pt-5">
-                        <h5 class="card-title mb-1" id="student-name">Noah, Domingo</h5>
+                        <h5 class="card-title mb-1" id="student-name"><?= htmlspecialchars($full_name)?></h5>
                         <p class="text-muted small mb-3" id="student-id">Student ID: S12345678</p>
                         <div class="mb-3">
                             <span class="badge-custom me-2">STEM</span>
@@ -254,8 +265,8 @@
     </div>
   </div>
 </div>
-<div class="chat-icon" title="Message Support">
-    💬
+<div >
+    <?php include 'messenger.php'; ?>
   </div>
 
 <?php include 'footer.php'; ?>

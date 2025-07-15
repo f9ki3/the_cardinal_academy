@@ -113,7 +113,7 @@
             <div class="container my-4">
               <div class="row mb-3">
                 <div class=" p-4">
-                  <h2 class="fw-bold">Disciplinary Rerocd</h2>
+                  <h2 class="fw-bold">Child Disciplinary Record</h2>
                 </div>
                 <!-- start -->
                  <div class="container mx-auto ">

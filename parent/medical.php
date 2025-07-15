@@ -1,5 +1,17 @@
 <?php include 'session_login.php'; ?>
-<?php include '../db_connection.php'; ?>
+<?php include '../db_connection.php'; 
+
+$user_id = $_SESSION['user_id'];
+
+$sql = "SELECT first_name, last_name, profile FROM users WHERE user_id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
+$full_name = htmlspecialchars($user['first_name'] . ', ' . $user['last_name']);
+
+?>
 
 <!DOCTYPE html>
 <html lang="en">
