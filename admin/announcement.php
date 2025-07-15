@@ -69,7 +69,6 @@
                   <td><?= htmlspecialchars($row['message']) ?></td>
                   <td><?= htmlspecialchars($row['date']) ?></td>
                   <td>
-                    <a href="announcement_edit.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-warning">Edit</a>
                     <a href="announcement_delete.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('Delete this announcement?')">Delete</a>
                   </td>
                 </tr>
