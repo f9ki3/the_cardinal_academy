@@ -19,7 +19,7 @@ $profile_image = !empty($user['profile']) ? '../static/uploads/' . htmlspecialch
 <div id="nav_side" class="d-print-none sidebar p-3 border-end sticky-top d-none d-md-block" style="min-height: 100vh; width: 250px; overflow: hidden;">
     <div class="profile-pic mb-3 w-100 text-center">
         <img 
-            src="../static/uploads/user_68727d26318ef.jpg" 
+            src="<?= htmlspecialchars($profile_image) ?>" 
             alt="Profile" 
             class="rounded-circle img-fluid d-block mx-auto" 
             style="width: 80px; height: 80px; object-fit: cover;"
