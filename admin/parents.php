@@ -7,7 +7,17 @@ $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int) $_GET['page'] 
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 $offset = ($page - 1) * $limit;
 
-$search_escaped = mysqli_real_escape_string($conn, $search);
+// ✅ MODIFIED: Count total parent users
+$count_query = "SELECT COUNT(*) as total FROM users 
+                WHERE acc_type = 'parent' AND (
+                    username LIKE '%$search%' 
+                    OR CONCAT(first_name, ' ', last_name) LIKE '%$search%'
+                )";
+
+$count_result = mysqli_query($conn, $count_query);
+if (!$count_result) {
+    die("<p style='color:red;'>Count Query Failed: " . mysqli_error($conn) . "</p>");
+}
 
 // Count total distinct parents
 $count_sql = "SELECT COUNT(DISTINCT guardian_name) AS total 
@@ -17,18 +27,30 @@ $count_result = mysqli_query($conn, $count_sql);
 $total = mysqli_fetch_assoc($count_result)['total'];
 $total_pages = ceil($total / $limit);
 
-// Get parent and student count
-$sql = "SELECT guardian_name, COUNT(*) AS student_count 
-        FROM admission_form 
-        WHERE guardian_name LIKE '%$search_escaped%'
-        GROUP BY guardian_name 
-        ORDER BY guardian_name ASC 
-        LIMIT $limit OFFSET $offset";
-$result = mysqli_query($conn, $sql);
+// ✅ MODIFIED: Fetch parent users
+$query = "SELECT 
+            user_id, 
+            CONCAT(first_name, ' ', last_name) AS fullname, 
+            username, 
+            created_at, 
+            enroll_id 
+          FROM users 
+          WHERE acc_type = 'parent' AND (
+              username LIKE '%$search%' 
+              OR CONCAT(first_name, ' ', last_name) LIKE '%$search%'
+          )
+          ORDER BY created_at DESC
+          LIMIT $limit OFFSET $offset";
+
+$result = mysqli_query($conn, $query);
+
 if (!$result) {
     die("<p style='color:red;'>Data Query Failed: " . mysqli_error($conn) . "</p>");
 }
 ?>
+
+<!-- The rest of your HTML code remains unchanged -->
+
 
 <!DOCTYPE html>
 <html lang="en">

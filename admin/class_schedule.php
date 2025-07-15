@@ -52,7 +52,7 @@ $schedule = $sched_stmt->get_result();
   <?php include 'header.php'; ?>
 </head>
 <body>
-<div class="d-flex flex-row bg-light">
+<div class="d-flex flex-row">
   <?php include 'navigation.php'; ?>
   <div class="content flex-grow-1">
     <?php include 'nav_top.php'; ?>

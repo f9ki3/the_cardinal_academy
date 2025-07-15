@@ -58,10 +58,28 @@ $hideLogInButton = true;
               <label for="username" class="form-label">Username or Email</label>
               <input type="text" name="username" id="username" class="form-control" required />
             </div>
-            <div class="mb-3">
+           <div class="mb-3">
               <label for="password" class="form-label">Password</label>
-              <input type="password" name="password" id="password" class="form-control" required />
+              <div class="input-group">
+                <input type="password" name="password" id="password" class="form-control" required />
+                <span class="input-group-text" id="togglePassword" style="cursor: pointer;">
+                  <i class="bi bi-eye-slash" id="toggleIcon"></i>
+                </span>
+              </div>
             </div>
+
+            <script>
+              const togglePassword = document.getElementById('togglePassword');
+              const passwordInput = document.getElementById('password');
+              const toggleIcon = document.getElementById('toggleIcon');
+
+              togglePassword.addEventListener('click', function () {
+                const isPassword = passwordInput.type === 'password';
+                passwordInput.type = isPassword ? 'text' : 'password';
+                toggleIcon.classList.toggle('bi-eye');
+                toggleIcon.classList.toggle('bi-eye-slash');
+              });
+            </script>
             <button type="submit" class="btn btn-danger text-light w-100 mb-3">Login</button>
           </form>
         </div>

@@ -78,7 +78,6 @@
 </head>
 <body>
 
-  <!-- Header -->
 <?php include 'navigation.php'; ?>
 
 

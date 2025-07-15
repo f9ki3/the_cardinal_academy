@@ -6,6 +6,15 @@ include '../db_connection.php';
 $sql = "SELECT * FROM attendance ";
 
 $result = mysqli_query($conn, $sql);
+
+$attendance_type = isset($_GET['attendance_type']) ? $_GET['attendance_type'] : null;
+
+$selected_type = null;
+if ($attendance_type === '1') {
+    $selected_type = 'time_in';
+} elseif ($attendance_type === '0') {
+    $selected_type = 'time_out';
+}
 ?>
 
 
@@ -46,9 +55,16 @@ $result = mysqli_query($conn, $sql);
                         placeholder="Scan RFID or Enter ID" 
                         required
                         >
+                        <script>
+                          window.addEventListener('DOMContentLoaded', () => {
+                            const input = document.getElementById('rfid_code');
+                            if (input) input.focus();
+                          });
+                        </script>
+
                         <select class="form-select" name="attendance_type" id="attendance_type" required>
-                        <option value="time_in" selected>Time In</option>
-                        <option value="time_out">Time Out</option>
+                            <option value="time_in" <?= $selected_type === 'time_in' ? 'selected' : '' ?>>Time In</option>
+                            <option value="time_out" <?= $selected_type === 'time_out' ? 'selected' : '' ?>>Time Out</option>
                         </select>
                     </div>
                     </form>
@@ -112,9 +128,14 @@ $result = mysqli_query($conn, $sql);
 
                         <?php endwhile; ?>
                     <?php else: ?>
-                        <tr>
-                        <td colspan="7" class="text-center text-muted">No attendance records found.</td>
-                        </tr>
+                      <tr>
+                        <td colspan="4">
+                          <div class="d-flex flex-column justify-content-center align-items-center py-4">
+                            <p class="text-center text-muted mb-3">No attendance records found.</p>
+                            <img src="../static/images/art7.svg" alt="No records" style="max-width: 300px; opacity: 70%">
+                          </div>
+                        </td>
+                      </tr>
                     <?php endif; ?>
                     </tbody>
                 </table>

@@ -90,15 +90,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <form method="post" class="mt-3">
               <div class="mb-3">
                 <label for="new_password" class="form-label">New Password</label>
-                <input type="password" name="new_password" id="new_password" class="form-control" required minlength="6" />
+                <div class="input-group">
+                  <input type="password" name="new_password" id="new_password" class="form-control" required minlength="6" />
+                  <span class="input-group-text" id="toggleNewPassword" style="cursor: pointer;">
+                    <i class="bi bi-eye-slash" id="iconNewPassword"></i>
+                  </span>
+                </div>
               </div>
+
               <div class="mb-3">
                 <label for="confirm_password" class="form-label">Confirm Password</label>
-                <input type="password" name="confirm_password" id="confirm_password" class="form-control" required />
+                <div class="input-group">
+                  <input type="password" name="confirm_password" id="confirm_password" class="form-control" required />
+                  <span class="input-group-text" id="toggleConfirmPassword" style="cursor: pointer;">
+                    <i class="bi bi-eye-slash" id="iconConfirmPassword"></i>
+                  </span>
+                </div>
               </div>
+
               <button type="submit" class="btn bg-main text-light">Save Password</button>
               <a href="view_user.php?id=<?= urlencode($user_id) ?>&nav_drop=true" class="btn btn-secondary ms-2">Cancel</a>
             </form>
+
+            <!-- Show/Hide Toggle Script -->
+            <script>
+              // Toggle for new password
+              document.getElementById('toggleNewPassword').addEventListener('click', function () {
+                const input = document.getElementById('new_password');
+                const icon = document.getElementById('iconNewPassword');
+                const isHidden = input.type === 'password';
+                input.type = isHidden ? 'text' : 'password';
+                icon.classList.toggle('bi-eye');
+                icon.classList.toggle('bi-eye-slash');
+              });
+
+              // Toggle for confirm password
+              document.getElementById('toggleConfirmPassword').addEventListener('click', function () {
+                const input = document.getElementById('confirm_password');
+                const icon = document.getElementById('iconConfirmPassword');
+                const isHidden = input.type === 'password';
+                input.type = isHidden ? 'text' : 'password';
+                icon.classList.toggle('bi-eye');
+                icon.classList.toggle('bi-eye-slash');
+              });
+            </script>
           </div>
         </div>
       </div>
