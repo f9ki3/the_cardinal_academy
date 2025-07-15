@@ -83,7 +83,7 @@ if ($result = mysqli_query($conn, $payment_query)) {
       <!-- Counters and Chart -->
       <div class="row g-4 mt-2">
         <!-- Admissions Counter -->
-        <div class="col-md-3">
+        <div class="col-6 col-md-3">
           <div class="card border-0 rounded-4 p-3 bg-white">
             <h6 class="text-muted">Total Admissions</h6>
             <h2 class="fw-bold text-primary mb-0"><?= $admission_count ?></h2>
@@ -91,7 +91,7 @@ if ($result = mysqli_query($conn, $payment_query)) {
         </div>
 
         <!-- Enrollees Counter -->
-        <div class="col-md-3">
+        <div class="col-6 col-md-3">
           <div class="card  border-0 rounded-4 p-3 bg-white">
             <h6 class="text-muted">Total Enrollees</h6>
             <h2 class="fw-bold text-primary mb-0"><?= $enrollment_count ?></h2>
@@ -99,7 +99,7 @@ if ($result = mysqli_query($conn, $payment_query)) {
         </div>
 
 
-        <div class="col-md-3">
+        <div class="col-6 col-md-3">
           <div class="card  border-0 rounded-4 p-3 bg-white">
             <h6 class="text-muted">Total Students</h6>
             <h2 class="fw-bold text-primary mb-0"><?= $student_count ?></h2>
@@ -107,7 +107,7 @@ if ($result = mysqli_query($conn, $payment_query)) {
         </div>
 
 
-        <div class="col-md-3">
+        <div class="col-6 col-md-3">
           <div class="card  border-0 rounded-4 p-3 bg-white">
             <h6 class="text-muted">Total teachers</h6>
             <h2 class="fw-bold text-primary mb-0"><?= $teacher_count ?></h2>
