@@ -6,9 +6,9 @@
     </div>
     <div>
         <!-- Bell icon opens offcanvas -->
-        <a data-bs-toggle="offcanvas" href="#notificationCanvas" role="button" aria-controls="notificationCanvas" class="btn border rounded-4 me-2">
+        <!-- <a data-bs-toggle="offcanvas" href="#notificationCanvas" role="button" aria-controls="notificationCanvas" class="btn border rounded-4 me-2">
             <i class="bi bi-bell"></i>
-        </a>
+        </a> -->
         <!-- Logout button -->
         <a href="logout.php" class="btn btn-danger rounded-4">Logout</a>
     </div>
