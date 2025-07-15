@@ -34,32 +34,32 @@ $profile_image = !empty($user['profile']) ? '../static/uploads/' . htmlspecialch
             </li>
 
             <li class="nav-item border-white">
-                <a href="attendance.php" class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
+                <a href="attendance.php" class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="attendance.php">
                     <i class="bi bi-calendar4-week me-2"></i>Attendance
                 </a>
             </li>
             <li class="nav-item border-white">
-                <a href="grades.php" class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
+                <a href="grades.php" class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="grades.php">
                     <i class="bi bi-card-text me-2"></i>Grades
                 </a>
             </li>
             <li class="nav-item border-white">
-                <a href="assignment.php" class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
+                <a href="assignment.php" class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="assignment.php">
                     <i class="bi bi-card-checklist me-2"></i>Assignment
                 </a>
             </li>
             <li class="nav-item border-white">
-                <a href="disciplinary.php" class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
+                <a href="disciplinary.php" class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="disciplinary.php">
                     <i class="bi bi-people me-2"></i>Disciplinary
                 </a>
             </li>
             <li class="nav-item border-white">
-                <a href="medical.php" class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
+                <a href="medical.php" class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="medical.php">
                     <i class="bi bi-capsule me-2"></i>Medical
                 </a>
             </li>
             <li class="nav-item border-white">
-                <a href="announcement.php" class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
+                <a href="announcement.php" class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="announcement.php">
                     <i class="bi bi-megaphone me-2"></i>Announcement
                 </a>
             </li>

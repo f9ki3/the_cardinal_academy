@@ -68,7 +68,7 @@ $full_name = htmlspecialchars($user['first_name'] . ', ' . $user['last_name']);
                 </div>
                 <div class="md:w-3/4 p-6">
                     <div class="uppercase tracking-wide text-sm text-blue-600 font-semibold">Student Profile</div>
-                    <h2 class="text-2xl font-bold text-gray-800 mt-1"><?= htmlspecialchars($full_name)?></h2>
+                    <h2 class="text-2xl font-bold text-gray-800 mt-1">Stephany Gandula</h2>
                     <p class="text-gray-600 mt-1">Grade 10, Section B</p>
                     
                     <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
