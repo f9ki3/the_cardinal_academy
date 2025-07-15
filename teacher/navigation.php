@@ -1,22 +1,30 @@
 <?php
-include 'header.php';
-include 'user_info.php';
+include '../db_connection.php';
 
-$user_info = getUserInfo();
-$full_name = isset($user_info['full_name']) ? $user_info['full_name'] : 'Guest';
-$profile_image = isset($user_info['profile_image']) ? $user_info['profile_image'] : 'default.png';
+$user_id = $_SESSION['user_id'];
+
+$sql = "SELECT first_name, last_name, profile FROM users WHERE user_id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+$user = $result->fetch_assoc();
+
+$full_name = htmlspecialchars($user['first_name'] . ', ' . $user['last_name']);
+$profile_image = !empty($user['profile']) ? '../static/uploads/' . htmlspecialchars($user['profile']) : '../static/uploads/default_profile.jpg';
 ?>
 
-
-    <!-- Scrollable navigation -->
 
 <div id="nav_side" class="d-print-none sidebar p-3 border-end sticky-top d-none d-md-block" style="min-height: 100vh; width: 250px; overflow: hidden;">
     <div class="profile-pic mb-3 text-center">
         <img src="<?= htmlspecialchars($profile_image) ?>" alt="Profile" class="border border-danger border- rounded-circle img-fluid" style="width: 80px; height: 80px; object-fit: cover;">
+
     </div>
     <h5 class="text-center fw-bolder text-dark mb-3"><?= htmlspecialchars($full_name) ?></h5>
     <hr class="text-dark">
 
+    <!-- Scrollable navigation -->
     <div style="overflow-y: auto; max-height: calc(100vh - 200px); padding-right: 5px;">
        <ul class="nav flex-column">
             <li class="nav-item">
@@ -24,6 +32,7 @@ $profile_image = isset($user_info['profile_image']) ? $user_info['profile_image'
                     <i class="bi bi-speedometer2 me-2"></i>Dashboard
                 </a>
             </li>
+         
             <li class="nav-item">
                 <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
                     <i class="bi bi-person-circle me-2"></i>Profile
