@@ -20,7 +20,7 @@ $full_name = htmlspecialchars($user['first_name'] . ', ' . $user['last_name']);
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Attendance Records</title>
   <?php include 'header.php' ?>
-  <script src="https://cdn.tailwindcss.com"></script>
+
     <style>
         .student-card:hover {
             transform: translateY(-2px);

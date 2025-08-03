@@ -8,8 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Attendance Records</title>
   <?php include 'header.php' ?>
-  <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <style>
         .medical-tab {
             transition: all 0.3s ease;

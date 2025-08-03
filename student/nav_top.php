@@ -13,26 +13,7 @@
         <a href="logout.php" class="btn btn-danger rounded-4">Logout</a>
     </div>
 </div>
-<style>
-
-  .nav-item {
-    border: none !important;
-  }
-
-  .nav-item .nav-link {
-    border: none !important;
-    color: gray !important; /* Inactive tab text color */
-    background-color: transparent !important;
-  }
-
-  .nav-item .nav-link.active {
-    color: white !important; /* Active tab text color */
-    border: none !important;
-    background-color: red !important;
-    border-radius: 0px !important;
-  }
-
-</style>
+<!-- 
 
 <?php
 // Assume session is started and $conn is your DB connection

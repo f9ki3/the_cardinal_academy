@@ -8,8 +8,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Attendance Records</title>
   <?php include 'header.php' ?>
-  <script src="https://cdn.tailwindcss.com"></script>
-    
+
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <style>
         :root {
@@ -106,10 +106,10 @@
   <div class="content flex-grow-1">
     <?php include 'nav_top.php' ?>
 
-    <div class="container my-4">
+    <div class="container my-3">
       <div class="row g-4">
         <div class="col-12">
-          <div class="rounded p-3 bg-white">
+          <div class="rounded p-3 bg-white ">
             <div class="container my-4">
               <div class="row mb-3">
                 <div class=" p-4">
