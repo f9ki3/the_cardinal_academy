@@ -83,6 +83,9 @@ $profile_image = isset($user_info['profile_image']) ? $user_info['profile_image'
                     <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="sectioning.php?nav_drop=true">
                         <i class="bi bi-diagram-3 me-2"></i>Manage Sections
                     </a>
+                    <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="uniforms.php?nav_drop=true">
+                        <i class="bi bi-person me-2"></i>Manage Uniforms
+                    </a>
                     <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="subject_unit.php?nav_drop=true">
                         <i class="bi bi-journal-bookmark me-2"></i>Subjects and Units
                     </a>
