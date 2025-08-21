@@ -69,7 +69,7 @@ if (!$subjects_result) {
 
             <div class="col-12 text-start pt-2">
               <button type="submit" class="btn bg-main text-light">Create Account</button>
-              <a href="parents.php" class="btn btn-secondary ms-2">Back</a>
+              <a href="parent.php" class="btn btn-secondary ms-2">Back</a>
             </div>
           </div>
         </div>

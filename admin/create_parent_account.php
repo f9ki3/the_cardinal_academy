@@ -48,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($exists) {
         // ✅ Already exists — redirect with status
-        header("Location: parents.php?status=exists&nav_drop=true");
+        header("Location: parent.php?status=exists&nav_drop=true");
         exit;
     }
 
@@ -100,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         );
 
         if ($insert->execute()) {
-            header("Location: parents.php?status=created&nav_drop=true");
+            header("Location: parent.php?status=created&nav_drop=true");
             exit;
         } else {
             die("❌ Failed to create account: " . $insert->error);
@@ -111,6 +111,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die("❌ Failed to prepare insert statement: " . $conn->error);
     }
 } else {
-    header("Location: parents.php?status=invalid_access");
+    header("Location: parent.php?status=invalid_access");
     exit;
 }
