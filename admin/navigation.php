@@ -71,7 +71,7 @@ $profile_image = isset($user_info['profile_image']) ? $user_info['profile_image'
                     <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="students.php?nav_drop=true">
                         <i class="bi bi-people-fill me-2"></i>Students Account
                     </a>
-                    <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="parents.php">
+                    <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="parent.php">
                         <i class="bi bi-house-heart me-2"></i>Parent Account
                     </a>
                     <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="teacher.php?nav_drop=true">
