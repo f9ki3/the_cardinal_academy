@@ -56,7 +56,7 @@ $result = mysqli_query($conn, $query);
   <?php include 'header.php' ?>
 </head>
 <body>
-<div class="d-flex flex-row bg-light">
+<div class="d-flex flex-row">
   <?php include 'navigation.php' ?>
 
   <div class="content flex-grow-1">
@@ -112,12 +112,12 @@ $result = mysqli_query($conn, $query);
                 <table class="table table-striped table-hover" style="cursor: pointer">
                   <thead>
                     <tr>
-                      <th scope="col">LRN</th>
-                      <th scope="col">CODE</th>
-                      <th scope="col">Fullname</th>
-                      <th scope="col">Address</th>
-                      <th scope="col">Grade Level</th>
-                      <th scope="col">Status</th>
+                      <th scope="col" style="width: 10%">LRN</th>
+                      <th scope="col" style="width: 10%">CODE</th>
+                      <th scope="col" style="width: 20%">Fullname</th>
+                      <th scope="col" style="width: 30%">Address</th>
+                      <th scope="col" style="width: 15%">Grade Level</th>
+                      <th scope="col" style="width: 10%">Status</th>
                     </tr>
                   </thead>
                   <tbody>

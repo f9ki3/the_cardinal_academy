@@ -27,7 +27,7 @@ if ($admission_id > 0) {
   <?php include 'header.php'; ?>
 </head>
 <body>
-<div class="d-flex flex-row bg-light">
+<div class="d-flex flex-row">
   <?php include 'navigation.php'; ?>
 
   <div class="content flex-grow-1">
@@ -35,14 +35,12 @@ if ($admission_id > 0) {
 
     <div class="container py-4">
      <form action="update_admission.php" method="POST">
-        <div class="bg-white p-4 rounded-4 shadow-sm">
-        <h2>Student Enrollment Form</h2>
-        <p class="m-0 mb-4">Note: Please review all information from the form before proceed to payment plan</p>
-        <hr>
+        <div class="bg-white p-4 rounded-4">
 
         <!-- Learner Profile -->
 <fieldset>
   <h4><strong>Student Profile</strong></h4>
+  <p class="m-0">Note: Please review all information from the form before proceed to payment plan</p>
   <div class="row g-3">
     <input type="hidden" name="admission_id" value="<?= htmlspecialchars($data['id'] ?? '') ?>">
 
@@ -101,7 +99,7 @@ if ($admission_id > 0) {
         <option value="">Select Grade Level</option>
         <?php
         $grades = [
-          'Nursery (with books)', 'Kinder (with books)',
+          'Nursery', 'Kinder',
           'Grade 1', 'Grade 2', 'Grade 3',
           'Grade 4', 'Grade 5', 'Grade 6',
           'Grade 7', 'Grade 8', 'Grade 9',

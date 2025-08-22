@@ -49,7 +49,7 @@ $result = mysqli_query($conn, $query);
   <?php include 'header.php' ?>
 </head>
 <body>
-<div class="d-flex flex-row bg-light">
+<div class="d-flex flex-row">
   <?php include 'navigation.php' ?>
 
   <div class="content flex-grow-1">
