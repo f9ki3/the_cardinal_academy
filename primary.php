@@ -98,7 +98,7 @@
           <div class="col-12 col-md-6">
             <label for="lrn" class="form-label text-muted">Learner Reference Number (LRN)</label>
             <input type="text" name="lrn" id="lrn" 
-                  placeholder="Note: For nursery that has no LRN leave empty." 
+                  placeholder="Note: if not sure LRN leave empty." 
                   class="form-control"
                   maxlength="12"
                   oninput="this.value = this.value.replace(/\D/g, '').slice(0, 12)">
@@ -487,15 +487,6 @@ const fields = [
   { id: 'house_address', message: 'House address is required' }
 ];
 
-// Only include LRN in validation if not nursery or kinder
-if (gradeLevel !== 'nursery' && gradeLevel !== 'kinder garten') {
-  fields.push({ id: 'lrn', message: 'LRN must be a 12-digit number', pattern: /^\d{12}$/ });
-}
-
-  // Only include LRN in validation if not Kinder Garten
-  if (gradeLevel !== 'nursery') {
-    fields.push({ id: 'lrn', message: 'LRN must be a 12-digit number', pattern: /^\d{12}$/ });
-  }
 
   let isValid = true;
 

@@ -62,49 +62,64 @@ if (!empty($grade_level)) {
 
            <div class="col-md-6">
             <label for="enrolled_section" class="form-label text-muted">Enrolled Section</label>
-            <select id="enrolled_section" name="enrolled_section" class="form-select">
+            <select id="enrolled_section" name="enrolled_section" class="form-select" required>
               <option value="">-- Select Section --</option>
             <?php
-              // Get current and next school year (format: YYYY-YYYY)
-              $currentYear = date("Y");
-              $nextYear = $currentYear + 1;
-              $currentSchoolYear = $currentYear . "-" . $nextYear;
-              $nextSchoolYear = $nextYear . "-" . ($nextYear + 1);
+                // Get current and next school year (format: YYYY-YYYY)
+                $currentYear = date("Y");
+                $nextYear = $currentYear + 1;
+                $currentSchoolYear = $currentYear . "-" . $nextYear;
+                $nextSchoolYear = $nextYear . "-" . ($nextYear + 1);
 
-              $sql = "SELECT section_id, section_name, grade_level, room, strand, teacher_id, capacity, enrolled, school_year 
-                      FROM sections 
-                      WHERE grade_level = '$grade_level'
-                      AND school_year IN ('$currentSchoolYear', '$nextSchoolYear')
-                      ORDER BY grade_level, section_name";
+                $sql = "SELECT section_id, section_name, grade_level, room, strand, teacher_id, capacity, enrolled, school_year 
+                        FROM sections 
+                        WHERE grade_level = '$grade_level'
+                        AND school_year IN ('$currentSchoolYear', '$nextSchoolYear')
+                        ORDER BY grade_level, section_name";
 
-              $result = mysqli_query($conn, $sql);
+                $result = mysqli_query($conn, $sql);
 
-              if ($result && mysqli_num_rows($result) > 0) {
-                while ($row = mysqli_fetch_assoc($result)) {
-                  $sectionId   = $row['section_id'];
-                  $sectionName = $row['section_name'];
-                  $gradeLevel  = $row['grade_level'];
-                  $room        = $row['room'];
-                  $strand      = $row['strand'];
-                  $capacity    = $row['capacity'];
-                  $enrolled    = $row['enrolled'];
-                  $schoolYear  = $row['school_year'];
+                if ($result && mysqli_num_rows($result) > 0) {
+                    $hasAvailable = false;
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        $sectionId   = $row['section_id'];
+                        $sectionName = $row['section_name'];
+                        $gradeLevel  = $row['grade_level'];
+                        $room        = $row['room'];
+                        $strand      = $row['strand'];
+                        $capacity    = $row['capacity'];
+                        $enrolled    = $row['enrolled'];
+                        $schoolYear  = $row['school_year'];
 
-                  // Build label
-                  $label = "{$sectionName} ( {$gradeLevel}";
-                  if (!empty($room)) {
-                    $label .= ", Room {$room}";
-                  }
-                  // Show strand only if Grade 11 or 12
-                  if (($gradeLevel == "11" || $gradeLevel == "12") && !empty($strand)) {
-                    $label .= ", Strand: {$strand}";
-                  }
-                  $label .= ") - {$enrolled}/{$capacity} students";
+                        // ✅ Skip if section is already full
+                        if ($capacity == $enrolled) {
+                            continue;
+                        }
 
-                  echo "<option value='{$sectionId}'>{$label} [SY: {$schoolYear}]</option>";
+                        // Build label
+                        $label = "{$sectionName} ( {$gradeLevel}";
+                        if (!empty($room)) {
+                            $label .= ", Room {$room}";
+                        }
+                        // Show strand only if Grade 11 or 12
+                        if (($gradeLevel == "11" || $gradeLevel == "12") && !empty($strand)) {
+                            $label .= ", Strand: {$strand}";
+                        }
+                        $label .= ") - {$enrolled}/{$capacity} students";
+
+                        echo "<option value='{$sectionId}'>{$label} [SY: {$schoolYear}]</option>";
+                        $hasAvailable = true;
+                    }
+
+                    // ✅ If all were full
+                    if (!$hasAvailable) {
+                        echo "<option value='' disabled selected>-- All sections are full --</option>";
+                    }
+                } else {
+                    echo "<option value='' disabled selected>-- No available section --</option>";
                 }
-              }
-              ?>
+                ?>
+
 
 
             </select>
@@ -131,7 +146,7 @@ if (!empty($grade_level)) {
 
             <div class="col-md-3">
               <label class="form-label text-muted">Uniform</label>
-              <input type="text" id="uniform" class="form-control" value="₱0" readonly>
+              <input type="text" id="uniform" name="uniform" class="form-control" readonly>
             </div>
 
             <div class="col-md-3">
@@ -217,14 +232,36 @@ if (!empty($grade_level)) {
 
 
                   </ul>
-
+                  <!-- Checkbox -->
+                  <div class="form-check ms-3 mt-3">
+                    <input class="form-check-input" type="checkbox" id="reviewed-check">
+                    <label class="form-check-label text-muted" for="reviewed-check">
+                      I confirm that all data has been reviewed
+                    </label>
+                  </div>
                   <div class="row">
                     <div class="col-12 col-md-6">
-                      <button id="enroll-btn" type="submit" name="action" value="enroll" class="btn btn-danger text-light rounded-4 mt-3 w-100" disabled>
+                      
+
+                      <!-- Enroll Button -->
+                      <button id="enroll-btn" type="submit" name="action" value="enroll" 
+                              class="btn btn-danger text-light rounded-4 mt-3 w-100" disabled>
                         <span class="btn-text">Enroll</span>
                         <span class="spinner-border spinner-border-sm ms-2 d-none" role="status" aria-hidden="true"></span>
                       </button>
                     </div>
+
+                    <script>
+                    document.addEventListener("DOMContentLoaded", function() {
+                      const reviewedCheck = document.getElementById("reviewed-check");
+                      const enrollBtn = document.getElementById("enroll-btn");
+
+                      reviewedCheck.addEventListener("change", function() {
+                        enrollBtn.disabled = !this.checked;
+                      });
+                    });
+                    </script>
+
 
                     <div class="col-12 col-md-6">
                       <a href="view_enrollment.php?id=<?php echo htmlspecialchars($admission_id)?>" class="btn btn-outline-danger text-danger border-2 rounded-4 mt-3 w-100">Back</a>

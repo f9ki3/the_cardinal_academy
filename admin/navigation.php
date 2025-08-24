@@ -36,6 +36,12 @@ $profile_image = isset($user_info['profile_image']) ? $user_info['profile_image'
                     <i class="bi bi-file-earmark-text me-2"></i>COR Issuance
                 </a>
             </li>
+
+            <li class="nav-item">
+                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="cor_issuance2.php">
+                    <i class="bi bi-file-earmark-text me-2"></i>COR Issuance
+                </a>
+            </li>
             <li class="nav-item">
                 <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="billing.php">
                     <i class="bi bi-credit-card-2-front me-2"></i>Tuition Payment
