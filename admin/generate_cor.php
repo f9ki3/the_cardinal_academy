@@ -14,6 +14,7 @@ $sql = "
 SELECT 
     st.id AS tuition_id,
     st.student_number,
+    st.account_number,
     si.lrn,
     si.firstname,
     si.middlename,
@@ -68,6 +69,7 @@ if ($result && $row = $result->fetch_assoc()) {
     $tuition = [
         "tuition_id"           => $row['tuition_id'],
         "student_number"       => $row['student_number'],
+        "account_number"       => $row['account_number'],
         "lrn"                  => $row['lrn'],
         "firstname"            => $row['firstname'],
         "middlename"           => $row['middlename'],
@@ -176,6 +178,10 @@ if ($result && $row = $result->fetch_assoc()) {
                 <div class="col-md-4">
                     <strong>Student Number:</strong> 
                     <?= htmlspecialchars($tuition['student_number'] ?? 'N/A') ?>
+                </div>
+                <div class="col-md-4">
+                    <strong>Account Number:</strong> 
+                    <?= htmlspecialchars($tuition['account_number'] ?? 'N/A') ?>
                 </div>
                 <div class="col-md-4">
                     <strong>Adviser:</strong> 

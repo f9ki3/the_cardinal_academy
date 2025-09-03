@@ -54,6 +54,11 @@ $profile_image = isset($user_info['profile_image']) ? $user_info['profile_image'
                     <i class="bi bi-credit-card-2-front me-2"></i>Tuition Payment
                 </a>
             </li>
+            <li class="nav-item">
+                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="billing2.php">
+                    <i class="bi bi-credit-card-2-front me-2"></i>Tuition Payment
+                </a>
+            </li>
             <!-- <li class="nav-item">
                 <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="scheduling.php">
                     <i class="bi bi-calendar-range me-2"></i>Class Scheduling

@@ -1,77 +1,119 @@
 <?php
 include 'session_login.php';
-// include '../db_connection.php';
+include '../db_connection.php';
 
-$host = 'localhost';        // usually localhost
-$db   = 'tca';              // your actual DB name
-$user = 'root';             // your MySQL username
-$pass = '';                 // your MySQL password
-
-// $host = 'localhost';        // usually localhost
-// $db   = 'u429904263_tca';              // your actual DB name
-// $user = 'u429904263_tca';             // your MySQL username
-// $pass = 'UsKA?M[7';                 // your MySQL password
-
-// Create connection
-$conn = new mysqli($host, $user, $pass, $db);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+// Retrieve tuition_id from URL and validate
+$tuition_id = isset($_GET['tuition_id']) ? intval($_GET['tuition_id']) : 0;
+if ($tuition_id <= 0) {
+    echo json_encode(["error" => "Invalid tuition ID."]);
+    exit;
 }
 
-$id = (int) $_GET['id'];
-$student_id = $id; // Define properly before using in queries
+// Prepare SQL to fetch tuition along with student, section, and teacher info
+$sql = "
+SELECT 
+    st.id AS tuition_id,
+    st.student_number,
+    st.account_number,
+    si.lrn,
+    si.firstname,
+    si.middlename,
+    si.lastname,
+    si.grade_level AS student_grade_level,
+    si.status,
+    si.gender,
+    si.profile_picture,
+    si.email,
+    si.birthday,
+    CONCAT(
+        COALESCE(si.residential_address, ''), ', ',
+        COALESCE(si.barangay, ''), ', ',
+        COALESCE(si.municipal, ''), ', ',
+        COALESCE(si.province, '')
+    ) AS residential_address,
+    st.payment_plan,
+    st.registration_fee,
+    st.tuition_fee,
+    st.miscellaneous,
+    st.uniform,
+    st.uniform_cart,
+    st.discount_type,
+    st.discount_value,
+    st.discount_amount,
+    st.downpayment,
+    st.enrolled_date,
+    sec.section_id,
+    sec.section_name,
+    sec.grade_level AS section_grade_level,
+    sec.teacher_id,
+    sec.room,
+    sec.strand AS section_strand,
+    sec.capacity,
+    sec.enrolled,
+    sec.school_year,
+    u.first_name AS teacher_firstname,
+    u.last_name AS teacher_lastname
+FROM student_tuition st
+INNER JOIN student_information si ON st.student_number = si.student_number
+INNER JOIN sections sec ON st.enrolled_section = sec.section_id
+INNER JOIN users u ON sec.teacher_id = u.user_id
+WHERE st.id = ?
+";
 
-// ✅ Get total amount paid by student
-$total_stmt = $conn->prepare("SELECT SUM(amount) AS total_amount FROM payment WHERE student_id = ?");
-$total_stmt->bind_param("i", $student_id);
-$total_stmt->execute();
-$total_result = $total_stmt->get_result();
-$total_row = $total_result->fetch_assoc();
-$total_amount = $total_row['total_amount'] ?? 0; // fallback to 0
-$total_stmt->close();
-
-// ✅ Get balance and enrollment info
-$sql = "SELECT enroll_form.tuition_fee, enroll_form.miscellaneous, enroll_form.payment_plan , enroll_form.firstname, enroll_form.middlename, enroll_form.lastname,  enroll_form.residential_address,  enroll_form.admission_date
-        FROM users 
-        JOIN enroll_form ON users.enroll_id = enroll_form.id 
-        WHERE users.acc_type = 'student' AND users.user_id = ?";
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $id);
-$stmt->execute();
-$result = $stmt->get_result(); 
+$stmt->bind_param("i", $tuition_id);
 
-if ($result->num_rows > 0) {
-    $data = $result->fetch_assoc();
-
-    $tuition_fee = (float) $data['tuition_fee'];
-    $misc = (float) $data['miscellaneous'];
-    $balance = $tuition_fee + $misc;
-    $payment_plan = $data['payment_plan'];
-    $fullname = $data['firstname'] . ' ' . $data['lastname'];
-    $residential_address = $data['residential_address'];
-    $admission_date = $data['admission_date'];
-
-
-    $amount_pay = 0;
-
-    if ($payment_plan == 'Semestral'){
-      $amount_pay = $balance / 2;
-    }else if ($payment_plan == 'Quarterly'){
-      $amount_pay = $balance / 4;
-    }else if ($payment_plan == 'Monthly'){
-      $amount_pay = $balance / 9;
-    }else{
-      $amount_pay = $balance / 1;
-    }
-
-    // ✅ Calculate remaining balance
-    $remaining_balance = $balance - $total_amount;
-} else {
-    echo "No matching student found.";
+if (!$stmt->execute()) {
+    echo json_encode(["error" => "Failed to execute query."]);
     exit;
+}
+
+$result = $stmt->get_result();
+
+if ($result && $row = $result->fetch_assoc()) {
+    $tuition = [
+        "tuition_id"           => $row['tuition_id'],
+        "student_number"       => $row['student_number'],
+        "account_number"       => $row['account_number'],
+        "lrn"                  => $row['lrn'],
+        "firstname"            => $row['firstname'],
+        "middlename"           => $row['middlename'],
+        "lastname"             => $row['lastname'],
+        "student_grade_level"  => $row['student_grade_level'],
+        "status"               => $row['status'],
+        "email"               => $row['email'],
+        "gender"               => $row['gender'],
+        "profile_picture"      => $row['profile_picture'],
+        "birthday"             => $row['birthday'],
+        "residential_address"  => $row['residential_address'],
+        "payment_plan"         => $row['payment_plan'],
+        "registration_fee"     => (float)$row['registration_fee'],
+        "tuition_fee"          => (float)$row['tuition_fee'],
+        "miscellaneous"        => (float)$row['miscellaneous'],
+        "uniform"              => (float)$row['uniform'],
+        "uniform_cart"         => json_decode($row['uniform_cart'], true),
+        "discount_type"        => $row['discount_type'],
+        "discount_value"       => (float)$row['discount_value'],
+        "discount_amount"      => (float)$row['discount_amount'],
+        "downpayment"          => (float)$row['downpayment'],
+        "enrolled_date"        => $row['enrolled_date'],
+        "section_id"           => $row['section_id'],
+        "section_name"         => $row['section_name'],
+        "section_grade_level"  => $row['section_grade_level'],
+        "teacher_id"           => $row['teacher_id'],
+        "room"                 => $row['room'],
+        "section_strand"       => $row['section_strand'],
+        "capacity"             => $row['capacity'],
+        "enrolled"             => $row['enrolled'],
+        "school_year"          => $row['school_year'],
+        "teacher_firstname"    => $row['teacher_firstname'],
+        "teacher_lastname"     => $row['teacher_lastname']
+    ];
+
+    // echo json_encode($tuition);
+} else {
+    echo json_encode(["error" => "Tuition record not found."]);
 }
 ?>
 
@@ -99,12 +141,14 @@ if ($result->num_rows > 0) {
                     <div class="col-12 col-md-12">
                      <div class="row pb-3">
                       <div class="col-12 d-flex flex-column col-md-6">
-                          <span class="me-3 text-muted">Student: <?php echo $fullname; ?></span>
-                          <span class="me-3 text-muted">Residential_address: <?php echo $residential_address; ?></span>
+                          <span class="me-3 text-muted">Account No: <?php echo $tuition['account_number']; ?></span>
+                          <span class="me-3 text-muted">Student: <?= htmlspecialchars($tuition['firstname'] . ' ' . $tuition['middlename'] . ' ' . $tuition['lastname']) ?></span>
+                          <span class="me-3 text-muted">Residential Address:  <?= htmlspecialchars($tuition['residential_address'] ?? 'N/A') ?></span>
                       </div>
                       <div class="col-12 d-flex flex-column col-md-6">
-                          <span class="me-3 text-muted">Admission_date: <?php echo $admission_date; ?>
-                          </span><span class="me-3 text-muted">Tuition Fee: PHP <?php echo number_format($balance, 2); ?></span>
+                          <span class="me-3 text-muted">Student No: <?= htmlspecialchars($tuition['student_number'] ?? 'N/A') ?></span>
+                          <span class="me-3 text-muted">Transaction Date: <?php echo $tuition['account_number']; ?> </span>
+                          </span><span class="me-3 text-muted">Tuition Fee: PHP <?php echo $tuition['tuition_fee']; ?></span>
                       </div>
 
                      </div>
@@ -115,17 +159,15 @@ if ($result->num_rows > 0) {
                         <!-- Table Area -->
                         <div class=" rounded rounded-4">
                       <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h6 class="mb-0 text-muted">Recent Payments - <?php echo $payment_plan?></h6>
+                        <h6 class="mb-0 text-muted">Recent Payments - <?php echo $tuition['payment_plan']; ?></h6>
                         <!-- Button trigger modal -->
-                         <?php if (number_format($remaining_balance, 2) == 0): ?>
-                          <a href="#" class="btn btn-danger btn-sm rounded rounded-4 px-4 disabled">
+                         
+                          <!-- <a href="#" class="btn btn-danger btn-sm rounded rounded-4 px-4 disabled">
                             <i class="bi bi-check-circle me-2"></i> Paid
-                          </a>
-                        <?php else: ?>
+                          </a> -->
                           <a href="#" class="btn btn-danger btn-sm border rounded rounded-4 px-4" data-bs-toggle="modal" data-bs-target="#payModal">
                             <i class="bi bi-cash me-2"></i> Pay
                           </a>
-                        <?php endif; ?>
 
                         <!-- Modal -->
                         <div class="modal fade" id="payModal" tabindex="-1" aria-labelledby="payModalLabel" aria-hidden="true">
@@ -166,11 +208,11 @@ if ($result->num_rows > 0) {
 
                                 <div class="mt-3">
                                   <h5>Payment Computation</h5>
-                                  <input type="hidden" name="student_id" value="<?php echo $id;?>">
+                                  <input type="hidden" name="student_id" value="">
                                   
                                   <div class="d-flex justify-content-between">
                                     <span class="text-muted">Amount pay:</span>
-                                    <span class='text-muted' id="balance-display">PHP <?php echo htmlspecialchars(number_format($amount_pay, 2)); ?></span>
+                                    <span class='text-muted' id="balance-display">PHP </span>
                                   </div>
 
                                   <div class="d-flex justify-content-between">
@@ -306,9 +348,9 @@ if ($result->num_rows > 0) {
                         </thead>
                        <tbody>
                         <?php
-                        $student_id = $id; // or use from session
+                        $student_id = $tuition_id; // or use from session
 
-                        $stmt = $conn->prepare("SELECT invoice_number, date, amount, payment, `change`, transaction_fee, payment_type FROM payment WHERE student_id = ? ORDER BY date DESC");
+                        $stmt = $conn->prepare("SELECT invoice_number, date, amount, payment, `change`, transaction_fee, payment_type FROM payment WHERE tuition_id = ? ORDER BY date DESC");
                         $stmt->bind_param("i", $student_id);
                         $stmt->execute();
                         $result = $stmt->get_result();
@@ -327,7 +369,7 @@ if ($result->num_rows > 0) {
                                 echo "</tr>";
                             }
                         } else {
-                            echo "<tr><td colspan='6' class='text-center py-3 text-muted'>
+                            echo "<tr><td colspan='7' class='text-center py-3 text-muted'>
                             <img src='../static/artnotfound.svg'class='mt-3' style='width: 50%; opacity: 70%'>
                             <p>No data found</p>
                             </td></tr>";
@@ -358,7 +400,7 @@ if ($result->num_rows > 0) {
                         <div class="col-12 mb-3">
                             <div class=" p-3 rounded shadow rounded-4" style="background-color: accentgreen">
                             <p class="text-muted">Remaining Balance</p>
-                            <h2 class="fw-bolder">PHP <?php echo number_format($remaining_balance, 2); ?></h2>
+                            <h2 class="fw-bolder">PHP <?php echo $tuition['tuition_fee']; ?></h2>
                             </div>
                         </div>
                         <div class="col-12">
