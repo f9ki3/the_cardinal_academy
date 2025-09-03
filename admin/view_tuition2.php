@@ -181,9 +181,9 @@ if ($result && $row = $result->fetch_assoc()) {
                           <!-- <a href="#" class="btn btn-danger btn-sm rounded rounded-4 px-4 disabled">
                             <i class="bi bi-check-circle me-2"></i> Paid
                           </a> -->
-                          <a href="#" class="btn btn-danger btn-sm border rounded rounded-4 px-4" data-bs-toggle="modal" data-bs-target="#payModal">
+                          <button id="payment_btn" class="btn btn-danger btn-sm border rounded rounded-4 px-4" data-bs-toggle="modal" data-bs-target="#payModal">
                             <i class="bi bi-cash me-2"></i> Pay
-                          </a>
+                          </button>
 
                         <!-- Modal -->
                         <div class="modal fade" id="payModal" tabindex="-1" aria-labelledby="payModalLabel" aria-hidden="true">
@@ -255,7 +255,12 @@ if ($result && $row = $result->fetch_assoc()) {
                               </div>
 
                               <div class="modal-footer">
-                                <button type="submit" class="btn btn-danger text-light px-4">Submit</button>
+                                <button type="submit" class="btn btn-danger text-light px-4" id="submit-btn" disabled>Submit</button>
+                                <script>
+                                document.getElementById('confirm-check').addEventListener('change', function () {
+                                    document.getElementById('submit-btn').disabled = !this.checked;
+                                });
+                                </script>
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                               </div>
                             </form>
@@ -424,6 +429,15 @@ if ($result && $row = $result->fetch_assoc()) {
   let chartLabel = 'Progress';
   if (percentage >= 100) {
     chartLabel = 'Completed';
+    const paymentBtn = document.getElementById("payment_btn");
+
+    // Change text to "Paid" with icon and disable
+    paymentBtn.innerHTML = '<i class="bi bi-cash me-2"></i> Paid';
+    paymentBtn.disabled = true;
+
+    // Optional: style disabled button
+    paymentBtn.style.cursor = "not-allowed";
+
   }
 
   // ApexCharts options

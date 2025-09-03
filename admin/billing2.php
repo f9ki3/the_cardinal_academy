@@ -123,7 +123,7 @@ if (!$result) {
                         placeholder="Search Student ID or Fullname">
 
                         <!-- Search Button -->
-                        <button class="btn border ms-2 rounded rounded-4" type="submit">
+                        <button disabled class="btn border ms-2 rounded rounded-4" type="submit">
                         Search
                         </button>
                     </div>
