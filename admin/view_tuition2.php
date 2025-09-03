@@ -60,7 +60,6 @@ INNER JOIN users u ON sec.teacher_id = u.user_id
 WHERE st.id = ?
 ";
 
-
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $tuition_id);
 
@@ -82,7 +81,7 @@ if ($result && $row = $result->fetch_assoc()) {
         "lastname"             => $row['lastname'],
         "student_grade_level"  => $row['student_grade_level'],
         "status"               => $row['status'],
-        "email"               => $row['email'],
+        "email"                => $row['email'],
         "gender"               => $row['gender'],
         "profile_picture"      => $row['profile_picture'],
         "birthday"             => $row['birthday'],
@@ -111,11 +110,28 @@ if ($result && $row = $result->fetch_assoc()) {
         "teacher_lastname"     => $row['teacher_lastname']
     ];
 
+    // ✅ Get total payments from payment table
+    $stmt2 = $conn->prepare("SELECT SUM(payment) AS total_payment FROM payment WHERE tuition_id = ?");
+    $stmt2->bind_param("i", $tuition_id);
+    $stmt2->execute();
+    $result2 = $stmt2->get_result();
+    $payment_row = $result2->fetch_assoc();
+    $total_payment = $payment_row['total_payment'] ?? 0;
+
+    // ✅ Calculate balance
+    $balance = $tuition['tuition_fee'];
+    $remaining_balance = $balance - $total_payment;
+
+    // Add to response
+    $tuition['total_payment'] = (float)$total_payment;
+    $tuition['remaining_balance'] = (float)$remaining_balance;
+
     // echo json_encode($tuition);
 } else {
     echo json_encode(["error" => "Tuition record not found."]);
 }
 ?>
+
 
 
 <!DOCTYPE html>
@@ -177,57 +193,54 @@ if ($result && $row = $result->fetch_assoc()) {
                                 <h5 class="modal-title" id="payModalLabel">Enter Payment Details</h5>
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                            <form action="pay_bill.php" method="POST" enctype="multipart/form-data">
+                           <form action="pay_bill.php" method="POST" enctype="multipart/form-data">
                               <div class="modal-body">
                                 <div class="row">
                                   <div class="col-md-6 mb-2">
                                     <label for="reference" class="text-muted">Reference Number</label>
-                                    <input type="number" step="0.01" class="form-control" id="reference" name="reference" required>
+                                    <input type="number" disabled step="0.01" class="form-control" id="reference" name="reference" required>
+                                    <input type="hidden" step="0.01" class="form-control" id="tuition_id" value="<?php echo $tuition_id?>" name="tuition_id" >
                                   </div>
                                   <div class="col-md-6 mb-2">
                                     <label for="payment_type" class="text-muted">Payment Type</label>
                                     <select class="form-select" id="payment_type" name="payment_type" required>
-                                      <option value="">Select Type</option>
-                                      <option value="Cash">Cash</option>
+                                      <option selected value="Cash">Cash</option>
                                       <option value="GCash">GCash</option>
                                       <option value="Bank Transfer">Bank Transfer</option>
                                     </select>
                                   </div>
-                                  <input type="hidden" class="form-control" name="balance" value="<?php echo $amount_pay; ?>">
                                 </div>
 
                                 <div class="mb-2">
                                   <label for="payment" class="text-muted">Payment</label>
-                                  <input placeholder="Note: must be greater than or equal to balance + fee." type="text" inputmode="decimal" pattern="^\d*\.?\d{0,2}$" class="form-control" id="payment" name="payment" required maxlength="10">
-                                  <small class="text-danger d-none" id="limit-warning">Maximum payment is PHP 1,000,000</small>
+                                  <input placeholder="Note: please enter payment." 
+                                        type="text" 
+                                        inputmode="decimal" 
+                                        pattern="^\d*\.?\d{0,2}$" 
+                                        class="form-control" 
+                                        id="payment" 
+                                        name="payment" 
+                                        required 
+                                        maxlength="10">
                                   <small class="text-danger d-none" id="invalid-warning"></small>
                                 </div>
                                 
                                 <!-- Transaction Fee Field -->
-                                <input type="hidden" id="transaction_fee_input" name="transaction_fee" value="0">
+                                <label class="text-muted">Transaction Fee</label>
+                                <input type="number" id="transaction_fee_input" name="transaction_fee" readonly class="form-control" disabled value="0.00">
 
                                 <div class="mt-3">
-                                  <h5>Payment Computation</h5>
+                                  <h5>Payment Summary</h5>
                                   <input type="hidden" name="student_id" value="">
                                   
                                   <div class="d-flex justify-content-between">
-                                    <span class="text-muted">Amount pay:</span>
-                                    <span class='text-muted' id="balance-display">PHP </span>
-                                  </div>
-
-                                  <div class="d-flex justify-content-between">
-                                    <span class="text-muted">Amount Paid:</span>
-                                    <span class="text-muted" id="amount-paid">PHP 0.00</span>
+                                    <span class="text-muted">Payment:</span>
+                                    <span class='text-muted' id="payment_display">PHP 0.00</span>
                                   </div>
 
                                   <div class="d-flex justify-content-between">
                                     <span class="text-muted">Transaction Fee:</span>
-                                    <span class="text-muted" id="transaction-fee">PHP 0.00</span>
-                                  </div>
-
-                                  <div class="d-flex justify-content-between">
-                                    <span class="text-muted">Change:</span>
-                                    <span class="text-muted" id="change">PHP 0.00</span>
+                                    <span class="text-muted" id="transaction_fee">PHP 0.00</span>
                                   </div>
 
                                   <hr>
@@ -239,86 +252,6 @@ if ($result && $row = $result->fetch_assoc()) {
                                     </label>
                                   </div>
                                 </div>
-
-                                <script>
-                                  document.addEventListener("DOMContentLoaded", function () {
-                                    const balance = <?php echo json_encode($amount_pay); ?>;
-                                    const paymentInput = document.getElementById('payment');
-                                    const amountPaidDisplay = document.getElementById('amount-paid');
-                                    const changeDisplay = document.getElementById('change');
-                                    const checkbox = document.getElementById('confirm-check');
-                                    const submitBtn = document.querySelector('button[type="submit"]');
-                                    const limitWarning = document.getElementById('limit-warning');
-                                    const invalidWarning = document.getElementById('invalid-warning');
-                                    const paymentType = document.getElementById('payment_type');
-                                    const referenceInput = document.getElementById('reference');
-                                    const transactionFeeDisplay = document.getElementById('transaction-fee');
-                                    const transactionFeeInput = document.getElementById('transaction_fee_input');
-
-                                    let transactionFee = 0;
-
-                                    function updateTransactionFee() {
-                                      const type = paymentType.value;
-                                      transactionFee = (type === 'GCash' || type === 'Bank Transfer') ? 15 : 0;
-                                      transactionFeeDisplay.textContent = 'PHP ' + formatCurrency(transactionFee);
-                                      transactionFeeInput.value = transactionFee;
-                                      validatePayment(); // revalidate whenever fee changes
-                                    }
-
-                                    function toggleReferenceField() {
-                                      if (paymentType.value === 'Cash') {
-                                        referenceInput.disabled = true;
-                                        referenceInput.removeAttribute('required');
-                                        referenceInput.value = '';
-                                      } else {
-                                        referenceInput.disabled = false;
-                                        referenceInput.setAttribute('required', 'required');
-                                      }
-                                      updateTransactionFee();
-                                    }
-
-                                    function formatCurrency(amount) {
-                                      return amount.toLocaleString('en-PH', {
-                                        minimumFractionDigits: 2,
-                                        maximumFractionDigits: 2
-                                      });
-                                    }
-
-                                    function validatePayment() {
-                                      const rawValue = paymentInput.value.replace(/[^0-9.]/g, '');
-                                      let payment = parseFloat(rawValue) || 0;
-
-                                      if (payment > 1000000) {
-                                        payment = 1000000;
-                                        paymentInput.value = '1000000';
-                                        limitWarning.classList.remove('d-none');
-                                      } else {
-                                        limitWarning.classList.add('d-none');
-                                      }
-
-                                      const totalDue = balance + transactionFee;
-                                      const change = payment - totalDue;
-
-                                      amountPaidDisplay.textContent = 'PHP ' + formatCurrency(payment);
-                                      changeDisplay.textContent = 'PHP ' + (change >= 0 ? formatCurrency(change) : '0.00');
-
-                                      if (payment < totalDue) {
-                                        invalidWarning.classList.remove('d-none');
-                                        submitBtn.disabled = true;
-                                      } else {
-                                        invalidWarning.classList.add('d-none');
-                                        submitBtn.disabled = !checkbox.checked;
-                                      }
-                                    }
-
-                                    paymentInput.addEventListener('input', validatePayment);
-                                    paymentType.addEventListener('change', toggleReferenceField);
-                                    checkbox.addEventListener('change', validatePayment);
-
-                                    toggleReferenceField(); // initialize
-                                    submitBtn.disabled = true;
-                                  });
-                                </script>
                               </div>
 
                               <div class="modal-footer">
@@ -326,6 +259,55 @@ if ($result && $row = $result->fetch_assoc()) {
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                               </div>
                             </form>
+
+                            <script>
+                            document.addEventListener("DOMContentLoaded", function () {
+                              const paymentType = document.getElementById("payment_type");
+                              const reference = document.getElementById("reference");
+                              const transactionFeeInput = document.getElementById("transaction_fee_input");
+                              const paymentInput = document.getElementById("payment");
+
+                              const paymentSummaryEl = document.getElementById("payment_display");
+                              const transactionFeeEl = document.getElementById("transaction_fee");
+
+                              function updateSummary() {
+                                let paymentValue = parseFloat(paymentInput.value) || 0;
+                                let transactionFee = (paymentType.value === "GCash" || paymentType.value === "Bank Transfer") 
+                                                      ? parseFloat(transactionFeeInput.value) 
+                                                      : 0;
+
+                                // Update Summary fields
+                                paymentSummaryEl.textContent = "PHP " + paymentValue.toFixed(2);
+                                transactionFeeEl.textContent = "PHP " + transactionFee.toFixed(2);
+                              }
+
+                              // Handle payment type changes
+                              paymentType.addEventListener("change", function () {
+                                if (this.value === "Cash") {
+                                  reference.disabled = true;
+                                  reference.required = false;
+                                  transactionFeeInput.disabled = true;
+                                  transactionFeeInput.value = "0.00";
+                                } else {
+                                  reference.disabled = false;
+                                  reference.required = true;
+                                  transactionFeeInput.disabled = false;
+                                  transactionFeeInput.value = "15.00";
+                                }
+                                updateSummary();
+                              });
+
+                              // Update on typing payment
+                              paymentInput.addEventListener("input", updateSummary);
+
+                              // Initial load
+                              updateSummary();
+                            });
+                            </script>
+
+
+
+                            
 
 
 
@@ -339,10 +321,8 @@ if ($result && $row = $result->fetch_assoc()) {
                             <tr>
                                 <th>Invoice No.</th>
                                 <th>Date</th>
-                                <th>Amount</th>
                                 <th>Payment</th>
                                 <th>Fee</th>
-                                <th>Change</th>
                                 <th>Type</th>
                             </tr>
                         </thead>
@@ -350,7 +330,7 @@ if ($result && $row = $result->fetch_assoc()) {
                         <?php
                         $student_id = $tuition_id; // or use from session
 
-                        $stmt = $conn->prepare("SELECT invoice_number, date, amount, payment, `change`, transaction_fee, payment_type FROM payment WHERE tuition_id = ? ORDER BY date DESC");
+                        $stmt = $conn->prepare("SELECT invoice_number, date, payment, transaction_fee, payment_type FROM payment WHERE tuition_id = ? ORDER BY date DESC");
                         $stmt->bind_param("i", $student_id);
                         $stmt->execute();
                         $result = $stmt->get_result();
@@ -361,10 +341,8 @@ if ($result && $row = $result->fetch_assoc()) {
                                 echo "<tr class='clickable-row' data-id='{$row['invoice_number']}' data-student='{$student_id}'>";
                                 echo "<td class='py-3'>{$formatted_invoice}</td>";
                                 echo "<td class='py-3'>" . $row['date'] . "</td>";
-                                echo "<td class='py-3'>₱" . number_format($row['amount'], 2) . "</td>";
                                 echo "<td class='py-3'>₱" . number_format($row['payment'], 2) . "</td>";
                                 echo "<td class='py-3'>₱" . number_format($row['transaction_fee'], 2) . "</td>";
-                                echo "<td class='py-3'>₱" . number_format($row['change'], 2) . "</td>";
                                 echo "<td class='py-3'>" . htmlspecialchars($row['payment_type']) . "</td>";
                                 echo "</tr>";
                             }
@@ -400,7 +378,7 @@ if ($result && $row = $result->fetch_assoc()) {
                         <div class="col-12 mb-3">
                             <div class=" p-3 rounded shadow rounded-4" style="background-color: accentgreen">
                             <p class="text-muted">Remaining Balance</p>
-                            <h2 class="fw-bolder">PHP <?php echo $tuition['tuition_fee']; ?></h2>
+                            <h2 class="fw-bolder"><?php echo "₱" . number_format($remaining_balance, 2); ?></h2>
                             </div>
                         </div>
                         <div class="col-12">
