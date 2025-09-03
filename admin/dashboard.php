@@ -38,7 +38,7 @@ if ($result = mysqli_query($conn, $teacher_query)) {
 $months = [];
 $totals = [];
 $payment_query = "
-    SELECT DATE_FORMAT(date, '%Y-%m-%d') AS day, SUM(amount) AS total
+    SELECT DATE_FORMAT(date, '%Y-%m-%d') AS day, SUM(payment) AS total
     FROM payment
     GROUP BY day
     ORDER BY day ASC
