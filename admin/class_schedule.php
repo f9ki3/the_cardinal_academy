@@ -123,9 +123,60 @@ $schedule = $sched_stmt->get_result();
                         <input type="text" id="subjectCodeInput" name="subject_code" class="form-control" readonly required>
                       </div>
                       <div class="mb-3">
-                        <label class="form-label">Time</label>
-                        <input type="text" name="time" class="form-control" placeholder="e.g. 08:00 AM – 09:00 AM" required>
+                      <label class="form-label">Time</label>
+
+                      <!-- Visible input to show combined time -->
+                      <input type="hidden" id="timeDisplay" class="form-control" placeholder="e.g. 08:00 AM – 09:00 AM" required readonly>
+
+                      <div class="d-flex gap-2 mt-2">
+                        <!-- Start Time -->
+                        <input type="time" id="startTime" class="form-control" required>
+
+                        <!-- End Time -->
+                        <input type="time" id="endTime" class="form-control" required>
                       </div>
+
+                      <!-- Hidden input to store value for submission -->
+                      <input type="hidden" name="time" id="timeInput">
+                    </div>
+
+                    <script>
+                    const startTime = document.getElementById('startTime');
+                    const endTime = document.getElementById('endTime');
+                    const timeDisplay = document.getElementById('timeDisplay');
+                    const timeInput = document.getElementById('timeInput');
+
+                    // Convert 24-hour HH:MM to 12-hour format with AM/PM
+                    function format12Hour(time) {
+                      const [h, m] = time.split(':');
+                      let hour = parseInt(h);
+                      const ampm = hour >= 12 ? 'PM' : 'AM';
+                      hour = hour % 12 || 12; // Convert 0 -> 12
+                      return `${hour.toString().padStart(2,'0')}:${m} ${ampm}`;
+                    }
+
+                    // Update visible and hidden input
+                    function updateTimeInput() {
+                      if (startTime.value && endTime.value) {
+                        // Validate end time is not earlier than start
+                        if (endTime.value <= startTime.value) {
+                          alert('End time cannot be earlier than or equal to start time.');
+                          endTime.value = '';
+                          timeDisplay.value = '';
+                          timeInput.value = '';
+                          return;
+                        }
+
+                        const formatted = `${format12Hour(startTime.value)} – ${format12Hour(endTime.value)}`;
+                        timeDisplay.value = formatted;
+                        timeInput.value = formatted;
+                      }
+                    }
+
+                    // Listen for changes
+                    [startTime, endTime].forEach(el => el.addEventListener('change', updateTimeInput));
+                    </script>
+
                       <div class="row g-2">
                         <div class="col-md-6 mb-3">
                           <label class="form-label">Advisory Class</label>
