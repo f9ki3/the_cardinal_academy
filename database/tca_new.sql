@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Aug 21, 2025 at 09:18 PM
+-- Generation Time: Sep 03, 2025 at 06:48 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `tca`
+-- Database: `tca1`
 --
 
 -- --------------------------------------------------------
@@ -74,8 +74,9 @@ CREATE TABLE `admission_form` (
 --
 
 INSERT INTO `admission_form` (`id`, `lrn`, `firstname`, `middlename`, `lastname`, `status`, `gender`, `grade_level`, `profile_picture`, `birthday`, `religion`, `place_of_birth`, `age`, `residential_address`, `region`, `province`, `municipal`, `barangay`, `father_name`, `father_occupation`, `father_contact`, `mother_name`, `mother_occupation`, `mother_contact`, `guardian_name`, `guardian_occupation`, `guardian_contact`, `admission_status`, `que_code`, `phone`, `email`, `facebook`, `admission_date`, `strand`, `birth_cert`, `report_card`, `good_moral`, `id_pic`, `esc_cert`) VALUES
-(83, '000000000001', 'Warren', 'test', 'Will', 'Old Student', 'male', 'Grade 1', '', '2025-08-12', 'Catholic', 'test', 12, 'Ramos West, San Isidro, Surigao Del Norte, Caraga,', NULL, NULL, NULL, NULL, 'test', 'test', '09324163453', 'test1', 'test', '09365541152', 'Sian Candado', 'N/A', '09764532163', 'approved', 'Q510915', '09135959565', 'john@gmail.com', NULL, '2025-08-21 18:30:38', NULL, 1, 1, 0, 1, 1),
-(84, '', 'asdas', 'test', 'Will', 'Old Student', 'male', 'Nursery', '', '2025-08-07', 'Catholic', 'test', 12, 'Malire, Antipas, Cotabato, SOCCSKSARGEN, ', 'SOCCSKSARGEN', 'Cotabato', 'Antipas', 'Malire', 'test', 'test', '09324163453', 'test1', 'test', '09365541152', 'Sian Candado', 'N/A', '09764532163', 'approved', 'Q850413', '09135959565', 'john@gmail.com', NULL, '2025-08-21 14:47:04', NULL, 0, 0, 0, 0, 0);
+(88, '20250002', 'Ana', 'Lopez', 'Reyes', 'active', 'female', 'Kinder', NULL, '2018-07-22', 'Christian', 'Cebu City', 6, '456 Example St.', 'Region VII', 'Cebu', 'Cebu City', 'Mabolo', 'Mario Reyes', 'Fisherman', '09221234561', 'Celia Reyes', 'Teacher', '09221234562', NULL, NULL, NULL, 'pending', NULL, '09221234560', 'ana.reyes@example.com', 'fb.com/ana.reyes', '2025-08-22 20:16:32', NULL, 1, 1, 1, 1, 0),
+(89, '20250003', 'Mark', 'Villanueva', 'Santos', 'active', 'male', 'Grade 1', NULL, '2017-03-15', 'Catholic', 'Davao', 7, '789 Test Rd.', 'Region XI', 'Davao del Sur', 'Davao City', 'Buhangin', 'Jose Santos', 'Farmer', '09333456781', 'Lorna Santos', 'Nurse', '09333456782', NULL, NULL, NULL, 'pending', NULL, '09333456780', 'mark.santos@example.com', 'fb.com/mark.santos', '2025-08-22 20:16:34', NULL, 1, 0, 1, 1, 1),
+(90, '20250004', 'Ella', 'Garcia', 'Mendoza', 'active', 'female', 'Grade 2', NULL, '2016-01-05', 'Catholic', 'Bacolod', 8, '321 Test Ave.', 'Region VI', 'Negros Occidental', 'Bacolod City', 'Tangub', 'Ramon Mendoza', 'Engineer', '09444567891', 'Luisa Mendoza', 'Housewife', '09444567892', NULL, NULL, NULL, 'approved', NULL, '09444567890', 'ella.mendoza@example.com', 'fb.com/ella.mendoza', '2025-09-01 16:30:31', NULL, 1, 1, 1, 0, 1);
 
 -- --------------------------------------------------------
 
@@ -179,7 +180,9 @@ INSERT INTO `class_schedule` (`id`, `section_id`, `subject_code`, `description`,
 (23, 17, 'MK', 'Makabansa', '10:30 AM - 11:40 AM', 'Roshane Mauricio', '101'),
 (24, 17, 'Math', 'Mathematics', '8:00 AM - 9:00 AM', 'Roshane Mauricio', '101'),
 (25, 19, 'Fil', 'Filipino', '10:30 AM - 11:40 AM', 'Karl Cedrick Talusig', '101'),
-(26, 31, 'Core 3', 'General Mathematics', '8:00 AM-9:00 AM', 'Leoncia Ala', '101');
+(26, 31, 'Core 3', 'General Mathematics', '8:00 AM-9:00 AM', 'Leoncia Ala', '101'),
+(28, 27, 'EPP', 'Edukasyong Pantahanan at Pangkabuhayan', '04:34 PM – 04:37 PM', 'Ann Nicole De Lara', '101'),
+(29, 28, 'Applied 4', 'Empowering Technology', '08:00 AM – 09:00 AM', 'Roshane Mauricio', '101');
 
 -- --------------------------------------------------------
 
@@ -256,7 +259,6 @@ INSERT INTO `master_list` (`id`, `section_id`, `firstname`, `lastname`, `gender`
 (73, 17, 'Yves', 'Vergara', 'Male'),
 (74, 17, 'Daniella', 'Gonzaga', 'Female'),
 (75, 17, 'Brianna', 'Del Mundo', 'Female'),
-(77, 19, 'Maceo Cael', 'Escalora', 'Male'),
 (78, 31, 'nik', 'Escalora', 'Male'),
 (79, 31, 'Daniella', 'Gonzaga', 'Female');
 
@@ -312,49 +314,11 @@ CREATE TABLE `payment` (
   `payment_type` varchar(50) NOT NULL,
   `proof` varchar(255) DEFAULT NULL,
   `student_id` int(11) NOT NULL,
-  `registar_id` int(11) NOT NULL,
   `date` datetime DEFAULT current_timestamp(),
   `invoice_number` double NOT NULL,
   `reference_number` bigint(20) DEFAULT NULL,
   `transaction_fee` decimal(10,2) DEFAULT 0.00
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `payment`
---
-
-INSERT INTO `payment` (`id`, `amount`, `payment`, `change`, `payment_type`, `proof`, `student_id`, `registar_id`, `date`, `invoice_number`, `reference_number`, `transaction_fee`) VALUES
-(10, 775.55555555556, 800, 24.444444444440023, 'Cash', '', 34, 1, '2025-07-10 21:28:07', 3751440, 2975583815, 0.00),
-(11, 775.55555555556, 800, 24.444444444440023, 'Cash', '', 34, 1, '2025-07-10 21:34:55', 8388351, 9946615128, 0.00),
-(12, 775.55555555556, 800, 24.444444444440023, 'Cash', '', 34, 1, '2025-07-10 21:35:18', 5335291, 9016664113, 0.00),
-(13, 775.55555555556, 800, 24.444444444440023, 'Cash', '', 34, 1, '2025-07-10 21:36:13', 1978460, 5532746423, 0.00),
-(14, 775.55555555556, 800, 24.444444444440023, 'Cash', '', 34, 1, '2025-07-10 21:38:37', 2496776, 7368867897, 0.00),
-(15, 775.55555555556, 1000, 224.44444444444002, 'Cash', '', 34, 1, '2025-07-10 21:41:18', 4828914, 8844958759, 0.00),
-(18, 775.55555555556, 800, 24.444444444440023, 'Cash', '', 34, 1, '2025-07-10 21:43:51', 6585607, 9893143461, 0.00),
-(19, 775.55555555556, 1000, 224.44444444444002, 'Cash', '', 34, 1, '2025-07-10 21:46:14', 4128074, 4259904907, 0.00),
-(20, 775.55555555556, 800, 24.444444444440023, 'Cash', '', 34, 1, '2025-07-14 21:58:08', 7816147, 2487759482, 0.00),
-(21, 1745, 2000, 255, 'Cash', '', 33, 1, '2025-07-13 22:13:08', 7798493, 7376478570, 0.00),
-(22, 1745, 2000, 255, 'Cash', '', 33, 1, '2025-07-14 22:16:20', 3117094, 1645791749, 0.00),
-(23, 1745, 2000, 255, 'Cash', '', 33, 1, '2025-07-14 22:16:31', 3321041, 1418996291, 0.00),
-(24, 1745, 2000, 255, 'Cash', '', 33, 1, '2025-07-10 22:16:41', 8023013, 3790960142, 0.00),
-(25, 19918, 20000, 82, 'Cash', '', 30, 1, '2025-07-15 03:05:58', 7657981, 4791217879, 0.00),
-(26, 19918, 20000, 82, 'Cash', '', 30, 1, '2025-07-11 03:06:42', 3377055, 1275491926, 0.00),
-(27, 19918, 20000, 82, 'Cash', '', 24, 1, '2025-07-11 03:59:36', 6376480, 5360319084, 0.00),
-(28, 19918, 20000, 82, 'Cash', '', 24, 1, '2025-07-14 03:59:52', 2105422, 9123001795, 0.00),
-(29, 19918, 20000, 82, 'Cash', '', 23, 1, '2025-07-11 04:30:12', 1044730, 6450032138, 0.00),
-(30, 20194, 21000, 806, 'Cash', '', 29, 1, '2025-07-14 05:05:30', 7164943, 7039519230, 0.00),
-(31, 20194, 21000, 791, 'GCash', '', 29, 1, '2025-07-07 05:12:30', 1058692, 56547812, 15.00),
-(32, 9959, 10000, 41, 'Cash', '', 17, 1, '2025-07-11 05:13:40', 3560790, 6169998003, 0.00),
-(33, 9959, 10000, 41, 'Cash', '', 17, 1, '2025-07-11 05:14:19', 2085043, 4013662264, 0.00),
-(34, 10097, 11000, 903, 'Cash', '', 13, 1, '2025-07-11 05:20:14', 4020765, 1073648282, 0.00),
-(35, 10097, 11000, 888, 'GCash', '', 13, 1, '2025-07-11 05:21:07', 1938231, 59912612, 15.00),
-(36, 775.55555555556, 775.56, 0.00444444443996872, 'Cash', '', 55, 1, '2025-07-13 05:23:05', 3479336, 7093497606, 0.00),
-(37, 775.55555555556, 800, 24.444444444440023, 'Cash', '', 35, 1, '2025-07-14 06:08:56', 7496864, 3747229411, 0.00),
-(38, 775.55555555556, 1000, 224.44444444444002, 'Cash', '', 59, 1, '2025-07-19 05:31:25', 1248536, 3567646985, 0.00),
-(39, 775.55555555556, 1000, 224.44444444444002, 'Cash', '', 59, 1, '2025-07-19 05:32:12', 4565969, 7629954295, 0.00),
-(40, 775.55555555556, 1000, 224.44444444444002, 'Cash', '', 59, 1, '2025-07-19 05:32:32', 1958509, 1228570783, 0.00),
-(41, 6980, 7000, 20, 'Cash', '', 36, 1, '2025-08-18 10:49:42', 5455761, 5500563505, 0.00),
-(42, 775.55555555556, 1000, 224.44444444444002, 'Cash', '', 52, 1, '2025-08-20 16:35:47', 2973539, 1165822356, 0.00);
 
 -- --------------------------------------------------------
 
@@ -370,7 +334,7 @@ CREATE TABLE `sections` (
   `room` varchar(50) DEFAULT NULL,
   `strand` varchar(1000) DEFAULT NULL,
   `capacity` int(11) NOT NULL,
-  `enrolled` int(11) NOT NULL,
+  `enrolled` int(11) NOT NULL DEFAULT 0,
   `school_year` varchar(20) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -380,27 +344,29 @@ CREATE TABLE `sections` (
 --
 
 INSERT INTO `sections` (`section_id`, `section_name`, `grade_level`, `teacher_id`, `room`, `strand`, `capacity`, `enrolled`, `school_year`, `created_at`) VALUES
-(15, 'Pelican', 'Kinder Garten', 38, '100', 'N/A', 20, 0, '2025-2026', '2025-07-12 15:36:54'),
-(16, 'Heron', 'Kinder Garten', 38, '100', 'N/A', 20, 0, '2025-2026', '2025-07-12 15:37:14'),
-(17, 'Diamond', 'Grade 1', 39, '101', 'N/A', 20, 0, '2025-2026', '2025-07-12 15:38:12'),
-(18, 'Emerald', 'Grade 1', 39, '101', 'N/A', 20, 0, '2025-2026', '2025-07-12 15:39:06'),
+(15, 'Pelican', 'Nursery', 38, '100', 'N/A', 20, 0, '2025-2026', '2025-07-12 15:36:54'),
+(16, 'Heron', 'Nursery', 38, '100', 'N/A', 20, 0, '2025-2026', '2025-07-12 15:37:14'),
+(17, 'Diamond', 'Nursery', 39, '101', 'N/A', 20, 0, '2025-2026', '2025-07-12 15:38:12'),
+(18, 'Emerald', 'Nursery', 39, '101', 'N/A', 20, 0, '2025-2026', '2025-07-12 15:39:06'),
 (19, 'Moonstone', 'Grade 1', 39, '101', 'N/A', 20, 0, '2025-2026', '2025-07-12 15:39:32'),
 (20, 'Topaz', 'Grade 2', 44, '102', 'N/A', 20, 0, '2025-2026', '2025-07-12 15:49:48'),
 (21, 'Amethyst', 'Grade 2', 44, '102', 'N/A', 20, 0, '2025-2026', '2025-07-12 15:50:07'),
 (22, 'Beryl', 'Grade 3', 45, '103', 'N/A', 25, 0, '2025-2026', '2025-07-12 15:51:43'),
 (23, 'Pearl', 'Grade 3', 45, '103', 'N/A', 25, 0, '2025-2026', '2025-07-12 15:52:01'),
-(24, 'Garnet', 'Grade 5', 41, '105', 'N/A', 20, 0, '2025-2026', '2025-07-12 15:54:58'),
+(24, 'Garnet', 'Grade 5', 41, '105', 'N/A', 20, 1, '2025-2026', '2025-07-12 15:54:58'),
 (25, 'Ruby', 'Grade 8', 51, '108', 'N/A', 30, 0, '2025-2026', '2025-07-12 16:06:43'),
-(26, 'Quartz', 'Grade 8', 51, '108', 'N/A', 30, 0, '2025-2026', '2025-07-12 16:07:01'),
-(27, 'Alexandrite', 'Grade 9', 51, '109', 'N/A', 30, 0, '2025-2026', '2025-07-12 16:07:21'),
-(28, 'Aquamarine', 'Grade 10', 51, '110', 'N/A', 30, 0, '2025-2026', '2025-07-12 16:08:11'),
+(26, 'Quartz', 'Grade 8', 51, '108', 'N/A', 30, 1, '2025-2026', '2025-07-12 16:07:01'),
+(27, 'Alexandrite', 'Grade 9', 51, '109', 'N/A', 30, 2, '2025-2026', '2025-07-12 16:07:21'),
+(28, 'Aquamarine', 'Grade 10', 51, '110', 'N/A', 30, 2, '2025-2027', '2025-07-12 16:08:11'),
 (29, 'Zircon', 'Grade 10', 51, '110', 'N/A', 30, 0, '2025-2026', '2025-07-12 16:09:19'),
-(30, 'ABM 11', 'Grade 11', 42, '111', 'ABM (Accountancy, Business and Management)', 30, 0, '2025-2026', '2025-07-12 16:10:06'),
+(30, 'ABM 11', 'Grade 11', 42, '111', 'ABM (Accountancy, Business and Management)', 30, 1, '2025-2026', '2025-07-12 16:10:06'),
 (31, 'HUMSS 11', 'Grade 11', 42, '111', 'HUMMS (Humanities and Social Sciences)', 30, 0, '2025-2026', '2025-07-12 16:10:25'),
 (32, 'STEM 11', 'Grade 11', 42, '111', 'STEM (Science, Technology, Engineering and Mathematics)', 30, 0, '2025-2026', '2025-07-12 16:10:52'),
-(33, 'ABM 12 - Feldspar', 'Grade 12', 43, '112', 'ABM (Accountancy, Business and Management)', 30, 0, '2025-2026', '2025-07-12 16:11:17'),
-(34, 'HUMSS 12', 'Grade 12', 43, '112', 'HUMMS (Humanities and Social Sciences)', 30, 0, '2025-2026', '2025-07-12 16:11:38'),
-(35, 'STEM 12 - Sardonyx', 'Grade 12', 43, '112', 'STEM (Science, Technology, Engineering and Mathematics)', 30, 0, '2025-2026', '2025-07-12 16:12:11');
+(33, 'ABM 12 - Feldspar', 'Grade 12', 43, '112', 'ABM (Accountancy, Business and Management)', 30, 5, '2025-2026', '2025-07-12 16:11:17'),
+(34, 'HUMSS 12', 'Grade 12', 43, '112', 'HUMMS (Humanities and Social Sciences)', 30, 1, '2025-2026', '2025-07-12 16:11:38'),
+(35, 'STEM 12 - Sardonyx', 'Grade 12', 43, '112', 'STEM (Science, Technology, Engineering and Mathematics)', 30, 0, '2025-2026', '2025-07-12 16:12:11'),
+(36, 'Malakas', 'Grade 4', 42, '303', 'N/A', 20, 0, '2025-2026', '2025-08-22 20:26:18'),
+(37, 'Mabait', 'Grade 6', 45, '303', 'N/A', 100, 0, '2025-2026', '2025-08-22 20:29:49');
 
 -- --------------------------------------------------------
 
@@ -410,16 +376,18 @@ INSERT INTO `sections` (`section_id`, `section_name`, `grade_level`, `teacher_id
 
 CREATE TABLE `student_information` (
   `id` int(11) NOT NULL,
-  `lrn` varchar(20) DEFAULT NULL,
-  `firstname` varchar(100) DEFAULT NULL,
-  `middlename` varchar(100) DEFAULT NULL,
-  `lastname` varchar(100) DEFAULT NULL,
-  `status` varchar(50) DEFAULT NULL,
-  `gender` varchar(10) DEFAULT NULL,
-  `grade_level` varchar(20) DEFAULT NULL,
-  `birthday` date DEFAULT NULL,
-  `religion` varchar(100) DEFAULT NULL,
-  `place_of_birth` varchar(255) DEFAULT NULL,
+  `student_number` varchar(100) NOT NULL,
+  `lrn` varchar(20) NOT NULL,
+  `firstname` varchar(50) NOT NULL,
+  `middlename` varchar(50) DEFAULT NULL,
+  `lastname` varchar(50) NOT NULL,
+  `status` varchar(255) NOT NULL,
+  `gender` enum('male','female') NOT NULL,
+  `grade_level` varchar(20) NOT NULL,
+  `profile_picture` varchar(255) DEFAULT NULL,
+  `birthday` date NOT NULL,
+  `religion` varchar(50) DEFAULT NULL,
+  `place_of_birth` varchar(100) DEFAULT NULL,
   `age` int(11) DEFAULT NULL,
   `residential_address` varchar(255) DEFAULT NULL,
   `region` varchar(100) DEFAULT NULL,
@@ -435,15 +403,79 @@ CREATE TABLE `student_information` (
   `guardian_name` varchar(100) DEFAULT NULL,
   `guardian_occupation` varchar(100) DEFAULT NULL,
   `guardian_contact` varchar(20) DEFAULT NULL,
-  `email` varchar(100) DEFAULT NULL,
-  `facebook` varchar(100) DEFAULT NULL,
-  `admission_date` datetime DEFAULT current_timestamp(),
+  `admission_status` varchar(255) DEFAULT 'for_verification',
+  `que_code` varchar(50) DEFAULT NULL,
+  `phone` varchar(20) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `facebook` varchar(255) DEFAULT NULL,
+  `admission_date` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `strand` varchar(100) DEFAULT NULL,
   `birth_cert` tinyint(1) DEFAULT 0,
   `report_card` tinyint(1) DEFAULT 0,
   `good_moral` tinyint(1) DEFAULT 0,
   `id_pic` tinyint(1) DEFAULT 0,
   `esc_cert` tinyint(1) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `student_information`
+--
+
+INSERT INTO `student_information` (`id`, `student_number`, `lrn`, `firstname`, `middlename`, `lastname`, `status`, `gender`, `grade_level`, `profile_picture`, `birthday`, `religion`, `place_of_birth`, `age`, `residential_address`, `region`, `province`, `municipal`, `barangay`, `father_name`, `father_occupation`, `father_contact`, `mother_name`, `mother_occupation`, `mother_contact`, `guardian_name`, `guardian_occupation`, `guardian_contact`, `admission_status`, `que_code`, `phone`, `email`, `facebook`, `admission_date`, `strand`, `birth_cert`, `report_card`, `good_moral`, `id_pic`, `esc_cert`) VALUES
+(20, '2025-55142', '20250018', 'Hannah', 'Aquino', 'Santos', 'active', 'female', 'Grade 12', NULL, '2006-07-15', 'Christian', 'Pangasinan', 18, '56 Ramos St.', NULL, NULL, NULL, NULL, 'Victor Santos', 'Engineer', '09170008881', 'Angela Santos', 'Housewife', '09170008882', NULL, NULL, NULL, 'approved', NULL, '09170008880', 'hannah.santos@example.com', 'fb.com/hannah.santos', '2025-08-22 20:55:16', NULL, 1, 1, 1, 1, 1),
+(21, '2025-32783', '20250017', 'Gabriel', 'Diaz', 'Fernandez', 'active', 'male', 'Grade 12', NULL, '2006-03-10', 'Catholic', 'Batangas', 18, '34 P. Burgos St.', 'Region IV-A', 'Batangas', 'Batangas City', 'Poblacion', 'Romeo Fernandez', 'Fisherman', '09170007771', 'Isabel Fernandez', 'Vendor', '09170007772', NULL, NULL, NULL, 'approved', NULL, '09170007770', 'gabriel.fernandez@example.com', 'fb.com/gabriel.fernandez', '2025-08-22 20:56:35', 'HUMSS', 1, 1, 1, 1, 0),
+(22, '2025-95762', '20250011', 'Adrian', 'Santos', 'Villamor', 'active', 'male', 'Grade 9', NULL, '2009-02-14', 'Catholic', 'Cavite', 15, '12 Mabini St.', NULL, NULL, NULL, NULL, 'Carlos Villamor', 'Driver', '09170001111', 'Liza Villamor', 'Vendor', '09170001112', NULL, NULL, NULL, 'approved', NULL, '09170001110', 'adrian.villamor@example.com', 'fb.com/adrian.villamor', '2025-08-23 04:41:57', NULL, 1, 1, 1, 1, 1),
+(23, '2025-99810', '20250012', 'Bianca', 'Lopez', 'Navarro', 'active', 'female', 'Grade 9', NULL, '2009-09-21', 'Christian', 'Taguig', 15, '45 Bayani Rd.', 'NCR', 'Metro Manila', 'Taguig', 'Western Bicutan', 'Mario Navarro', 'Engineer', '09170002221', 'Celia Navarro', 'Housewife', '09170002222', NULL, NULL, NULL, 'approved', NULL, '09170002220', 'bianca.navarro@example.com', 'fb.com/bianca.navarro', '2025-08-23 08:36:24', NULL, 1, 1, 0, 1, 0),
+(24, '2025-03938', '20250014', 'Danica', 'Garcia', 'Torres', 'active', 'female', 'Grade 10', NULL, '2008-12-08', 'Christian', 'Laguna', 16, '23 Calamba Rd.', 'Region IV-A', 'Laguna', 'San Pablo', 'Sto. Angel', 'Antonio Torres', 'Farmer', '09170004441', 'Lourdes Torres', 'Teacher', '09170004442', NULL, NULL, NULL, 'approved', NULL, '09170004440', 'danica.torres@example.com', 'fb.com/danica.torres', '2025-08-24 04:37:24', NULL, 1, 0, 1, 1, 0),
+(25, '2025-45561', '20250013', 'Christian', 'Mendoza', 'Ramos', 'active', 'male', 'Grade 10', NULL, '2008-04-30', 'Catholic', 'Baguio', 16, '67 Session Rd.', 'CAR', 'Benguet', 'Baguio City', 'Loakan', 'Rafael Ramos', 'Carpenter', '09170003331', 'Alma Ramos', 'Nurse', '09170003332', NULL, NULL, NULL, 'approved', NULL, '09170003330', 'christian.ramos@example.com', 'fb.com/christian.ramos', '2025-08-24 13:32:47', NULL, 1, 1, 1, 0, 1),
+(26, '2025-68933', '20250010', 'Lea', 'Aquino', 'Santiago', 'active', 'female', 'Grade 8', NULL, '2010-06-30', 'Catholic', 'Quezon', 14, '951 Test St.', NULL, NULL, NULL, NULL, 'Pedro Santiago', 'Carpenter', '09101234561', 'Maria Santiago', 'Nurse', '09101234562', NULL, NULL, NULL, 'approved', NULL, '09101234560', 'lea.santiago@example.com', 'fb.com/lea.santiago', '2025-08-24 13:57:54', NULL, 1, 1, 1, 1, 1),
+(27, '2025-07422', '20250007', 'David', 'Flores', 'Bautista', 'active', 'male', 'Grade 5', NULL, '2013-04-03', 'Christian', 'Iloilo', 11, '159 Test Lane', 'Region VI', 'Iloilo', 'Iloilo City', 'Jaro', 'Paulo Bautista', 'Teacher', '09777891231', 'Linda Bautista', 'Vendor', '09777891232', NULL, NULL, NULL, 'approved', NULL, '09777891230', 'david.bautista@example.com', 'fb.com/david.bautista', '2025-08-31 13:23:38', NULL, 1, 1, 0, 1, 0),
+(28, '2025-08605', '20250019', 'Ivan', 'Lopez', 'Cruz', 'active', 'male', 'Grade 12', NULL, '2006-01-28', 'Catholic', 'Nueva Ecija', 18, '12 Del Pilar St.', 'Region III', 'Nueva Ecija', 'Cabanatuan', 'Sampaloc', 'Francisco Cruz', 'Farmer', '09170009991', 'Gloria Cruz', 'Teacher', '09170009992', NULL, NULL, NULL, 'approved', NULL, '09170009990', 'ivan.cruz@example.com', 'fb.com/ivan.cruz', '2025-08-31 13:23:57', 'STEM', 1, 1, 0, 1, 0),
+(29, '2025-55480', '20250009', 'James', 'Diaz', 'Fernandez', 'active', 'male', 'Grade 7', NULL, '2011-08-17', 'Christian', 'Pampanga', 13, '852 Example St.', 'Region III', 'Pampanga', 'San Fernando', 'Dolores', 'Arturo Fernandez', 'Driver', '09999123451', 'Cecilia Fernandez', 'Vendor', '09999123452', NULL, NULL, NULL, 'approved', NULL, '09999123450', 'james.fernandez@example.com', 'fb.com/james.fernandez', '2025-09-01 14:17:16', NULL, 1, 1, 1, 0, 0),
+(30, '2025-03743', '20250020', 'Jasmine', 'Ramos', 'Gonzales', 'active', 'female', 'Grade 12', NULL, '2006-09-09', 'Christian', 'Ilocos Norte', 18, '78 Luna St.', 'Region I', 'Ilocos Norte', 'Laoag', 'Barangay 1', 'Alfredo Gonzales', 'Driver', '09170101011', 'Marites Gonzales', 'Vendor', '09170101012', NULL, NULL, NULL, 'approved', NULL, '09170101010', 'jasmine.gonzales@example.com', 'fb.com/jasmine.gonzales', '2025-09-01 16:30:44', 'ABM', 1, 1, 1, 1, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `student_tuition`
+--
+
+CREATE TABLE `student_tuition` (
+  `id` int(11) NOT NULL,
+  `student_number` varchar(20) NOT NULL,
+  `payment_plan` varchar(200) NOT NULL,
+  `enrolled_section` varchar(50) NOT NULL,
+  `registration_fee` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `tuition_fee` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `miscellaneous` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `uniform` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `uniform_cart` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`uniform_cart`)),
+  `discount_type` enum('percent','fixed','') DEFAULT '',
+  `discount_value` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `discount_amount` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `downpayment` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `enrolled_date` datetime NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `student_tuition`
+--
+
+INSERT INTO `student_tuition` (`id`, `student_number`, `payment_plan`, `enrolled_section`, `registration_fee`, `tuition_fee`, `miscellaneous`, `uniform`, `uniform_cart`, `discount_type`, `discount_value`, `discount_amount`, `downpayment`, `enrolled_date`) VALUES
+(17, '2025-55142', 'Quarterly', '33', 2500.00, 0.00, 6980.00, 1920.00, '[{\"name\":\"Grade 11 to 12 - Top - Long Sleeves\",\"quantity\":3,\"total\":1920,\"gender\":\"Male\",\"size\":\"XL\"}]', '', 0.00, 0.00, 1000.00, '2025-08-22 22:55:47'),
+(18, '2025-56945', 'Quarterly', '33', 2500.00, 0.00, 6980.00, 1920.00, '[{\"name\":\"Grade 11 to 12 - Top - Long Sleeves\",\"quantity\":3,\"total\":1920,\"gender\":\"Male\",\"size\":\"XL\"}]', '', 0.00, 0.00, 1000.00, '2025-08-22 22:56:07'),
+(19, '2025-02870', 'Quarterly', '33', 2500.00, 0.00, 6980.00, 1920.00, '[{\"name\":\"Grade 11 to 12 - Top - Long Sleeves\",\"quantity\":3,\"total\":1920,\"gender\":\"Male\",\"size\":\"XL\"}]', '', 0.00, 0.00, 1000.00, '2025-08-22 22:56:17'),
+(20, '2025-32783', 'Semestral', '34', 2500.00, 0.00, 6980.00, 640.00, '[{\"name\":\"Grade 11 to 12 - Top - Long Sleeves\",\"quantity\":1,\"total\":640,\"gender\":\"Male\",\"size\":\"XL\"}]', '', 0.00, 0.00, 0.00, '2025-08-22 22:56:56'),
+(21, '2025-95762', 'Quarterly', '27', 2500.00, 29118.00, 15635.25, 550.00, '[{\"name\":\"Grade 1 to 6 - Top - Polo Jacket\",\"quantity\":1,\"total\":550,\"gender\":\"Male\",\"size\":\"XL\"}]', '', 0.00, 0.00, 0.00, '2025-08-23 09:46:53'),
+(22, '2025-99810', 'Quarterly', '27', 2500.00, 29118.00, 15635.25, 1190.00, '[{\"name\":\"Grade 1 to 6 - Top - Polo Jacket\",\"quantity\":1,\"total\":550,\"gender\":\"Male\",\"size\":\"XL\"},{\"name\":\"Grade 11 to 12 - Top - Long Sleeves\",\"quantity\":1,\"total\":640,\"gender\":\"Male\",\"size\":\"XS\"}]', 'percent', 10.00, 4594.33, 0.00, '2025-08-23 10:37:02'),
+(23, '2025-03938', 'Monthly', '28', 2500.00, 29545.75, 15635.25, 550.00, '[{\"name\":\"Grade 1 to 6 - Top - Polo Jacket\",\"quantity\":1,\"total\":550,\"gender\":\"Male\",\"size\":\"S\"}]', 'percent', 100.00, 45731.00, 0.00, '2025-08-24 06:40:11'),
+(24, '2025-45561', 'Semestral', '28', 2500.00, 29545.75, 15635.25, 1170.00, '[{\"name\":\"Grade 1 to 6 - Top - Polo Jacket\",\"quantity\":1,\"total\":550,\"gender\":\"Male\",\"size\":\"XL\"},{\"name\":\"Grade 7 to 10 - Top - Polo Barong\",\"quantity\":1,\"total\":620,\"gender\":\"Male\",\"size\":\"L\"}]', '', 0.00, 0.00, 0.00, '2025-08-24 15:34:43'),
+(25, '2025-68933', 'Semestral', '26', 2500.00, 29118.00, 15635.25, 1600.00, '[{\"name\":\"Grade 1 to 6 - Top - Polo Jacket\",\"quantity\":1,\"total\":550,\"gender\":\"Male\",\"size\":\"XL\"},{\"name\":\"Grade 7 to 10 - Top - Polo Barong\",\"quantity\":1,\"total\":620,\"gender\":\"Male\",\"size\":\"XL\"},{\"name\":\"Nursery to Kinder - Top - Polo Jacket with Lining\",\"quantity\":1,\"total\":430,\"gender\":\"Male\",\"size\":\"XS\"}]', '', 0.00, 0.00, 0.00, '2025-08-24 15:58:11'),
+(26, '2025-07422', 'Semestral', '24', 2500.00, 24752.75, 15635.25, 1720.00, '[{\"name\":\"Grade 1 to 6 - Top - Polo Jacket\",\"quantity\":1,\"total\":550,\"gender\":\"Male\",\"size\":\"S\"},{\"name\":\"Grade 1 to 6 - Top - Polo Jacket\",\"quantity\":1,\"total\":550,\"gender\":\"Male\",\"size\":\"M\"},{\"name\":\"Grade 7 to 10 - Top - Polo Barong\",\"quantity\":1,\"total\":620,\"gender\":\"Male\",\"size\":\"XL\"}]', '', 0.00, 0.00, 1000.00, '2025-08-31 15:25:29'),
+(27, '2025-08605', 'Quarterly', '33', 2500.00, 0.00, 6980.00, 860.00, '[{\"name\":\"Nursery to Kinder - Top - Polo Jacket with Lining\",\"quantity\":1,\"total\":430,\"gender\":\"Male\",\"size\":\"S\"},{\"name\":\"Nursery to Kinder - Top - Polo Jacket with Lining\",\"quantity\":1,\"total\":430,\"gender\":\"Male\",\"size\":\"XS\"}]', '', 0.00, 0.00, 0.00, '2025-09-01 12:55:40'),
+(28, '2025-55480', 'Quarterly', '', 2500.00, 29118.00, 15635.25, 550.00, '[{\"name\":\"Grade 1 to 6 - Top - Polo Jacket\",\"quantity\":1,\"total\":550,\"gender\":\"Male\",\"size\":\"S\"}]', '', 0.00, 0.00, 0.00, '2025-09-01 18:29:44'),
+(29, '2025-90689', 'Semestral', '', 2500.00, 29118.00, 15635.25, 550.00, '[{\"name\":\"Grade 1 to 6 - Top - Polo Jacket\",\"quantity\":1,\"total\":550,\"gender\":\"Male\",\"size\":\"S\"}]', '', 0.00, 0.00, 100.00, '2025-09-01 18:30:03'),
+(30, '2025-03743', 'Quarterly', '33', 2500.00, 0.00, 6980.00, 550.00, '[{\"name\":\"Grade 1 to 6 - Top - Polo Jacket\",\"quantity\":1,\"total\":550,\"gender\":\"Male\",\"size\":\"S\"}]', '', 0.00, 0.00, 0.00, '2025-09-01 18:31:22');
 
 -- --------------------------------------------------------
 
@@ -514,8 +546,8 @@ CREATE TABLE `tuition_fees` (
 --
 
 INSERT INTO `tuition_fees` (`id`, `grade_level`, `tuition_fee`, `miscellaneous`, `total`) VALUES
-(1, 'Nursery (with books)', 22341.00, 16359.00, 38700.00),
-(2, 'Kinder (with books)', 24283.75, 16359.00, 40642.75),
+(1, 'Nursery', 22341.00, 16359.00, 38700.00),
+(2, 'Kinder', 24283.75, 16359.00, 40642.75),
 (3, 'Grade 1', 24200.75, 15635.25, 39836.00),
 (4, 'Grade 2', 24200.75, 15635.25, 39836.00),
 (5, 'Grade 3', 24200.75, 15635.25, 39836.00),
@@ -621,7 +653,7 @@ INSERT INTO `users` (`user_id`, `acc_type`, `username`, `email`, `password`, `fi
 (33, 'student', 'bianca_torres.student', 'bianca.t@example.com', '$2y$10$0dOlACpaEczDVCxTBe92dOxkfAx0eNPb.j4/R1Y4bexn/nQCdF3/e', 'Bianca', 'Torres', 'female', '2006-11-21', 'fb.com/bianca.t', '456 Lopez Ave', '2025-07-10 03:20:15', '2025-07-15 18:56:45', 'dummy.jpg', NULL, 36, 'active', NULL, 17),
 (34, 'student', 'alvin_fernandez.student', 'galecandado@gmail.com', '$2y$10$YTl8vDJDcyPc5hk6Hvwl8.nKtrPvILrJ0pxfYtPS8ZgWSx0thdIE2', 'Matthew Sebastian', 'De Guzman', 'male', '2017-09-19', '', 'Loma de Gato, Marilao, Bulacan, Central Luzon, Block 15 Lot 28 Phase 1 Green Forbes Residences', '2025-07-10 03:20:34', '2025-07-15 18:56:45', 'dummy.jpg', NULL, 61, 'active', NULL, 17),
 (35, 'student', 'ulysses_domingo.student', 'ulysses.d@example.com', '$2y$10$csCzr57WPRGCjmnKpSXgj.jYGuCU3pGoQFBlmorZLA1NPyTTuei3O', 'Ulysses', 'Domingo', 'male', '2007-03-12', 'fb.com/ulysses.d', '23 Mabuhay St', '2025-07-12 06:42:48', '2025-07-15 18:56:45', 'dummy.jpg', NULL, 55, 'active', NULL, 17),
-(36, 'student', 'maceo cael_escalora.student', 'escalora.cj28@gmail.com', '$2y$10$kzp7yp/OuMV1sqdleON9y.uFSUOMNymvmBAdEKCLDZ3EZDeKDBmNi', 'Maceo Cael', 'Escalora', 'male', '2025-06-14', '', 'Santa Rosa I, Marilao, Bulacan, Central Luzon, B3 L2 Mary grace subd.', '2025-07-12 08:10:27', '2025-07-16 00:19:25', 'dummy.jpg', NULL, 70, 'active', NULL, 19),
+(36, 'student', 'maceo cael_escalora.student', 'escalora.cj28@gmail.com', '$2y$10$kzp7yp/OuMV1sqdleON9y.uFSUOMNymvmBAdEKCLDZ3EZDeKDBmNi', 'Maceo Cael', 'Escalora', 'male', '2025-06-14', '', 'Santa Rosa I, Marilao, Bulacan, Central Luzon, B3 L2 Mary grace subd.', '2025-07-12 08:10:27', '2025-08-22 15:02:44', 'dummy.jpg', NULL, 70, 'active', NULL, NULL),
 (37, 'student', 'vanessa_tuazon.student', 'vanessa.t@example.com', '$2y$10$XaIJVj5Hgy8I7JyrGnWPdOzaz5XnWObSFM8Iy8EnzzIYZhxdoHVXO', 'Vanessa', 'Tuazon', 'female', '2006-05-01', 'fb.com/vanessa.t', '11 Mabini St', '2025-07-12 08:19:42', '2025-07-15 18:56:45', 'dummy.jpg', NULL, 56, 'active', NULL, 17),
 (38, 'teacher', 'tan.teacher', 'tan@gmail.com', '$2y$10$uh2Usb5yLsmVFXtSkjtBH.hx9fWOM04QR6/Q0aS3hdMGRxMOoMyZa', 'Niña Francesca', 'Tan', 'female', '2000-07-12', '', 'Meycauayan, Bulacan', '2025-07-12 15:14:03', '2025-07-15 20:58:29', 'user_38_1752483132.png', NULL, 0, 'active', 'Oral Communication', NULL),
 (39, 'teacher', 'mauricio.teacher', 'mauricio@gmail.com', '$2y$10$KEek95Y7gfl.7WplR9kPI.jOp2mGx/daQXe4zjOITFv7DkgpHdJX.', 'Roshane', 'Mauricio', 'female', '2000-07-12', '', 'Meycauayan, Bulacan', '2025-07-12 15:17:57', '2025-07-14 08:45:28', 'dummy.jpg', NULL, 0, 'active', 'MK - Makabansa', NULL),
@@ -699,7 +731,16 @@ ALTER TABLE `sections`
 -- Indexes for table `student_information`
 --
 ALTER TABLE `student_information`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `lrn` (`lrn`),
+  ADD KEY `student_information_ibfk_1` (`student_number`);
+
+--
+-- Indexes for table `student_tuition`
+--
+ALTER TABLE `student_tuition`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `student_number` (`student_number`);
 
 --
 -- Indexes for table `subjects`
@@ -735,7 +776,7 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `admission_form`
 --
 ALTER TABLE `admission_form`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=85;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=107;
 
 --
 -- AUTO_INCREMENT for table `announcement`
@@ -753,7 +794,7 @@ ALTER TABLE `attendance`
 -- AUTO_INCREMENT for table `class_schedule`
 --
 ALTER TABLE `class_schedule`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT for table `master_list`
@@ -765,13 +806,25 @@ ALTER TABLE `master_list`
 -- AUTO_INCREMENT for table `payment`
 --
 ALTER TABLE `payment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `sections`
 --
 ALTER TABLE `sections`
-  MODIFY `section_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `section_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
+
+--
+-- AUTO_INCREMENT for table `student_information`
+--
+ALTER TABLE `student_information`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+
+--
+-- AUTO_INCREMENT for table `student_tuition`
+--
+ALTER TABLE `student_tuition`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT for table `subjects`
