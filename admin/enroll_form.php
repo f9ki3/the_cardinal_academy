@@ -58,9 +58,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'enrol
     $randomDigits = str_pad(mt_rand(0, 99999), 5, "0", STR_PAD_LEFT);
     $student_number = $year . "-" . $randomDigits;
 
-    // ✅ Generate Unique Account Number
-    $account_number = generateUniqueAccountNumber($conn);
-
     // ✅ Enrolled Date
     $enrolled_date = date("Y-m-d H:i:s");
 
@@ -97,28 +94,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && ($_POST['action'] ?? '') === 'enrol
         $stmt->bind_param("i", $admission_id);
         $stmt->execute();
         
-        // 3️⃣ Insert into student_tuition (with account_number)
+       // 3️⃣ Insert into student_tuition (added account_number)
         $sqlTuition = "INSERT INTO student_tuition 
             (account_number, student_number, payment_plan, enrolled_section, registration_fee, tuition_fee, miscellaneous, uniform, uniform_cart, discount_type, discount_value, discount_amount, downpayment, enrolled_date) 
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sqlTuition);
         $cart_json = json_encode($decoded_cart);
         $reg_fee = 2500.00;
-        $stmt->bind_param("ssssddddssddds", 
-            $account_number,     // s
-            $student_number,     // s
-            $payment_plan,       // s
-            $enrolled_section,   // s
-            $reg_fee,            // d
-            $tuition_fee,        // d
-            $miscellaneous,      // d
-            $uniform,            // d
-            $cart_json,          // s
-            $discount_type,      // s
-            $discount_value,     // d
-            $discount,           // d
-            $downpayment,        // d
-            $enrolled_date       // s
+        $stmt->bind_param("ssssdddssddds", 
+            $account_number,
+            $student_number, 
+            $payment_plan, 
+            $enrolled_section, 
+            $reg_fee, 
+            $tuition_fee, 
+            $miscellaneous, 
+            $uniform, 
+            $cart_json, 
+            $discount_type, 
+            $discount_value, 
+            $discount, 
+            $downpayment, 
+            $enrolled_date
         );
         $stmt->execute();
 
