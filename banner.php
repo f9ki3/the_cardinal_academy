@@ -1,5 +1,5 @@
 <?php
-$mysqli = new mysqli("localhost", "root", "", "tca");
+$mysqli = new mysqli("localhost", "u429904263_tca", "UsKA?M[7", "u429904263_tca");
 
 $announcements = []; // Always define it
 $result = $mysqli->query("SELECT heading, paragraph FROM announcement WHERE visible = 1 ORDER BY id DESC");
