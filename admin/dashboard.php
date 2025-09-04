@@ -12,7 +12,7 @@ if ($result = mysqli_query($conn, $admission_query)) {
 
 // Get Enrollees Count
 $enrollment_count = 0;
-$enroll_query = "SELECT COUNT(*) AS total FROM enroll_form";
+$enroll_query = "SELECT COUNT(*) AS total FROM student_information";
 if ($result = mysqli_query($conn, $enroll_query)) {
     $row = mysqli_fetch_assoc($result);
     $enrollment_count = $row['total'];
