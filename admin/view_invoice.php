@@ -9,6 +9,7 @@ $tuition_id = (int) $_GET['tuition_id'];
 $sql = "
 SELECT 
     p.invoice_number,
+    p.reference_number,
     p.date,
     p.payment,
     p.payment_type,
@@ -53,6 +54,7 @@ if (!$data) {
 // Format values
 $fullname = $data['firstname'] . ' ' . ($data['middlename'] ? $data['middlename'] . ' ' : '') . $data['lastname'];
 $full_address = $data['full_address'];
+$reference_number = $data['reference_number'];
 $invoice = 'INV-' . str_pad($data['invoice_number'], 4, '0', STR_PAD_LEFT);
 $date = date("F j, Y", strtotime($data['date']));
 $payment = number_format($data['payment'], 2);
@@ -132,6 +134,7 @@ $total = number_format((float)$data['balance'] + (float)$data['payment'], 2);
                 </div>
                 <div class="col-12 col-md-6">
                   <p class="mb-1"><strong>Invoice Number:</strong> <?php echo $invoice; ?></p>
+                  <p class="mb-1"><strong>Reference Number:</strong> <?php echo $reference_number; ?></p>
                   <p class="mb-1"><strong>Account Number:</strong> <?php echo $account_no; ?></p>
                 </div>
               </div>
