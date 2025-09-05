@@ -142,7 +142,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       <div class="mt-4">
         <button type="submit" class="btn bg-main text-light">Save Record</button>
-        <a href="scholastic.php" class="btn btn-outline-danger ms-2">Cancel</a>
+        <a href="scholastic.php?student_number=<?php echo $student_id?>" class="btn btn-outline-danger ms-2">Cancel</a>
       </div>
     </form>
   </div>
