@@ -160,7 +160,7 @@ if ($student_id !== '') {
                                     ?>
                                         <div class="col-12 col-md-6">
                                             <div class="border-4 border border-dark mb-4">
-                                                <div class="row gx-3 gy-2 pb-2 p-3">
+                                                <div class="row gx-3 gy-2 m-3">
                                                     <div class="col-12 col-md-8">
                                                         <p class="text-muted mb-0 small">School</p>
                                                         <h6 class="fw-bold text-dark mb-0"><?= htmlspecialchars($record_data['school']) ?></h6>
@@ -169,6 +169,8 @@ if ($student_id !== '') {
                                                         <p class="text-muted mb-0 small">School ID</p>
                                                         <h6 class="fw-bold text-dark mb-0"><?= htmlspecialchars($record_data['school_id']) ?></h6>
                                                     </div>
+                                                </div>
+                                                <div class="row border-top gx-3 gy-2 mt-0 m-3">
                                                     <div class="col-12 col-md-6">
                                                         <p class="text-muted mb-0 small">District</p>
                                                         <h6 class="fw-bold text-dark mb-0"><?= htmlspecialchars($record_data['district']) ?></h6>
@@ -177,6 +179,8 @@ if ($student_id !== '') {
                                                         <p class="text-muted mb-0 small">Division</p>
                                                         <h6 class="fw-bold text-dark mb-0"><?= htmlspecialchars($record_data['division']) ?></h6>
                                                     </div>
+                                                </div>
+                                                <div class="row border-top gx-3 gy-2 mt-0 m-3">
                                                     <div class="col-12 col-md-4">
                                                         <p class="text-muted mb-0 small">Region</p>
                                                         <h6 class="fw-bold text-dark mb-0"><?= htmlspecialchars($record_data['region']) ?></h6>
@@ -189,6 +193,8 @@ if ($student_id !== '') {
                                                         <p class="text-muted mb-0 small">Section</p>
                                                         <h6 class="fw-bold text-dark mb-0"><?= htmlspecialchars($record_data['section']) ?></h6>
                                                     </div>
+                                                </div>
+                                                <div class="row border-top gx-3 gy-2 mt-0 m-3">
                                                     <div class="col-12 col-md-6">
                                                         <p class="text-muted mb-0 small">School Year</p>
                                                         <h6 class="fw-bold text-dark mb-0"><?= htmlspecialchars($record_data['school_year']) ?></h6>
