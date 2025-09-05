@@ -412,7 +412,72 @@ if ($result && $row = $result->fetch_assoc()) {
 
 <input type="hidden" id="balance" value="<?php echo $balance; ?>">
 <input type="hidden" id="amount_pay" value="<?php echo $remaining_balance; ?>">
+<script>
+  // Get values from input fields
+  const balance = parseFloat(document.getElementById("balance").value) || 0;
+  const amountPay = parseFloat(document.getElementById("amount_pay").value) || 0;
 
+  // Calculate percentage
+  let percentage = 0;
+  if (balance === 0 && amountPay === 0) {
+    percentage = 100; // Treat as fully paid
+  } else if (balance > 0) {
+    percentage = 100 - (amountPay / balance) * 100;
+    if (percentage > 100) percentage = 100; // Cap at 100%
+    if (percentage < 0) percentage = 0; // Prevent negative
+  }
+
+  // Determine label based on percentage
+  let chartLabel = 'Progress';
+  if (percentage >= 100) {
+    chartLabel = 'Completed';
+    const paymentBtn = document.getElementById("payment_btn");
+
+    // Change text to "Paid" with icon and disable
+    paymentBtn.innerHTML = '<i class="bi bi-cash me-2"></i> Paid';
+    paymentBtn.disabled = true;
+
+    // Optional: style disabled button
+    paymentBtn.style.cursor = "not-allowed";
+  }
+
+  // ApexCharts options
+  var options = {
+    chart: {
+      type: 'radialBar',
+      height: 250
+    },
+    plotOptions: {
+      radialBar: {
+        hollow: {
+          size: '60%',
+        },
+        dataLabels: {
+          name: {
+            show: true,
+            fontSize: '16px'
+          },
+          value: {
+            fontSize: '20px',
+            formatter: function (val) {
+              return val.toFixed(1) + "%";
+            }
+          }
+        }
+      }
+    },
+    series: [percentage], // dynamic percentage
+    labels: [chartLabel],
+    colors: ['#b72029']
+  };
+
+  // Render chart
+  var chart = new ApexCharts(document.querySelector("#radialChart"), options);
+  chart.render();
+</script>
+
+
+<!-- 
 <script>
   // Get values from input fields
   const balance = parseFloat(document.getElementById("balance").value) || 0;
@@ -473,4 +538,4 @@ if ($result && $row = $result->fetch_assoc()) {
   // Render chart
   var chart = new ApexCharts(document.querySelector("#radialChart"), options);
   chart.render();
-</script>
+</script> -->
