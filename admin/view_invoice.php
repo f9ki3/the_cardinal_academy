@@ -102,9 +102,11 @@ $total = number_format((float)$data['balance'] + (float)$data['payment'], 2);
                 <button class="btn btn-sm border text-muted rounded-4" onclick="window.print()">
                   <i class="bi bi-printer me-1"></i> Print
                 </button>
-                <a href="view_tuition.php?id=<?php echo urlencode($student_id); ?>" class="btn btn-sm border text-muted rounded-4">
+                <a href="view_tuition2.php?tuition_id=<?php echo $tuition_id; ?>" 
+                  class="btn btn-sm border text-muted rounded-4">
                   <i class="bi bi-arrow-left me-1"></i> Go Back
                 </a>
+
 
               </div>
             </div>

@@ -368,7 +368,7 @@ if ($result && $row = $result->fetch_assoc()) {
                                   row.addEventListener('click', function() {
                                       const invoiceId = this.getAttribute('data-id');
                                       const studentId = this.getAttribute('data-student');
-                                      window.location.href = 'view_invoice.php?invoice_id=' + encodeURIComponent(invoiceId) + '&student_id=' + encodeURIComponent(studentId);
+                                      window.location.href = 'view_invoice.php?invoice_id=' + encodeURIComponent(invoiceId) + '&tuition_id=' + encodeURIComponent(studentId);
                                   });
                               });
                           });
