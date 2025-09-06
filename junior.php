@@ -50,8 +50,8 @@
           </style>
 
           <div class="tab-buttons">
-            <button type="button" class="tab-btn active" onclick="switchTab('old')">Old Student</button>
-            <button type="button" class="tab-btn" onclick="switchTab('new')">New Student</button>
+            <a href="junior_old.php" type="button" class="tab-btn text-decoration-none text-muted" >Old Student</a>
+            <a href="junior.php" type="button" class="tab-btn active text-decoration-none" >New Student</a>
           </div>
 
          <script>

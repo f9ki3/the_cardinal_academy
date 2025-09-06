@@ -1,58 +1,52 @@
 <?php include 'session_login.php'; ?>
-<?php include '../db_connection.php'; // assumes $conn is defined here ?>
+<?php include '../db_connection.php'; ?>
 
 <?php
 // Search and Pagination
-$limit = 10;
-$page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int) $_GET['page'] : 1;
+$limit  = 10;
+$page   = isset($_GET['page']) && is_numeric($_GET['page']) ? (int) $_GET['page'] : 1;
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 
-$search_safe = mysqli_real_escape_string($conn, $search); // sanitize search
 $offset = ($page - 1) * $limit;
 
 // Count total results for pagination
 $count_query = "SELECT COUNT(*) as total 
-                FROM admission_form 
-                WHERE (admission_status = 'approved' OR admission_status = 'for_review') 
-                  AND (
-                    lrn LIKE '%$search_safe%' 
-                    OR que_code LIKE '%$search_safe%' 
-                    OR CONCAT(firstname, ' ', lastname) LIKE '%$search_safe%'
-                  )";
-
-$count_result = mysqli_query($conn, $count_query);
-$total = mysqli_fetch_assoc($count_result)['total'] ?? 0;
+                FROM admission_old 
+                WHERE admission_status = 'pending' AND (
+                    que_code LIKE '%$search%' 
+                    OR CONCAT(first_name, ' ', last_name) LIKE '%$search%'
+                )";
+$count_result = mysqli_query($conn, $count_query) or die("Count Query Failed: " . mysqli_error($conn));
+$total = mysqli_fetch_assoc($count_result)['total'];
 $total_pages = ceil($total / $limit);
 
 // Fetch paginated data
 $query = "SELECT 
             id,
             que_code, 
-            lrn, 
-            CONCAT(firstname, ' ', lastname) AS fullname, 
-            CONCAT(barangay, ', ', municipal, ', ', province) AS address, 
-            residential_address,
+            student_id,
+            strand, 
+            CONCAT(first_name, ' ', last_name) AS fullname, 
             grade_level,
-            admission_status 
-          FROM admission_form
-          WHERE (admission_status = 'approved' OR admission_status = 'for_review') 
-            AND (
-              lrn LIKE '%$search_safe%' 
-              OR que_code LIKE '%$search_safe%' 
-              OR CONCAT(firstname, ' ', lastname) LIKE '%$search_safe%'
-            )
+            admission_status,
+            created_at
+          FROM admission_old
+          WHERE admission_status = 'approved' AND (
+              que_code LIKE '%$search%' 
+              OR CONCAT(first_name, ' ', last_name) LIKE '%$search%'
+          )
+          ORDER BY created_at DESC
           LIMIT $limit OFFSET $offset";
 
-$result = mysqli_query($conn, $query);
+$result = mysqli_query($conn, $query) or die("Main Query Failed: " . mysqli_error($conn));
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AcadeSys Enrollment</title>
+  <title>AcadeSys Admission</title>
   <?php include 'header.php' ?>
 </head>
 <body>
@@ -83,8 +77,6 @@ $result = mysqli_query($conn, $query);
                       <a href="enrollment.php" class="btn border ms-2 rounded rounded-4">
                         <i class="bi bi-person-plus me-1"></i> New Student
                       </a>
-
-                    </div>
                   </form>
                 </div>
                 <div class="col-12 pt-3">
@@ -120,98 +112,81 @@ $result = mysqli_query($conn, $query);
                 <table class="table table-striped table-hover" style="cursor: pointer">
                   <thead>
                     <tr>
-                      <th scope="col" style="width: 10%">LRN</th>
-                      <th scope="col" style="width: 10%">CODE</th>
-                      <th scope="col" style="width: 20%">Fullname</th>
-                      <th scope="col" style="width: 30%">Address</th>
-                      <th scope="col" style="width: 15%">Grade Level</th>
-                      <th scope="col" style="width: 10%">Status</th>
+                      <th scope="col">Student No.</th>
+                      <th scope="col">CODE</th>
+                      <th scope="col">Fullname</th>
+                      <th scope="col">Grade Level</th>
+                      <th scope="col">Strand</th>
+                      <th scope="col">Status</th>
+                      <th scope="col">Date</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <?php if (mysqli_num_rows($result) > 0): ?>
-                      <?php while ($row = mysqli_fetch_assoc($result)): ?>
-                        <tr class="clickable-row" data-id="<?= $row['id'] ?>">
-                          <td>
-                            <p class="text-muted pt-3 pb-3 mb-0">
-                              <?= !empty($row['lrn']) ? htmlspecialchars($row['lrn']) : 'No LRN yet' ?>
-                            </p>
-                          </td>
-
-                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['que_code'] ?? '-') ?></p></td>
-                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['fullname']) ?></p></td>
-                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['residential_address']) ?></p></td>
-                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['grade_level']) ?></p></td>
-                          <td>
-                            <?php
-                              $status = htmlspecialchars($row['admission_status']);
-                              if ($status === 'for_review') {
-                                  $label = 'For Review';
-                                  $class = 'badge bg-warning text-dark';
-                              } elseif ($status === 'approved') {
-                                  $label = 'Approved';
-                                  $class = 'badge bg-success';
-                              } else {
-                                  $label = ucfirst($status); // fallback
-                                  $class = 'badge bg-secondary';
-                              }
-                            ?>
-                            <p class="pt-3 pb-3 mb-0">
-                              <span class="<?= $class ?>"><?= $label ?></span>
-                            </p>
-                          </td>
-
+                        <?php if (mysqli_num_rows($result) > 0): ?>
+                        <?php while ($row = mysqli_fetch_assoc($result)): ?>
+                            <tr class="clickable-row" data-id="<?= $row['id'] ?>">
+                            <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['student_id']) ?></p></td>
+                            <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['que_code']) ?></p></td>
+                            <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['fullname']) ?></p></td>
+                            <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['grade_level']) ?></p></td><td>
+                                <p class="text-muted pt-3 pb-3 mb-0">
+                                    <?= !empty($row['strand']) ? htmlspecialchars($row['strand']) : 'N/A' ?>
+                                </p>
+                            </td>
+                            <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['admission_status']) ?></p>
+                            </td>
+                            <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['created_at']) ?></p></td>
+                            </tr>
+                        <?php endwhile; ?>
+                        <?php else: ?>
+                        <tr>
+                            <td colspan="7"><p class="text-muted text-center pt-3 pb-3 mb-0">No data available</p></td>
                         </tr>
+                        <?php endif; ?>
+                        </tbody>
 
-                      <?php endwhile; ?>
-                    <?php else: ?>
-                      <tr>
-                        <td colspan="6"><p class="text-muted text-center pt-3 pb-3 mb-0">No data available</p></td>
-                      </tr>
-                    <?php endif; ?>
-                  </tbody>
                 </table>
               </div>
 
               <!-- Pagination -->
               <?php if ($total_pages > 1): ?>
-  <nav aria-label="Page navigation">
-    <ul class="pagination justify-content-start pagination-sm">
-      <!-- Previous Button -->
-      <?php if ($page > 1): ?>
-        <li class="page-item">
-          <a class="page-link text-muted" href="?search=<?= urlencode($search) ?>&page=<?= $page - 1 ?>">Previous</a>
-        </li>
-      <?php endif; ?>
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-start pagination-sm">
+                        <!-- Previous Button -->
+                        <?php if ($page > 1): ?>
+                            <li class="page-item">
+                            <a class="page-link text-muted" href="?search=<?= urlencode($search) ?>&page=<?= $page - 1 ?>">Previous</a>
+                            </li>
+                        <?php endif; ?>
 
-      <?php
-        // Determine the start and end page numbers to show
-        $max_links = 5;
-        $start = max(1, $page - floor($max_links / 2));
-        $end = min($total_pages, $start + $max_links - 1);
+                        <?php
+                            // Determine the start and end page numbers to show
+                            $max_links = 5;
+                            $start = max(1, $page - floor($max_links / 2));
+                            $end = min($total_pages, $start + $max_links - 1);
 
-        // Adjust start again if we are near the end
-        if ($end - $start < $max_links - 1) {
-          $start = max(1, $end - $max_links + 1);
-        }
-      ?>
+                            // Adjust start again if we are near the end
+                            if ($end - $start < $max_links - 1) {
+                            $start = max(1, $end - $max_links + 1);
+                            }
+                        ?>
 
-      <!-- Page Links -->
-      <?php for ($i = $start; $i <= $end; $i++): ?>
-        <li class="page-item">
-          <a class="page-link text-muted <?= $i == $page ? 'fw-bold' : '' ?>" href="?search=<?= urlencode($search) ?>&page=<?= $i ?>"><?= $i ?></a>
-        </li>
-      <?php endfor; ?>
+                        <!-- Page Links -->
+                        <?php for ($i = $start; $i <= $end; $i++): ?>
+                            <li class="page-item">
+                            <a class="page-link text-muted <?= $i == $page ? 'fw-bold' : '' ?>" href="?search=<?= urlencode($search) ?>&page=<?= $i ?>"><?= $i ?></a>
+                            </li>
+                        <?php endfor; ?>
 
-      <!-- Next Button -->
-      <?php if ($page < $total_pages): ?>
-        <li class="page-item">
-          <a class="page-link text-muted" href="?search=<?= urlencode($search) ?>&page=<?= $page + 1 ?>">Next</a>
-        </li>
-      <?php endif; ?>
-    </ul>
-  </nav>
-<?php endif; ?>
+                        <!-- Next Button -->
+                        <?php if ($page < $total_pages): ?>
+                            <li class="page-item">
+                            <a class="page-link text-muted" href="?search=<?= urlencode($search) ?>&page=<?= $page + 1 ?>">Next</a>
+                            </li>
+                        <?php endif; ?>
+                        </ul>
+                    </nav>
+                    <?php endif; ?>
 
             </div>
           </div>
@@ -231,7 +206,7 @@ $result = mysqli_query($conn, $query);
     rows.forEach(row => {
       row.addEventListener('click', () => {
         const id = row.getAttribute('data-id');
-        window.location.href = `view_enrollment.php?id=${id}`;
+        window.location.href = `view_admission 2.php?id=${id}`;
       });
     });
   });

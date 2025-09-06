@@ -24,7 +24,8 @@ $total_pages = ceil($total / $limit);
 $query = "SELECT 
             id,
             que_code, 
-            student_id, 
+            student_id,
+            strand, 
             CONCAT(first_name, ' ', last_name) AS fullname, 
             grade_level,
             admission_status,
@@ -115,6 +116,7 @@ $result = mysqli_query($conn, $query) or die("Main Query Failed: " . mysqli_erro
                       <th scope="col">CODE</th>
                       <th scope="col">Fullname</th>
                       <th scope="col">Grade Level</th>
+                      <th scope="col">Strand</th>
                       <th scope="col">Status</th>
                       <th scope="col">Date</th>
                     </tr>
@@ -126,7 +128,11 @@ $result = mysqli_query($conn, $query) or die("Main Query Failed: " . mysqli_erro
                             <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['student_id']) ?></p></td>
                             <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['que_code']) ?></p></td>
                             <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['fullname']) ?></p></td>
-                            <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['grade_level']) ?></p></td>
+                            <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['grade_level']) ?></p></td><td>
+                                <p class="text-muted pt-3 pb-3 mb-0">
+                                    <?= !empty($row['strand']) ? htmlspecialchars($row['strand']) : 'N/A' ?>
+                                </p>
+                            </td>
                             <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['admission_status']) ?></p>
                             </td>
                             <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['created_at']) ?></p></td>
@@ -134,7 +140,7 @@ $result = mysqli_query($conn, $query) or die("Main Query Failed: " . mysqli_erro
                         <?php endwhile; ?>
                         <?php else: ?>
                         <tr>
-                            <td colspan="6"><p class="text-muted text-center pt-3 pb-3 mb-0">No data available</p></td>
+                            <td colspan="7"><p class="text-muted text-center pt-3 pb-3 mb-0">No data available</p></td>
                         </tr>
                         <?php endif; ?>
                         </tbody>

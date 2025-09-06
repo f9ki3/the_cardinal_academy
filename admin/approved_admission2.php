@@ -97,7 +97,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     }
                 }
 
-                header("Location: admission.php?id=$admission_id&status=success");
+                header("Location: admission_old.php?id=$admission_id&status=success");
                 exit();
             } else {
                 echo "Failed to update status.";

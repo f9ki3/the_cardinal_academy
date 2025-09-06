@@ -23,6 +23,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $que_code       = generateQueueCode($conn);
     $grade_level    = sanitize($_POST['grade_level'] ?? '');
+    $strand         = sanitize($_POST['strand'] ?? ''); 
+    $strand         = !empty($strand) ? $strand : "N/A"; // ✅ Default to N/A
     $gender         = sanitize($_POST['gender'] ?? '');
     $student_id     = sanitize($_POST['student_id'] ?? '');
     $last_name      = sanitize($_POST['last_name'] ?? '');
@@ -60,6 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $sql = "INSERT INTO admission_old (
         que_code,
         grade_level, 
+        strand,
         gender, 
         student_id, 
         last_name, 
@@ -71,18 +74,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         religion, 
         guardian_phone, 
         email
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     $stmt = $conn->prepare($sql);
     if (!$stmt) {
         die("SQL prepare() failed: " . $conn->error);
     }
 
-    // 's' for que_code, total 13 values now
+    // 's' for strings, 'i' for integer (age)
     $stmt->bind_param(
-        "ssssssssissss",
+        "ssssssssssisss",
         $que_code,
         $grade_level,
+        $strand,
         $gender,
         $student_id,
         $last_name,
