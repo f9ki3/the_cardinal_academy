@@ -206,7 +206,7 @@ $result = mysqli_query($conn, $query) or die("Main Query Failed: " . mysqli_erro
     rows.forEach(row => {
       row.addEventListener('click', () => {
         const id = row.getAttribute('data-id');
-        window.location.href = `view_admission 2.php?id=${id}`;
+        window.location.href = `view_enrollement_old.php?id=${id}`;
       });
     });
   });
