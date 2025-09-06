@@ -100,13 +100,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <td class="pt-4 pb-4"><?= htmlspecialchars($row['grade_level'] ?? 'N/A') ?></td>
                             <td class="pt-4 pb-4"><?= htmlspecialchars($row['email'] ?? 'N/A') ?></td>
                             <td class="pt-4 pb-4">
-                                <a href="enroll_form.php?id=<?= $admission_id ?>&student_number=<?= urlencode($row['student_number']) ?>" 
+                                <a href="payment_plan2.php?student_number=<?= urlencode($row['student_number']) ?>&grade=<?= htmlspecialchars($row['grade_level'] ?? 'N/A') ?>&id=<?= $admission_id; ?>" 
                                     class="btn border rounded rounded-4 text-muted">
                                     <i class="fas fa-user-graduate me-1"></i> Enroll
                                 </a>
                                 <a href="check_scholastic.php?id=<?= $admission_id ?>&student_number=<?= urlencode($row['student_number']) ?>" 
                                     class="btn border rounded rounded-4 text-muted">
-                                    <i class="fas fa-user-graduate me-1"></i> View Scholastic
+                                    <i class="fas fa-book me-1"></i> View Scholastic
                                 </a>
 
                             </td>
