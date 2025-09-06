@@ -61,21 +61,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             $visit_msg_text = "Please visit the school registrar tomorrow between 8:00 AM and 5:00 PM to correct or update your credentials.\n";
                         }
 
+                        // Convert status text for display (replace underscore with space)
+                        $display_status = ucfirst(str_replace('_', ' ', $status));
+
                         $mail->Body = '
                         <table cellpadding="0" cellspacing="0" border="0" width="100%" style="font-family:sans-serif;">
                         <tr>
-                            <td style="padding:20px;">
-                                <p style="font-size:16px;">Hi <strong>' . $fullname . '</strong>,</p>
-                                <p style="font-size:16px;">Your admission application has been <strong style="color:green;">' . ucfirst($status) . '</strong>.</p>
-                                <p style="font-size:16px;">Queuing Code: <strong>' . $que_code . '</strong></p>
-                                ' . $visit_msg_html . '
-                                <br>
-                                <p style="font-size:16px;">Thank you,<br><strong>The Cardinal Academy</strong></p>
-                                <br>
-                                <p style="font-size:16px;">Note: please bring php 2,500 for the registration fee</p>
+                            <td style="padding:20px; font-size:16px; line-height:1.6;">
+                            <p>Hi <strong>' . htmlspecialchars($fullname) . '</strong>,</p>
+                            <p>Your admission application has been 
+                                <strong style="color:green;">' . htmlspecialchars($display_status) . '</strong>.
+                            </p>
+                            <p>Queuing Code: <strong>' . htmlspecialchars($que_code) . '</strong></p>
+                            ' . $visit_msg_html . '
+                            <br>
+                            <p>Thank you,<br><strong>The Cardinal Academy</strong></p>
+                            <br>
+                            <p><strong>Note:</strong> Please bring the following documents:</p>
+                            <ul style="font-size:16px; padding-left:20px; margin:0;">
+                                <li>PHP 2,500 for the registration fee</li>
+                                <li>Birth Certificate (PSA Copy)</li>
+                                <li>Original Report Card (Form 137)</li>
+                                <li>Good Moral Certificate</li>
+                                <li>2x2 ID Picture (White Background)</li>
+                                <li>ESC Certification (Grade 11 and 12)</li>
+                            </ul>
                             </td>
                         </tr>
                         </table>';
+                        $mail->AltBody = "Hello $fullname,\nYour admission is $display_status.\nCode: $que_code\n" .
+                        $visit_msg_text .
+                        "\nThank you.";
+
+
+
+
+
 
                         $mail->AltBody = "Hello $fullname,\nYour admission is $status.\nCode: $que_code\n" .
                                          $visit_msg_text .
