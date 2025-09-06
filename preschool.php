@@ -50,35 +50,19 @@
           </style>
 
           <div class="tab-buttons">
-            <button type="button" class="tab-btn active" onclick="switchTab('old')">Old Student</button>
-            <button type="button" class="tab-btn" onclick="switchTab('new')">New Student</button>
+            <a href="old_preschool.php" type="button" class="tab-btn text-decoration-none text-muted" >Old Student</a>
+            <a href="preschool.php" type="button" class="tab-btn active text-decoration-none" >New Student</a>
           </div>
 
-         <script>
-            function switchTab(tab) {
-              const buttons = document.querySelectorAll('.tab-btn');
-              buttons.forEach(btn => btn.classList.remove('active'));
-
-              const statusSelect = document.getElementById('status');
-
-              if (tab === 'old') {
-                buttons[0].classList.add('active');
-                statusSelect.value = 'Old Student';
-              } else {
-                buttons[1].classList.add('active');
-                statusSelect.value = 'New Student';
-              }
-            }
-          </script>
-
+         
 
         <div class="row g-3">
 
           <div class="col-12 d-none col-md-6">
             <label for="status" class="form-label text-muted">Status</label>
             <select name="status" id="status" class="form-select">
-              <option selected>Old Student</option>
-              <option>New Student</option>
+              <option >Old Student</option>
+              <option selected>New Student</option>
             </select>
             <div id="status-error" class="invalid-feedback d-none">Status is required.</div>
           </div>

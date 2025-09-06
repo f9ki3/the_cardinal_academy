@@ -1,21 +1,22 @@
 <?php include 'session_login.php'; ?>
-<?php  include '../db_connection.php'; // assumes $conn is defined here?>
+<?php include '../db_connection.php'; ?>
+
 <?php
 // Search and Pagination
-$limit = 10;
-$page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int) $_GET['page'] : 1;
+$limit  = 10;
+$page   = isset($_GET['page']) && is_numeric($_GET['page']) ? (int) $_GET['page'] : 1;
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 
 $offset = ($page - 1) * $limit;
 
 // Count total results for pagination
-$count_query = "SELECT COUNT(*) as total FROM admission_form 
+$count_query = "SELECT COUNT(*) as total 
+                FROM admission_old 
                 WHERE admission_status = 'pending' AND (
-                    lrn LIKE '%$search%' 
-                    OR que_code LIKE '%$search%' 
-                    OR CONCAT(firstname, ' ', lastname) LIKE '%$search%'
+                    que_code LIKE '%$search%' 
+                    OR CONCAT(first_name, ' ', last_name) LIKE '%$search%'
                 )";
-$count_result = mysqli_query($conn, $count_query);
+$count_result = mysqli_query($conn, $count_query) or die("Count Query Failed: " . mysqli_error($conn));
 $total = mysqli_fetch_assoc($count_result)['total'];
 $total_pages = ceil($total / $limit);
 
@@ -23,21 +24,20 @@ $total_pages = ceil($total / $limit);
 $query = "SELECT 
             id,
             que_code, 
-            lrn, 
-            CONCAT(firstname, ' ', lastname) AS fullname, 
-            CONCAT(barangay, ', ', municipal, ', ', province) AS address, 
+            student_id, 
+            CONCAT(first_name, ' ', last_name) AS fullname, 
             grade_level,
-            status 
-          FROM admission_form
-          WHERE admission_status = 'pending' AND status = 'New Student' AND (
-              lrn LIKE '%$search%' 
-              OR que_code LIKE '%$search%' 
-              OR CONCAT(firstname, ' ', lastname) LIKE '%$search%'
+            admission_status,
+            created_at
+          FROM admission_old
+          WHERE admission_status = 'pending' AND (
+              que_code LIKE '%$search%' 
+              OR CONCAT(first_name, ' ', last_name) LIKE '%$search%'
           )
-          ORDER BY admission_date DESC
+          ORDER BY created_at DESC
           LIMIT $limit OFFSET $offset";
 
-$result = mysqli_query($conn, $query);
+$result = mysqli_query($conn, $query) or die("Main Query Failed: " . mysqli_error($conn));
 ?>
 
 <!DOCTYPE html>
@@ -62,7 +62,7 @@ $result = mysqli_query($conn, $query);
             <div class="container my-4">
               <div class="row mb-3">
                 <div class="col-12 col-md-6">
-                  <h4>Student Admissions - New</h4>
+                  <h4>Student Admissions - Old</h4>
                 </div>
                 <div class="col-12 col-md-6">
                   <form method="GET" action="">
@@ -76,8 +76,6 @@ $result = mysqli_query($conn, $query);
                       <a href="admission.php" class="btn border ms-2 rounded rounded-4">
                         <i class="bi bi-person-plus me-1"></i> New Student
                       </a>
-
-                    </div>
                   </form>
                 </div>
                 <div class="col-12 pt-3">
@@ -113,75 +111,76 @@ $result = mysqli_query($conn, $query);
                 <table class="table table-striped table-hover" style="cursor: pointer">
                   <thead>
                     <tr>
-                      <th scope="col">LRN</th>
+                      <th scope="col">Student No.</th>
                       <th scope="col">CODE</th>
                       <th scope="col">Fullname</th>
-                      <th scope="col">Address</th>
                       <th scope="col">Grade Level</th>
                       <th scope="col">Status</th>
+                      <th scope="col">Date</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <?php if (mysqli_num_rows($result) > 0): ?>
-                      <?php while ($row = mysqli_fetch_assoc($result)): ?>
-                        <tr class="clickable-row" data-id="<?= $row['id'] ?>">
-                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= !empty($row['lrn']) ? htmlspecialchars($row['lrn']) : 'N/A' ?></p></td>
-                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['que_code'] ?? '-') ?></p></td>
-                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['fullname']) ?></p></td>
-                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['address']) ?></p></td>
-                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['grade_level']) ?></p></td>
-                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['status']) ?></p></td>
+                        <?php if (mysqli_num_rows($result) > 0): ?>
+                        <?php while ($row = mysqli_fetch_assoc($result)): ?>
+                            <tr class="clickable-row" data-id="<?= $row['id'] ?>">
+                            <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['student_id']) ?></p></td>
+                            <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['que_code']) ?></p></td>
+                            <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['fullname']) ?></p></td>
+                            <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['grade_level']) ?></p></td>
+                            <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['admission_status']) ?></p>
+                            </td>
+                            <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['created_at']) ?></p></td>
+                            </tr>
+                        <?php endwhile; ?>
+                        <?php else: ?>
+                        <tr>
+                            <td colspan="6"><p class="text-muted text-center pt-3 pb-3 mb-0">No data available</p></td>
                         </tr>
+                        <?php endif; ?>
+                        </tbody>
 
-                      <?php endwhile; ?>
-                    <?php else: ?>
-                      <tr>
-                        <td colspan="6"><p class="text-muted text-center pt-3 pb-3 mb-0">No data available</p></td>
-                      </tr>
-                    <?php endif; ?>
-                  </tbody>
                 </table>
               </div>
 
               <!-- Pagination -->
               <?php if ($total_pages > 1): ?>
-  <nav aria-label="Page navigation">
-    <ul class="pagination justify-content-start pagination-sm">
-      <!-- Previous Button -->
-      <?php if ($page > 1): ?>
-        <li class="page-item">
-          <a class="page-link text-muted" href="?search=<?= urlencode($search) ?>&page=<?= $page - 1 ?>">Previous</a>
-        </li>
-      <?php endif; ?>
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-start pagination-sm">
+                        <!-- Previous Button -->
+                        <?php if ($page > 1): ?>
+                            <li class="page-item">
+                            <a class="page-link text-muted" href="?search=<?= urlencode($search) ?>&page=<?= $page - 1 ?>">Previous</a>
+                            </li>
+                        <?php endif; ?>
 
-      <?php
-        // Determine the start and end page numbers to show
-        $max_links = 5;
-        $start = max(1, $page - floor($max_links / 2));
-        $end = min($total_pages, $start + $max_links - 1);
+                        <?php
+                            // Determine the start and end page numbers to show
+                            $max_links = 5;
+                            $start = max(1, $page - floor($max_links / 2));
+                            $end = min($total_pages, $start + $max_links - 1);
 
-        // Adjust start again if we are near the end
-        if ($end - $start < $max_links - 1) {
-          $start = max(1, $end - $max_links + 1);
-        }
-      ?>
+                            // Adjust start again if we are near the end
+                            if ($end - $start < $max_links - 1) {
+                            $start = max(1, $end - $max_links + 1);
+                            }
+                        ?>
 
-      <!-- Page Links -->
-      <?php for ($i = $start; $i <= $end; $i++): ?>
-        <li class="page-item">
-          <a class="page-link text-muted <?= $i == $page ? 'fw-bold' : '' ?>" href="?search=<?= urlencode($search) ?>&page=<?= $i ?>"><?= $i ?></a>
-        </li>
-      <?php endfor; ?>
+                        <!-- Page Links -->
+                        <?php for ($i = $start; $i <= $end; $i++): ?>
+                            <li class="page-item">
+                            <a class="page-link text-muted <?= $i == $page ? 'fw-bold' : '' ?>" href="?search=<?= urlencode($search) ?>&page=<?= $i ?>"><?= $i ?></a>
+                            </li>
+                        <?php endfor; ?>
 
-      <!-- Next Button -->
-      <?php if ($page < $total_pages): ?>
-        <li class="page-item">
-          <a class="page-link text-muted" href="?search=<?= urlencode($search) ?>&page=<?= $page + 1 ?>">Next</a>
-        </li>
-      <?php endif; ?>
-    </ul>
-  </nav>
-<?php endif; ?>
+                        <!-- Next Button -->
+                        <?php if ($page < $total_pages): ?>
+                            <li class="page-item">
+                            <a class="page-link text-muted" href="?search=<?= urlencode($search) ?>&page=<?= $page + 1 ?>">Next</a>
+                            </li>
+                        <?php endif; ?>
+                        </ul>
+                    </nav>
+                    <?php endif; ?>
 
             </div>
           </div>
@@ -201,7 +200,7 @@ $result = mysqli_query($conn, $query);
     rows.forEach(row => {
       row.addEventListener('click', () => {
         const id = row.getAttribute('data-id');
-        window.location.href = `view_admission.php?id=${id}`;
+        window.location.href = `view_admission 2.php?id=${id}`;
       });
     });
   });

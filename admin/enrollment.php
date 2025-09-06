@@ -68,14 +68,22 @@ $result = mysqli_query($conn, $query);
           <div class="rounded p-3 bg-white">
             <div class="container my-4">
               <div class="row mb-3">
-                <div class="col-12 col-md-8">
-                  <h4>Student Enrollment</h4>
+                <div class="col-12 col-md-6">
+                  <h4>Student Enrollment - New</h4>
                 </div>
-                <div class="col-12 col-md-4">
+                <div class="col-12 col-md-6">
                   <form method="GET" action="">
                     <div class="input-group">
                       <input class="form-control rounded rounded-4" type="text" name="search" value="<?= htmlspecialchars($search) ?>" placeholder="Search LRN, CODE or Fullname">
                       <button class="btn border ms-2 rounded rounded-4" type="submit">Search</button>
+                      <a href="enrollment_old.php" class="btn border ms-2 rounded rounded-4">
+                        <i class="bi bi-person-badge me-1"></i> Old Student
+                      </a>
+
+                      <a href="enrollment.php" class="btn border ms-2 rounded rounded-4">
+                        <i class="bi bi-person-plus me-1"></i> New Student
+                      </a>
+
                     </div>
                   </form>
                 </div>
@@ -124,12 +132,35 @@ $result = mysqli_query($conn, $query);
                     <?php if (mysqli_num_rows($result) > 0): ?>
                       <?php while ($row = mysqli_fetch_assoc($result)): ?>
                         <tr class="clickable-row" data-id="<?= $row['id'] ?>">
-                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['lrn']) ?></p></td>
+                          <td>
+                            <p class="text-muted pt-3 pb-3 mb-0">
+                              <?= !empty($row['lrn']) ? htmlspecialchars($row['lrn']) : 'No LRN yet' ?>
+                            </p>
+                          </td>
+
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['que_code'] ?? '-') ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['fullname']) ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['residential_address']) ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['grade_level']) ?></p></td>
-                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['admission_status']) ?></p></td>
+                          <td>
+                            <?php
+                              $status = htmlspecialchars($row['admission_status']);
+                              if ($status === 'for_review') {
+                                  $label = 'For Review';
+                                  $class = 'badge bg-warning text-dark';
+                              } elseif ($status === 'approved') {
+                                  $label = 'Approved';
+                                  $class = 'badge bg-success';
+                              } else {
+                                  $label = ucfirst($status); // fallback
+                                  $class = 'badge bg-secondary';
+                              }
+                            ?>
+                            <p class="pt-3 pb-3 mb-0">
+                              <span class="<?= $class ?>"><?= $label ?></span>
+                            </p>
+                          </td>
+
                         </tr>
 
                       <?php endwhile; ?>

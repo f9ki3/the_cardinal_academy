@@ -1,22 +1,27 @@
 <?php include 'session_login.php'; ?>
-<?php  include '../db_connection.php'; // assumes $conn is defined here?>
+<?php include '../db_connection.php'; // assumes $conn is defined here ?>
+
 <?php
 // Search and Pagination
 $limit = 10;
 $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int) $_GET['page'] : 1;
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 
+$search_safe = mysqli_real_escape_string($conn, $search); // sanitize search
 $offset = ($page - 1) * $limit;
 
 // Count total results for pagination
-$count_query = "SELECT COUNT(*) as total FROM admission_form 
-                WHERE admission_status = 'pending' AND (
-                    lrn LIKE '%$search%' 
-                    OR que_code LIKE '%$search%' 
-                    OR CONCAT(firstname, ' ', lastname) LIKE '%$search%'
-                )";
+$count_query = "SELECT COUNT(*) as total 
+                FROM admission_form 
+                WHERE (admission_status = 'approved' OR admission_status = 'for_review') 
+                  AND (
+                    lrn LIKE '%$search_safe%' 
+                    OR que_code LIKE '%$search_safe%' 
+                    OR CONCAT(firstname, ' ', lastname) LIKE '%$search_safe%'
+                  )";
+
 $count_result = mysqli_query($conn, $count_query);
-$total = mysqli_fetch_assoc($count_result)['total'];
+$total = mysqli_fetch_assoc($count_result)['total'] ?? 0;
 $total_pages = ceil($total / $limit);
 
 // Fetch paginated data
@@ -26,26 +31,28 @@ $query = "SELECT
             lrn, 
             CONCAT(firstname, ' ', lastname) AS fullname, 
             CONCAT(barangay, ', ', municipal, ', ', province) AS address, 
+            residential_address,
             grade_level,
-            status 
+            admission_status 
           FROM admission_form
-          WHERE admission_status = 'pending' AND status = 'New Student' AND (
-              lrn LIKE '%$search%' 
-              OR que_code LIKE '%$search%' 
-              OR CONCAT(firstname, ' ', lastname) LIKE '%$search%'
-          )
-          ORDER BY admission_date DESC
+          WHERE (admission_status = 'approved' OR admission_status = 'for_review') 
+            AND (
+              lrn LIKE '%$search_safe%' 
+              OR que_code LIKE '%$search_safe%' 
+              OR CONCAT(firstname, ' ', lastname) LIKE '%$search_safe%'
+            )
           LIMIT $limit OFFSET $offset";
 
 $result = mysqli_query($conn, $query);
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AcadeSys Admission</title>
+  <title>AcadeSys Enrollment</title>
   <?php include 'header.php' ?>
 </head>
 <body>
@@ -62,18 +69,18 @@ $result = mysqli_query($conn, $query);
             <div class="container my-4">
               <div class="row mb-3">
                 <div class="col-12 col-md-6">
-                  <h4>Student Admissions - New</h4>
+                  <h4>Student Enrollment - Old</h4>
                 </div>
                 <div class="col-12 col-md-6">
                   <form method="GET" action="">
                     <div class="input-group">
                       <input class="form-control rounded rounded-4" type="text" name="search" value="<?= htmlspecialchars($search) ?>" placeholder="Search LRN, CODE or Fullname">
                       <button class="btn border ms-2 rounded rounded-4" type="submit">Search</button>
-                      <a href="admission_old.php" class="btn border ms-2 rounded rounded-4">
+                      <a href="enrollment_old.php" class="btn border ms-2 rounded rounded-4">
                         <i class="bi bi-person-badge me-1"></i> Old Student
                       </a>
 
-                      <a href="admission.php" class="btn border ms-2 rounded rounded-4">
+                      <a href="enrollment.php" class="btn border ms-2 rounded rounded-4">
                         <i class="bi bi-person-plus me-1"></i> New Student
                       </a>
 
@@ -113,24 +120,47 @@ $result = mysqli_query($conn, $query);
                 <table class="table table-striped table-hover" style="cursor: pointer">
                   <thead>
                     <tr>
-                      <th scope="col">LRN</th>
-                      <th scope="col">CODE</th>
-                      <th scope="col">Fullname</th>
-                      <th scope="col">Address</th>
-                      <th scope="col">Grade Level</th>
-                      <th scope="col">Status</th>
+                      <th scope="col" style="width: 10%">LRN</th>
+                      <th scope="col" style="width: 10%">CODE</th>
+                      <th scope="col" style="width: 20%">Fullname</th>
+                      <th scope="col" style="width: 30%">Address</th>
+                      <th scope="col" style="width: 15%">Grade Level</th>
+                      <th scope="col" style="width: 10%">Status</th>
                     </tr>
                   </thead>
                   <tbody>
                     <?php if (mysqli_num_rows($result) > 0): ?>
                       <?php while ($row = mysqli_fetch_assoc($result)): ?>
                         <tr class="clickable-row" data-id="<?= $row['id'] ?>">
-                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= !empty($row['lrn']) ? htmlspecialchars($row['lrn']) : 'N/A' ?></p></td>
+                          <td>
+                            <p class="text-muted pt-3 pb-3 mb-0">
+                              <?= !empty($row['lrn']) ? htmlspecialchars($row['lrn']) : 'No LRN yet' ?>
+                            </p>
+                          </td>
+
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['que_code'] ?? '-') ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['fullname']) ?></p></td>
-                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['address']) ?></p></td>
+                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['residential_address']) ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['grade_level']) ?></p></td>
-                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['status']) ?></p></td>
+                          <td>
+                            <?php
+                              $status = htmlspecialchars($row['admission_status']);
+                              if ($status === 'for_review') {
+                                  $label = 'For Review';
+                                  $class = 'badge bg-warning text-dark';
+                              } elseif ($status === 'approved') {
+                                  $label = 'Approved';
+                                  $class = 'badge bg-success';
+                              } else {
+                                  $label = ucfirst($status); // fallback
+                                  $class = 'badge bg-secondary';
+                              }
+                            ?>
+                            <p class="pt-3 pb-3 mb-0">
+                              <span class="<?= $class ?>"><?= $label ?></span>
+                            </p>
+                          </td>
+
                         </tr>
 
                       <?php endwhile; ?>
@@ -201,7 +231,7 @@ $result = mysqli_query($conn, $query);
     rows.forEach(row => {
       row.addEventListener('click', () => {
         const id = row.getAttribute('data-id');
-        window.location.href = `view_admission.php?id=${id}`;
+        window.location.href = `view_enrollment.php?id=${id}`;
       });
     });
   });
