@@ -61,8 +61,8 @@
           <div class="col-12 d-none col-md-6">
             <label for="status" class="form-label text-muted">Status</label>
             <select name="status" id="status" class="form-select">
-              <option selected>Old Student</option>
-              <option>New Student</option>
+              <option>Old Student</option>
+              <option selected>New Student</option>
             </select>
             <div id="status-error" class="invalid-feedback d-none">Status is required.</div>
           </div>
