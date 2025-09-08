@@ -64,7 +64,7 @@
             <div class="container my-4">
               <div class="row mb-3">
                 <div class="col-12 border-bottom col-md-12">
-                  <h4>Stream Class</h4>
+                  <h4>Students List</h4>
                 </div>
 
                 
@@ -74,7 +74,7 @@
               <div class="row g-3">
                 <?php $course_id = isset($_GET['id']) ? intval($_GET['id']) : 0; ?>
                 <div class="tabs d-flex">
-                    <div class="tab active">
+                    <div class="tab ">
                         <a href="course.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Stream</a>
                     </div>
                     <div class="tab">
@@ -83,7 +83,7 @@
                     <div class="tab">
                         <a href="assignment.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Assignment</a>
                     </div>
-                    <div class="tab">
+                    <div class="tab active">
                         <a href="student.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Students</a>
                     </div>
                     <div class="tab">
@@ -94,7 +94,7 @@
 
                 <!-- Tabs Content -->
                 <div class="p-0" >
-                <?php include 'stream.php'?>
+                <?php include 'students_lists.php'?>
                 
                 </div>
 

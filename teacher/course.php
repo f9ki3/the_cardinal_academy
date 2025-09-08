@@ -72,23 +72,25 @@
 
               <!-- Courses Grid -->
               <div class="row g-3">
+                <?php $course_id = isset($_GET['id']) ? intval($_GET['id']) : 0; ?>
                 <div class="tabs d-flex">
                     <div class="tab active">
-                        <p>Stream</p>
+                        <a href="course.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Stream</a>
                     </div>
                     <div class="tab">
-                        <p>Attendance</p>
+                        <a href="attendance.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Attendance</a>
                     </div>
                     <div class="tab">
-                        <p>Assignment</p>
+                        <a href="assignment.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Assignment</a>
                     </div>
                     <div class="tab">
-                        <p>Students</p>
+                        <a href="student.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Students</a>
                     </div>
                     <div class="tab">
-                        <p>Settings</p>
+                        <a href="settings.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Settings</a>
                     </div>
                 </div>
+
 
                 <!-- Tabs Content -->
                 <div class="p-0" >
