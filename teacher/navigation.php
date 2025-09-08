@@ -39,7 +39,7 @@ $profile_image = !empty($user['profile']) ? '../static/uploads/' . htmlspecialch
 
             <li class="nav-item">
                 <a class="nav-link d-flex align-items-center px-3 py-2 rounded-3" href="dashboard.php">
-                    <i class="bi bi-speedometer2 me-2"></i> <span>Home</span>
+                    <i class="bi bi-house me-2"></i> <span>Home</span>
                 </a>
             </li>
 
@@ -51,7 +51,7 @@ $profile_image = !empty($user['profile']) ? '../static/uploads/' . htmlspecialch
 
             <li class="nav-item">
                 <a class="nav-link d-flex align-items-center px-3 py-2 rounded-3" href="#">
-                    <i class="bi bi-archive me-2"></i> <span>Archived</span>
+                    <i class="bi bi-archive me-2"></i> <span>Archived Classes</span>
                 </a>
             </li>
 
@@ -60,7 +60,7 @@ $profile_image = !empty($user['profile']) ? '../static/uploads/' . htmlspecialch
                 <a class="nav-link d-flex align-items-center px-3 py-2 rounded-3" 
                 data-bs-toggle="collapse" href="#teachingMenu" role="button" 
                 aria-expanded="false" aria-controls="teachingMenu">
-                    <i class="bi bi-calendar-check me-2"></i> <span>Teaching</span>
+                    <i class="bi bi-calendar-check me-2"></i> <span>Teacher's Classes</span>
                     <i class="bi bi-chevron-down ms-auto"></i>
                 </a>
                 <div class="collapse" id="teachingMenu">
