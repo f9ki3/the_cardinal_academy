@@ -12,7 +12,7 @@ $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
 $full_name = htmlspecialchars($user['first_name'] . ', ' . $user['last_name']);
-$profile_image = !empty($user['profile']) ? '../static/uploads/' . htmlspecialchars($user['profile']) : '../static/uploads/default_profile.jpg';
+$profile_image = !empty($user['profile']) ? '../static/uploads/' . htmlspecialchars($user['profile']) : '../static/uploads/dummy.jpg';
 ?>
 
 <div id="nav_side" 
@@ -57,7 +57,13 @@ $profile_image = !empty($user['profile']) ? '../static/uploads/' . htmlspecialch
 
             <li class="nav-item">
                 <a href="archive.php" class="nav-link d-flex align-items-center px-3 py-2 rounded-3" href="#">
-                    <i class="bi bi-archive me-2"></i> <span>Archived Classes</span>
+                    <i class="bi bi-archive me-2"></i> <span>Assignments</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="archive.php" class="nav-link d-flex align-items-center px-3 py-2 rounded-3" href="#">
+                    <i class="bi bi-people me-2"></i> <span>Attendance</span>
                 </a>
             </li>
 
@@ -66,16 +72,22 @@ $profile_image = !empty($user['profile']) ? '../static/uploads/' . htmlspecialch
                 <a class="nav-link d-flex align-items-center px-3 py-2 rounded-3" 
                 data-bs-toggle="collapse" href="#teachingMenu" role="button" 
                 aria-expanded="false" aria-controls="teachingMenu">
-                    <i class="bi bi-calendar-check me-2"></i> <span>Teacher's Classes</span>
+                    <i class="bi bi-calendar-check me-2"></i> <span>My Classes</span>
                     <i class="bi bi-chevron-down ms-auto"></i>
                 </a>
-                <div class="collapse" id="teachingMenu">
+              <div class="collapse" id="teachingMenu">
                     <ul class="nav flex-column small ps-0">
                         <?php
-                        // Fetch teacher's courses
-                        $teacher_id = $_SESSION['user_id'];
-                        $stmt = $conn->prepare("SELECT id, course_name, subject FROM courses WHERE teacher_id = ? AND status='active'");
-                        $stmt->bind_param("i", $teacher_id);
+                        // Fetch student's enrolled courses
+                        $student_id = $_SESSION['user_id'];
+
+                        $stmt = $conn->prepare("
+                            SELECT c.id, c.course_name, c.subject, cs.joined_at 
+                            FROM course_students cs
+                            JOIN courses c ON cs.course_id = c.id
+                            WHERE cs.student_id = ?
+                        ");
+                        $stmt->bind_param("i", $student_id);
                         $stmt->execute();
                         $result = $stmt->get_result();
 
@@ -95,7 +107,8 @@ $profile_image = !empty($user['profile']) ? '../static/uploads/' . htmlspecialch
                                 $bgColor = $colors[$i % count($colors)]; // alternate color
 
                                 echo '<li class="nav-item">
-                                        <a class="nav-link px-3 d-flex align-items-center py-2" href="course.php?id=' . $course['id'] . '" style="padding-left:0;">
+                                        <a class="nav-link px-3 d-flex align-items-center py-2" 
+                                        href="course.php?id=' . $course['id'] . '" style="padding-left:0;">
                                             <span class="rounded-circle text-white d-inline-flex align-items-center justify-content-center me-2" 
                                                 style="width:24px; height:24px; font-size:0.8rem; background-color:' . $bgColor . ';">
                                                 ' . $firstLetter . '
@@ -108,7 +121,7 @@ $profile_image = !empty($user['profile']) ? '../static/uploads/' . htmlspecialch
                             }
                         } else {
                             echo '<li class="nav-item">
-                                    <span class="nav-link text-muted py-2">No courses assigned</span>
+                                    <span class="nav-link text-muted py-2">No courses enrolled</span>
                                 </li>';
                         }
 
@@ -138,6 +151,7 @@ $profile_image = !empty($user['profile']) ? '../static/uploads/' . htmlspecialch
                     });
                     </script>
                 </div>
+
 
             </li>
 

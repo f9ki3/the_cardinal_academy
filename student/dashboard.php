@@ -28,7 +28,7 @@
                 <!-- Header and Search -->
                 <div class="row mb-3">
                     <div class="col-12 col-md-5">
-                        <h4>Teacher's Classes</h4>
+                        <h4>My Classes</h4>
                     </div>
 
                     <div class="col-12 col-md-7 d-flex justify-content-between align-items-center flex-wrap gap-2">
@@ -50,32 +50,33 @@
 
                         <!-- Create Course Button -->
                         <button type="button" class="btn bg-danger text-light rounded rounded-4 px-4" data-bs-toggle="modal" data-bs-target="#createCourseModal">
-                            + Create Class
+                            + Join Class
                         </button>
 
-                        <!-- Modal (Create Course) -->
-                        <?php include 'create_modal.php'; ?>
                     </div>
                 </div>
 
                 <!-- Courses Grid -->
-                <div class="row g-3">
+             <div class="row g-3">
                     <?php
-                    $teacher_id = $_SESSION['user_id'];
+                    $student_id = $_SESSION['user_id'];
                     $search = trim($_GET['search'] ?? '');
 
-                    // Base query
-                    $query = "SELECT * FROM courses WHERE teacher_id = ? AND status='active'";
+                    // Base query with join to course_students
+                    $query = "SELECT c.* 
+                            FROM courses c
+                            INNER JOIN course_students cs ON c.id = cs.course_id
+                            WHERE cs.student_id = ?";
 
                     // Add search condition
                     if ($search) {
-                        $query .= " AND (course_name LIKE ? OR subject LIKE ?)";
+                        $query .= " AND (c.course_name LIKE ? OR c.subject LIKE ?)";
                         $search_param = "%$search%";
                         $stmt = $conn->prepare($query);
-                        $stmt->bind_param("iss", $teacher_id, $search_param, $search_param);
+                        $stmt->bind_param("iss", $student_id, $search_param, $search_param);
                     } else {
                         $stmt = $conn->prepare($query);
-                        $stmt->bind_param("i", $teacher_id);
+                        $stmt->bind_param("i", $student_id);
                     }
 
                     $stmt->execute();
@@ -127,12 +128,13 @@
                         echo '<div class="d-flex flex-column justify-content-center align-items-center py-4">
                                 <img src="../static/images/art7.svg" alt="No records" style="max-width: 300px; opacity: 70%">
                                 <p class="text-center mt-5 text-muted mb-3">No class or course found.</p>
-                              </div>';
+                            </div>';
                     }
 
                     $stmt->close();
                     ?>
                 </div>
+
                 <!-- End Courses Grid -->
 
             </div> <!-- End inner container -->

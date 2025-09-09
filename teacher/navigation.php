@@ -12,7 +12,7 @@ $result = $stmt->get_result();
 $user = $result->fetch_assoc();
 
 $full_name = htmlspecialchars($user['first_name'] . ', ' . $user['last_name']);
-$profile_image = !empty($user['profile']) ? '../static/uploads/' . htmlspecialchars($user['profile']) : '../static/uploads/default_profile.jpg';
+$profile_image = !empty($user['profile']) ? '../static/uploads/' . htmlspecialchars($user['profile']) : '../static/uploads/dummy.jpg';
 ?>
 
 <div id="nav_side" 
@@ -94,13 +94,16 @@ $profile_image = !empty($user['profile']) ? '../static/uploads/' . htmlspecialch
                                 $firstLetter = strtoupper(substr($course['subject'], 0, 1));
                                 $bgColor = $colors[$i % count($colors)]; // alternate color
 
+                                // Limit course_name to 20 chars with "..."
+                                $courseName = htmlspecialchars(mb_strimwidth($course['course_name'], 0, 20, "..."));
+
                                 echo '<li class="nav-item">
                                         <a class="nav-link px-3 d-flex align-items-center py-2" href="course.php?id=' . $course['id'] . '" style="padding-left:0;">
                                             <span class="rounded-circle text-white d-inline-flex align-items-center justify-content-center me-2" 
                                                 style="width:24px; height:24px; font-size:0.8rem; background-color:' . $bgColor . ';">
                                                 ' . $firstLetter . '
                                             </span>
-                                            ' . htmlspecialchars($course['course_name']) . '
+                                            ' . $courseName . '
                                         </a>
                                     </li>';
 
@@ -111,6 +114,7 @@ $profile_image = !empty($user['profile']) ? '../static/uploads/' . htmlspecialch
                                     <span class="nav-link text-muted py-2">No courses assigned</span>
                                 </li>';
                         }
+
 
                         $stmt->close();
                         ?>
