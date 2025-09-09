@@ -28,7 +28,7 @@
                 <!-- Header and Search -->
                 <div class="row mb-3">
                     <div class="col-12 col-md-5">
-                        <h4>Teacher's Classes</h4>
+                        <h4>Acrchived Classes</h4>
                     </div>
 
                     <div class="col-12 col-md-7 d-flex justify-content-between align-items-center flex-wrap gap-2">

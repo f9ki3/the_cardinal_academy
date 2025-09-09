@@ -29,7 +29,7 @@ if (isset($_GET['id'])) {
                 <img src="' . $cover . '" class="w-100" alt="Course Cover" style="height:250px; object-fit:cover;">
                 <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark" style="opacity:0.8;"></div>
                 <div class="position-absolute bottom-0 start-0 w-100 text-white p-4">
-                  <h2 class="mb-1">' . htmlspecialchars($course['course_name']) . '</h2>
+                  <h1 class="mb-1">' . htmlspecialchars($course['course_name']) . '</h1>
                   <h6 class="fw-normal mb-2">' . htmlspecialchars($course['subject']) . ' • Section ' . htmlspecialchars($course['section']) . '</h6>';
 
             // render course description as HTML
@@ -136,12 +136,13 @@ if (isset($_GET['id'])) {
                                 </a>';
                         }
 
-                        echo '
-                                </div>
-                                </div>
-                                <p class="card-text small text-muted mb-1">' . date("M d, Y h:i A", strtotime($post['created_at'])) . '</p>
-                                <div class="card-text">' . $post['description'] . '</div>
-                                <div class="mt-2">';
+                       echo '
+                            </div>
+                            </div>
+                            <p class="card-text small text-muted mb-1">' . date("M d, Y h:i A", strtotime($post['created_at'])) . '</p>
+                            <div class="card-text" style="max-width: 100vh; word-wrap: break-word;">' . $post['description'] . '</div>
+                            <div class="mt-2">';
+
 
                         // show video if exists
                         if (!empty($post['video_link'])) {

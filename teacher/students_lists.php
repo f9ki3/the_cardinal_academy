@@ -22,8 +22,9 @@
                 <p class="mb-0">johndoe@example.com</p>
             </div>
             <div class="col-12 col-md-2 d-flex align-items-center justify-content-md-end mt-2 mt-md-0">
-                <button class="btn btn-danger rounded-4">Join Student</button>
+                <button data-bs-toggle="modal" data-bs-target="#createStudentModal" class="btn btn-danger rounded-4">Join Student</button>
             </div>
+
         </div>
     </div>
 
@@ -72,3 +73,7 @@
         <!-- Add more students here -->
     </div>
 </div>
+
+
+
+<?php include 'join_student_modal.php'?>

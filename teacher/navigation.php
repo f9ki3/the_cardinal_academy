@@ -44,6 +44,12 @@ $profile_image = !empty($user['profile']) ? '../static/uploads/' . htmlspecialch
             </li>
 
             <li class="nav-item">
+                <a href="profile.php" class="nav-link d-flex align-items-center px-3 py-2 rounded-3" href="dashboard.php">
+                    <i class="bi bi-person me-2"></i> <span>Profile</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
                 <a href="calendar.php" class="nav-link d-flex align-items-center px-3 py-2 rounded-3" href="#">
                     <i class="bi bi-calendar3 me-2"></i> <span>Calendar</span>
                 </a>

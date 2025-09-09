@@ -73,23 +73,23 @@
               <!-- Courses Grid -->
               <div class="row g-3">
                 <?php $course_id = isset($_GET['id']) ? intval($_GET['id']) : 0; ?>
-                <div class="tabs d-flex">
-                    <div class="tab active">
-                        <a href="course.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Stream</a>
+                    <div class="tabs d-flex">
+                        <div class="tab active">
+                            <a href="course.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Stream</a>
+                        </div>
+                        <div class="tab">
+                            <a href="attendance.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Attendance</a>
+                        </div>
+                        <div class="tab">
+                            <a href="assignment.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Assignment</a>
+                        </div>
+                        <div class="tab">
+                            <a href="student.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Students</a>
+                        </div>
+                        <div class="tab">
+                            <a href="settings.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Settings</a>
+                        </div>
                     </div>
-                    <div class="tab">
-                        <a href="attendance.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Attendance</a>
-                    </div>
-                    <div class="tab">
-                        <a href="assignment.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Assignment</a>
-                    </div>
-                    <div class="tab">
-                        <a href="student.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Students</a>
-                    </div>
-                    <div class="tab">
-                        <a href="settings.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Settings</a>
-                    </div>
-                </div>
 
 
                 <!-- Tabs Content -->
