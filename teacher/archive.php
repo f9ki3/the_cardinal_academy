@@ -48,11 +48,6 @@
                             </div>
                         </form>
 
-                        <!-- Create Course Button -->
-                        <button type="button" class="btn bg-danger text-light rounded rounded-4 px-4" data-bs-toggle="modal" data-bs-target="#createCourseModal">
-                            + Create Class
-                        </button>
-
                         <!-- Modal (Create Course) -->
                         <?php include 'create_modal.php'; ?>
                     </div>
@@ -65,7 +60,7 @@
                     $search = trim($_GET['search'] ?? '');
 
                     // Base query
-                    $query = "SELECT * FROM courses WHERE teacher_id = ? AND status='active'";
+                    $query = "SELECT * FROM courses WHERE teacher_id = ? AND status='inactive'";
 
                     // Add search condition
                     if ($search) {

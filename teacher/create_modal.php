@@ -27,6 +27,7 @@
                 <label for="courseDay" class="form-label">Day</label>
                 <select class="form-select" id="courseDay" name="day" required>
                   <option selected disabled>Choose a day</option>
+                  <option>Everyday</option>
                   <option>Monday</option>
                   <option>Tuesday</option>
                   <option>Wednesday</option>

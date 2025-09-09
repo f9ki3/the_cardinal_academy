@@ -38,19 +38,19 @@ $profile_image = !empty($user['profile']) ? '../static/uploads/' . htmlspecialch
         <ul class="nav flex-column gap-1">
 
             <li class="nav-item">
-                <a class="nav-link d-flex align-items-center px-3 py-2 rounded-3" href="dashboard.php">
+                <a href="dashboard.php" class="nav-link d-flex align-items-center px-3 py-2 rounded-3" href="dashboard.php">
                     <i class="bi bi-house me-2"></i> <span>Home</span>
                 </a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link d-flex align-items-center px-3 py-2 rounded-3" href="#">
+                <a href="calendar.php" class="nav-link d-flex align-items-center px-3 py-2 rounded-3" href="#">
                     <i class="bi bi-calendar3 me-2"></i> <span>Calendar</span>
                 </a>
             </li>
 
             <li class="nav-item">
-                <a class="nav-link d-flex align-items-center px-3 py-2 rounded-3" href="#">
+                <a href="archive.php" class="nav-link d-flex align-items-center px-3 py-2 rounded-3" href="#">
                     <i class="bi bi-archive me-2"></i> <span>Archived Classes</span>
                 </a>
             </li>
@@ -68,7 +68,7 @@ $profile_image = !empty($user['profile']) ? '../static/uploads/' . htmlspecialch
                         <?php
                         // Fetch teacher's courses
                         $teacher_id = $_SESSION['user_id'];
-                        $stmt = $conn->prepare("SELECT id, course_name, subject FROM courses WHERE teacher_id = ?");
+                        $stmt = $conn->prepare("SELECT id, course_name, subject FROM courses WHERE teacher_id = ? AND status='active'");
                         $stmt->bind_param("i", $teacher_id);
                         $stmt->execute();
                         $result = $stmt->get_result();

@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($stmt->execute()) {
         // Success, redirect or show message
-        header("Location: attendance.php?success=Course created successfully");
+        header("Location: dashboard.php?success=1");
         exit;
     } else {
         echo "<p style='color:red;'>Failed to save course: " . $stmt->error . "</p>";
