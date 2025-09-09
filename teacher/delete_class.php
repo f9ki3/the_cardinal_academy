@@ -33,7 +33,7 @@ if ($stmt->execute()) {
         }
     }
 
-    header("Location: dashboard.php?success=Course deleted successfully");
+    header("Location: dashboard.php?success=5");
     exit;
 } else {
     echo "<p style='color:red;'>Failed to delete course: " . $stmt->error . "</p>";

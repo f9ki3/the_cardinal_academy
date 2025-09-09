@@ -24,7 +24,7 @@ if (isset($_GET['id'])) {
 
             // --- course header / cover ---
             echo '
-            <div class="card border-0 rounded rounded-4 overflow-hidden mb-3">
+            <div class="card border-0 rounded-4 overflow-hidden mb-3">
               <div class="position-relative">
                 <img src="' . $cover . '" class="w-100" alt="Course Cover" style="height:250px; object-fit:cover;">
                 <div class="position-absolute top-0 start-0 w-100 h-100 bg-dark" style="opacity:0.8;"></div>
@@ -32,7 +32,6 @@ if (isset($_GET['id'])) {
                   <h1 class="mb-1">' . htmlspecialchars($course['course_name']) . '</h1>
                   <h6 class="fw-normal mb-2">' . htmlspecialchars($course['subject']) . ' • Section ' . htmlspecialchars($course['section']) . '</h6>';
 
-            // render course description as HTML
             if (!empty($course['description'])) {
                 echo '<div class="small text-light mb-2">' . $course['description'] . '</div>';
             }
@@ -47,14 +46,14 @@ if (isset($_GET['id'])) {
               </div>
 
               <!-- toolbar: search + post -->
-              <div class="rounded rounded-4 p-4">
+              <div class="rounded-4 p-4">
                 <div class="d-flex gap-2 align-items-center">
                   <form class="d-flex flex-grow-1" action="" method="GET">
                     <input type="hidden" name="id" value="' . $course_id . '">
-                    <input class="form-control rounded rounded-4 me-2" type="search" name="q" placeholder="Search posts title or lessons..." value="' . htmlspecialchars($q) . '" aria-label="Search">
-                    <button class="btn d-flex border rounded rounded-4" type="submit"><i class="bi bi-search me-2"></i>Search</button>
+                    <input class="form-control rounded-4 me-2" type="search" name="q" placeholder="Search posts title or lessons..." value="' . htmlspecialchars($q) . '" aria-label="Search">
+                    <button class="btn d-flex border rounded-4" type="submit"><i class="bi bi-search me-2"></i>Search</button>
                   </form>
-                  <a href="create_post.php?course_id=' . $course_id . '" class="btn d-flex flex-row rounded rounded-4 btn-danger" data-bs-toggle="modal" data-bs-target="#createPostModal">
+                  <a href="#" class="btn d-flex flex-row rounded-4 btn-danger" data-bs-toggle="modal" data-bs-target="#createPostModal">
                     <i class="bi bi-plus-circle me-1"></i>Create Post
                   </a>
                 </div>
@@ -62,6 +61,30 @@ if (isset($_GET['id'])) {
 
               <div class="p-3">
             ';
+
+            // --- alerts ---
+            $alert_message = '';
+            $alert_type = '';
+
+            if (isset($_GET['success'])) {
+                switch ($_GET['success']) {
+                    case '2':
+                        $alert_message = 'The post has been removed.';
+                        $alert_type = 'danger';
+                        break;
+                    case '1':
+                        $alert_message = 'The class has been added.';
+                        $alert_type = 'success';
+                        break;
+                }
+            }
+
+            if (!empty($alert_message)) {
+                echo '<div class="alert alert-' . $alert_type . ' alert-dismissible mx-2 fade show rounded-4" role="alert">'
+                    . $alert_message .
+                    '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>';
+            }
 
             // --- fetch posts ---
             if (!empty($q)) {
@@ -94,7 +117,6 @@ if (isset($_GET['id'])) {
                 $post_stmt->execute();
                 $posts = $post_stmt->get_result();
 
-                // helper for file icons
                 function getFileIcon($filename) {
                     $ext = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
                     switch ($ext) {
@@ -113,69 +135,58 @@ if (isset($_GET['id'])) {
                     while ($post = $posts->fetch_assoc()) {
                         echo '
                         <div class="card mb-3 border-0">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start">
-                            <div class="flex-grow-1 pe-3">
+                            <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-start">
-                                <h5 class="card-title fw-bolder mb-1">' . htmlspecialchars($post['title']) . '</h5>
-                                <div class="d-flex gap-2">
-                                    <!-- View -->
-                                    <a href="view_post.php?id=' . $post['id'] . '" class="btn btn-sm rounded-circle border-0" title="View">
-                                        <i class="bi bi-eye"></i>
-                                    </a>';
-
+                                    <div class="flex-grow-1 pe-3">
+                                        <div class="d-flex justify-content-between align-items-start">
+                                            <h5 class="card-title fw-bolder mb-1">' . htmlspecialchars($post['title']) . '</h5>
+                                            <div class="d-flex gap-2">
+                                                <a href="view_post.php?id=' . $post['id'] . '" class="btn btn-sm rounded-circle border-0" title="View">
+                                                    <i class="bi bi-eye"></i>
+                                                </a>';
                         if (isset($_SESSION['user_id']) && $_SESSION['user_id'] == $post['teacher_id']) {
                             echo '
-                                <!-- Edit -->
-                                <a href="edit_post.php?id=' . $post['id'] . '" class="btn btn-sm rounded-circle border-0" title="Edit">
-                                    <i class="bi bi-pencil"></i>
-                                </a>
-                                <!-- Delete -->
-                                <a href="delete_post.php?id=' . $post['id'] . '&course_id=' . $course_id . '" class="btn btn-sm rounded-circle border-0" onclick="return confirm(\'Delete this post?\')" title="Delete">
-                                    <i class="bi bi-trash"></i>
-                                </a>';
+                                                <a href="edit_post.php?id=' . $post['id'] . '" class="btn btn-sm rounded-circle border-0" title="Edit">
+                                                    <i class="bi bi-pencil"></i>
+                                                </a>
+                                                <a href="delete_post.php?id=' . $post['id'] . '&course_id=' . $course_id . '" class="btn btn-sm rounded-circle border-0" onclick="return confirm(\'Delete this post?\')" title="Delete">
+                                                    <i class="bi bi-trash"></i>
+                                                </a>';
                         }
 
-                       echo '
-                            </div>
-                            </div>
-                            <p class="card-text small text-muted mb-1">' . date("M d, Y h:i A", strtotime($post['created_at'])) . '</p>
-                            <div class="card-text" style="max-width: 100vh; word-wrap: break-word;">' . $post['description'] . '</div>
-                            <div class="mt-2">';
-
-
-                        // show video if exists
+                        echo '
+                                            </div>
+                                        </div>
+                                        <p class="card-text small text-muted mb-1">' . date("M d, Y h:i A", strtotime($post['created_at'])) . '</p>
+                                        <div class="card-text" style="max-width: 100vh; word-wrap: break-word;">' . $post['description'] . '</div>
+                                        <div class="mt-2">';
+                        // Video
                         if (!empty($post['video_link'])) {
                             $video_url = $post['video_link'];
                             $embed_url = $video_url;
-
-                            // YouTube normalization
                             if (preg_match('/youtu\.be\/([^\?&]+)/', $video_url, $matches)) {
-                                $video_id = $matches[1];
-                                $embed_url = "https://www.youtube.com/embed/" . $video_id;
+                                $embed_url = "https://www.youtube.com/embed/" . $matches[1];
                             } elseif (preg_match('/v=([^\?&]+)/', $video_url, $matches)) {
-                                $video_id = $matches[1];
-                                $embed_url = "https://www.youtube.com/embed/" . $video_id;
+                                $embed_url = "https://www.youtube.com/embed/" . $matches[1];
                             }
-
-                            echo '
-                            <div class="ratio ratio-16x9 my-2">
-                                <iframe src="' . htmlspecialchars($embed_url) . '" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                            </div>';
+                            echo '<div class="ratio ratio-16x9 my-2">
+                                    <iframe src="' . htmlspecialchars($embed_url) . '" title="YouTube video player" frameborder="0" allowfullscreen></iframe>
+                                  </div>';
                         }
 
-                        // show attachments
+                        // Attachments
                         if (!empty($post['attachment'])) {
                             $attachments = json_decode($post['attachment'], true);
-                            if (is_array($attachments)) {
+                            if (is_array($attachments) && count($attachments) > 0) {
+                                echo '<div class="mb-2"><p class="fw-bold mb-1">Attachments:</p></div>';
                                 echo '<div class="d-flex flex-wrap gap-2">';
                                 foreach ($attachments as $file) {
                                     $file = trim($file);
                                     if ($file === '') continue;
 
                                     $icon = getFileIcon($file);
-                                    echo '<div class="p-2 border rounded bg-light d-flex align-items-center" style="min-width: 200px; max-width: 250px;">
-                                            <i class="' . $icon . ' me-2" style="font-size: 1.5rem;"></i>
+                                    echo '<div class="p-2 border rounded bg-light d-flex align-items-center" style="min-width:200px; max-width:250px;">
+                                            <i class="' . $icon . ' me-2" style="font-size:1.5rem;"></i>
                                             <a href="../static/uploads/' . htmlspecialchars($file) . '" download class="text-muted text-decoration-none text-truncate" style="max-width:180px;">
                                                 ' . htmlspecialchars($file) . '
                                             </a>
@@ -185,12 +196,8 @@ if (isset($_GET['id'])) {
                             }
                         }
 
-                        echo '
-                                </div>
-                            </div>
-                            </div>
-                        </div>
-                        </div> <hr class="text-muted mx-3">';
+
+                        echo '</div></div></div></div><hr class="text-muted mx-3">';
                     }
                 } else {
                     echo '<div class="d-flex flex-column justify-content-center align-items-center py-4">';
@@ -199,7 +206,7 @@ if (isset($_GET['id'])) {
                     } else {
                         echo '<p class="text-center mt-5 text-muted mb-3">No posts yet. Be the first to create one!</p>';
                     }
-                    echo '<img src="../static/images/art7.svg" alt="No records" style="max-width: 300px; opacity: 70%"></div>';
+                    echo '<img src="../static/images/art7.svg" alt="No records" style="max-width:300px; opacity:70%"></div>';
                 }
 
                 $post_stmt->close();
@@ -218,8 +225,6 @@ if (isset($_GET['id'])) {
 ?>
 </div>
 
-
-
 <!-- Modal (Create Post) -->
 <div class="modal fade" id="createPostModal" tabindex="-1" aria-labelledby="createPostModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-scrollable modal-lg">
@@ -231,7 +236,7 @@ if (isset($_GET['id'])) {
       </div>
 
       <div class="modal-body">
-        <form action="save_post.php" method="POST" enctype="multipart/form-data">
+        <form id="createPostForm" action="save_post.php" method="POST" enctype="multipart/form-data">
           <div class="row g-3">
             
             <!-- Left Column -->
@@ -242,51 +247,11 @@ if (isset($_GET['id'])) {
               </div>
 
               <div class="mb-3">
-                <label for="description" class="form-label">Content Description</label>
-                <textarea class="form-control" id="description" name="description" rows="5" placeholder="Brief post description" ></textarea>
+                <label for="description" class="form-label">Content Description (optional)</label>
+                <textarea class="form-control" id="description" name="description" rows="5" placeholder="Brief post description"></textarea>
               </div>
 
-                <!-- CKEditor CDN -->
-                <script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
-                <script>
-                ClassicEditor
-                    .create(document.querySelector('#description'), {
-                        toolbar: [
-                            'heading', 'bold', 'italic', 'underline', 
-                            'bulletedList', 'numberedList',
-                            'undo', 'redo'
-                        ],
-                        heading: {
-                            options: [
-                                { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
-                                { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
-                                { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
-                                { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' }
-                            ]
-                        }
-                    })
-                    .then(editor => {
-                        // Save editor instance for validation
-                        window.descriptionEditor = editor;
-                    })
-                    .catch(error => {
-                        console.error(error);
-                    });
-
-                // Form validation
-                const form = document.querySelector('form');
-                form.addEventListener('submit', function(e) {
-                    const editorData = window.descriptionEditor ? window.descriptionEditor.getData() : '';
-                    if (!editorData.trim()) {
-                        e.preventDefault(); // stop form submission
-                        alert("Description is required.");
-                    }
-                });
-                </script>
-
-
-
-
+              <!-- Video Link -->
               <div class="mb-3">
                 <label for="videoLink" class="form-label">Video Link (optional)</label>
                 <input type="url" class="form-control" id="videoLink" name="video_link" placeholder="Paste YouTube or video link">
@@ -295,13 +260,8 @@ if (isset($_GET['id'])) {
 
             <!-- Right Column -->
             <div class="col-12 col-md-6">
-              <div class="mb-3">
-                <input type="hidden" class="form-control" id="courseId" name="course_id" placeholder="Enter course ID" value="<?php echo $course_id = intval($_GET['id']);?>" required>
-              </div>
-
-              <div class="mb-3">
-                <input type="hidden" class="form-control" id="teacherId" name="teacher_id" placeholder="Enter teacher ID" value="<?php echo $_SESSION['user_id'];?>" required>
-              </div>
+              <input type="hidden" name="course_id" value="<?php echo intval($_GET['id']); ?>">
+              <input type="hidden" name="teacher_id" value="<?php echo $_SESSION['user_id']; ?>">
 
               <div class="mb-3">
                 <label for="attachments" class="form-label">Attachments</label>
@@ -309,25 +269,15 @@ if (isset($_GET['id'])) {
                 <small class="text-muted">You can upload multiple files (PDF, images, docs, etc.)</small>
 
                 <!-- Preview list with scroll -->
-                <div style="max-height: 220px; height: 220px; overflow-y: auto;" 
-                    class="border rounded mt-2 p-2">
-
-                <ul id="fileList" class="list-group list-group-flush h-100">
-                    <!-- Empty state -->
-                    <li id="emptyState" 
-                        class="list-group-item text-muted d-flex flex-column justify-content-center align-items-center h-100">
-                    <i class="bi bi-folder2-open mb-2" style="font-size: 3rem;"></i>
-                    No attachments selected
+                <div style="max-height: 220px; overflow-y: auto;" class="border rounded mt-2 p-2">
+                  <ul id="fileList" class="list-group list-group-flush h-100">
+                    <li id="emptyState" class="list-group-item text-muted d-flex flex-column justify-content-center align-items-center h-100">
+                      <i class="bi bi-folder2-open mb-2" style="font-size: 3rem;"></i>
+                      No attachments selected
                     </li>
-                </ul>
-
+                  </ul>
                 </div>
-
-                </div>
-
-               
-
-
+              </div>
             </div>
           </div>
 
@@ -342,32 +292,51 @@ if (isset($_GET['id'])) {
           </div>
         </form>
       </div>
-
     </div>
   </div>
 </div>
 
- <script>
-document.getElementById("attachments").addEventListener("change", function () {
-const fileList = document.getElementById("fileList");
-const emptyState = document.getElementById("emptyState");
-fileList.innerHTML = ""; // clear old list
+<!-- CKEditor -->
+<script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  // Initialize CKEditor
+  ClassicEditor
+    .create(document.querySelector('#description'), {
+      toolbar: ['heading','bold','italic','underline','bulletedList','numberedList','undo','redo'],
+      heading: {
+        options: [
+          { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
+          { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
+          { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
+          { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' }
+        ]
+      }
+    })
+    .then(editor => { window.descriptionEditor = editor; })
+    .catch(error => { console.error(error); });
 
-if (this.files.length === 0) {
-    fileList.innerHTML = `
-    <li id="emptyState" class="list-group-item text-muted text-center">
-        <i class="bi bi-folder2-open me-2"></i>No attachments selected
-    </li>
-    `;
-    return;
-}
+  // File attachment preview
+  const attachments = document.getElementById("attachments");
+  const fileList = document.getElementById("fileList");
+  const emptyState = document.getElementById("emptyState");
 
-[...this.files].forEach(file => {
-    const li = document.createElement("li");
-    li.className = "list-group-item d-flex align-items-center";
-    li.innerHTML = `<i class="bi bi-file-earmark me-2"></i> ${file.name}`;
-    fileList.appendChild(li);
-});
+  attachments.addEventListener("change", function () {
+    fileList.innerHTML = "";
+    if (this.files.length === 0) {
+      fileList.innerHTML = `<li id="emptyState" class="list-group-item text-muted text-center">
+          <i class="bi bi-folder2-open me-2"></i>No attachments selected
+        </li>`;
+      return;
+    }
+    [...this.files].forEach(file => {
+      const li = document.createElement("li");
+      li.className = "list-group-item d-flex align-items-center";
+      li.innerHTML = `<i class="bi bi-file-earmark me-2"></i> ${file.name}`;
+      fileList.appendChild(li);
+    });
+  });
 });
 </script>
+
 
