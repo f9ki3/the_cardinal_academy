@@ -146,9 +146,6 @@ if (isset($_GET['id'])) {
                                                 </a>';
                         if (isset($_SESSION['user_id']) && $_SESSION['user_id'] == $post['teacher_id']) {
                             echo '
-                                                <a href="edit_post.php?id=' . $post['id'] . '" class="btn btn-sm rounded-circle border-0" title="Edit">
-                                                    <i class="bi bi-pencil"></i>
-                                                </a>
                                                 <a href="delete_post.php?id=' . $post['id'] . '&course_id=' . $course_id . '" class="btn btn-sm rounded-circle border-0" onclick="return confirm(\'Delete this post?\')" title="Delete">
                                                     <i class="bi bi-trash"></i>
                                                 </a>';
