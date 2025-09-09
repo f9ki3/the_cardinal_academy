@@ -141,7 +141,7 @@ if (isset($_GET['id'])) {
                                         <div class="d-flex justify-content-between align-items-start">
                                             <h5 class="card-title fw-bolder mb-1">' . htmlspecialchars($post['title']) . '</h5>
                                             <div class="d-flex gap-2">
-                                                <a href="view_post.php?id=' . $post['id'] . '" class="btn btn-sm rounded-circle border-0" title="View">
+                                                <a href="view_post.php?post_id=' . $post['id'] . '&id=' . $course_id . '" class="btn btn-sm rounded-circle border-0" title="View">
                                                     <i class="bi bi-eye"></i>
                                                 </a>';
                         if (isset($_SESSION['user_id']) && $_SESSION['user_id'] == $post['teacher_id']) {
