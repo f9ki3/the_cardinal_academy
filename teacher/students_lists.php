@@ -62,14 +62,16 @@
             // Alert type based on status
             if ($status === '0') {
                 $alert_class = 'alert-success'; // all added
+                $message_1 = 'Account is joined the class';
             } elseif ($status === '1') {
                 $alert_class = 'alert-warning'; // already exists
+                $message_1 = 'Account is already joined the class';
             } else {
                 $alert_class = 'alert-danger'; // error
             }
 
             echo "<div class='alert {$alert_class} mt-3 alert-dismissible fade show' role='alert'>";
-            echo $message;
+            echo $message_1;
             echo "<button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>";
             echo "</div>";
         }
@@ -136,8 +138,12 @@
                 </div>
             <?php endwhile; ?>
         <?php else: ?>
-            <div class="list-group-item text-muted fs-5">No students enrolled in this course.</div>
+            <div class="list-group-item d-flex align-items-center text-secondary fs-5 py-4">
+                <i class="bi bi-person-x me-3 fs-3 text-muted"></i>
+                <span>No students enrolled in this course.</span>
+            </div>
         <?php endif; ?>
+
     </div>
 
     <?php
@@ -147,20 +153,27 @@
     ?>
 
     <script>
-    function deleteStudent(studentId) {
-        if(confirm('Are you sure you want to remove this student?')) {
-            fetch('delete_student.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ course_id: <?= $course_id ?>, student_id: studentId })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if(data.success) location.reload();
-                else alert('Failed to remove student.');
-            });
+        function deleteStudent(studentId) {
+            if(confirm('Are you sure you want to remove this student?')) {
+                fetch('delete_student.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ course_id: <?= $course_id ?>, student_id: studentId })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.success) {
+                        location.reload();
+                    } else {
+                        alert(data.message || 'Failed to remove student.');
+                    }
+                })
+                .catch(error => {
+                    alert('An error occurred: ' + error.message);
+                });
+            }
         }
-    }
     </script>
+
 </div>
 <?php include 'join_student_modal.php'?>
