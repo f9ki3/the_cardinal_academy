@@ -57,8 +57,11 @@ try {
 
     $conn->commit();
 
-    $message = "Successfully added {$students_added} students. Skipped {$students_skipped} already enrolled.";
-    header("Location: student.php?id={$course_id}&status=success&message=" . urlencode($message));
+    // Determine status
+    $status = ($students_skipped > 0) ? 1 : 0; // 1 if any student already exists, 0 if all added
+    $message = "Added: {$students_added}, Already exist: {$students_skipped}";
+
+    header("Location: student.php?id={$course_id}&status={$status}&message=" . urlencode($message));
 
 } catch (Exception $e) {
     $conn->rollback();

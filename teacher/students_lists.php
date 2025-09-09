@@ -54,22 +54,28 @@
                 </div>
             </div>
         </div>
-            <?php
-            // PHP code at the top of course_details.php
-            if (isset($_GET['status']) && isset($_GET['message'])) {
-                $status = htmlspecialchars($_GET['status']);
-                $message = htmlspecialchars($_GET['message']);
+        <?php
+        if (isset($_GET['status']) && isset($_GET['message'])) {
+            $status = htmlspecialchars($_GET['status']);
+            $message = htmlspecialchars($_GET['message']);
 
-                // Set alert type based on status
-                $alert_class = ($status === 'success') ? 'alert-success' : 'alert-danger';
-                
-                // Display the alert
-                echo "<div class='alert {$alert_class} mt-5 alert-dismissible fade show' role='alert'>";
-                echo "  {$message}";
-                echo "  <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>";
-                echo "</div>";
+            // Alert type based on status
+            if ($status === '0') {
+                $alert_class = 'alert-success'; // all added
+            } elseif ($status === '1') {
+                $alert_class = 'alert-warning'; // already exists
+            } else {
+                $alert_class = 'alert-danger'; // error
             }
-            ?>
+
+            echo "<div class='alert {$alert_class} mt-3 alert-dismissible fade show' role='alert'>";
+            echo $message;
+            echo "<button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>";
+            echo "</div>";
+        }
+        ?>
+
+
     <h5 class="fw-bold mt-5 mb-3">Students</h5>
     <?php
         $course_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
