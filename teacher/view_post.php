@@ -94,7 +94,7 @@
 
                 <!-- Tabs Content -->
                 <div class="p-0" >
-                <?php include 'view_post_details.php'?>
+                  <?php include 'view_post_details.php'?>
                 
                 </div>
 

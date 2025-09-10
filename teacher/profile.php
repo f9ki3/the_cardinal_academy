@@ -36,7 +36,42 @@ include '../db_connection.php';
 
 
                             </div> 
+                            <?php
+                                $alert_message = '';
+                                $alert_type = '';
 
+                                if (isset($_GET['success'])) {
+                                    switch ($_GET['success']) {
+                                        case 'archived':
+                                            $alert_message = 'The class has been archived.';
+                                            $alert_type = 'danger';
+                                            break;
+                                        case 'unarchived':
+                                            $alert_message = 'The class has been successfully restored.';
+                                            $alert_type = 'success';
+                                            break;
+                                        case '2':
+                                            $alert_message = 'Change password successfully.';
+                                            $alert_type = 'success';
+                                            break;
+                                        case 'updated':
+                                            $alert_message = 'The information has been updated.';
+                                            $alert_type = 'success';
+                                            break;
+                                        case '5':
+                                            $alert_message = 'The class has been deleted.';
+                                            $alert_type = 'danger';
+                                            break;
+                                    }
+                                }
+                            ?>
+                            
+                            <?php if (!empty($alert_message)): ?>
+                                <div class="alert alert-<?= $alert_type; ?> rounded rounded-4 alert-dismissible fade show" role="alert">
+                                    <?= $alert_message; ?>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>
+                            <?php endif; ?>
                             <?php include 'profile_info.php'?>
                         
                             </div>

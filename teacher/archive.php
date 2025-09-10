@@ -29,7 +29,7 @@ include '../db_connection.php';
                         <div class="container my-4">
                             <div class="row mb-3">
                                 <div class="col-12 col-md-5">
-                                    <h4>Teacher's Classes</h4>
+                                    <h4>Archived Classes</h4>
                                 </div>
 
                                 <div class="col-12 col-md-7 d-flex justify-content-between align-items-center flex-wrap gap-2">
@@ -47,10 +47,6 @@ include '../db_connection.php';
                                             </button>
                                         </div>
                                     </form>
-
-                                    <button type="button" class="btn bg-danger text-light rounded rounded-4 px-4" data-bs-toggle="modal" data-bs-target="#createCourseModal">
-                                        + Create Class
-                                    </button>
 
                                     <?php include 'create_modal.php'; ?>
                                 </div>

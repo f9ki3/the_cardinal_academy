@@ -54,7 +54,7 @@ if (isset($_GET['id'])) {
                     <button class="btn d-flex border rounded-4" type="submit"><i class="bi bi-search me-2"></i>Search</button>
                   </form>
                   <a href="create_post.php?id=' . $course_id . '" class="btn d-flex flex-row rounded-4 btn-danger" >
-                    <i class="bi bi-plus-circle me-1"></i>Create Post
+                    <i class="bi bi-plus-circle me-1"></i>Create
                   </a>
                 </div>
               </div>
@@ -80,7 +80,7 @@ if (isset($_GET['id'])) {
             }
 
             if (!empty($alert_message)) {
-                echo '<div class="alert alert-' . $alert_type . ' alert-dismissible mx-2 fade show rounded-4" role="alert">'
+                echo '<div class="alert alert-' . $alert_type . ' alert-dismissible mx-3 fade show rounded-0" role="alert">'
                     . $alert_message .
                     '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>';
