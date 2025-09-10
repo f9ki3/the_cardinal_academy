@@ -53,7 +53,7 @@ if (isset($_GET['id'])) {
                     <input class="form-control rounded-4 me-2" type="search" name="q" placeholder="Search posts title or lessons..." value="' . htmlspecialchars($q) . '" aria-label="Search">
                     <button class="btn d-flex border rounded-4" type="submit"><i class="bi bi-search me-2"></i>Search</button>
                   </form>
-                  <a href="#" class="btn d-flex flex-row rounded-4 btn-danger" data-bs-toggle="modal" data-bs-target="#createPostModal">
+                  <a href="create_post.php?id=' . $course_id . '" class="btn d-flex flex-row rounded-4 btn-danger" >
                     <i class="bi bi-plus-circle me-1"></i>Create Post
                   </a>
                 </div>
@@ -137,7 +137,7 @@ if (isset($_GET['id'])) {
                         <div class="card mb-3 border-0">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-start">
-                                    <div class="flex-grow-1 pe-3">
+                                    <div class="flex-grow-1 border p-4">
                                         <div class="d-flex justify-content-between align-items-start">
                                             <h5 class="card-title fw-bolder mb-1">' . htmlspecialchars($post['title']) . '</h5>
                                             <div class="d-flex gap-2">
@@ -155,6 +155,7 @@ if (isset($_GET['id'])) {
                                             </div>
                                         </div>
                                         <p class="card-text small text-muted mb-1">' . date("M d, Y h:i A", strtotime($post['created_at'])) . '</p>
+                                        <hr class="text-muted">
                                         <div class="card-text" style="max-width: 100vh; word-wrap: break-word;">' . $post['description'] . '</div>
                                         <div class="mt-2">';
                         // Video
@@ -194,7 +195,7 @@ if (isset($_GET['id'])) {
                         }
 
 
-                        echo '</div></div></div></div><hr class="text-muted mx-3">';
+                        echo '</div></div></div></div>';
                     }
                 } else {
                     echo '<div class="d-flex flex-column justify-content-center align-items-center py-4">';
@@ -221,119 +222,3 @@ if (isset($_GET['id'])) {
 }
 ?>
 </div>
-
-<!-- Modal (Create Post) -->
-<div class="modal fade" id="createPostModal" tabindex="-1" aria-labelledby="createPostModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable modal-lg">
-    <div class="modal-content">
-
-      <div class="modal-header">
-        <h5 class="modal-title fw-bold" id="createPostModalLabel">Create New Post</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-
-      <div class="modal-body">
-        <form id="createPostForm" action="save_post.php" method="POST" enctype="multipart/form-data">
-          <div class="row g-3">
-            
-            <!-- Left Column -->
-            <div class="col-12 col-md-6">
-              <div class="mb-3">
-                <label for="postTitle" class="form-label">Post Title</label>
-                <input type="text" class="form-control" id="postTitle" name="title" placeholder="Enter post title" required>
-              </div>
-
-              <div class="mb-3">
-                <label for="description" class="form-label">Content Description (optional)</label>
-                <textarea class="form-control" id="description" name="description" rows="5" placeholder="Brief post description"></textarea>
-              </div>
-
-              <!-- Video Link -->
-              <div class="mb-3">
-                <label for="videoLink" class="form-label">Video Link (optional)</label>
-                <input type="url" class="form-control" id="videoLink" name="video_link" placeholder="Paste YouTube or video link">
-              </div>
-            </div>
-
-            <!-- Right Column -->
-            <div class="col-12 col-md-6">
-              <input type="hidden" name="course_id" value="<?php echo intval($_GET['id']); ?>">
-              <input type="hidden" name="teacher_id" value="<?php echo $_SESSION['user_id']; ?>">
-
-              <div class="mb-3">
-                <label for="attachments" class="form-label">Attachments</label>
-                <input class="form-control" type="file" id="attachments" name="attachments[]" multiple>
-                <small class="text-muted">You can upload multiple files (PDF, images, docs, etc.)</small>
-
-                <!-- Preview list with scroll -->
-                <div style="max-height: 220px; overflow-y: auto;" class="border rounded mt-2 p-2">
-                  <ul id="fileList" class="list-group list-group-flush h-100">
-                    <li id="emptyState" class="list-group-item text-muted d-flex flex-column justify-content-center align-items-center h-100">
-                      <i class="bi bi-folder2-open mb-2" style="font-size: 3rem;"></i>
-                      No attachments selected
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Action Buttons -->
-          <div class="mt-3">
-            <button type="submit" class="btn btn-danger rounded-4 px-4">
-              <i class="bi bi-check-circle me-2"></i> Save Post
-            </button>
-            <button type="button" class="btn btn-outline-danger rounded-4 px-4" data-bs-dismiss="modal">
-              Cancel
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- CKEditor -->
-<script src="https://cdn.ckeditor.com/ckeditor5/41.4.2/classic/ckeditor.js"></script>
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-  // Initialize CKEditor
-  ClassicEditor
-    .create(document.querySelector('#description'), {
-      toolbar: ['heading','bold','italic','underline','bulletedList','numberedList','undo','redo'],
-      heading: {
-        options: [
-          { model: 'paragraph', title: 'Paragraph', class: 'ck-heading_paragraph' },
-          { model: 'heading1', view: 'h1', title: 'Heading 1', class: 'ck-heading_heading1' },
-          { model: 'heading2', view: 'h2', title: 'Heading 2', class: 'ck-heading_heading2' },
-          { model: 'heading3', view: 'h3', title: 'Heading 3', class: 'ck-heading_heading3' }
-        ]
-      }
-    })
-    .then(editor => { window.descriptionEditor = editor; })
-    .catch(error => { console.error(error); });
-
-  // File attachment preview
-  const attachments = document.getElementById("attachments");
-  const fileList = document.getElementById("fileList");
-  const emptyState = document.getElementById("emptyState");
-
-  attachments.addEventListener("change", function () {
-    fileList.innerHTML = "";
-    if (this.files.length === 0) {
-      fileList.innerHTML = `<li id="emptyState" class="list-group-item text-muted text-center">
-          <i class="bi bi-folder2-open me-2"></i>No attachments selected
-        </li>`;
-      return;
-    }
-    [...this.files].forEach(file => {
-      const li = document.createElement("li");
-      li.className = "list-group-item d-flex align-items-center";
-      li.innerHTML = `<i class="bi bi-file-earmark me-2"></i> ${file.name}`;
-      fileList.appendChild(li);
-    });
-  });
-});
-</script>
-
-

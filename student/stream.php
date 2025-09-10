@@ -125,7 +125,7 @@ if (isset($_GET['id'])) {
                         <div class="card mb-3 border-0">
                             <div class="card-body">
                                 <div class="d-flex justify-content-between align-items-start">
-                                    <div class="flex-grow-1 pe-3">
+                                    <div class="flex-grow-1 p-4 border">
                                         <div class="d-flex justify-content-between align-items-start">
                                             <h5 class="card-title fw-bolder mb-1">' . htmlspecialchars($post['title']) . '</h5>
                                             <div class="d-flex gap-2">
