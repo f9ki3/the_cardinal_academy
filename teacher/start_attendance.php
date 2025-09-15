@@ -154,23 +154,17 @@
 
                   <?php if (isset($_GET['message'])): ?>
                         <?php
-                            $message = htmlspecialchars($_GET['message']);
-                            $alertType = 'info';
-
-                            // You can customize based on message content
-                            if (stripos($message, 'error') !== false || stripos($message, 'not found') !== false) {
-                                $alertType = 'danger';
-                            } elseif (stripos($message, 'recorded') !== false) {
-                                $alertType = 'success';
-                            } elseif (stripos($message, 'already') !== false) {
-                                $alertType = 'warning';
-                            }
+                            $message = htmlspecialchars($_GET['message'], ENT_QUOTES, 'UTF-8');
+                            // Use alertType from URL or fallback to 'info'
+                            $alertType = isset($_GET['alertType']) ? htmlspecialchars($_GET['alertType'], ENT_QUOTES, 'UTF-8') : 'info';
                         ?>
                         <div class="alert alert-<?= $alertType ?> alert-dismissible fade show mt-3" role="alert">
                             <?= $message ?>
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>
                     <?php endif; ?>
+
+
 
 
                   <div class="table-responsive">
@@ -204,16 +198,17 @@
                                 <?php if ($result->num_rows > 0): ?>
                                     <?php while ($row = $result->fetch_assoc()): ?>
                                         <tr>
-                                            <td><?= htmlspecialchars($row['first_name']) ?></td>
-                                            <td><?= htmlspecialchars($row['last_name']) ?></td>
-                                            <td><?= htmlspecialchars($row['rfid']) ?></td>
-                                            <td>
+                                            <td class="text-muted"><?= htmlspecialchars($row['first_name']) ?></td>
+                                            <td class="text-muted"><?= htmlspecialchars($row['last_name']) ?></td>
+                                            <td class="text-muted"><?= htmlspecialchars($row['rfid']) ?></td>
+                                            <td class="text-muted">
                                                 <?php
                                                     $time_in_12hr = date('h:i A', strtotime($row['time_in']));
                                                     echo $time_in_12hr;
                                                 ?>
                                             </td>
                                         </tr>
+
                                     <?php endwhile; ?>
                                 <?php else: ?>
                                     <tr>
