@@ -23,7 +23,7 @@ $profile_image = isset($user_info['profile_image']) ? $user_info['profile_image'
 
             <!-- Main Navigation -->
             <li class="nav-item">
-                <h6 class="fw-bold text-uppercase text-secondary ps-2 mb-2 mt-2">Main</h6>
+                <h6 class="fw-bold text-uppercase text-secondary ps-2 mb-2 mt-2">ANALYTICS AND INSIGHTS</h6>
             </li>
             <li class="nav-item">
                 <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="dashboard.php">
