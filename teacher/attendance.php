@@ -142,7 +142,7 @@
                         <tbody>
                           <?php if ($result->num_rows > 0): ?>
                             <?php while ($row = $result->fetch_assoc()): ?>
-                              <tr class="text-muted" style="cursor:pointer" onclick="window.location.href='view_attendance.php?course_id=<?= $course_id ?>&date=<?= $row['date'] ?>'">
+                              <tr class="text-muted" style="cursor:pointer" onclick="window.location.href='view_attendance.php?id=<?= $course_id ?>&date=<?= $row['date'] ?>'">
                                 <td class="text-muted"><?= htmlspecialchars($row['date']) ?></td>
                                 <td class="text-muted"><?= intval($row['count']) ?></td>
                                 <td>
