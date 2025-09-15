@@ -86,6 +86,9 @@
                     <div class="tab active">
                         <a href="student.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Students</a>
                     </div>
+                    <div class="tab ">
+                        <a href="student.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Grade Sheet</a>
+                    </div>
                     <div class="tab">
                         <a href="settings.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Settings</a>
                     </div>

@@ -87,90 +87,109 @@
                         <a href="student.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Students</a>
                     </div>
                     <div class="tab">
+                        <a href="student.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Grade Sheet</a>
+                    </div>
+                    <div class="tab">
                         <a href="settings.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Settings</a>
                     </div>
                 </div>
 
 
                 <!-- Tabs Content -->
-                  <div class="p-0">
+                <?php
+                  $course_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
-                    <div class="mb-4 d-flex justify-content-between align-items-center">
-                      <h5>Attendance for Course ID: <?= $course_id ?></h5>
-                      <button id="startAttendanceBtn" class="btn btn-danger rounded-4">Start Attendance</button>
+                  // Fetch distinct attendance dates for the course
+                  $stmt = $conn->prepare("SELECT date, COUNT(*) as count FROM attendance WHERE course_id = ? GROUP BY date ORDER BY date DESC");
+                  $stmt->bind_param("i", $course_id);
+                  $stmt->execute();
+                  $result = $stmt->get_result();
+
+                  // $excluded_date = '2025-09-15'; // example date to exclude
+                  // $stmt = $conn->prepare("SELECT date, COUNT(*) as count FROM attendance WHERE course_id = ? AND date <> ? GROUP BY date ORDER BY date DESC");
+                  // $stmt->bind_param("is", $course_id, $excluded_date);
+                  // $stmt->execute();
+                  // $result = $stmt->get_result();
+
+                  ?>
+
+                  <div class="col-12 col-md-12 p-4 bg-white rounded-4">
+                    <div class="row align-items-center mb-4">
+                      <div class="col-12 col-md-10">
+                        <div class="input-group w-50">
+                          <input type="text" id="searchDateInput" class="form-control" placeholder="Search date here...">
+                          <button class="btn border" type="button" onclick="filterTable()">
+                            <i class="bi bi-search"></i>
+                          </button>
+                        </div>
+                      </div>
+                      <div class="col-12 col-md-2 mt-2 mt-md-0">
+                        <a href="start_attendance.php?id=<?= $course_id ?>" class="btn btn-danger rounded rounded-4 w-100">
+                          <i class="bi bi-play-circle me-2"></i> Start Attendance
+                        </a>
+                      </div>
                     </div>
 
-                    <div id="attendanceSection" style="display:none;">
-                      <table class="table table-bordered table-striped">
-                        <thead class="table-dark">
+                    <div class="table-responsive">
+                      <table class="table table-hover" id="attendanceTable">
+                        <thead>
                           <tr>
-                            <th>#</th>
-                            <th>Student Name</th>
-                            <th>Student ID</th>
-                            <th>Status</th>
+                            <th scope="col" class="text-muted">Date</th>
+                            <th scope="col" class="text-muted">Present</th>
+                            <th scope="col" class="text-muted" style="width: 120px;">Action</th>
                           </tr>
                         </thead>
                         <tbody>
-                          <?php
-                          // Hardcoded attendance data (could be fetched from DB in real app)
-                          $students = [
-                            ['id' => 'S001', 'name' => 'Alice Johnson', 'status' => 'Absent'],
-                            ['id' => 'S002', 'name' => 'Bob Smith', 'status' => 'Absent'],
-                            ['id' => 'S003', 'name' => 'Charlie Lee', 'status' => 'Absent'],
-                            ['id' => 'S004', 'name' => 'Dana White', 'status' => 'Absent'],
-                            ['id' => 'S005', 'name' => 'Eve Martin', 'status' => 'Absent'],
-                          ];
-
-                          foreach ($students as $index => $student) :
-                          ?>
+                          <?php if ($result->num_rows > 0): ?>
+                            <?php while ($row = $result->fetch_assoc()): ?>
+                              <tr style="cursor:pointer" onclick="window.location.href='view_attendance.php?course_id=<?= $course_id ?>&date=<?= $row['date'] ?>'">
+                                <td><?= htmlspecialchars($row['date']) ?></td>
+                                <td><?= intval($row['count']) ?></td>
+                                <td>
+                                  <button class="btn rounded rounded-circle btn-border btn-sm" onclick="event.stopPropagation(); deleteAttendance('<?= $row['date'] ?>');" title="Delete">
+                                    <i class="bi bi-trash"></i>
+                                  </button>
+                                </td>
+                              </tr>
+                            <?php endwhile; ?>
+                          <?php else: ?>
                             <tr>
-                              <td><?= $index + 1 ?></td>
-                              <td><?= htmlspecialchars($student['name']) ?></td>
-                              <td><?= htmlspecialchars($student['id']) ?></td>
-                              <td class="attendance-status text-center" style="cursor:pointer;" data-status="Absent">Absent</td>
+                              <td colspan="3" class="text-center text-muted">No attendance records found.</td>
                             </tr>
-                          <?php endforeach; ?>
+                          <?php endif; ?>
                         </tbody>
                       </table>
                     </div>
-
                   </div>
 
                   <script>
-                  // Show attendance table on start button click
-                  document.getElementById('startAttendanceBtn').addEventListener('click', () => {
-                    document.getElementById('attendanceSection').style.display = 'block';
-                    // Disable start button to prevent multiple clicks
-                    document.getElementById('startAttendanceBtn').disabled = true;
-                  });
+                  // Simple filter function to filter attendance by date in the table
+                  function filterTable() {
+                    const input = document.getElementById("searchDateInput").value.toLowerCase();
+                    const table = document.getElementById("attendanceTable");
+                    const trs = table.tBodies[0].getElementsByTagName("tr");
 
-                  // Toggle attendance status on click (Absent <-> Present)
-                  document.addEventListener('click', function(e) {
-                    if(e.target.classList.contains('attendance-status')) {
-                      const cell = e.target;
-                      const currentStatus = cell.getAttribute('data-status');
-                      const newStatus = currentStatus === 'Absent' ? 'Present' : 'Absent';
-                      cell.setAttribute('data-status', newStatus);
-                      cell.textContent = newStatus;
-
-                      // Update color to visually distinguish status
-                      if (newStatus === 'Present') {
-                        cell.classList.remove('text-danger');
-                        cell.classList.add('text-success');
-                      } else {
-                        cell.classList.remove('text-success');
-                        cell.classList.add('text-danger');
+                    for (let i = 0; i < trs.length; i++) {
+                      const dateCell = trs[i].getElementsByTagName("td")[0];
+                      if (dateCell) {
+                        const dateText = dateCell.textContent || dateCell.innerText;
+                        trs[i].style.display = dateText.toLowerCase().indexOf(input) > -1 ? "" : "none";
                       }
                     }
-                  });
+                  }
 
-                  // Initially mark all statuses as red (Absent)
-                  window.addEventListener('DOMContentLoaded', () => {
-                    document.querySelectorAll('.attendance-status').forEach(cell => {
-                      cell.classList.add('text-danger');
-                    });
-                  });
+                  // Dummy delete function - you need to implement actual deletion logic with AJAX or form submission
+                  function deleteAttendance(date) {
+                    if (confirm(`Are you sure you want to delete attendance for ${date}?`)) {
+                      // You can implement AJAX here or redirect to delete script
+                      // Example: window.location.href = `delete_attendance.php?course_id=<?= $course_id ?>&date=${date}`;
+                      alert('Delete function is not implemented yet.');
+                    }
+                  }
                   </script>
+
+
+                  
 
 
               </div>
