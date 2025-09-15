@@ -84,10 +84,7 @@
                             <a href="assignment.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Assignment</a>
                         </div>
                         <div class="tab">
-                            <a href="student.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Students</a>
-                        </div>
-                        <div class="tab">
-                            <a href="settings.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Settings</a>
+                            <a href="document.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Files and Documents</a>
                         </div>
                     </div>
 

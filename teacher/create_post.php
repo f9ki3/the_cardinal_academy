@@ -6,7 +6,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Attendance Records</title>
+  <title>Create Post</title>
   <?php include 'header.php' ?>
   <style>
     .rounded-circle:hover{
@@ -64,7 +64,7 @@
             <div class="container my-4">
               <div class="row mb-3">
                 <div class="col-12 border-bottom col-md-12">
-                  <h4>Stream</h4>
+                  <h4>Stream Class</h4>
                 </div>
 
                 
@@ -85,6 +85,9 @@
                     </div>
                     <div class="tab ">
                         <a href="student.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Students</a>
+                    </div>
+                    <div class="tab">
+                        <a href="student.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Grade Sheet</a>
                     </div>
                     <div class="tab">
                         <a href="settings.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Settings</a>

@@ -11,30 +11,21 @@ $hideLogInButton = true;
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>AcadeSys</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
   <style>
     @media (max-width: 767.98px) {
       .login-image {
         display: none;
       }
     }
-  </style>
-  <?php include 'header.php'; ?>
-</head>
-<body>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Sticky Combined Navbar</title>
 
-  <!-- Bootstrap CSS -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-  <style>
     .navbar-sticky-wrapper {
       position: sticky;
       top: 0;
@@ -63,7 +54,6 @@ $hideLogInButton = true;
     .navbar-toggler-icon {
       background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='%23ffffff' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
     }
-
 
     .sub-navbar .nav-link {
       color: #f8f9fa !important;
@@ -116,24 +106,19 @@ $hideLogInButton = true;
 
       <div class="collapse navbar-collapse justify-content-end" id="navbarMain">
         <ul class="navbar-nav me-3 mb-2 mb-lg-0">
-            <li class="nav-item"><a class="nav-link" href="index.php">Home</a></li>
-            <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
-            <li class="nav-item"><a class="nav-link" href="#courses">Courses</a></li>
-            <li class="nav-item"><a class="nav-link" href="contact.php">Contact</a></li>
-            <li class="nav-item"><a class="nav-link" href="enroll.php">Enroll</a></li>
+          <li class="nav-item"><a class="nav-link" href="index.php">Home</a></li>
+          <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+          <li class="nav-item"><a class="nav-link" href="#courses">Courses</a></li>
+          <li class="nav-item"><a class="nav-link" href="contact.php">Contact</a></li>
+          <li class="nav-item"><a class="nav-link" href="enroll.php">Enroll</a></li>
         </ul>
 
-          <a href="login.php" class="btn text-light ms-2" style="background-color: #da3030; box-shadow: 0 4px 8px rgba(0,0,0,0.3);">
-            Log In
-          </a>
+        <a href="login.php" class="btn text-light ms-2" style="background-color: #da3030; box-shadow: 0 4px 8px rgba(0,0,0,0.3);">
+          Log In
+        </a>
       </div>
     </nav>
-
   </div>
-
-</body>
-</html>
-
 
   <div class="container-fluid">
     <div class="row d-flex justify-content-center" style="margin-top: 200px;">
@@ -167,7 +152,7 @@ $hideLogInButton = true;
               <label for="username" class="form-label">Username or Email</label>
               <input type="text" name="username" id="username" class="form-control" required />
             </div>
-           <div class="mb-3">
+            <div class="mb-3">
               <label for="password" class="form-label">Password</label>
               <div class="input-group">
                 <input type="password" name="password" id="password" class="form-control" required />
@@ -177,18 +162,6 @@ $hideLogInButton = true;
               </div>
             </div>
 
-            <script>
-              const togglePassword = document.getElementById('togglePassword');
-              const passwordInput = document.getElementById('password');
-              const toggleIcon = document.getElementById('toggleIcon');
-
-              togglePassword.addEventListener('click', function () {
-                const isPassword = passwordInput.type === 'password';
-                passwordInput.type = isPassword ? 'text' : 'password';
-                toggleIcon.classList.toggle('bi-eye');
-                toggleIcon.classList.toggle('bi-eye-slash');
-              });
-            </script>
             <button type="submit" class="btn btn-danger text-light w-100 mb-3">Login</button>
           </form>
         </div>
@@ -196,7 +169,21 @@ $hideLogInButton = true;
     </div>
   </div>
 
-  
+  <!-- Bootstrap Bundle JS (includes Popper) -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+    const toggleIcon = document.getElementById('toggleIcon');
+
+    togglePassword.addEventListener('click', function () {
+      const isPassword = passwordInput.type === 'password';
+      passwordInput.type = isPassword ? 'text' : 'password';
+      toggleIcon.classList.toggle('bi-eye');
+      toggleIcon.classList.toggle('bi-eye-slash');
+    });
+  </script>
 
 </body>
 </html>

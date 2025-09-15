@@ -145,10 +145,10 @@ include '../db_connection.php';
                                                         <a href="course.php?id=<?= $course['id'] ?>" class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;" title="Course Details">
                                                             <i class="bi bi-journal-bookmark"></i>
                                                         </a>
-                                                        <a href="attendance.php?course_id=<?= $course['id'] ?>" class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;" title="Attendance">
+                                                        <a href="attendance.php?id=<?= $course['id'] ?>" class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;" title="Attendance">
                                                             <i class="bi bi-clipboard-check"></i>
                                                         </a>
-                                                        <a href="assignment.php?course_id=<?= $course['id'] ?>" class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;" title="Assignments">
+                                                        <a href="assignment.php?id=<?= $course['id'] ?>" class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;" title="Assignments">
                                                             <i class="bi bi-file-earmark-text"></i>
                                                         </a>
                                                     </div>

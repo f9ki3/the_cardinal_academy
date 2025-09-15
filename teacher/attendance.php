@@ -64,7 +64,7 @@
             <div class="container my-4">
               <div class="row mb-3">
                 <div class="col-12 border-bottom col-md-12">
-                  <h4>Attendance</h4>
+                  <h4>Attendance Records</h4>
                 </div>
 
                 
@@ -190,10 +190,6 @@
                     }
                   }
                   </script>
-
-
-                  
-
 
               </div>
 

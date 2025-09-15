@@ -61,11 +61,11 @@ $profile_image = !empty($user['profile']) ? '../static/uploads/' . htmlspecialch
                 </a>
             </li>
 
-            <li class="nav-item">
-                <a href="archive.php" class="nav-link d-flex align-items-center px-3 py-2 rounded-3" href="#">
-                    <i class="bi bi-people me-2"></i> <span>Attendance</span>
+            <!-- <li class="nav-item">
+                <a href="announcements.php" class="nav-link d-flex align-items-center px-3 py-2 rounded-3">
+                    <i class="bi bi-megaphone me-2"></i> <span>Announcements</span>
                 </a>
-            </li>
+            </li> -->
 
             <!-- Collapsible Teaching Menu -->
             <li class="nav-item">

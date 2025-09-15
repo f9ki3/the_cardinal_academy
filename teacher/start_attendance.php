@@ -6,7 +6,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Attendance Records</title>
+  <title>Start Attendance</title>
   <?php include 'header.php' ?>
   <style>
     .rounded-circle:hover{
