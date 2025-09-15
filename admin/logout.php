@@ -3,6 +3,6 @@ session_start();
 session_unset();   
 session_destroy();
 
-header("Location: ./");
+header("Location: ../login.php?status=2");
 exit(); 
 ?>

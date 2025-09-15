@@ -17,31 +17,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Check hashed password
         if (password_verify($password, $user['password'])) {
-            // Block admin login
-            if ($user['acc_type'] === 'admin') {
-                header("Location: login.php?status=unauthorized"); // You can customize this message
-                exit;
-            }
-
             // Set session variables
             $_SESSION['user_id'] = $user['user_id'];
             $_SESSION['username'] = $user['username'];
             $_SESSION['acc_type'] = $user['acc_type'];
 
-            // Redirect by role
+            // Redirect all roles to the same dashboard (can be customized if needed)
             if ($_SESSION['acc_type'] === 'teacher') {
-                header("Location: teacher/dashboard.php");
-            } elseif ($_SESSION['acc_type'] === 'parent') {
-                header("Location: parent/dashboard.php");
-            } elseif ($_SESSION['acc_type'] === 'student') {
-                header("Location: student/dashboard.php");
-            } else {
-                header("Location: login.php?status=1"); // fallback
-            }
+                    header("Location: teacher/dashboard.php");
+                } elseif ($_SESSION['acc_type'] === 'parent') {
+                    header("Location: parent/dashboard.php");
+                } elseif ($_SESSION['acc_type'] === 'student') {
+                    header("Location: student/dashboard.php");
+                } else {
+                    header("Location: login.php");
+                }
 
             exit;
+        } else {
+            // Wrong password
+            header("Location: login.php?status=1");
         }
-
     } else {
         // User not found
         header("Location: login.php?status=1");
