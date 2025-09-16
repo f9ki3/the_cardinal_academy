@@ -55,7 +55,7 @@
           <div class="container my-4">
             <div class="row mb-3">
               <div class="col-12 border-bottom col-md-12">
-                <h4>Assignment</h4>
+                <h4>My Assignments</h4>
               </div>
             </div>
 
@@ -63,27 +63,9 @@
             <div class="row g-3">
               <?php 
                 $course_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+                $user_id = $_SESSION['user_id'];
               ?>
-              <div class="tabs d-flex">
-                <div class="tab">
-                  <a href="course.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Stream</a>
-                </div>
-                <div class="tab">
-                  <a href="attendance.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Attendance</a>
-                </div>
-                <div class="tab active">
-                  <a href="assignment.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Assignment</a>
-                </div>
-                <div class="tab">
-                  <a href="student.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Students</a>
-                </div>
-                <div class="tab">
-                  <a href="student.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Grade Sheet</a>
-                </div>
-                <div class="tab">
-                  <a href="settings.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Settings</a>
-                </div>
-              </div>
+              
 
               <!-- Post Assignment Form -->
               <div class="col-12">
@@ -101,57 +83,72 @@
                 <!-- Assignment List -->
                 <div class="row g-3 mb-3">
                   <?php
-                      // Fetch assignments from the database
-                      $query = "SELECT * FROM assignments WHERE course_id = '$course_id' ORDER BY due_date DESC";
-                      $result = mysqli_query($conn, $query);
+                        // Assuming the user_id is already stored in the session
+                        $user_id = $_SESSION['user_id'];
 
-                      if (mysqli_num_rows($result) > 0) {
-                          while ($assignment = mysqli_fetch_assoc($result)) {
-                              $assignment_id = $assignment['assignment_id']; // Get the assignment ID
-                              $title = $assignment['title'];
-                              $instructions = $assignment['instructions'];
-                              $points = $assignment['points'];
-                              $due_date = date("Y-m-d H:i A", strtotime($assignment['due_date'])); // Format due date
-                              $accept = $assignment['accept']; // Get the current accept value (0 or 1)
+                        // Fetch assignments for the specific user and their enrolled courses
+                        $query = "
+                            SELECT assignments.*
+                            FROM assignments
+                            INNER JOIN course_students ON course_students.course_id = assignments.course_id
+                            WHERE course_students.student_id = ?
+                            ORDER BY assignments.due_date DESC
+                        ";
 
-                              // Set the appropriate icon based on accept value
-                              $iconClass = $accept == 1 ? 'bi-check-circle' : 'bi-x-circle';
-                              $action = $accept == 1 ? 'reject' : 'accept';
-                              $tooltip = $accept == 1 ? 'Accept' : 'Reject';
+                        // Prepare and execute the query using prepared statements to avoid SQL injection
+                        $stmt = $conn->prepare($query);
+                        $stmt->bind_param("i", $user_id);  // Bind the user_id as integer
+                        $stmt->execute();
+                        $result = $stmt->get_result();
 
-                              echo "<div class='col-12 col-md-6 col-lg-4'>
-                                      <div class='card h-100 shadow-sm border-0 rounded-4 overflow-hidden'>
+                        // Check if there are any assignments for the user
+                        if ($result->num_rows > 0) {
+                            while ($assignment = $result->fetch_assoc()) {
+                                $assignment_id = $assignment['assignment_id']; // Get the assignment ID
+                                $title = $assignment['title'];
+                                $instructions = $assignment['instructions'];
+                                $points = $assignment['points'];
+                                $due_date = date("Y-m-d H:i A", strtotime($assignment['due_date'])); // Format due date
+                                $accept = $assignment['accept']; // Get the current accept value (0 or 1)
+
+                                // Set the appropriate icon based on the accept value
+                                $iconClass = $accept == 1 ? 'bi-check-circle' : 'bi-x-circle';
+                                $action = $accept == 1 ? 'reject' : 'accept';
+                                $tooltip = $accept == 1 ? 'Accepted' : 'Not Accepted';
+
+                                // Output the assignment card
+                                echo "<div class='col-12 col-md-6 col-lg-4'>
+                                        <div class='card h-100 shadow-sm border-0 rounded-4 overflow-hidden'>
                                         <div class='card-body pt-3 d-flex flex-column'>
-                                          <h5 class='fw-bolder'>$title</h5>
-                                          <p class='small mb-1 text-muted'>Instructions: $instructions</p>
-                                          
-                                          <div class='d-flex justify-content-start'>
+                                            <h5 class='fw-bolder'>$title</h5>
+                                            <p class='small mb-1 text-muted'>Instructions: $instructions</p>
+                                            <div class='d-flex justify-content-start'>
                                             <p class='small mb-0 d-flex align-items-center text-muted'>
-                                              <i class='bi bi-patch-check me-2'></i>Points: $points
+                                                <i class='bi bi-patch-check me-2'></i>Points: $points
                                             </p>
                                             <p class='small ms-3 mb-0 d-flex align-items-center text-muted'>
-                                              <i class='bi bi-calendar-check me-2'></i>Due Date: $due_date
+                                                <i class='bi bi-calendar-check me-2'></i>Due Date: $due_date
                                             </p>
-                                          </div>
-
-                                          <hr>
-
-                                          <div class='mt-auto d-flex gap-2 justify-content-start'>
-                                              <!-- View Button -->
-                                              <a href='view_assignment.php?id=$assignment_id' class='btn btn-sm border rounded-circle d-flex align-items-center justify-content-center' 
+                                            </div>
+                                            <hr>
+                                            <div class='mt-auto d-flex gap-2 justify-content-start'>
+                                            <a href='view_assignment.php?id=$assignment_id' class='btn btn-sm border rounded-circle d-flex align-items-center justify-content-center' 
                                                 style='width: 46px; height: 46px;' title='View Assignment'>
                                                 <i class='bi bi-eye'></i>
-                                              </a>
-                                              
-                                          </div>
+                                            </a>
+                                            </div>
                                         </div>
-                                      </div>
+                                        </div>
                                     </div>";
-                          }
-                      } else {
-                          echo "<div class='col-12'><p>No assignments posted for this course.</p></div>";
-                      }
-                  ?>
+                            }
+                        } else {
+                            echo "<div class='col-12'><p>No assignments posted for this user in the enrolled courses.</p></div>";
+                        }
+
+                        // Close the prepared statement
+                        $stmt->close();
+                    ?>
+
                 </div>
 
                 <!-- AJAX Script -->
