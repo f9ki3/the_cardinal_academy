@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Sep 09, 2025 at 02:10 PM
+-- Generation Time: Sep 16, 2025 at 02:08 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -237,6 +237,51 @@ INSERT INTO `announcement` (`id`, `heading`, `paragraph`, `visible`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `assignments`
+--
+
+CREATE TABLE `assignments` (
+  `assignment_id` int(11) NOT NULL,
+  `title` varchar(255) NOT NULL,
+  `instructions` text NOT NULL,
+  `points` int(11) NOT NULL,
+  `due_date` date NOT NULL,
+  `due_time` time NOT NULL,
+  `teacher_id` int(11) DEFAULT NULL,
+  `course_id` int(11) DEFAULT NULL,
+  `attachment` varchar(255) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `accept` varchar(1) DEFAULT '1'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `assignments`
+--
+
+INSERT INTO `assignments` (`assignment_id`, `title`, `instructions`, `points`, `due_date`, `due_time`, `teacher_id`, `course_id`, `attachment`, `created_at`, `accept`) VALUES
+(7, 'test', 'test', 100, '2025-09-18', '23:59:00', 40, 20, '', '2025-09-16 11:32:39', '1'),
+(8, 'test', 'test', 100, '2025-09-17', '11:59:00', 40, 24, '', '2025-09-16 12:01:47', '1');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `assignment_submissions`
+--
+
+CREATE TABLE `assignment_submissions` (
+  `submission_id` int(11) NOT NULL,
+  `student_id` int(11) DEFAULT NULL,
+  `assignment_id` int(11) DEFAULT NULL,
+  `submission_date` timestamp NOT NULL DEFAULT current_timestamp(),
+  `file_path` varchar(255) DEFAULT NULL,
+  `file_url` varchar(255) DEFAULT NULL,
+  `grade` int(11) DEFAULT NULL,
+  `feedback` text DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `attendance`
 --
 
@@ -244,34 +289,21 @@ CREATE TABLE `attendance` (
   `id` int(11) NOT NULL,
   `date` date NOT NULL,
   `time_in` time DEFAULT NULL,
-  `time_out` time DEFAULT NULL,
-  `teacher_id` int(11) NOT NULL,
-  `student_id` int(11) NOT NULL
+  `course_id` int(11) NOT NULL,
+  `rfid` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `first_name` varchar(100) NOT NULL,
+  `last_name` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `attendance`
 --
 
-INSERT INTO `attendance` (`id`, `date`, `time_in`, `time_out`, `teacher_id`, `student_id`) VALUES
-(25, '2025-07-07', '20:51:43', '20:52:08', 40, 12),
-(26, '2025-07-07', '20:51:54', '20:52:01', 40, 13),
-(27, '2025-07-08', '21:08:08', '21:08:33', 40, 12),
-(28, '2025-07-08', '21:08:28', '21:08:37', 40, 13),
-(29, '2025-07-09', '21:09:53', '21:10:01', 40, 12),
-(30, '2025-07-09', '21:09:55', '21:10:04', 40, 13),
-(31, '2025-07-10', '21:12:51', '21:13:03', 40, 12),
-(32, '2025-07-10', '21:12:56', '21:13:12', 40, 13),
-(33, '2025-07-11', '21:18:28', '21:18:34', 40, 12),
-(34, '2025-07-11', '21:18:30', '21:18:37', 40, 13),
-(35, '2025-07-01', '21:19:27', '21:19:33', 40, 12),
-(36, '2025-07-01', '21:19:29', '21:19:35', 40, 13),
-(37, '2025-07-15', '00:58:00', '00:58:09', 40, 12),
-(38, '2025-07-15', '00:58:05', '00:58:12', 40, 13),
-(39, '2025-07-16', '07:22:14', '07:22:22', 40, 58),
-(40, '2025-07-16', '07:40:35', '07:40:39', 40, 57),
-(41, '2025-07-16', '08:06:33', '08:06:43', 40, 56),
-(42, '2025-07-16', '10:15:07', '10:15:49', 40, 59);
+INSERT INTO `attendance` (`id`, `date`, `time_in`, `course_id`, `rfid`, `user_id`, `first_name`, `last_name`) VALUES
+(57, '2025-09-15', '18:34:45', 25, 1224955175, 13, 'Daniel', 'Tan'),
+(58, '2025-09-15', '18:35:10', 25, 1224955174, 12, 'Ava', 'Flores'),
+(59, '2025-09-16', '01:32:09', 20, 1224955175, 13, 'Daniel', 'Tan');
 
 -- --------------------------------------------------------
 
@@ -348,8 +380,16 @@ CREATE TABLE `courses` (
 --
 
 INSERT INTO `courses` (`id`, `teacher_id`, `course_name`, `description`, `day`, `start_time`, `end_time`, `section`, `subject`, `room`, `cover_photo`, `created_at`, `updated_at`, `status`) VALUES
-(11, 40, 'Science', 'Science 6', 'Monday', '09:00:00', '10:00:00', 'Amythist', 'Science', '303', '1757394028_science.jpeg', '2025-09-09 05:00:28', '2025-09-09 08:08:17', 'active'),
-(13, 40, 'English', 'English for grade 6', 'Tuesday', '08:00:00', '09:00:00', 'Amythist', 'English', '303', '1757394701_learn-english.jpeg', '2025-09-09 05:11:41', '2025-09-09 08:32:58', 'active');
+(16, 40, 'Filipino 1', 'Pag-aaral ng wikang Filipino at panitikan para sa elementarya', 'Monday', '08:00:00', '09:00:00', 'Grade 1-A', 'Filipino', 'Room 101', '1757440819_68c06b3368c26.jpg', '2025-09-09 16:50:30', '2025-09-15 18:08:35', 'active'),
+(17, 40, 'English 1', 'Basic English communication skills for elementary pupils', 'Monday', '09:00:00', '10:00:00', 'Grade 1-A', 'English', 'Room 101', '1757440796_68c06b1ca2b90.jpg', '2025-09-09 16:50:30', '2025-09-09 18:02:47', 'active'),
+(18, 40, 'Mathematics 1', 'Basic arithmetic: addition, subtraction, multiplication, division', 'Tuesday', '08:00:00', '09:00:00', 'Grade 1-A', 'Mathematics', 'Room 101', '1757440221_68c068dddb5a2.jpg', '2025-09-09 16:50:30', '2025-09-09 17:50:21', 'active'),
+(19, 40, 'Araling Panlipunan 1', 'Pag-aaral tungkol sa kasaysayan, heograpiya at kultura', 'Tuesday', '09:10:00', '10:10:00', 'Grade 1-A', 'Araling Panlipunan', 'Room 101', '1757440786_68c06b12b2113.jpg', '2025-09-09 16:50:30', '2025-09-09 17:59:46', 'active'),
+(20, 40, 'Science 1', 'Introduction to natural and physical sciences for children', 'Wednesday', '08:00:00', '09:00:00', 'Grade 1-A', 'Science', 'Room 101', '1757440776_68c06b08c728c.jpg', '2025-09-09 16:50:30', '2025-09-09 17:59:36', 'active'),
+(21, 40, 'Edukasyon sa Pagpapakatao (EsP) 1', 'Pagpapahalaga, tamang asal at wastong gawi', 'Wednesday', '09:10:00', '10:10:00', 'Grade 1-A', 'EsP', 'Room 101', '1757440765_68c06afd441c2.jpg', '2025-09-09 16:50:30', '2025-09-09 17:59:25', 'active'),
+(22, 40, 'MAPEH 1', 'Music, Arts, Physical Education, and Health integration', 'Thursday', '08:00:00', '09:00:00', 'Grade 1-A', 'MAPEH', 'Room 102', '1757440654_68c06a8e3d51c.jpg', '2025-09-09 16:50:30', '2025-09-09 17:57:34', 'active'),
+(23, 40, 'Music 1', 'Learning basic rhythm, singing, and instruments', 'Thursday', '09:10:00', '10:10:00', 'Grade 1-A', 'Music', 'Room 102', '1757440257_68c06901ddd75.jpg', '2025-09-09 16:50:30', '2025-09-09 17:50:57', 'active'),
+(24, 40, 'Arts 1', 'Exploring creativity through drawing, coloring, and crafts', 'Friday', '08:00:00', '09:00:00', 'Grade 1-A', 'Arts', 'Room 102', '1757440185_68c068b9ce30f.jpg', '2025-09-09 16:50:30', '2025-09-09 17:49:45', 'active'),
+(25, 40, 'Physical Education 1', 'Basic exercises, games, and fitness for children', 'Tuesday', '10:00:00', '11:00:00', 'Grade 1-A', 'Physical Education', 'Gymnasium', '1757440156_68c0689c9e487.jpg', '2025-09-09 16:50:30', '2025-09-10 08:27:41', 'active');
 
 -- --------------------------------------------------------
 
@@ -369,9 +409,24 @@ CREATE TABLE `course_students` (
 --
 
 INSERT INTO `course_students` (`id`, `course_id`, `student_id`, `joined_at`) VALUES
-(29, 13, 12, '2025-09-09 11:05:45'),
-(30, 13, 53, '2025-09-09 11:05:45'),
-(31, 13, 56, '2025-09-09 11:05:45');
+(38, 13, 59, '2025-09-09 15:25:54'),
+(39, 11, 59, '2025-09-09 16:33:46'),
+(41, 24, 59, '2025-09-09 17:15:10'),
+(42, 23, 59, '2025-09-09 17:15:20'),
+(43, 20, 59, '2025-09-09 18:28:56'),
+(44, 20, 36, '2025-09-09 18:29:04'),
+(45, 20, 10, '2025-09-09 18:29:04'),
+(46, 20, 34, '2025-09-09 18:29:04'),
+(47, 20, 17, '2025-09-09 18:29:04'),
+(48, 20, 35, '2025-09-09 18:29:04'),
+(51, 16, 59, '2025-09-10 04:23:28'),
+(52, 20, 13, '2025-09-15 17:33:29'),
+(53, 25, 32, '2025-09-15 18:19:20'),
+(55, 25, 35, '2025-09-15 18:19:20'),
+(56, 25, 37, '2025-09-15 18:19:20'),
+(57, 25, 52, '2025-09-15 18:19:20'),
+(58, 25, 55, '2025-09-15 18:19:20'),
+(59, 24, 13, '2025-09-16 12:01:30');
 
 -- --------------------------------------------------------
 
@@ -511,7 +566,8 @@ CREATE TABLE `payment` (
 --
 
 INSERT INTO `payment` (`id`, `payment`, `payment_type`, `tuition_id`, `date`, `invoice_number`, `reference_number`, `transaction_fee`) VALUES
-(58, 100, 'Cash', 33, '2025-09-06 01:09:57', 8103224, 1128463787, 0.00);
+(58, 100, 'Cash', 33, '2025-09-06 01:09:57', 8103224, 1128463787, 0.00),
+(59, 1000, 'Cash', 38, '2025-09-16 02:40:19', 1836395, 5377908823, 0.00);
 
 -- --------------------------------------------------------
 
@@ -529,6 +585,18 @@ CREATE TABLE `posts` (
   `attachment` varchar(255) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `posts`
+--
+
+INSERT INTO `posts` (`id`, `course_id`, `teacher_id`, `title`, `description`, `video_link`, `attachment`, `created_at`) VALUES
+(29, 13, 40, 'Sylabus', '<h3><strong>Sylabus:</strong></h3><p>&nbsp;</p><p>Welcome guys to english subjects. Hope we learn a lot with this subject</p>', NULL, NULL, '2025-09-09 16:29:17'),
+(37, 16, 40, 'Kahulugan ng Wika', '<h1><strong>Lesson 1: Kahulugan ng Wika</strong></h1><p>Ang wika ay hindi lamang isang paraan ng komunikasyon, kundi isa ring pagkakakilanlan ng isang bansa. Sa pamamagitan ng wika, naipapahayag natin ang ating saloobin, damdamin, at kultura. Ano para sa iyo ang kahalagahan ng Filipino bilang ating pambansang wika?</p>', NULL, NULL, '2025-09-10 04:17:06'),
+(38, 16, 40, 'Panitikan ng Pilipinas', '<h1><strong>Lesson 2: Panitikan ng Pilipinas</strong></h1><p>&nbsp;</p><p>Ang panitikan ay salamin ng lipunan. Mula sa epiko, alamat, pabula, hanggang sa modernong tula at maikling kuwento, ipinapakita nito ang ating kasaysayan at karanasan. Anong akdang pampanitikan ang paborito mo at bakit?</p>', NULL, NULL, '2025-09-10 04:18:04'),
+(45, 20, 40, 'Lesson 1: The Scientific Method', '<h1>Lesson 1: The Scientific Method</h1><p>&nbsp;</p><p><strong>Overview:</strong><br>Learn how scientists explore the world using observation, hypothesis, experimentation, and analysis.</p><p><strong>Objectives:</strong></p><ul><li>Understand the steps of the scientific method</li><li>Practice forming hypotheses and drawing conclusions</li></ul>', NULL, '[\"file_68c8520cdfc1d.png\"]', '2025-09-15 17:51:08'),
+(46, 20, 40, 'Lesson 2: Earth\'s Layers', '<h1>Lesson 2: Earth\'s Layers</h1><p>&nbsp;</p><p><strong>Overview:</strong><br>Explore the structure of the Earth—crust, mantle, outer core, and inner core.</p><p><strong>Objectives:</strong></p><ul><li>Identify Earth\'s layers and their characteristics</li><li>Understand how tectonic plates move</li></ul>', NULL, NULL, '2025-09-15 17:51:54'),
+(47, 20, 40, 'Lesson 3: States of Matter', '<h1>Lesson 3: States of Matter</h1><p>&nbsp;</p><p><strong>Overview:</strong><br>Discover the 3 main states of matter: solid, liquid, and gas — and how they change with temperature.</p><p><strong>Objectives:</strong></p><ul><li>Define each state of matter</li><li>Describe melting, freezing, condensation, and evaporation</li></ul>', NULL, '[\"file_68c8526644613.png\"]', '2025-09-15 17:52:38');
 
 -- --------------------------------------------------------
 
@@ -863,9 +931,9 @@ CREATE TABLE `users` (
 INSERT INTO `users` (`user_id`, `acc_type`, `username`, `email`, `password`, `first_name`, `last_name`, `gender`, `birthdate`, `phone_number`, `address`, `created_at`, `updated_at`, `profile`, `rfid`, `acc_status`, `subject`) VALUES
 (1, 'admin', 'stephani.admin', 'stephani.candado@example.com', '$2y$10$KEek95Y7gfl.7WplR9kPI.jOp2mGx/daQXe4zjOITFv7DkgpHdJX.', 'Stephani', 'Candado', 'female', '1990-03-15', '09170000001', '101 Admin Ave, Cityville', '2025-06-13 16:58:26', '2025-07-14 09:10:20', 'dummy.jpg', NULL, 'active', NULL),
 (3, 'parent', 'cj.parent', 'cj.escalora@example.com', '$2y$10$KEek95Y7gfl.7WplR9kPI.jOp2mGx/daQXe4zjOITFv7DkgpHdJX.', 'CJ', 'Escalora', 'male', '1982-11-05', '09170000003', '103 Parent Rd, Cityville', '2025-06-13 16:58:26', '2025-07-15 06:05:16', 'dummy.jpg', NULL, 'active', NULL),
-(10, 'student', 'mary_espinosa.student', 'mary@gmail.com', '$2y$10$KEek95Y7gfl.7WplR9kPI.jOp2mGx/daQXe4zjOITFv7DkgpHdJX.', 'Mary', 'Espinosa', 'female', '2000-02-22', 'N/A', 'Bundukan, Bocaue, Bulacan, Central Luzon', '2025-06-22 03:19:52', '2025-09-09 10:54:31', 'dummy.jpg', NULL, 'active', NULL),
+(10, 'student', 'mary_espinosa.student', 'mary@gmail.com', '$2y$10$KEek95Y7gfl.7WplR9kPI.jOp2mGx/daQXe4zjOITFv7DkgpHdJX.', 'Mary', 'Espinosa', 'female', '2000-02-22', 'N/A', 'Bundukan, Bocaue, Bulacan, Central Luzon', '2025-06-22 03:19:52', '2025-09-15 10:47:21', '1757500769_68c1556178674.png', NULL, 'active', NULL),
 (12, 'student', 'ava_flores.student', 'ava.flores@email.com', '$2y$10$Rk9RsPBzi7Tl5W0ipMR9Re/Ym8UzrmHTYhIX22ekpiEAvp3tuGb3i', 'Ava', 'Flores', 'female', '2012-08-10', 'N/A', 'Longos, Pulilan, Bulacan', '2025-06-22 03:43:53', '2025-07-15 18:56:45', 'dummy.jpg', 1224955174, 'active', NULL),
-(13, 'student', 'daniel_tan.student', 'daniel.tan@email.com', '$2y$10$Yt5ZH.lgNtQA57Ys92IM1uUP76aeHWlMmnC0OfvHrvxsgO90sca/q', 'Daniel', 'Tan', 'male', '2013-06-25', 'N/A', 'Tikay, Malolos, Bulacan', '2025-06-22 03:49:53', '2025-07-15 18:56:45', 'dummy.jpg', 1224955175, 'active', NULL),
+(13, 'student', 'daniel_tan.student', 'daniel.tan@email.com', '$2y$10$KEek95Y7gfl.7WplR9kPI.jOp2mGx/daQXe4zjOITFv7DkgpHdJX.', 'Daniel', 'Tan', 'male', '2013-06-25', 'N/A', 'Tikay, Malolos, Bulacan', '2025-06-22 03:49:53', '2025-09-15 17:32:51', 'dummy.jpg', 1224955175, 'active', NULL),
 (17, 'student', 'sophia_santos.student', 'sophia.santos@email.com', '$2y$10$KEek95Y7gfl.7WplR9kPI.jOp2mGx/daQXe4zjOITFv7DkgpHdJX.', 'Sophia', 'Santos', 'female', '2017-11-05', 'N/A', 'Tabang, Guiguinto, Bulacan', '2025-06-24 02:49:33', '2025-07-15 18:56:45', 'dummy.jpg', NULL, 'active', NULL),
 (21, 'student', 'isabella_navarro.student', 'isabella.navarro@email.com', '$2y$10$yZ/m1QREMDYg2ZUW/PmHhe4AbtCMNe2.P.bBsdSZVJOzmbZK/KI2i', 'Isabella', 'Navarro', 'female', '2013-03-08', 'N/A', 'Poblacion, San Rafael, Bulacan', '2025-06-25 01:37:50', '2025-07-15 18:56:45', 'dummy.jpg', NULL, 'active', NULL),
 (22, 'student', 'mia_salazar.student', 'mia.salazar@email.com', '$2y$10$vYoAj4ApyumEBqYMxD0OhOijyRIrK6qgVf9xfmt6YomYL6X4nC3Z6', 'Mia', 'Salazar', 'female', '2019-02-17', 'N/A', 'Pag-asa, Obando, Bulacan', '2025-06-25 01:38:01', '2025-07-15 18:56:45', 'dummy.jpg', NULL, 'active', NULL),
@@ -882,7 +950,7 @@ INSERT INTO `users` (`user_id`, `acc_type`, `username`, `email`, `password`, `fi
 (37, 'student', 'vanessa_tuazon.student', 'vanessa.t@example.com', '$2y$10$XaIJVj5Hgy8I7JyrGnWPdOzaz5XnWObSFM8Iy8EnzzIYZhxdoHVXO', 'Vanessa', 'Tuazon', 'female', '2006-05-01', 'fb.com/vanessa.t', '11 Mabini St', '2025-07-12 08:19:42', '2025-07-15 18:56:45', 'dummy.jpg', NULL, 'active', NULL),
 (38, 'teacher', 'tan.teacher', 'tan@gmail.com', '$2y$10$uh2Usb5yLsmVFXtSkjtBH.hx9fWOM04QR6/Q0aS3hdMGRxMOoMyZa', 'Niña Francesca', 'Tan', 'female', '2000-07-12', '', 'Meycauayan, Bulacan', '2025-07-12 15:14:03', '2025-07-15 20:58:29', 'user_38_1752483132.png', NULL, 'active', 'Oral Communication'),
 (39, 'teacher', 'mauricio.teacher', 'mauricio@gmail.com', '$2y$10$KEek95Y7gfl.7WplR9kPI.jOp2mGx/daQXe4zjOITFv7DkgpHdJX.', 'Roshane', 'Mauricio', 'female', '2000-07-12', '', 'Meycauayan, Bulacan', '2025-07-12 15:17:57', '2025-07-14 08:45:28', 'dummy.jpg', NULL, 'active', 'MK - Makabansa'),
-(40, 'teacher', 'stephany.teacher', 'stephany.admin@gmail.com', '$2y$10$KEek95Y7gfl.7WplR9kPI.jOp2mGx/daQXe4zjOITFv7DkgpHdJX.', 'Stephany', 'Gandula', 'female', '2025-07-12', '', 'Marilao, Bulacan', '2025-07-12 15:20:06', '2025-07-14 08:57:11', 'user_68727d26318ef.jpg', NULL, 'active', 'Core 1 - Oral Communication'),
+(40, 'teacher', 'stephany.teacher', 'stephany.teacher@gmail.com', '$2y$10$KEek95Y7gfl.7WplR9kPI.jOp2mGx/daQXe4zjOITFv7DkgpHdJX.', 'Juan', 'Dela Cruz', 'female', '2025-07-12', '09122021211', 'Marilao, Bulacan', '2025-07-12 15:20:06', '2025-09-16 06:09:01', '1757496680_68c14568295bd.png', NULL, 'active', 'Core 1 - Oral Communication'),
 (41, 'teacher', 'delara.teacher', 'delara@gmail.com', '$2y$10$nVP5lPueFtnhvkP5xOv2K.g3I4j.XQGa1.VIQwDC7c2bn2ynPnnc2', 'Ann Nicole', 'De Lara', 'female', '2025-07-12', '', 'Meycauayan, Bulacan', '2025-07-12 15:22:45', '2025-07-12 15:22:45', 'dummy.jpg', NULL, 'active', 'RL - Read and Literacy'),
 (42, 'teacher', 'mancenido.teacher', 'mancenido@gmail.com', '$2y$10$XCe5y6sBwNBjeSODwMv9XO4gSrqvsIhsyZ6Z9kyrH/MAJr0AKWeHK', 'Kim', 'Mancenido', 'female', '2025-07-12', '', 'Meycauayan, Bulacan', '2025-07-12 15:24:43', '2025-07-12 15:24:43', 'dummy.jpg', NULL, 'active', 'Core 1 - Oral Communication'),
 (43, 'teacher', 'agliam.teacher', 'agliam@gmail.com', '$2y$10$m/50Jsjk.R2dxqoiBP0PKOKfTDNoPB7V6wbrKd8Ji0gro9RZcYvbO', 'Rosilyn', 'Agliam', 'female', '2025-07-12', '', 'Meycauayan, Bulacan', '2025-07-12 15:29:20', '2025-07-12 15:29:20', 'dummy.jpg', NULL, 'active', 'Applied 1 - Research in Daily Life 1'),
@@ -901,7 +969,7 @@ INSERT INTO `users` (`user_id`, `acc_type`, `username`, `email`, `password`, `fi
 (56, 'student', 'caleb_lim.student', 'caleb.l@example.com', '$2y$10$mTazEx./ndKFyslQrKJ0G.Yw27Wnix4gqZJfOejjwO4viV4svFKnK', 'Caleb', 'Lim', 'male', '2007-12-05', 'fb.com/caleb.l', '16 Mango St', '2025-07-13 05:26:00', '2025-07-16 00:06:12', 'dummy.jpg', 1189264005, 'active', NULL),
 (57, 'student', 'warren_lozano.student', 'warren.l@example.com', '$2y$10$wBoA21DHed69.h.vnmSew.HE5IKBUFkl0vl2qrJqJ2s9N172zHjc2', 'Warren', 'Lozano', 'male', '2007-06-14', 'fb.com/warren.l', '4 Kalayaan Rd', '2025-07-14 08:38:46', '2025-07-15 23:40:06', 'dummy.jpg', 1190446453, 'active', NULL),
 (58, 'student', 'gavin_santiago.student', 'gavin.s@example.com', '$2y$10$YOIKk1azhEDjoWp6fFrUA.Gi5TKuubor7vwnmRu3BdB6eLeBHHNwO', 'Gavin', 'Santiago', 'male', '2007-01-20', 'fb.com/gavin.s', '202 Taguig Rd', '2025-07-15 12:28:37', '2025-07-15 23:21:08', 'dummy.png', 1226073813, 'active', NULL),
-(59, 'student', 'nik_escalora.student', 'juliusbergania367@gmail.com', '$2y$10$Xt.KvpWodbZR0Bmd/eGVs.bfyrinXy7KTGH8mJd/dj8kAgLJW7XS2', 'nik', 'Escalora', 'male', '2025-07-16', '', 'Bambang, Bulacan, Bulacan, Central Luzon, 0437 Gavino Rd.', '2025-07-16 01:48:50', '2025-08-14 16:20:41', 'dummy.png', 1190562885, 'active', NULL);
+(59, 'student', 'nik_escalora.student', 'juliusbergania367@gmail.com', '$2y$10$KEek95Y7gfl.7WplR9kPI.jOp2mGx/daQXe4zjOITFv7DkgpHdJX.', 'nik', 'Escalora', 'male', '2025-07-16', '', 'Bambang, Bulacan, Bulacan, Central Luzon, 0437 Gavino Rd.', '2025-07-16 01:48:50', '2025-09-09 15:27:37', '', 1190562885, 'active', NULL);
 
 --
 -- Indexes for dumped tables
@@ -928,12 +996,24 @@ ALTER TABLE `announcement`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `assignments`
+--
+ALTER TABLE `assignments`
+  ADD PRIMARY KEY (`assignment_id`);
+
+--
+-- Indexes for table `assignment_submissions`
+--
+ALTER TABLE `assignment_submissions`
+  ADD PRIMARY KEY (`submission_id`);
+
+--
 -- Indexes for table `attendance`
 --
 ALTER TABLE `attendance`
   ADD PRIMARY KEY (`id`),
-  ADD KEY `teacher_id` (`teacher_id`),
-  ADD KEY `student_id` (`student_id`);
+  ADD KEY `teacher_id` (`course_id`),
+  ADD KEY `student_id` (`rfid`);
 
 --
 -- Indexes for table `class_schedule`
@@ -1047,10 +1127,22 @@ ALTER TABLE `announcement`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
+-- AUTO_INCREMENT for table `assignments`
+--
+ALTER TABLE `assignments`
+  MODIFY `assignment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+
+--
+-- AUTO_INCREMENT for table `assignment_submissions`
+--
+ALTER TABLE `assignment_submissions`
+  MODIFY `submission_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `attendance`
 --
 ALTER TABLE `attendance`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
 
 --
 -- AUTO_INCREMENT for table `class_schedule`
@@ -1062,13 +1154,13 @@ ALTER TABLE `class_schedule`
 -- AUTO_INCREMENT for table `courses`
 --
 ALTER TABLE `courses`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT for table `course_students`
 --
 ALTER TABLE `course_students`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
 
 --
 -- AUTO_INCREMENT for table `master_list`
@@ -1080,13 +1172,13 @@ ALTER TABLE `master_list`
 -- AUTO_INCREMENT for table `payment`
 --
 ALTER TABLE `payment`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
 
 --
 -- AUTO_INCREMENT for table `posts`
 --
 ALTER TABLE `posts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=29;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
 
 --
 -- AUTO_INCREMENT for table `scholastic_records`
@@ -1135,17 +1227,6 @@ ALTER TABLE `uniforms`
 --
 ALTER TABLE `users`
   MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
-
---
--- Constraints for dumped tables
---
-
---
--- Constraints for table `attendance`
---
-ALTER TABLE `attendance`
-  ADD CONSTRAINT `attendance_ibfk_1` FOREIGN KEY (`teacher_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `attendance_ibfk_2` FOREIGN KEY (`student_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
