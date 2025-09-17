@@ -100,7 +100,6 @@
                     <button type="button" class="btn bg-danger text-light rounded rounded-4 px-4" data-bs-toggle="modal" data-bs-target="#createAssignmentModal">
                         + Assignment
                     </button>
-
                     <?php include 'create_assignment.php'; ?>
                   </div>
                 </div>
@@ -108,7 +107,6 @@
                 <!-- Assignment List -->
                 <div class="row g-3 mb-3">
                   <?php
-                      // Fetch assignments along with course name from the database
                       $query = "SELECT assignments.*, courses.course_name 
                                 FROM assignments
                                 INNER JOIN courses ON assignments.course_id = courses.id
@@ -118,52 +116,72 @@
 
                       if (mysqli_num_rows($result) > 0) {
                           while ($assignment = mysqli_fetch_assoc($result)) {
-                              $assignment_id = $assignment['assignment_id']; // Get the assignment ID
+                              $assignment_id = $assignment['assignment_id'];
                               $title = $assignment['title'];
                               $instructions = $assignment['instructions'];
                               $points = $assignment['points'];
-                              $due_date = date("Y-m-d H:i A", strtotime($assignment['due_date'])); // Format due date
-                              $accept = $assignment['accept']; // Get the current accept value (0 or 1)
-                              $course_name = $assignment['course_name']; // Get the course name
+                              $due_date = date("Y-m-d H:i A", strtotime($assignment['due_date']));
+                              $accept = $assignment['accept'];
+                              $course_name = $assignment['course_name'];
 
-                              // Set the appropriate icon based on accept value
-                              $iconClass = $accept == 1 ? 'bi-check-circle' : 'bi-x-circle';
+                              $iconClass = $accept == 1 ? 'bi-x-circle' : 'bi-check-circle';
                               $action = $accept == 1 ? 'reject' : 'accept';
-                              $tooltip = $accept == 1 ? 'Accept' : 'Reject';
+                              $statusText = $action == 'accept' ? 'Opened' : 'Closed';
 
                               echo "<div class='col-12 col-md-6 col-lg-4'>
                                       <div class='card h-100 shadow-sm border-0 rounded-4 overflow-hidden'>
-                                        <div class='card-body pt-3 d-flex flex-column'>
-                                          <p class='small mb-1 text-muted'>$course_name</p>
-                                          <h5 class='fw-bolder'>$title</h5>
-                                          <p class='small mb-1 text-muted'>Instructions: $instructions</p>
-                                          
-                                          <div class='d-flex justify-content-start'>
-                                            <p class='small mb-0 d-flex align-items-center text-muted'>
-                                              <i class='bi bi-patch-check me-2'></i>Points: $points
-                                            </p>
-                                            <p class='small ms-3 mb-0 d-flex align-items-center text-muted'>
-                                              <i class='bi bi-calendar-check me-2'></i>Due Date: $due_date
-                                            </p>
-                                          </div>
+                                          <div class='card-body pt-3 d-flex flex-column'>
+                                              <p class='small mb-1 text-muted'>{$course_name}</p>
+                                              <h5 class='fw-bolder'>{$title}</h5>
+                                              <p class='small mb-1 text-muted'>Instructions: {$instructions}</p>
+                                              
+                                              <div class='d-flex justify-content-start'>
+                                                  <p class='small mb-0 d-flex align-items-center text-muted'>
+                                                      <i class='bi bi-patch-check me-2'></i>Points: {$points}
+                                                  </p>
+                                                  <p class='small ms-3 mb-0 d-flex align-items-center text-muted'>
+                                                      <i class='bi bi-calendar-check me-2'></i>Due Date: {$due_date}
+                                                  </p>
+                                              </div>
 
-                                          <hr>
+                                              <hr>
 
-                                          <div class='mt-auto d-flex gap-2 justify-content-start'>
-                                              <!-- Toggle Accept/Reject Button -->
-                                              <a href='#' class='btn btn-sm rounded-circle d-flex align-items-center justify-content-center toggle-accept' 
-                                                  data-id='$assignment_id' data-action='$action' style='width: 36px; height: 36px;' title='$tooltip'>
-                                                  <i class='bi $iconClass'></i>
-                                              </a>
-                                              <!-- Delete Button -->
-                                              <a href='delete_assignment.php?id=$assignment_id' class='btn btn-sm rounded-circle d-flex align-items-center justify-content-center' 
-                                                style='width: 36px; height: 36px;' title='Delete Assignment' onclick='return confirm(\"Are you sure you want to delete this assignment?\")'>
-                                                <i class='bi bi-trash'></i>
-                                              </a>
+                                              <div class='mt-auto d-flex justify-content-between align-items-center'>
+                                                  <div class='d-flex gap-2 align-items-center'>
+                                                      <!-- View Button -->
+                                                      <a href='view_assignment.php?id={$assignment_id}' 
+                                                          class='btn btn-sm rounded-circle d-flex align-items-center justify-content-center' 
+                                                          style='width: 36px; height: 36px;' 
+                                                          title='View Assignment'>
+                                                          <i class='bi bi-eye'></i>
+                                                      </a>
+                                                      <!-- Accept/Reject Button -->
+                                                      <a href='#' 
+                                                          class='btn btn-sm rounded-circle d-flex align-items-center justify-content-center toggle-accept' 
+                                                          data-id='{$assignment_id}' 
+                                                          data-action='{$action}' 
+                                                          style='width: 36px; height: 36px;' 
+                                                          title='{$statusText}'>
+                                                          <i class='bi {$iconClass}'></i>
+                                                      </a>
+                                                      <!-- Delete Button -->
+                                                      <a href='delete_assignment.php?id={$assignment_id}' 
+                                                          class='btn btn-sm rounded-circle d-flex align-items-center justify-content-center' 
+                                                          style='width: 36px; height: 36px;' 
+                                                          title='Delete Assignment' 
+                                                          onclick='return confirm(\"Are you sure you want to delete this assignment?\")'>
+                                                          <i class='bi bi-trash'></i>
+                                                      </a>
+
+                                                  </div>
+
+                                                  <!-- Status Text -->
+                                                  <span class='small fw-semibold text-secondary assignment-status' data-id='{$assignment_id}'>{$statusText}</span>
+                                              </div>
                                           </div>
-                                        </div>
                                       </div>
-                                    </div>";
+                                  </div>";
+
                           }
                       } else {
                           echo "<div class='col-12'><p>No assignments posted for this course.</p></div>";
@@ -171,49 +189,64 @@
                   ?>
                 </div>
 
-
-                <!-- AJAX Script -->
+                <!-- AJAX -->
                 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
                 <script>
-                    $(document).ready(function () {
-                        // Handle toggle click
-                        $('.toggle-accept').on('click', function (e) {
-                            e.preventDefault();
+                  $(document).ready(function () {
+                    $('.toggle-accept').on('click', function (e) {
+                      e.preventDefault();
 
-                            var button = $(this);
-                            var assignment_id = button.data('id');
-                            var action = button.data('action');
+                      var button = $(this);
+                      var assignment_id = button.data('id');
+                      var currentAction = button.data('action'); // 'accept' or 'reject'
 
-                            // Confirm action (Accept or Reject)
-                            var confirmationMessage = action === 'accept' ? "Do you want to accept this assignment?" : "Do you want to reject this assignment?";
-                            
-                            if (confirm(confirmationMessage)) {
-                                // Send AJAX request to update the accept status
-                                $.ajax({
-                                    url: 'update_accept.php',
-                                    type: 'GET',
-                                    data: { id: assignment_id, action: action },
-                                    success: function(response) {
-                                        var data = JSON.parse(response);
-                                        if (data.success) {
-                                            // Toggle the action and icon
-                                            var newAction = data.accept == 1 ? 'reject' : 'accept';
-                                            var newIcon = data.accept == 1 ? 'bi-check-circle' : 'bi-x-circle';
-                                            var newTooltip = data.accept == 1 ? 'Accepted' : 'Not Accepted';
+                      // Confirmation message reversed:
+                      var confirmationMessage = currentAction === 'accept'
+                        ? "Do you want to close this assignment?"
+                        : "Do you want to open this assignment?";
 
-                                            // Update the button's icon and action
-                                            button.find('i').removeClass().addClass('bi ' + newIcon);
-                                            button.data('action', newAction);
-                                            button.attr('title', newTooltip);
-                                        } else {
-                                            alert('Error updating accept status.');
-                                        }
-                                    }
-                                });
+                      if (confirm(confirmationMessage)) {
+                        $.ajax({
+                          url: 'update_accept.php',
+                          type: 'GET',
+                          data: {
+                            id: assignment_id,
+                            action: currentAction
+                          },
+                          success: function (response) {
+                            try {
+                              var data = JSON.parse(response);
+
+                              if (data.success) {
+                                var isAccepted = data.accept == 1;
+                                // Reversed logic:
+                                var newAction = isAccepted ? 'reject' : 'accept';
+                                var newIcon = isAccepted ? 'bi-x-circle' : 'bi-check-circle';
+                                var newStatus = isAccepted ? 'Closed' : 'Opened';
+
+                                button.find('i').removeClass().addClass('bi ' + newIcon);
+                                button.data('action', newAction);
+                                button.attr('title', newStatus);
+
+                                $('.assignment-status[data-id="' + assignment_id + '"]').text(newStatus);
+                              } else {
+                                alert('Failed to update assignment status.');
+                              }
+                            } catch (error) {
+                              console.error('Invalid response:', response);
+                              alert('Unexpected error occurred.');
                             }
+                          },
+                          error: function () {
+                            alert('AJAX request failed.');
+                          }
                         });
+                      }
                     });
+                  });
                 </script>
+
+
 
               </div>
             </div>

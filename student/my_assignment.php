@@ -88,11 +88,18 @@
 
                         // Fetch assignments for the specific user and their enrolled courses
                         $query = "
-                            SELECT assignments.*
+                            SELECT 
+                                assignments.*, 
+                                courses.course_name
                             FROM assignments
-                            INNER JOIN course_students ON course_students.course_id = assignments.course_id
+                            INNER JOIN course_students 
+                                ON course_students.course_id = assignments.course_id
+                            INNER JOIN courses 
+                                ON courses.id = course_students.course_id
                             WHERE course_students.student_id = ?
                             ORDER BY assignments.due_date DESC
+
+
                         ";
 
                         // Prepare and execute the query using prepared statements to avoid SQL injection
@@ -106,6 +113,8 @@
                             while ($assignment = $result->fetch_assoc()) {
                                 $assignment_id = $assignment['assignment_id']; // Get the assignment ID
                                 $title = $assignment['title'];
+                                $status = $assignment['accept'];
+                                $course_name = $assignment['course_name'];
                                 $instructions = $assignment['instructions'];
                                 $points = $assignment['points'];
                                 $due_date = date("Y-m-d H:i A", strtotime($assignment['due_date'])); // Format due date
@@ -118,28 +127,41 @@
 
                                 // Output the assignment card
                                 echo "<div class='col-12 col-md-6 col-lg-4'>
-                                        <div class='card h-100 shadow-sm border-0 rounded-4 overflow-hidden'>
-                                        <div class='card-body pt-3 d-flex flex-column'>
-                                            <h5 class='fw-bolder'>$title</h5>
-                                            <p class='small mb-1 text-muted'>Instructions: $instructions</p>
-                                            <div class='d-flex justify-content-start'>
-                                            <p class='small mb-0 d-flex align-items-center text-muted'>
-                                                <i class='bi bi-patch-check me-2'></i>Points: $points
-                                            </p>
-                                            <p class='small ms-3 mb-0 d-flex align-items-center text-muted'>
-                                                <i class='bi bi-calendar-check me-2'></i>Due Date: $due_date
-                                            </p>
-                                            </div>
-                                            <hr>
-                                            <div class='mt-auto d-flex gap-2 justify-content-start'>
-                                            <a href='view_assignment.php?id=$assignment_id' class='btn btn-sm border rounded-circle d-flex align-items-center justify-content-center' 
+                                  <div class='card h-100 shadow-sm border-0 rounded-4 overflow-hidden'>
+                                      <div class='card-body pt-3 d-flex flex-column'>
+                                          <p class='small mb-1 text-muted'>$course_name</p>
+                                          <h5 class='fw-bolder'>$title</h5>
+                                          <p class='small mb-1 text-muted'>Instructions: $instructions</p>
+
+                                          <div class='d-flex justify-content-start'>
+                                              <p class='small mb-0 d-flex align-items-center text-muted'>
+                                                  <i class='bi bi-patch-check me-2'></i>Points: $points
+                                              </p>
+                                              <p class='small ms-3 mb-0 d-flex align-items-center text-muted'>
+                                                  <i class='bi bi-calendar-check me-2'></i>Due Date: $due_date
+                                              </p>
+                                          </div>
+
+                                          <hr>
+
+                                          <div class='mt-auto d-flex justify-content-between align-items-center'>
+                                              <!-- View Assignment Button (Left) -->
+                                              <a href='view_assignment.php?id=$assignment_id' 
+                                                class='btn btn-sm border rounded-circle d-flex align-items-center justify-content-center' 
                                                 style='width: 46px; height: 46px;' title='View Assignment'>
-                                                <i class='bi bi-eye'></i>
-                                            </a>
-                                            </div>
-                                        </div>
-                                        </div>
-                                    </div>";
+                                                  <i class='bi bi-eye'></i>
+                                              </a>
+
+                                              <!-- Assignment Status (Right) -->
+                                              <span class='badge text-" . ($status == 1 ? "success" : "secondary") . " mb-2'>
+                                                  " . ($status == 1 ? "Open" : "Closed") . "
+                                              </span>
+                                          </div>
+                                      </div>
+                                  </div>
+                                </div>";
+
+
                             }
                         } else {
                             echo "<div class='col-12'><p>No assignments posted for this user in the enrolled courses.</p></div>";

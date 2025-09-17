@@ -55,15 +55,42 @@
           <div class="container my-4">
             <div class="row mb-3">
               <div class="col-12 border-bottom col-md-12">
-                <h4>Assignment</h4>
+                <?php 
+                  $course_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+                  $course_name = '';
+
+                  // JOIN assignments with course to get course_name
+                  $query = "
+                    SELECT 
+                      assignments.*, 
+                      courses.course_name 
+                    FROM assignments 
+                    JOIN courses ON assignments.course_id = courses.id 
+                    WHERE assignments.course_id = '$course_id' 
+                    ORDER BY due_date DESC
+                  ";
+                  $result = mysqli_query($conn, $query);
+
+                  $assignments = [];
+
+                  if (mysqli_num_rows($result) > 0) {
+                      $first_row = mysqli_fetch_assoc($result);
+                      $course_name = $first_row['course_name'];
+                      $assignments[] = $first_row;
+
+                      while ($row = mysqli_fetch_assoc($result)) {
+                          $assignments[] = $row;
+                      }
+                  }
+                ?>
+
+                <!-- Show course name -->
+                <h4>Assignments - <?= htmlspecialchars($course_name) ?></h4>
               </div>
             </div>
 
             <!-- Course Tabs -->
             <div class="row g-3">
-              <?php 
-                $course_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
-              ?>
               <div class="tabs d-flex">
                 <div class="tab">
                   <a href="course.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Stream</a>
@@ -75,13 +102,7 @@
                   <a href="assignment.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Assignment</a>
                 </div>
                 <div class="tab">
-                  <a href="student.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Students</a>
-                </div>
-                <div class="tab">
-                  <a href="student.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Grade Sheet</a>
-                </div>
-                <div class="tab">
-                  <a href="settings.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Settings</a>
+                    <a href="document.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Files and Documents</a>
                 </div>
               </div>
 
@@ -101,56 +122,52 @@
                 <!-- Assignment List -->
                 <div class="row g-3 mb-3">
                   <?php
-                      // Fetch assignments from the database
-                      $query = "SELECT * FROM assignments WHERE course_id = '$course_id' ORDER BY due_date DESC";
-                      $result = mysqli_query($conn, $query);
+                    if (count($assignments) > 0) {
+                      foreach ($assignments as $assignment) {
+                        $assignment_id = $assignment['assignment_id'];
+                        $title = $assignment['title'];
+                        $instructions = $assignment['instructions'];
+                        $course_name = $assignment['course_name'];
+                        $points = $assignment['points'];
+                        $due_date = date("Y-m-d H:i A", strtotime($assignment['due_date']));
+                        $accept = $assignment['accept'];
 
-                      if (mysqli_num_rows($result) > 0) {
-                          while ($assignment = mysqli_fetch_assoc($result)) {
-                              $assignment_id = $assignment['assignment_id']; // Get the assignment ID
-                              $title = $assignment['title'];
-                              $instructions = $assignment['instructions'];
-                              $points = $assignment['points'];
-                              $due_date = date("Y-m-d H:i A", strtotime($assignment['due_date'])); // Format due date
-                              $accept = $assignment['accept']; // Get the current accept value (0 or 1)
+                        $iconClass = $accept == 1 ? 'bi-check-circle' : 'bi-x-circle';
+                        $action = $accept == 1 ? 'reject' : 'accept';
+                        $tooltip = $accept == 1 ? 'Accepted' : 'Not Accepted';
 
-                              // Set the appropriate icon based on accept value
-                              $iconClass = $accept == 1 ? 'bi-check-circle' : 'bi-x-circle';
-                              $action = $accept == 1 ? 'reject' : 'accept';
-                              $tooltip = $accept == 1 ? 'Accept' : 'Reject';
+                        echo "<div class='col-12 col-md-6 col-lg-4'>
+                                <div class='card h-100 shadow-sm border-0 rounded-4 overflow-hidden'>
+                                  <div class='card-body pt-3 d-flex flex-column'>
+                                    <p class='small mb-1 text-muted'>$course_name</p>
+                                    <h5 class='fw-bolder'>$title</h5>
+                                    <p class='small mb-1 text-muted'>Instructions: $instructions</p>
+                                    
+                                    <div class='d-flex justify-content-start'>
+                                      <p class='small mb-0 d-flex align-items-center text-muted'>
+                                        <i class='bi bi-patch-check me-2'></i>Points: $points
+                                      </p>
+                                      <p class='small ms-3 mb-0 d-flex align-items-center text-muted'>
+                                        <i class='bi bi-calendar-check me-2'></i>Due Date: $due_date
+                                      </p>
+                                    </div>
 
-                              echo "<div class='col-12 col-md-6 col-lg-4'>
-                                      <div class='card h-100 shadow-sm border-0 rounded-4 overflow-hidden'>
-                                        <div class='card-body pt-3 d-flex flex-column'>
-                                          <h5 class='fw-bolder'>$title</h5>
-                                          <p class='small mb-1 text-muted'>Instructions: $instructions</p>
-                                          
-                                          <div class='d-flex justify-content-start'>
-                                            <p class='small mb-0 d-flex align-items-center text-muted'>
-                                              <i class='bi bi-patch-check me-2'></i>Points: $points
-                                            </p>
-                                            <p class='small ms-3 mb-0 d-flex align-items-center text-muted'>
-                                              <i class='bi bi-calendar-check me-2'></i>Due Date: $due_date
-                                            </p>
-                                          </div>
+                                    <hr>
 
-                                          <hr>
-
-                                          <div class='mt-auto d-flex gap-2 justify-content-start'>
-                                              <!-- View Button -->
-                                              <a href='view_assignment.php?id=$assignment_id' class='btn btn-sm border rounded-circle d-flex align-items-center justify-content-center' 
-                                                style='width: 46px; height: 46px;' title='View Assignment'>
-                                                <i class='bi bi-eye'></i>
-                                              </a>
-                                              
-                                          </div>
-                                        </div>
-                                      </div>
-                                    </div>";
-                          }
-                      } else {
-                          echo "<div class='col-12'><p>No assignments posted for this course.</p></div>";
+                                    <div class='mt-auto d-flex gap-2 justify-content-start'>
+                                        <!-- View Button -->
+                                        <a href='view_assignment.php?id=$assignment_id' class='btn btn-sm border rounded-circle d-flex align-items-center justify-content-center' 
+                                          style='width: 46px; height: 46px;' title='View Assignment'>
+                                          <i class='bi bi-eye'></i>
+                                        </a>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>";
                       }
+                    } else {
+                      echo "<div class='col-12'><p>No assignments posted for this course.</p></div>";
+                    }
                   ?>
                 </div>
 
@@ -166,11 +183,10 @@
                             var assignment_id = button.data('id');
                             var action = button.data('action');
 
-                            // Confirm action (Accept or Reject)
+                            // Confirm action
                             var confirmationMessage = action === 'accept' ? "Do you want to accept this assignment?" : "Do you want to reject this assignment?";
                             
                             if (confirm(confirmationMessage)) {
-                                // Send AJAX request to update the accept status
                                 $.ajax({
                                     url: 'update_accept.php',
                                     type: 'GET',
@@ -178,12 +194,10 @@
                                     success: function(response) {
                                         var data = JSON.parse(response);
                                         if (data.success) {
-                                            // Toggle the action and icon
                                             var newAction = data.accept == 1 ? 'reject' : 'accept';
                                             var newIcon = data.accept == 1 ? 'bi-check-circle' : 'bi-x-circle';
                                             var newTooltip = data.accept == 1 ? 'Accepted' : 'Not Accepted';
 
-                                            // Update the button's icon and action
                                             button.find('i').removeClass().addClass('bi ' + newIcon);
                                             button.data('action', newAction);
                                             button.attr('title', newTooltip);
