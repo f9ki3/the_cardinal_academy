@@ -115,6 +115,7 @@
                                 $title = $assignment['title'];
                                 $status = $assignment['accept'];
                                 $course_name = $assignment['course_name'];
+                                $course_id = $assignment['course_id'];
                                 $instructions = $assignment['instructions'];
                                 $points = $assignment['points'];
                                 $due_date = date("Y-m-d H:i A", strtotime($assignment['due_date'])); // Format due date
@@ -146,7 +147,7 @@
 
                                           <div class='mt-auto d-flex justify-content-between align-items-center'>
                                               <!-- View Assignment Button (Left) -->
-                                              <a href='view_assignment.php?id=$assignment_id' 
+                                              <a href='view_assignment.php?id=$assignment_id&course_id=$course_id' 
                                                 class='btn btn-sm border rounded-circle d-flex align-items-center justify-content-center' 
                                                 style='width: 46px; height: 46px;' title='View Assignment'>
                                                   <i class='bi bi-eye'></i>
@@ -160,8 +161,6 @@
                                       </div>
                                   </div>
                                 </div>";
-
-
                             }
                         } else {
                             echo "<div class='col-12'><p>No assignments posted for this user in the enrolled courses.</p></div>";

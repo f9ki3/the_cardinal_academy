@@ -130,11 +130,8 @@
                         $course_name = $assignment['course_name'];
                         $points = $assignment['points'];
                         $due_date = date("Y-m-d H:i A", strtotime($assignment['due_date']));
-                        $accept = $assignment['accept'];
+                        $status = $assignment['accept']; // Get the current accept value (0 or 1)
 
-                        $iconClass = $accept == 1 ? 'bi-check-circle' : 'bi-x-circle';
-                        $action = $accept == 1 ? 'reject' : 'accept';
-                        $tooltip = $accept == 1 ? 'Accepted' : 'Not Accepted';
 
                         echo "<div class='col-12 col-md-6 col-lg-4'>
                                 <div class='card h-100 shadow-sm border-0 rounded-4 overflow-hidden'>
@@ -154,12 +151,18 @@
 
                                     <hr>
 
-                                    <div class='mt-auto d-flex gap-2 justify-content-start'>
-                                        <!-- View Button -->
-                                        <a href='view_assignment.php?id=$assignment_id' class='btn btn-sm border rounded-circle d-flex align-items-center justify-content-center' 
+                                    <div class='mt-auto d-flex justify-content-between align-items-center'>
+                                        <!-- View Assignment Button (Left) -->
+                                        <a href='view_assignment.php?id=$assignment_id&course_id=$course_id' 
+                                          class='btn btn-sm border rounded-circle d-flex align-items-center justify-content-center' 
                                           style='width: 46px; height: 46px;' title='View Assignment'>
-                                          <i class='bi bi-eye'></i>
+                                            <i class='bi bi-eye'></i>
                                         </a>
+
+                                        <!-- Assignment Status (Right) -->
+                                        <span class='badge text-" . ($status == 1 ? "success" : "secondary") . " mb-2'>
+                                            " . ($status == 1 ? "Open" : "Closed") . "
+                                        </span>
                                     </div>
                                   </div>
                                 </div>
