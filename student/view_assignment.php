@@ -62,31 +62,55 @@ if ($student_id) {
     <!-- Assignment Details -->
     <div class="col-12 col-md-7">
       <?php if ($assignment): ?>
-        <h1><?= htmlspecialchars($assignment['course_name']) ?> - <?= htmlspecialchars($assignment['title']) ?></h1>
-        <p>Created: <?= date("F d, Y, h:i A", strtotime($assignment['created_at'])) ?></p>
-        <div class="d-flex justify-content-between mb-3">
-          <p>Points: <?= htmlspecialchars($assignment['points']) ?></p>
-          <p>Due: <?= date("F d, Y h:i A", strtotime($assignment['due_date'].' '.$assignment['due_time'])) ?></p>
+        <h3 class="fw-bolder"><?= htmlspecialchars($assignment['course_name']) ?> - <?= htmlspecialchars($assignment['title']) ?></h3>
+        <p class="p-0 m-0 text-muted">Created: <?= date("F d, Y, h:i A", strtotime($assignment['created_at'])) ?></p>
+        <div class="d-flex justify-content-between m-0 p-0">
+          <p class="text-muted">Due: <?= date("F d, Y h:i A", strtotime($assignment['due_date'].' '.$assignment['due_time'])) ?></p>
+          <p class="text-muted">Points: <?= htmlspecialchars($assignment['points']) ?></p>
         </div>
         <hr>
         <h5>Instructions:</h5>
-        <p><?= nl2br(htmlspecialchars($assignment['instructions'])) ?></p>
+        <p class="text-muted"><?= nl2br(htmlspecialchars($assignment['instructions'])) ?></p>
         <h5>Attachment:</h5>
-        <?php if (!empty($assignment['attachment'])): ?>
-            <a href="download_file.php?file=<?= urlencode($assignment['attachment']) ?>" target="_blank" class="btn btn-link">Download Attachment</a>
+        <?php if (!empty($assignment['attachment'])): 
+        // If you have multiple attachments stored as JSON array
+        $attachments = json_decode($assignment['attachment'], true);
+        if (!$attachments) $attachments = [$assignment['attachment']]; // fallback to single
+        ?>
+        <div class="row g-3">
+            <?php foreach($attachments as $file): 
+                $ext = pathinfo($file, PATHINFO_EXTENSION);
+                $icon = "bi-file-earmark";
+                if(in_array($ext, ["png","jpg","jpeg"])) $icon = "bi-file-earmark-image text-warning";
+                if($ext === "pdf") $icon = "bi-file-earmark-pdf text-danger";
+                if(in_array($ext, ["doc","docx"])) $icon = "bi-file-earmark-word text-primary";
+                if(in_array($ext, ["ppt","pptx"])) $icon = "bi-file-earmark-ppt text-warning";
+                if(in_array($ext, ["xls","xlsx"])) $icon = "bi-file-earmark-excel text-success";
+            ?>
+            <div class="col-md-6">
+                <a href="download_file.php?file=<?= urlencode($file) ?>" target="_blank" 
+                  class="d-flex bg-white align-items-center border rounded-4 p-3 text-decoration-none text-dark hover-shadow">
+                    <i class="bi <?= $icon ?> fs-3 me-3"></i>
+                    <span class="text-truncate" style="max-width:200px;" title="<?= htmlspecialchars(basename($file)) ?>">
+                        <?= htmlspecialchars(basename($file)) ?>
+                    </span>
+                </a>
+            </div>
+            <?php endforeach; ?>
+        </div>
         <?php else: ?>
             <p class="text-muted">No attachment available.</p>
         <?php endif; ?>
+
       <?php else: ?>
         <p class="text-danger">Assignment not found.</p>
       <?php endif; ?>
     </div>
 
     <!-- Submission Section -->
-    <!-- Submission Section -->
     <div class="col-12 col-md-5">
-      <div class="submission-box">
-        <h5 class="mb-3">Your Work:</h5>
+      <div class="submission-box pb-4">
+        <h5 class="mb-3 mt-3">Your Work:</h5>
 
         <?php if ($submission): ?>
           <!-- Submitted assignment -->
