@@ -154,8 +154,8 @@
                                               </a>
 
                                               <!-- Assignment Status (Right) -->
-                                              <span class='badge text-" . ($status == 1 ? "success" : "secondary") . " mb-2'>
-                                                  " . ($status == 1 ? "Open" : "Closed") . "
+                                              <span class='badge text-" . ($status == 1 ? "secondary" : "secondary") . " mb-2'>
+                                                  " . ($status == 1 ? "Closed" : "Open") . "
                                               </span>
                                           </div>
                                       </div>
