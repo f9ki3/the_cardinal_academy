@@ -126,7 +126,7 @@
 
                               $iconClass = $accept == 1 ? 'bi-x-circle' : 'bi-check-circle';
                               $action = $accept == 1 ? 'reject' : 'accept';
-                              $statusText = $action == 'accept' ? 'Opened' : 'Closed';
+                              $statusText = $action == 'accept' ? 'Open' : 'Close';
 
                               echo "<div class='col-12 col-md-6 col-lg-4'>
                                       <div class='card h-100 shadow-sm border-0 rounded-4 overflow-hidden'>
@@ -222,7 +222,7 @@
                                 // Reversed logic:
                                 var newAction = isAccepted ? 'reject' : 'accept';
                                 var newIcon = isAccepted ? 'bi-x-circle' : 'bi-check-circle';
-                                var newStatus = isAccepted ? 'Closed' : 'Opened';
+                                var newStatus = isAccepted ? 'Close' : 'Open';
 
                                 button.find('i').removeClass().addClass('bi ' + newIcon);
                                 button.data('action', newAction);
