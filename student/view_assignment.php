@@ -34,7 +34,9 @@ if ($student_id) {
     $stmt2->execute();
     $submission = $stmt2->get_result()->fetch_assoc();
 }
+$isClosed = (int)$assignment['accept'] === 1;
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -110,12 +112,16 @@ if ($student_id) {
     <!-- Submission Section -->
     <div class="col-12 col-md-5">
       <div class="submission-box pb-4">
-        <h5 class="mb-3 mt-3">Your Work:</h5>
+        <div class="d-flex justify-content-between align-items-center">
+          <h5 class="mb-3 mt-3">Your Work:</h5>
+          <?php if($isClosed): ?>
+            <p class="text-danger mb-0">Submission Closed</p>
+          <?php endif; ?>
+        </div>
 
         <?php if ($submission): ?>
-          <!-- Submitted assignment -->
+          <!-- Show submitted assignment -->
           <p><strong>Submitted on:</strong> <?= date("F d, Y h:i A", strtotime($submission['submission_date'])) ?></p>
-          
           <?php if (!empty($submission['file_path'])): 
             $files = json_decode($submission['file_path'], true);
           ?>
@@ -147,25 +153,23 @@ if ($student_id) {
           <p><strong>Grade:</strong> <?= $submission['grade'] ?? "Not graded yet" ?></p>
           <p><strong>Feedback:</strong> <?= !empty($submission['feedback']) ? nl2br(htmlspecialchars($submission['feedback'])) : "No feedback yet" ?></p>
 
-          <?php if ((int)$assignment['accept'] !== 1): ?>
-            <!-- Show Unsubmit button -->
-            <form action="unsubmit_assignment.php" method="POST" class="mt-3">
-              <input type="hidden" name="assignment_id" value="<?= $assignment_id ?>" />
-              <input type="hidden" name="course_id" value="<?= $course_id ?>" />
-              <input type="hidden" name="submission_id" value="<?= $submission['submission_id'] ?>" />
-              <button type="submit" class="btn btn-outline-danger w-100">Unsubmit</button>
-            </form>
-          <?php endif; ?>
+          <!-- Unsubmit button if open -->
+          <form action="unsubmit_assignment.php" method="POST" class="mt-3">
+            <input type="hidden" name="assignment_id" value="<?= $assignment_id ?>" />
+            <input type="hidden" name="course_id" value="<?= $course_id ?>" />
+            <input type="hidden" name="submission_id" value="<?= $submission['submission_id'] ?>" />
+            <button type="submit" class="btn btn-outline-danger w-100" <?= $isClosed ? "disabled" : "" ?>>Unsubmit</button>
+          </form>
 
-        <?php elseif ((int)$assignment['accept'] !== 1): ?>
-          <!-- Show submission form -->
+        <?php else: ?>
+          <!-- Submission form -->
           <form action="submit_assignment.php" method="POST" enctype="multipart/form-data" class="mt-3">
             <input type="hidden" name="assignment_id" value="<?= $assignment_id ?>" />
             <input type="hidden" name="course_id" value="<?= $course_id ?>" />
 
             <div class="mb-3">
               <label for="submissionType" class="form-label text-muted">Submission Type</label>
-              <select id="submissionType" name="submissionType" class="form-select" onchange="toggleSubmissionInput()">
+              <select id="submissionType" name="submissionType" class="form-select" onchange="toggleSubmissionInput()" <?= $isClosed ? "disabled" : "" ?>>
                 <option value="file">Attachment</option>
                 <option value="url">URL</option>
               </select>
@@ -173,21 +177,18 @@ if ($student_id) {
 
             <div id="fileInputGroup" class="mb-3">
               <label for="fileInput" class="form-label">Upload Files</label>
-              <input type="file" class="form-control" required id="fileInput" name="fileInput[]" multiple>
+              <input type="file" class="form-control" id="fileInput" name="fileInput[]" multiple <?= $isClosed ? "disabled" : "" ?>>
               <div id="filePreview" class="list-group mt-3" style="display:none; max-height:200px; overflow-y:auto;"></div>
             </div>
 
             <div id="urlInputGroup" class="mb-3 d-none">
               <label for="urlInput" class="form-label text-muted">Assignment URL</label>
-              <input type="url" class="form-control" id="urlInput" name="urlInput" placeholder="https://example.com/your-work">
+              <input type="url" class="form-control" id="urlInput" name="urlInput" placeholder="https://example.com/your-work" <?= $isClosed ? "disabled" : "" ?>>
             </div>
 
-            <button type="submit" class="btn btn-danger w-100">Turn In</button>
+            <button type="submit" class="btn btn-danger w-100" <?= $isClosed ? "disabled" : "" ?>>Turn In</button>
           </form>
-        <?php else: ?>
-          <p class="text-danger mt-3">Submission Closed</p>
         <?php endif; ?>
-
       </div>
     </div>
 
