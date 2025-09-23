@@ -59,7 +59,6 @@
                   $course_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
                   $course_name = '';
 
-                  // JOIN assignments with course to get course_name
                   $query = "
                     SELECT 
                       assignments.*, 
@@ -84,35 +83,26 @@
                   }
                 ?>
 
-                <!-- Show course name -->
                 <h4>Assignments - <?= htmlspecialchars($course_name) ?></h4>
               </div>
             </div>
 
-            <!-- Course Tabs -->
+            <!-- Tabs -->
             <div class="row g-3">
               <div class="tabs d-flex">
-                <div class="tab">
-                  <a href="course.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Stream</a>
-                </div>
-                <div class="tab">
-                  <a href="attendance.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Attendance</a>
-                </div>
-                <div class="tab active">
-                  <a href="assignment.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Assignment</a>
-                </div>
-                <div class="tab">
-                    <a href="document.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Files and Documents</a>
-                </div>
+                <div class="tab"><a href="course.php?id=<?= $course_id ?>" class="text-dark text-decoration-none">Stream</a></div>
+                <div class="tab"><a href="attendance.php?id=<?= $course_id ?>" class="text-dark text-decoration-none">Attendance</a></div>
+                <div class="tab active"><a href="assignment.php?id=<?= $course_id ?>" class="text-dark text-decoration-none">Assignment</a></div>
+                <div class="tab"><a href="document.php?id=<?= $course_id ?>" class="text-dark text-decoration-none">Files and Documents</a></div>
               </div>
 
-              <!-- Post Assignment Form -->
+              <!-- Search -->
               <div class="col-12">
                 <div class="row align-items-center mb-4">
                   <div class="col-12 col-md-10">
                     <div class="input-group w-50">
-                      <input type="text" id="searchDateInput" class="form-control" placeholder="Search assignment here...">
-                      <button class="btn border" type="button" onclick="filterTable()">
+                      <input type="text" id="searchInput" class="form-control" placeholder="Search assignment...">
+                      <button class="btn border" type="button" onclick="filterAssignments()">
                         <i class="bi bi-search"></i>
                       </button>
                     </div>
@@ -120,25 +110,24 @@
                 </div>
 
                 <!-- Assignment List -->
-                <div class="row g-3 mb-3">
+                <div class="row g-3 mb-3" id="assignmentList">
                   <?php
                     if (count($assignments) > 0) {
                       foreach ($assignments as $assignment) {
                         $assignment_id = $assignment['assignment_id'];
-                        $title = $assignment['title'];
-                        $instructions = $assignment['instructions'];
-                        $course_name = $assignment['course_name'];
+                        $title = htmlspecialchars($assignment['title']);
+                        $instructions = htmlspecialchars($assignment['instructions']);
+                        $course_name = htmlspecialchars($assignment['course_name']);
                         $points = $assignment['points'];
                         $due_date = date("Y-m-d H:i A", strtotime($assignment['due_date']));
-                        $status = $assignment['accept']; // Get the current accept value (0 or 1)
+                        $status = $assignment['accept'];
 
-
-                        echo "<div class='col-12 col-md-6 col-lg-4'>
+                        echo "<div class='col-12 col-md-6 col-lg-4 assignment-card'>
                                 <div class='card h-100 shadow-sm border-0 rounded-4 overflow-hidden'>
                                   <div class='card-body pt-3 d-flex flex-column'>
-                                    <p class='small mb-1 text-muted'>$course_name</p>
-                                    <h5 class='fw-bolder'>$title</h5>
-                                    <p class='small mb-1 text-muted'>Instructions: $instructions</p>
+                                    <p class='small mb-1 text-muted course-name'>$course_name</p>
+                                    <h5 class='fw-bolder assignment-title'>$title</h5>
+                                    <p class='small mb-1 text-muted instructions'>Instructions: $instructions</p>
                                     
                                     <div class='d-flex justify-content-start'>
                                       <p class='small mb-0 d-flex align-items-center text-muted'>
@@ -152,15 +141,12 @@
                                     <hr>
 
                                     <div class='mt-auto d-flex justify-content-between align-items-center'>
-                                        <!-- View Assignment Button (Left) -->
                                         <a href='view_assignment.php?id=$assignment_id&course_id=$course_id' 
                                           class='btn btn-sm border rounded-circle d-flex align-items-center justify-content-center' 
                                           style='width: 46px; height: 46px;' title='View Assignment'>
                                             <i class='bi bi-eye'></i>
                                         </a>
-
-                                        <!-- Assignment Status (Right) -->
-                                        <span class='badge text-" . ($status == 1 ? "secondary" : "secondary") . " mb-2'>
+                                        <span class='badge text-secondary mb-2'>
                                             " . ($status == 1 ? "Closed" : "Open") . "
                                         </span>
                                     </div>
@@ -169,49 +155,46 @@
                               </div>";
                       }
                     } else {
-                      echo "<div class='col-12'><p>No assignments posted for this course.</p></div>";
+                      echo '<div class="d-flex flex-column justify-content-center align-items-center py-4">
+                      <img src="../static/images/art7.svg" alt="No records" style="max-width: 300px; opacity: 70%">
+                      <p class="text-center mt-5 text-muted mb-3">No assignment found.</p>
+                  </div>';
                     }
                   ?>
                 </div>
 
-                <!-- AJAX Script -->
-                <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                <!-- No Results -->
+                <div id="noResults" class="d-none">
+                  <div class="d-flex flex-column justify-content-center align-items-center py-4">
+                      <img src="../static/images/art7.svg" alt="No records" style="max-width: 300px; opacity: 70%">
+                      <p class="text-center mt-5 text-muted mb-3">No assignment found.</p>
+                  </div>
+                </div>
+
+                <!-- Search Script -->
                 <script>
-                    $(document).ready(function () {
-                        // Handle toggle click
-                        $('.toggle-accept').on('click', function (e) {
-                            e.preventDefault();
+                  function filterAssignments() {
+                    let input = document.getElementById("searchInput").value.toLowerCase();
+                    let cards = document.querySelectorAll("#assignmentList .assignment-card");
+                    let visibleCount = 0;
 
-                            var button = $(this);
-                            var assignment_id = button.data('id');
-                            var action = button.data('action');
+                    cards.forEach(card => {
+                      let title = card.querySelector(".assignment-title").textContent.toLowerCase();
+                      let instructions = card.querySelector(".instructions").textContent.toLowerCase();
+                      let course = card.querySelector(".course-name").textContent.toLowerCase();
 
-                            // Confirm action
-                            var confirmationMessage = action === 'accept' ? "Do you want to accept this assignment?" : "Do you want to reject this assignment?";
-                            
-                            if (confirm(confirmationMessage)) {
-                                $.ajax({
-                                    url: 'update_accept.php',
-                                    type: 'GET',
-                                    data: { id: assignment_id, action: action },
-                                    success: function(response) {
-                                        var data = JSON.parse(response);
-                                        if (data.success) {
-                                            var newAction = data.accept == 1 ? 'reject' : 'accept';
-                                            var newIcon = data.accept == 1 ? 'bi-check-circle' : 'bi-x-circle';
-                                            var newTooltip = data.accept == 1 ? 'Accepted' : 'Not Accepted';
-
-                                            button.find('i').removeClass().addClass('bi ' + newIcon);
-                                            button.data('action', newAction);
-                                            button.attr('title', newTooltip);
-                                        } else {
-                                            alert('Error updating accept status.');
-                                        }
-                                    }
-                                });
-                            }
-                        });
+                      if (title.includes(input) || instructions.includes(input) || course.includes(input)) {
+                        card.style.display = "";
+                        visibleCount++;
+                      } else {
+                        card.style.display = "none";
+                      }
                     });
+
+                    document.getElementById("noResults").classList.toggle("d-none", visibleCount > 0);
+                  }
+
+                  document.getElementById("searchInput").addEventListener("keyup", filterAssignments);
                 </script>
 
               </div>
