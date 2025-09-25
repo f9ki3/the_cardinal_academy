@@ -49,10 +49,10 @@
                         </form>
 
                         <!-- Create Course Button -->
-                        <button type="button" class="btn bg-danger text-light rounded rounded-4 px-4" data-bs-toggle="modal" data-bs-target="#createCourseModal">
+                        <button type="button" class="btn bg-danger text-light rounded rounded-4 px-4" data-bs-toggle="modal" data-bs-target="#joinCourses">
                             + Join Class
                         </button>
-
+                        <?php include 'join_course.php'?>
                     </div>
                 </div>
 

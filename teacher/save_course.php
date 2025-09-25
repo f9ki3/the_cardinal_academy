@@ -2,6 +2,20 @@
 include 'session_login.php';
 include '../db_connection.php';
 
+// Function to generate unique 8-digit joined_id
+function generateUniqueJoinedId($conn) {
+    do {
+        $joined_id = mt_rand(10000000, 99999999); // 8-digit random number
+        $stmt = $conn->prepare("SELECT COUNT(*) FROM courses WHERE joined_id = ?");
+        $stmt->bind_param("i", $joined_id);
+        $stmt->execute();
+        $stmt->bind_result($count);
+        $stmt->fetch();
+        $stmt->close();
+    } while ($count > 0); // repeat if already exists
+    return $joined_id;
+}
+
 // Check if the form is submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $teacher_id = $_SESSION['user_id'];
@@ -33,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $filename = time() . '_' . basename($_FILES['cover_photo']['name']);
         $target_file = $upload_dir . $filename;
 
-        // Optional: validate file type
+        // Validate file type
         $file_type = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
         $allowed_types = ['jpg','jpeg','png','gif','svg'];
         if (!in_array($file_type, $allowed_types)) {
@@ -55,12 +69,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Insert into database with teacher_id
+    // Generate unique 8-digit joined_id
+    $joined_id = generateUniqueJoinedId($conn);
+
+    // Insert into database with joined_id
     $stmt = $conn->prepare("INSERT INTO courses 
-        (teacher_id, course_name, description, day, start_time, end_time, section, subject, room, cover_photo) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+        (joined_id, teacher_id, course_name, description, day, start_time, end_time, section, subject, room, cover_photo) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
     $stmt->bind_param(
-        "isssssssss", 
+        "iisssssssss", 
+        $joined_id,
         $teacher_id, 
         $course_name, 
         $description, 
@@ -74,7 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     );
 
     if ($stmt->execute()) {
-        // Success, redirect or show message
+        // Success, redirect
         header("Location: dashboard.php?success=1");
         exit;
     } else {

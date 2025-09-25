@@ -116,6 +116,7 @@
                             $course_name = $row['course_name'];
                             $description = $row['description'];
                             $status = $row['status'];
+                            $joined_id = $row['joined_id'];
                             $day = $row['day'];
                             $start_time = $row['start_time'];
                             $end_time = $row['end_time'];
@@ -134,9 +135,34 @@
                           <!-- Left Column -->
                           <div class="col-12 col-md-6">
                               <div class="mb-3">
-                                  <label for="courseName" class="form-label">Course Name</label>
+                                  <label for="courseName" class="form-label">Joined ID</label>
                                   <input type="text" class="form-control" id="courseName" name="course_name" placeholder="Enter course name" required value="<?= htmlspecialchars($course_name) ?>">
                               </div> 
+
+                              <div class="mb-3">
+                                    <label for="joinedId" class="form-label">Course ID</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="joinedId" readonly 
+                                            value="<?= htmlspecialchars($joined_id) ?>">
+                                        <button class="btn border" type="button" id="copyBtn">
+                                            <i class="bi bi-clipboard"></i> Copy
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <script>
+                                document.getElementById('copyBtn').addEventListener('click', function() {
+                                    const input = document.getElementById('joinedId');
+                                    input.select();
+                                    input.setSelectionRange(0, 99999); // for mobile devices
+                                    navigator.clipboard.writeText(input.value).then(() => {
+                                        alert('Course ID copied: ' + input.value);
+                                    }).catch(err => {
+                                        console.error('Failed to copy: ', err);
+                                    });
+                                });
+                                </script>   
+
 
                               <div class="mb-3">
                                   <label for="description" class="form-label">Description</label>
