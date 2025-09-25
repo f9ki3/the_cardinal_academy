@@ -165,7 +165,7 @@
                                                           <i class='bi {$iconClass}'></i>
                                                       </a>
                                                       <!-- Delete Button -->
-                                                      <a href='delete_assignment.php?id={$assignment_id}' 
+                                                      <a href='delete_assignment.php?id={$assignment_id}&course_id={$course_id}' 
                                                           class='btn btn-sm rounded-circle d-flex align-items-center justify-content-center' 
                                                           style='width: 36px; height: 36px;' 
                                                           title='Delete Assignment' 
@@ -245,9 +245,6 @@
                     });
                   });
                 </script>
-
-
-
               </div>
             </div>
           </div>
