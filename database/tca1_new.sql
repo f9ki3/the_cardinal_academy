@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Sep 16, 2025 at 02:08 PM
+-- Generation Time: Sep 25, 2025 at 10:27 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -251,7 +251,7 @@ CREATE TABLE `assignments` (
   `course_id` int(11) DEFAULT NULL,
   `attachment` varchar(255) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `accept` varchar(1) DEFAULT '1'
+  `accept` varchar(1) DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -259,8 +259,12 @@ CREATE TABLE `assignments` (
 --
 
 INSERT INTO `assignments` (`assignment_id`, `title`, `instructions`, `points`, `due_date`, `due_time`, `teacher_id`, `course_id`, `attachment`, `created_at`, `accept`) VALUES
-(7, 'test', 'test', 100, '2025-09-18', '23:59:00', 40, 20, '', '2025-09-16 11:32:39', '1'),
-(8, 'test', 'test', 100, '2025-09-17', '11:59:00', 40, 24, '', '2025-09-16 12:01:47', '1');
+(8, 'test', 'test', 100, '2025-09-17', '11:59:00', 40, 24, '', '2025-09-16 12:01:47', '0'),
+(9, 'test', 'test', 100, '2000-02-11', '23:59:00', 40, 25, '', '2025-09-17 05:34:07', '0'),
+(10, 'test', 'tetsatst', 100, '2025-09-18', '23:59:00', 40, 0, '', '2025-09-17 06:34:01', '1'),
+(16, 'a', 'a', 100, '2025-09-26', '23:59:00', 40, 0, '', '2025-09-25 07:24:06', '0'),
+(18, 'asa', 'ssasas', 100, '2025-09-26', '23:59:00', 40, 0, '', '2025-09-25 07:26:19', '0'),
+(24, 'Parts of a Plant', 'Draw a diagram of a plant and label its main parts (roots, stem, leaves, flowers). Write one sentence describing the function of each part. Submit your drawing on a clean sheet or as a scanned image.', 100, '2025-09-26', '23:59:00', 40, 20, '', '2025-09-25 07:37:22', '0');
 
 -- --------------------------------------------------------
 
@@ -273,11 +277,19 @@ CREATE TABLE `assignment_submissions` (
   `student_id` int(11) DEFAULT NULL,
   `assignment_id` int(11) DEFAULT NULL,
   `submission_date` timestamp NOT NULL DEFAULT current_timestamp(),
-  `file_path` varchar(255) DEFAULT NULL,
+  `file_path` text DEFAULT NULL,
   `file_url` varchar(255) DEFAULT NULL,
   `grade` int(11) DEFAULT NULL,
   `feedback` text DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `assignment_submissions`
+--
+
+INSERT INTO `assignment_submissions` (`submission_id`, `student_id`, `assignment_id`, `submission_date`, `file_path`, `file_url`, `grade`, `feedback`) VALUES
+(36, 59, 24, '2025-09-25 07:50:20', '[\"1758786620_Screenshot From 2025-06-26 10-20-22.png\"]', NULL, NULL, NULL),
+(37, 10, 24, '2025-09-25 08:08:58', '[\"1758787738_Screenshot From 2025-06-24 19-30-44.png\",\"1758787738_Screenshot From 2025-06-24 19-30-58.png\",\"1758787738_Screenshot From 2025-06-24 19-31-27.png\",\"1758787738_Screenshot From 2025-06-25 02-55-59.png\",\"1758787738_Screenshot From 2025-06-25 11-39-12.png\"]', NULL, 100, 'test');
 
 -- --------------------------------------------------------
 
@@ -380,11 +392,11 @@ CREATE TABLE `courses` (
 --
 
 INSERT INTO `courses` (`id`, `teacher_id`, `course_name`, `description`, `day`, `start_time`, `end_time`, `section`, `subject`, `room`, `cover_photo`, `created_at`, `updated_at`, `status`) VALUES
-(16, 40, 'Filipino 1', 'Pag-aaral ng wikang Filipino at panitikan para sa elementarya', 'Monday', '08:00:00', '09:00:00', 'Grade 1-A', 'Filipino', 'Room 101', '1757440819_68c06b3368c26.jpg', '2025-09-09 16:50:30', '2025-09-15 18:08:35', 'active'),
+(16, 40, 'Filipino 1', 'Pag-aaral ng wikang Filipino at panitikan para sa elementarya', 'Monday', '08:00:00', '09:00:00', 'Grade 1-A', 'Filipino', 'Room 101', '1757440819_68c06b3368c26.jpg', '2025-09-09 16:50:30', '2025-09-17 12:40:56', 'inactive'),
 (17, 40, 'English 1', 'Basic English communication skills for elementary pupils', 'Monday', '09:00:00', '10:00:00', 'Grade 1-A', 'English', 'Room 101', '1757440796_68c06b1ca2b90.jpg', '2025-09-09 16:50:30', '2025-09-09 18:02:47', 'active'),
 (18, 40, 'Mathematics 1', 'Basic arithmetic: addition, subtraction, multiplication, division', 'Tuesday', '08:00:00', '09:00:00', 'Grade 1-A', 'Mathematics', 'Room 101', '1757440221_68c068dddb5a2.jpg', '2025-09-09 16:50:30', '2025-09-09 17:50:21', 'active'),
 (19, 40, 'Araling Panlipunan 1', 'Pag-aaral tungkol sa kasaysayan, heograpiya at kultura', 'Tuesday', '09:10:00', '10:10:00', 'Grade 1-A', 'Araling Panlipunan', 'Room 101', '1757440786_68c06b12b2113.jpg', '2025-09-09 16:50:30', '2025-09-09 17:59:46', 'active'),
-(20, 40, 'Science 1', 'Introduction to natural and physical sciences for children', 'Wednesday', '08:00:00', '09:00:00', 'Grade 1-A', 'Science', 'Room 101', '1757440776_68c06b08c728c.jpg', '2025-09-09 16:50:30', '2025-09-09 17:59:36', 'active'),
+(20, 40, 'Science 1', 'Introduction to natural and physical sciences for children', 'Saturday', '08:00:00', '09:00:00', 'Grade 1-A', 'Science', 'Room 101', '1757440776_68c06b08c728c.jpg', '2025-09-09 16:50:30', '2025-09-25 08:19:35', 'active'),
 (21, 40, 'Edukasyon sa Pagpapakatao (EsP) 1', 'Pagpapahalaga, tamang asal at wastong gawi', 'Wednesday', '09:10:00', '10:10:00', 'Grade 1-A', 'EsP', 'Room 101', '1757440765_68c06afd441c2.jpg', '2025-09-09 16:50:30', '2025-09-09 17:59:25', 'active'),
 (22, 40, 'MAPEH 1', 'Music, Arts, Physical Education, and Health integration', 'Thursday', '08:00:00', '09:00:00', 'Grade 1-A', 'MAPEH', 'Room 102', '1757440654_68c06a8e3d51c.jpg', '2025-09-09 16:50:30', '2025-09-09 17:57:34', 'active'),
 (23, 40, 'Music 1', 'Learning basic rhythm, singing, and instruments', 'Thursday', '09:10:00', '10:10:00', 'Grade 1-A', 'Music', 'Room 102', '1757440257_68c06901ddd75.jpg', '2025-09-09 16:50:30', '2025-09-09 17:50:57', 'active'),
@@ -421,12 +433,16 @@ INSERT INTO `course_students` (`id`, `course_id`, `student_id`, `joined_at`) VAL
 (48, 20, 35, '2025-09-09 18:29:04'),
 (51, 16, 59, '2025-09-10 04:23:28'),
 (52, 20, 13, '2025-09-15 17:33:29'),
-(53, 25, 32, '2025-09-15 18:19:20'),
 (55, 25, 35, '2025-09-15 18:19:20'),
 (56, 25, 37, '2025-09-15 18:19:20'),
 (57, 25, 52, '2025-09-15 18:19:20'),
 (58, 25, 55, '2025-09-15 18:19:20'),
-(59, 24, 13, '2025-09-16 12:01:30');
+(59, 24, 13, '2025-09-16 12:01:30'),
+(60, 26, 10, '2025-09-17 12:29:39'),
+(61, 26, 13, '2025-09-17 12:31:12'),
+(62, 16, 13, '2025-09-17 12:38:14'),
+(64, 22, 10, '2025-09-23 06:16:30'),
+(65, 16, 10, '2025-09-25 08:20:58');
 
 -- --------------------------------------------------------
 
@@ -596,7 +612,9 @@ INSERT INTO `posts` (`id`, `course_id`, `teacher_id`, `title`, `description`, `v
 (38, 16, 40, 'Panitikan ng Pilipinas', '<h1><strong>Lesson 2: Panitikan ng Pilipinas</strong></h1><p>&nbsp;</p><p>Ang panitikan ay salamin ng lipunan. Mula sa epiko, alamat, pabula, hanggang sa modernong tula at maikling kuwento, ipinapakita nito ang ating kasaysayan at karanasan. Anong akdang pampanitikan ang paborito mo at bakit?</p>', NULL, NULL, '2025-09-10 04:18:04'),
 (45, 20, 40, 'Lesson 1: The Scientific Method', '<h1>Lesson 1: The Scientific Method</h1><p>&nbsp;</p><p><strong>Overview:</strong><br>Learn how scientists explore the world using observation, hypothesis, experimentation, and analysis.</p><p><strong>Objectives:</strong></p><ul><li>Understand the steps of the scientific method</li><li>Practice forming hypotheses and drawing conclusions</li></ul>', NULL, '[\"file_68c8520cdfc1d.png\"]', '2025-09-15 17:51:08'),
 (46, 20, 40, 'Lesson 2: Earth\'s Layers', '<h1>Lesson 2: Earth\'s Layers</h1><p>&nbsp;</p><p><strong>Overview:</strong><br>Explore the structure of the Earth—crust, mantle, outer core, and inner core.</p><p><strong>Objectives:</strong></p><ul><li>Identify Earth\'s layers and their characteristics</li><li>Understand how tectonic plates move</li></ul>', NULL, NULL, '2025-09-15 17:51:54'),
-(47, 20, 40, 'Lesson 3: States of Matter', '<h1>Lesson 3: States of Matter</h1><p>&nbsp;</p><p><strong>Overview:</strong><br>Discover the 3 main states of matter: solid, liquid, and gas — and how they change with temperature.</p><p><strong>Objectives:</strong></p><ul><li>Define each state of matter</li><li>Describe melting, freezing, condensation, and evaporation</li></ul>', NULL, '[\"file_68c8526644613.png\"]', '2025-09-15 17:52:38');
+(47, 20, 40, 'Lesson 3: States of Matter', '<h1>Lesson 3: States of Matter</h1><p>&nbsp;</p><p><strong>Overview:</strong><br>Discover the 3 main states of matter: solid, liquid, and gas — and how they change with temperature.</p><p><strong>Objectives:</strong></p><ul><li>Define each state of matter</li><li>Describe melting, freezing, condensation, and evaporation</li></ul>', NULL, '[\"file_68c8526644613.png\"]', '2025-09-15 17:52:38'),
+(49, 26, 40, 'sa', '<p>twe</p>', NULL, '[\"file_68cafd4608348.pdf\"]', '2025-09-17 18:26:14'),
+(50, 26, 40, 'asas', '<p>asas</p>', NULL, '[\"file_68caff681946d.pptx\"]', '2025-09-17 18:35:20');
 
 -- --------------------------------------------------------
 
@@ -1130,13 +1148,13 @@ ALTER TABLE `announcement`
 -- AUTO_INCREMENT for table `assignments`
 --
 ALTER TABLE `assignments`
-  MODIFY `assignment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `assignment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `assignment_submissions`
 --
 ALTER TABLE `assignment_submissions`
-  MODIFY `submission_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `submission_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT for table `attendance`
@@ -1154,13 +1172,13 @@ ALTER TABLE `class_schedule`
 -- AUTO_INCREMENT for table `courses`
 --
 ALTER TABLE `courses`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `course_students`
 --
 ALTER TABLE `course_students`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=60;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
 
 --
 -- AUTO_INCREMENT for table `master_list`
@@ -1178,7 +1196,7 @@ ALTER TABLE `payment`
 -- AUTO_INCREMENT for table `posts`
 --
 ALTER TABLE `posts`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=49;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=51;
 
 --
 -- AUTO_INCREMENT for table `scholastic_records`
