@@ -1,30 +1,54 @@
-<?php
-include 'session_login.php';
-include '../db_connection.php';
-
-// Fetch all records from the attendance table
-$sql = "SELECT * FROM attendance ";
-
-$result = mysqli_query($conn, $sql);
-
-$attendance_type = isset($_GET['attendance_type']) ? $_GET['attendance_type'] : null;
-
-$selected_type = null;
-if ($attendance_type === '1') {
-    $selected_type = 'time_in';
-} elseif ($attendance_type === '0') {
-    $selected_type = 'time_out';
-}
-?>
-
+<?php include 'session_login.php'; ?>
+<?php include '../db_connection.php'; ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AcadeSys Admission</title>
+  <title>Attendance Records</title>
   <?php include 'header.php' ?>
+  <style>
+    .rounded-circle:hover{
+      background-color:rgb(240, 249, 255) !important;
+    }
+  </style>
+    <style>
+    .tabs {
+    display: flex;
+    gap: 30px;           
+    padding: 5px;
+    }
+
+    .tab {
+    padding: 8px 0;
+    cursor: pointer;
+    position: relative;
+    }
+
+    .tab p {
+    margin: 0;
+    font-weight: 500;
+    color: #555;
+    }
+
+    /* underline only active tab */
+    .tab.active p {
+    color: #000; /* active text color */
+    }
+
+    .tab.active::after {
+    content: "";
+    position: absolute;
+    bottom: -2px;  /* sits on base line */
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background:rgb(218, 64, 64); /* your active color (green) */
+    border-radius: 2px;
+    }
+    </style>
+
 </head>
 <body>
 <div class="d-flex flex-row bg-light">
@@ -36,114 +60,140 @@ if ($attendance_type === '1') {
     <div class="container my-4">
       <div class="row g-4">
         <div class="col-12">
-          <div class="rounded pt-4 p-3 bg-white">
-            <div class="row mb-3">
+          <div>
+            <div class="container my-4">
+              <div class="row mb-3">
+                <div class="col-12 border-bottom col-md-12">
+                  <h4>Attendance Records</h4>
+                </div>
 
-              <div class="col-md-8">
-                <div id="liveTime" class=" fw-bold"></div>
-                <p id="date">Date</p>
+                
               </div>
-              <div class="col-12 col-md-4">
-               <form id="attendanceForm" method="POST" action="attendance_rfid.php">
-                <input type="hidden" name="teacher_id" id="teacher_id" value="<?= $_SESSION['user_id'] ?>">
-                    <div class="input-group">
-                        <input 
-                        type="text" 
-                        name="rfid_code" 
-                        id="rfid_code"
-                        class="form-control" 
-                        placeholder="Scan RFID or Enter ID" 
-                        required
-                        >
-                        <script>
-                          window.addEventListener('DOMContentLoaded', () => {
-                            const input = document.getElementById('rfid_code');
-                            if (input) input.focus();
-                          });
-                        </script>
 
-                        <select class="form-select" name="attendance_type" id="attendance_type" required>
-                            <option value="time_in" <?= $selected_type === 'time_in' ? 'selected' : '' ?>>Time In</option>
-                            <option value="time_out" <?= $selected_type === 'time_out' ? 'selected' : '' ?>>Time Out</option>
-                        </select>
+              <!-- Courses Grid -->
+              <div class="row g-3">
+                <?php $course_id = isset($_GET['id']) ? intval($_GET['id']) : 0; ?>
+                <div class="tabs d-flex">
+                    <div class="tab ">
+                        <a href="course.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Stream</a>
                     </div>
-                    </form>
-              </div>
-            </div>
-            <?php if (isset($_GET['message'])): ?>
-                <?= $_GET['message'] ?>
-            <?php endif; ?>
-
-
-            <?php
-                // Fetch only today's attendance records and join with users table to get full name
-                $sql = "SELECT 
-                            attendance.id,
-                            attendance.date,
-                            attendance.time_in,
-                            attendance.time_out,
-                            attendance.teacher_id,
-                            attendance.student_id,
-                            CONCAT(users.first_name, ' ', users.last_name) AS fullname
-                        FROM attendance
-                        INNER JOIN users ON attendance.student_id = users.user_id
-                        WHERE attendance.date = CURDATE()
-                        ORDER BY attendance.time_in ASC";
-
-                $result = mysqli_query($conn, $sql);
-
-                // Check for query errors
-                if (!$result) {
-                    die("Query failed: " . mysqli_error($conn));
-                }
-                ?>
-
-                <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Student</th>
-                        <th>Time In</th>
-                        <th>Time Out</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <?php if (mysqli_num_rows($result) > 0): ?>
-                        <?php while ($row = mysqli_fetch_assoc($result)): ?>
-                        <tr>
-                            <td><p class="text-muted py-3 mb-0"><?= htmlspecialchars($row['date']) ?></p></td>
-                            <td><p class="text-muted py-3 mb-0"><?= htmlspecialchars($row['fullname']) ?></p></td>
-                            <td>
-                                <p class="text-muted py-3 mb-0">
-                                    <?= $row['time_in'] ? date('h:i:s A', strtotime($row['time_in'])) : '<span class="text-muted">--</span>' ?>
-                                </p>
-                            </td>
-                            <td>
-                                <p class="text-muted py-3 mb-0">
-                                    <?= $row['time_out'] ? date('h:i:s A', strtotime($row['time_out'])) : '<span class="text-muted">--</span>' ?>
-                                </p>
-                            </td>
-                        </tr>
-
-                        <?php endwhile; ?>
-                    <?php else: ?>
-                      <tr>
-                        <td colspan="4">
-                          <div class="d-flex flex-column justify-content-center align-items-center py-4">
-                            <p class="text-center text-muted mb-3">No attendance records found.</p>
-                            <img src="../static/images/art7.svg" alt="No records" style="max-width: 300px; opacity: 70%">
-                          </div>
-                        </td>
-                      </tr>
-                    <?php endif; ?>
-                    </tbody>
-                </table>
+                    <div class="tab active">
+                        <a href="attendance.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Attendance</a>
+                    </div>
+                    <div class="tab">
+                        <a href="assignment.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Assignment</a>
+                    </div>
+                    <div class="tab">
+                        <a href="student.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Students</a>
+                    </div>
+                    <div class="tab">
+                        <a href="student.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Grade Sheet</a>
+                    </div>
+                    <div class="tab">
+                        <a href="settings.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Settings</a>
+                    </div>
                 </div>
 
 
+                <!-- Tabs Content -->
+                <?php
+                  $course_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
+                  // Fetch distinct attendance dates for the course
+                  $stmt = $conn->prepare("SELECT date, COUNT(*) as count FROM attendance WHERE course_id = ? GROUP BY date ORDER BY date DESC");
+                  $stmt->bind_param("i", $course_id);
+                  $stmt->execute();
+                  $result = $stmt->get_result();
 
+                  // $excluded_date = '2025-09-15'; // example date to exclude
+                  // $stmt = $conn->prepare("SELECT date, COUNT(*) as count FROM attendance WHERE course_id = ? AND date <> ? GROUP BY date ORDER BY date DESC");
+                  // $stmt->bind_param("is", $course_id, $excluded_date);
+                  // $stmt->execute();
+                  // $result = $stmt->get_result();
+
+                  ?>
+    
+                  <div class="col-12 col-md-12 p-4 bg-white rounded-4">
+                    <div class="row align-items-center mb-4">
+                      <div class="col-12 col-md-10">
+                        <div class="input-group w-50">
+                          <input type="text" id="searchDateInput" class="form-control" placeholder="Search date here...">
+                          <button class="btn border" type="button" onclick="filterTable()">
+                            <i class="bi bi-search"></i>
+                          </button>
+                        </div>
+                      </div>
+                      <div class="col-12 col-md-2 mt-2 mt-md-0">
+                        <a href="start_attendance.php?id=<?= $course_id ?>" class="btn btn-danger rounded rounded-4 w-100">
+                          <i class="bi bi-play-circle me-2"></i> Start Attendance
+                        </a>
+                      </div>
+                    </div>
+
+                    <div class="table-responsive">
+                      <table class="table table-hover" id="attendanceTable">
+                        <thead>
+                          <tr>
+                            <th scope="col" class="text-muted">Date</th>
+                            <th scope="col" class="text-muted">Present</th>
+                            <th scope="col" class="text-muted" style="width: 120px;">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <?php if ($result->num_rows > 0): ?>
+                            <?php while ($row = $result->fetch_assoc()): ?>
+                              <tr class="text-muted" style="cursor:pointer" onclick="window.location.href='view_attendance.php?id=<?= $course_id ?>&date=<?= $row['date'] ?>'">
+                                <td class="text-muted"><?= htmlspecialchars($row['date']) ?></td>
+                                <td class="text-muted"><?= intval($row['count']) ?></td>
+                                <td>
+                                  <button class="btn rounded rounded-circle btn-border btn-sm text-muted" 
+                                          style="color: inherit;" 
+                                          onclick="event.stopPropagation(); deleteAttendance('<?= $row['date'] ?>');" 
+                                          title="Delete">
+                                    <i class="bi bi-trash text-muted" style="color: inherit;"></i>
+                                  </button>
+                                </td>
+                              </tr>
+                            <?php endwhile; ?>
+                          <?php else: ?>
+                            <tr>
+                              <td colspan="3" class="text-center text-muted">No attendance records found.</td>
+                            </tr>
+                          <?php endif; ?>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <script>
+                  // Simple filter function to filter attendance by date in the table
+                  function filterTable() {
+                    const input = document.getElementById("searchDateInput").value.toLowerCase();
+                    const table = document.getElementById("attendanceTable");
+                    const trs = table.tBodies[0].getElementsByTagName("tr");
+
+                    for (let i = 0; i < trs.length; i++) {
+                      const dateCell = trs[i].getElementsByTagName("td")[0];
+                      if (dateCell) {
+                        const dateText = dateCell.textContent || dateCell.innerText;
+                        trs[i].style.display = dateText.toLowerCase().indexOf(input) > -1 ? "" : "none";
+                      }
+                    }
+                  }
+
+                  // Dummy delete function - you need to implement actual deletion logic with AJAX or form submission
+                  function deleteAttendance(date) {
+                    if (confirm(`Are you sure you want to delete attendance for ${date}?`)) {
+                      // You can implement AJAX here or redirect to delete script
+                      // Example: window.location.href = `delete_attendance.php?course_id=<?= $course_id ?>&date=${date}`;
+                      alert('Delete function is not implemented yet.');
+                    }
+                  }
+                  </script>
+
+              </div>
+
+            </div> <!-- end inner container -->
           </div>
         </div>
       </div>
@@ -152,65 +202,5 @@ if ($attendance_type === '1') {
 </div>
 
 <?php include 'footer.php'; ?>
-
 </body>
 </html>
-
-<!-- Scripts -->
-<script>
-function updateClock() {
-    const now = new Date();
-
-    const timeString = now.toLocaleTimeString([], {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: true
-    });
-
-    const dateString = now.toLocaleDateString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-    });
-
-    const timeElement = document.getElementById('liveTime');
-    if (timeElement) {
-    timeElement.innerHTML = `<h1 class="fw-bold">${timeString}</h1>`;
-    }
-
-    const dateElement = document.getElementById('date');
-    if (dateElement) {
-    dateElement.textContent = dateString;
-    }
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-    updateClock();
-    setInterval(updateClock, 1000);
-
-    // Focus RFID input only when selection is made
-    const select = document.getElementById('attendance_type');
-    const rfidInput = document.getElementById('rfid_code');
-
-    select.addEventListener('change', () => {
-    if (select.value !== '') {
-        rfidInput.focus();
-    }
-    });
-
-    // Clickable row redirect
-    document.querySelectorAll('.clickable-row').forEach(row => {
-    row.addEventListener('click', () => {
-        const id = row.getAttribute('data-id');
-        if (id) {
-        window.location.href = `view_admission.php?id=${id}`;
-        }
-    });
-    });
-});
-</script>
-
-
-<script src="sendToArduino.js"></script>

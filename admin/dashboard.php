@@ -12,7 +12,7 @@ if ($result = mysqli_query($conn, $admission_query)) {
 
 // Get Enrollees Count
 $enrollment_count = 0;
-$enroll_query = "SELECT COUNT(*) AS total FROM enroll_form";
+$enroll_query = "SELECT COUNT(*) AS total FROM student_information";
 if ($result = mysqli_query($conn, $enroll_query)) {
     $row = mysqli_fetch_assoc($result);
     $enrollment_count = $row['total'];
@@ -38,7 +38,7 @@ if ($result = mysqli_query($conn, $teacher_query)) {
 $months = [];
 $totals = [];
 $payment_query = "
-    SELECT DATE_FORMAT(date, '%Y-%m-%d') AS day, SUM(amount) AS total
+    SELECT DATE_FORMAT(date, '%Y-%m-%d') AS day, SUM(payment) AS total
     FROM payment
     GROUP BY day
     ORDER BY day ASC

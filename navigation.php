@@ -98,7 +98,7 @@
             <li class="nav-item"><a class="nav-link" href="enroll.php">Enroll</a></li>
         </ul>
 
-          <a href="login.php" class="btn text-light ms-2" style="background-color: #da3030; box-shadow: 0 4px 8px rgba(0,0,0,0.3);">
+          <a href="login.php" class="btn text-light ms-2" style="background-color: #da3030;">
             Log In
           </a>
       </div>

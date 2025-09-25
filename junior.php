@@ -50,8 +50,8 @@
           </style>
 
           <div class="tab-buttons">
-            <button type="button" class="tab-btn active" onclick="switchTab('old')">Old Student</button>
-            <button type="button" class="tab-btn" onclick="switchTab('new')">New Student</button>
+            <a href="junior_old.php" type="button" class="tab-btn text-decoration-none text-muted" >Old Student</a>
+            <a href="junior.php" type="button" class="tab-btn active text-decoration-none" >New Student</a>
           </div>
 
          <script>
@@ -77,8 +77,8 @@
           <div class="col-12 d-none col-md-6">
             <label for="status" class="form-label text-muted">Status</label>
             <select name="status" id="status" class="form-select">
-              <option selected>Old Student</option>
-              <option>New Student</option>
+              <option >Old Student</option>
+              <option selected>New Student</option>
             </select>
             <div id="status-error" class="invalid-feedback d-none">Status is required.</div>
           </div>
@@ -99,7 +99,7 @@
         <div class="col-12 col-md-6">
           <label for="lrn" class="form-label text-muted">Learner Reference Number (LRN)</label>
           <input type="text" name="lrn" id="lrn" 
-                placeholder="Note: For nursery that has no LRN leave empty." 
+                placeholder="Note: if not sure LRN leave empty." 
                 class="form-control"
                 maxlength="12"
                 oninput="this.value = this.value.replace(/\D/g, '').slice(0, 12)">
@@ -213,11 +213,43 @@
             <div id="Barangay-error" class="invalid-feedback d-none">Barangay is required.</div>
           </div>
 
-          <div class="col-12">
+          <div class="col-12 d-none">
             <label for="residential_address" class="form-label text-muted">Complete Residential Address</label>
-            <input type="text" id="residential_address" name="residential_address" class="form-control" placeholder="e.g., Block No., Lot No., Street Name, Subdivision">
+            <input type="text" id="residential_address" name="full_residential_address" class="form-control" placeholder="e.g., Block No., Lot No., Street Name, Subdivision" readonly>
             <div id="residential_address-error" class="invalid-feedback d-none">Complete residential address is required.</div>
           </div>
+
+          <div class="col-12 col-md-6">
+            <label for="street_address" class="form-label text-muted">Street Name / Subdivision</label>
+            <input type="text" id="street_address" name="street_address" class="form-control" placeholder="e.g., Street Name, Subdivision">
+            <div id="street_address-error" class="invalid-feedback d-none">Street name or subdivision is required.</div>
+          </div>
+
+          <div class="col-12 col-md-6">
+            <label for="house_address" class="form-label text-muted">House No. / Lot / BLK / Building No.</label>
+            <input type="text" id="house_address" name="house_address" class="form-control" placeholder="e.g., House No., Lot, Block, Building No.">
+            <div id="house_address-error" class="invalid-feedback d-none">House number or lot details are required.</div>
+          </div>
+
+          <script>
+            const residentialInput = document.getElementById("residential_address");
+            const streetInput = document.getElementById("street_address");
+            const houseInput = document.getElementById("house_address");
+
+            function updateResidentialAddress() {
+              let house = houseInput.value.trim();
+              let street = streetInput.value.trim();
+
+              // Join values with comma if both exist
+              let fullAddress = [street, house].filter(Boolean).join(", ");
+
+              residentialInput.value = fullAddress;
+            }
+
+            // Update on typing
+            streetInput.addEventListener("input", updateResidentialAddress);
+            houseInput.addEventListener("input", updateResidentialAddress);
+          </script>
 
 
          <div class="col-12 text-center">
@@ -451,18 +483,20 @@ const fields = [
   { id: 'Province', message: 'Province is required' },
   { id: 'Municipal', message: 'Municipal is required' },
   { id: 'Barangay', message: 'Barangay is required' },
-  { id: 'residential_address', message: 'Residential address is required' }
+  { id: 'residential_address', message: 'Residential address is required' },
+  { id: 'street_address', message: 'Street address is required' },
+  { id: 'house_address', message: 'House address is required' }
 ];
 
-// Only include LRN in validation if not nursery or kinder
-if (gradeLevel !== 'nursery' && gradeLevel !== 'kinder garten') {
-  fields.push({ id: 'lrn', message: 'LRN must be a 12-digit number', pattern: /^\d{12}$/ });
-}
+// // Only include LRN in validation if not nursery or kinder
+// if (gradeLevel !== 'nursery' && gradeLevel !== 'kinder garten') {
+//   fields.push({ id: 'lrn', message: 'LRN must be a 12-digit number', pattern: /^\d{12}$/ });
+// }
 
-  // Only include LRN in validation if not Kinder Garten
-  if (gradeLevel !== 'nursery') {
-    fields.push({ id: 'lrn', message: 'LRN must be a 12-digit number', pattern: /^\d{12}$/ });
-  }
+//   // Only include LRN in validation if not Kinder Garten
+//   if (gradeLevel !== 'nursery') {
+//     fields.push({ id: 'lrn', message: 'LRN must be a 12-digit number', pattern: /^\d{12}$/ });
+//   }
 
   let isValid = true;
 

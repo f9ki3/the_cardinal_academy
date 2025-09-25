@@ -27,7 +27,7 @@ if ($admission_id > 0) {
   <?php include 'header.php'; ?>
 </head>
 <body>
-<div class="d-flex flex-row bg-light">
+<div class="d-flex flex-row">
   <?php include 'navigation.php'; ?>
 
   <div class="content flex-grow-1">
@@ -35,7 +35,7 @@ if ($admission_id > 0) {
 
     <div class="container py-4">
      <form action="approved_admission.php" method="POST">
-        <div class="bg-white p-4 rounded-4 shadow-sm">
+        <div class="bg-white p-4 rounded-4 ">
         <h2>Student Admission Form</h2>
         <p class="m-0 mb-4">Note: Please review all information from the form.</p>
         <hr>

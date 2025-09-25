@@ -215,7 +215,7 @@ document.addEventListener('DOMContentLoaded', function () {
     row.addEventListener('click', () => {
       const id = row.getAttribute('data-id');
       const grade = row.getAttribute('data-grade');
-      window.location.href = `view_section.php?id=${id}&grade_level=${encodeURIComponent(grade)}&nav_drop=true`;
+      window.location.href = `class_schedule.php?id=${id}&grade_level=${encodeURIComponent(grade)}&nav_drop=true`;
     });
   });
 });

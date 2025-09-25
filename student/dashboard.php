@@ -1,91 +1,19 @@
 <?php include 'session_login.php'; ?>
-<?php include '../db_connection.php'; 
-
-$user_id = $_SESSION['user_id'];
-
-$sql = "SELECT first_name, last_name, profile FROM users WHERE user_id = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$user = $result->fetch_assoc();
-$full_name = htmlspecialchars($user['first_name'] . ', ' . $user['last_name']);
-?>
+<?php include '../db_connection.php'; ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AcadeSys Dashboard</title>
+  <title>Attendance Records</title>
   <?php include 'header.php' ?>
-   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    .rounded-circle:hover{
+      background-color:rgb(240, 249, 255) !important;
+    }
+  </style>
 </head>
-<style>
-  .chat-icon {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background-color: #b72029;
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      color: white;
-      font-size: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 10px rgba(0,0,0,0.2);
-      cursor: pointer;
-    }
-    .chat-icon:hover {
-      background-color: #da3030;
-    }
-    :root {
-            --primary: #4f46e5;
-            --background: #f9fafb;
-            --accent: #10b981;
-            --text-muted: #6b7280;
-        }
-        body {
-            background-color: var(--background);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        .profile-picture {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            border: 4px solid white;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
-        }
-        .badge-custom {
-            background-color: var(--accent);
-            color: white;
-            font-size: 0.75rem;
-            font-weight: 600;
-            padding: 0.4rem 0.75rem;
-            border-radius: 9999px;
-        }
-        .card-header.bg-primary {
-            background-color: var(--primary) !important;
-        }
-        .card {
-            border: none;
-            border-radius: 12px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
-        }
-        .table td, .table th {
-            vertical-align: middle;
-        }
-        .rounded-circle {
-            font-weight: 600;
-        }
-        h5.card-title {
-            font-weight: 600;
-        }
-</style>
 <body>
 <div class="d-flex flex-row bg-light">
   <?php include 'navigation.php' ?>
@@ -93,181 +21,129 @@ $full_name = htmlspecialchars($user['first_name'] . ', ' . $user['last_name']);
   <div class="content flex-grow-1">
     <?php include 'nav_top.php' ?>
 
-    <div class="container my-4">
-      <div class="row g-4">
+  <div class="container my-4">
+    <div class="row g-4">
         <div class="col-12">
-          <div class="rounded p-3 bg-white">
             <div class="container my-4">
-              <div class="row mb-3">  
-    <div class="container">
-        <div class="row g-4">
-            <!-- Profile Column -->
-            <div class="col-md-4">
-                <!-- Profile Card -->
-                <div class="card">
-                    <div class="card-body text-center pt-5">
-                        <h5 class="card-title mb-1" id="student-name"><?= htmlspecialchars($full_name)?></h5>
-                        <p class="text-muted small mb-3" id="student-id">Student ID: S12345678</p>
-                        <div class="mb-3">
-                            <span class="badge-custom me-2">STEM</span>
-                        </div>
-                        <div class="row text-center border-top pt-3">
-                            <div class="col">
-                                <div class="text-muted small">GPA</div>
-                                <strong>3.8</strong>
+                <!-- Header and Search -->
+                <div class="row mb-3">
+                    <div class="col-12 col-md-5">
+                        <h4>My Classes</h4>
+                    </div>
+
+                    <div class="col-12 col-md-7 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                        <!-- Search Form -->
+                        <form method="GET" action="" class="flex-grow-1">
+                            <div class="input-group">
+                                <input 
+                                    class="form-control rounded rounded-4" 
+                                    type="text" 
+                                    name="search" 
+                                    value="<?= htmlspecialchars($_GET['search'] ?? '') ?>" 
+                                    placeholder="Search by course name or subject"
+                                >
+                                <button type="submit" class="btn border ms-2 rounded rounded-4" style="background-color: white;">
+                                    <i class="bi bi-search me-1"></i> Search
+                                </button>
                             </div>
-                            <div class="col">
-                                <div class="text-muted small">Credits</div>
-                                <strong>78</strong>
-                            </div>
-                            <div class="col">
-                                <div class="text-muted small">Status</div>
-                                <strong class="text-success">Active</strong>
-                            </div>
-                        </div>
-                        <div class="mt-4">
-                            <button class="btn btn-primary w-100">Edit Profile</button>
-                        </div>
+                        </form>
+
+                        <!-- Create Course Button -->
+                        <button type="button" class="btn bg-danger text-light rounded rounded-4 px-4" data-bs-toggle="modal" data-bs-target="#joinCourses">
+                            + Join Class
+                        </button>
+                        <?php include 'join_course.php'?>
                     </div>
                 </div>
 
-                <!-- Contact Info -->
-                <div class="card mt-4">
-                    <div class="card-body">
-                        <h5 class="card-title mb-3">
-                            <i class="bi bi-envelope me-2 text-primary"></i>Contact Info
-                        </h5>
-                        <ul class="list-unstyled small text-muted">
-                            <li class="mb-2">
-                                <i class="bi bi-geo-alt me-2"></i>123 University Ave, Campus Town
-                            </li>
-                            <li class="mb-2">
-                                <i class="bi bi-telephone me-2"></i>(555) 123-4567
-                            </li>
-                            <li>
-                                <i class="bi bi-envelope-at me-2"></i>alex.johnson@university.edu
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
+                <!-- Courses Grid -->
+             <div class="row g-3">
+                    <?php
+                    $student_id = $_SESSION['user_id'];
+                    $search = trim($_GET['search'] ?? '');
 
-            <!-- Academic Column -->
-            <div class="col-md-8">
-                <!-- Academic Progress -->
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title">Academic Progress</h5>
-                        <div class="row text-center mt-4">
-                            <div class="col">
-                                <svg width="100" height="100">
-                                    <circle cx="50" cy="50" r="40" stroke="#e6e7eb" stroke-width="8" fill="none"/>
-                                    <circle cx="50" cy="50" r="40" stroke="#10b981" stroke-width="8" fill="none" stroke-dasharray="251.2" stroke-dashoffset="50.24" transform="rotate(-90 50 50)"/>
-                                    <text x="50" y="55" text-anchor="middle" font-size="16" font-weight="bold">80%</text>
-                                </svg>
-                                <div class="small text-muted mt-1">Degree Completion</div>
-                            </div>
-                            <div class="col">
-                                <svg width="100" height="100">
-                                    <circle cx="50" cy="50" r="40" stroke="#e6e7eb" stroke-width="8" fill="none"/>
-                                    <circle cx="50" cy="50" r="40" stroke="#3b82f6" stroke-width="8" fill="none" stroke-dasharray="251.2" stroke-dashoffset="75.36" transform="rotate(-90 50 50)"/>
-                                    <text x="50" y="55" text-anchor="middle" font-size="16" font-weight="bold">70%</text>
-                                </svg>
-                                <div class="small text-muted mt-1">Major Requirements</div>
-                            </div>
-                            <div class="col">
-                                <svg width="100" height="100">
-                                    <circle cx="50" cy="50" r="40" stroke="#e6e7eb" stroke-width="8" fill="none"/>
-                                    <circle cx="50" cy="50" r="40" stroke="#f59e0b" stroke-width="8" fill="none" stroke-dasharray="251.2" stroke-dashoffset="125.6" transform="rotate(-90 50 50)"/>
-                                    <text x="50" y="55" text-anchor="middle" font-size="16" font-weight="bold">50%</text>
-                                </svg>
-                                <div class="small text-muted mt-1">Minor Requirements</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    // Base query with join to course_students
+                    $query = "SELECT c.* 
+                            FROM courses c
+                            INNER JOIN course_students cs ON c.id = cs.course_id
+                            WHERE cs.student_id = ?";
 
-                <!-- Course Table -->
-                <div class="card">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between align-items-center mb-3">
-                            <h5 class="card-title">Current Courses</h5>
-                            <a href="#" class="btn btn-sm btn-outline-primary">View All</a>
-                        </div>
-                        <div class="table-responsive">
-                            <table class="table table-bordered align-middle">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>Course</th>
-                                        <th>Instructor</th>
-                                        <th>Schedule</th>
-                                        <th>Room</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
+                    // Add search condition
+                    if ($search) {
+                        $query .= " AND (c.course_name LIKE ? OR c.subject LIKE ?)";
+                        $search_param = "%$search%";
+                        $stmt = $conn->prepare($query);
+                        $stmt->bind_param("iss", $student_id, $search_param, $search_param);
+                    } else {
+                        $stmt = $conn->prepare($query);
+                        $stmt->bind_param("i", $student_id);
+                    }
 
-                                                <div class="ms-3">
-                                                    <div>CS 401</div>
-                                                    <div class="text-muted small">Advanced Algorithms</div>
-                                                </div>
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+
+                    if ($result->num_rows > 0) {
+                        while ($course = $result->fetch_assoc()) {
+                            $cover = $course['cover_photo'] ? "../static/uploads/" . $course['cover_photo'] : "../static/uploads/default_cover.jpg";
+                            ?>
+                            <div class="col-12 col-md-6 col-lg-4">
+                                <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden">
+                                    <!-- Top Image with overlay -->
+                                    <a href="course.php?id=<?= $course['id'] ?>" class="text-decoration-none">
+                                        <div class="position-relative" style="height: 150px; overflow: hidden;">
+                                            <img src="<?= $cover ?>" alt="Course" class="w-100 h-100" style="object-fit: cover;">
+                                            <div class="position-absolute top-0 start-0 w-100 h-100" style="background: rgba(0,0,0,0.6);"></div>
+                                            <div class="position-absolute bottom-0 start-0 p-3 text-light">
+                                                <h5 class="mb-1 fw-bolder"><?= htmlspecialchars($course['course_name']) ?></h5>
+                                                <p class="small mb-1"><?= htmlspecialchars($course['description']) ?></p>
+                                                <p class="small mb-0">
+                                                    <i class="bi bi-calendar-event me-1"></i> <?= htmlspecialchars($course['day']) ?>
+                                                    <span class="ms-2">
+                                                        <i class="bi bi-clock me-1"></i> <?= date("h:i A", strtotime($course['start_time'])) ?> - <?= date("h:i A", strtotime($course['end_time'])) ?>
+                                                    </span>
+                                                </p>
                                             </div>
-                                        </td>
-                                        <td>Dr. Smith</td>
-                                        <td>MWF 9:00–10:15</td>
-                                        <td><span class="badge bg-success">201</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">
-                                                <div class="ms-3">
-                                                    <div>MATH 310</div>
-                                                    <div class="text-muted small">Probability Theory</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>Prof. Johnson</td>
-                                        <td>TTh 11:00–12:15</td>
-                                        <td><span class="badge bg-success">201</span></td>
-                                    </tr>
-                                    <tr>
-                                        <td>
-                                            <div class="d-flex align-items-center">                                               
-                                                <div class="ms-3">
-                                                    <div>PHYS 250</div>
-                                                    <div class="text-muted small">Modern Physics</div>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td>Dr. Lee</td>
-                                        <td>MW 2:00–3:15</td>
-                                        <td><span class="badge bg-success">201</span></td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                                        </div>
+                                    </a>
+
+                                    <!-- Card Buttons -->
+                                    <div class="card-body d-flex flex-column">
+                                        <div class="mt-auto d-flex gap-2 justify-content-start">
+                                            <a href="course.php?id=<?= $course['id'] ?>" class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;" title="Course Details">
+                                                <i class="bi bi-journal-bookmark"></i>
+                                            </a>
+                                            <a href="attendance.php?id=<?= $course['id'] ?>" class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;" title="Attendance">
+                                                <i class="bi bi-clipboard-check"></i>
+                                            </a>
+                                            <a href="assignment.php?id=<?= $course['id'] ?>" class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center" style="width: 36px; height: 36px;" title="Assignments">
+                                                <i class="bi bi-file-earmark-text"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <?php
+                        }
+                    } else {
+                        echo '<div class="d-flex flex-column justify-content-center align-items-center py-4">
+                                <img src="../static/images/art7.svg" alt="No records" style="max-width: 300px; opacity: 70%">
+                                <p class="text-center mt-5 text-muted mb-3">No class or course found.</p>
+                            </div>';
+                    }
+
+                    $stmt->close();
+                    ?>
                 </div>
 
-        
+                <!-- End Courses Grid -->
+
+            </div> <!-- End inner container -->
         </div>
     </div>
-</body>
-</html>
+</div>
 
-
-            </div> <!-- end inner container -->
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 </div>
-<div >
-    <?php include 'messenger.php'; ?>
-  </div>
 
 <?php include 'footer.php'; ?>
 </body>

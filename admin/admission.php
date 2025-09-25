@@ -29,7 +29,7 @@ $query = "SELECT
             grade_level,
             status 
           FROM admission_form
-          WHERE admission_status = 'pending' AND (
+          WHERE admission_status = 'pending' AND status = 'New Student' AND (
               lrn LIKE '%$search%' 
               OR que_code LIKE '%$search%' 
               OR CONCAT(firstname, ' ', lastname) LIKE '%$search%'
@@ -49,7 +49,7 @@ $result = mysqli_query($conn, $query);
   <?php include 'header.php' ?>
 </head>
 <body>
-<div class="d-flex flex-row bg-light">
+<div class="d-flex flex-row">
   <?php include 'navigation.php' ?>
 
   <div class="content flex-grow-1">
@@ -61,14 +61,22 @@ $result = mysqli_query($conn, $query);
           <div class="rounded p-3 bg-white">
             <div class="container my-4">
               <div class="row mb-3">
-                <div class="col-12 col-md-8">
-                  <h4>Student Admissions</h4>
+                <div class="col-12 col-md-6">
+                  <h4>Student Admissions - New</h4>
                 </div>
-                <div class="col-12 col-md-4">
+                <div class="col-12 col-md-6">
                   <form method="GET" action="">
                     <div class="input-group">
                       <input class="form-control rounded rounded-4" type="text" name="search" value="<?= htmlspecialchars($search) ?>" placeholder="Search LRN, CODE or Fullname">
                       <button class="btn border ms-2 rounded rounded-4" type="submit">Search</button>
+                      <a href="admission_old.php" class="btn border ms-2 rounded rounded-4">
+                        <i class="bi bi-person-badge me-1"></i> Old Student
+                      </a>
+
+                      <a href="admission.php" class="btn border ms-2 rounded rounded-4">
+                        <i class="bi bi-person-plus me-1"></i> New Student
+                      </a>
+
                     </div>
                   </form>
                 </div>

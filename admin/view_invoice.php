@@ -2,33 +2,78 @@
 include 'session_login.php';
 include '../db_connection.php';
 
-$id = (int) $_GET['invoice_id'];
-$student_id = (int) $_GET['student_id'];
+$id = (int) $_GET['invoice_id']; // invoice_number
+$tuition_id = (int) $_GET['tuition_id'];
 
-// Fetch payment details
-$stmt = $conn->prepare("SELECT *
-FROM payment
-JOIN users ON payment.student_id = users.user_id
-JOIN enroll_form ON users.enroll_id = enroll_form.id
-WHERE payment.invoice_number = ?
-");
-$stmt->bind_param("i", $id);
+// Fetch payment with student and tuition details + balance
+$sql = "
+SELECT 
+    p.invoice_number,
+    p.reference_number,
+    p.date,
+    p.payment,
+    p.payment_type,
+    p.reference_number,
+    p.transaction_fee,
+    st.account_number,
+    st.tuition_fee,
+    st.payment_plan,
+    st.registration_fee,
+    st.miscellaneous,
+    st.uniform,
+    st.discount_type,
+    st.discount_value,
+    st.discount_amount,
+    st.downpayment,
+    si.firstname,
+    si.middlename,
+    si.lastname,
+    CONCAT_WS(', ', si.residential_address, si.barangay, si.municipal, si.province) AS full_address,
+    -- compute balance
+    (st.tuition_fee - IFNULL((SELECT SUM(pp.payment) 
+                              FROM payment pp 
+                              WHERE pp.tuition_id = st.id), 0)) AS balance
+FROM payment p
+JOIN student_tuition st ON p.tuition_id = st.id
+JOIN student_information si ON st.student_number = si.student_number
+WHERE p.invoice_number = ?
+  AND p.tuition_id = ?
+";
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("ii", $id, $tuition_id);
 $stmt->execute();
 $result = $stmt->get_result();
 $data = $result->fetch_assoc();
 $stmt->close();
 
-$fullname = $data['first_name'] . ' ' . $data['last_name'];
-$address = $data['address'];
+if (!$data) {
+    die("No record found.");
+}
+
+// Format values
+$fullname = $data['firstname'] . ' ' . ($data['middlename'] ? $data['middlename'] . ' ' : '') . $data['lastname'];
+$full_address = $data['full_address'];
+$reference_number = $data['reference_number'];
 $invoice = 'INV-' . str_pad($data['invoice_number'], 4, '0', STR_PAD_LEFT);
 $date = date("F j, Y", strtotime($data['date']));
-$amount = number_format($data['amount'], 2);
 $payment = number_format($data['payment'], 2);
-$change = number_format($data['change'], 2);
 $fee = number_format($data['transaction_fee'], 2);
-$plan = $data['payment_plan'];
 $type = $data['payment_type'];
+$account_no = $data['account_number'];
+$plan = $data['payment_plan'];
+$registration_fee = number_format($data['registration_fee'], 2);
+$tuition_fee = number_format($data['tuition_fee'], 2);
+$misc = number_format($data['miscellaneous'], 2);
+$uniform = number_format($data['uniform'], 2);
+$discount = number_format($data['discount_amount'], 2);
+$downpayment = number_format($data['downpayment'], 2);
+$balance = number_format($data['balance'], 2);
+$total = number_format((float)$data['balance'] + (float)$data['payment'], 2);
+
 ?>
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -59,9 +104,11 @@ $type = $data['payment_type'];
                 <button class="btn btn-sm border text-muted rounded-4" onclick="window.print()">
                   <i class="bi bi-printer me-1"></i> Print
                 </button>
-                <a href="view_tuition.php?id=<?php echo urlencode($student_id); ?>" class="btn btn-sm border text-muted rounded-4">
+                <a href="view_tuition2.php?tuition_id=<?php echo $tuition_id; ?>" 
+                  class="btn btn-sm border text-muted rounded-4">
                   <i class="bi bi-arrow-left me-1"></i> Go Back
                 </a>
+
 
               </div>
             </div>
@@ -81,27 +128,31 @@ $type = $data['payment_type'];
               <h5 class="fw-bold mb-3 d-print-block">Transaction Details</h5>
               <div class="row mb-3">
                 <div class="col-12 col-md-6">
+                  <p class="mb-1"><strong>Date:</strong> <?php echo $date; ?></p>
                   <p class="mb-1"><strong>Student Name:</strong> <?php echo $fullname; ?></p>
-                  <p class="mb-1"><strong>Residential Address:</strong> <?php echo $address; ?></p>
+                  <p class="mb-1"><strong>Residential Address:</strong> <?php echo $full_address; ?></p>
                 </div>
                 <div class="col-12 col-md-6">
                   <p class="mb-1"><strong>Invoice Number:</strong> <?php echo $invoice; ?></p>
-                  <p class="mb-1"><strong>Date:</strong> <?php echo $date; ?></p>
+                  <p class="mb-1"><strong>Reference Number:</strong> <?php echo $reference_number; ?></p>
+                  <p class="mb-1"><strong>Account Number:</strong> <?php echo $account_no; ?></p>
                 </div>
               </div>
 
               <hr class="my-3">
-              <h5 class="fw-bold mb-3 d-print-block">Transaction Computation</h5>
+              <h5 class="fw-bold mb-3 d-print-block">Summary</h5>
               <div class="row">
                 <div class="col-12 col-md-6">
-                  <p class="mb-1"><strong>Amount:</strong> ₱<?php echo $amount; ?></p>
-                  <p class="mb-1"><strong>Payment:</strong> ₱<?php echo $payment; ?></p>
-                  <p class="mb-1"><strong>Change:</strong> ₱<?php echo $change; ?></p>
-                </div>
-                <div class="col-12 col-md-6">
+                   <p class="mb-1"><strong>Tuition Fee:</strong> ₱<?php echo $tuition_fee; ?></p>
                   <p class="mb-1"><strong>Payment Plan:</strong> <?php echo $plan; ?></p>
                   <p class="mb-1"><strong>Payment Type:</strong> <?php echo $type; ?></p>
                   <p class="mb-1"><strong>Transaction Fee:</strong> ₱<?php echo $fee; ?></p>
+                 
+                </div>
+                <div class="col-12 col-md-6">
+                   <p class="mb-1"><strong>Balance:</strong> ₱<?php echo $total; ?></p>
+                   <p class="mb-1"><strong>Payment:</strong> ₱<?php echo $payment; ?></p>
+                   <p class="mb-1"><strong>Remaining:</strong> ₱<?php echo $balance; ?></p>
                 </div>
               </div>
             </div>

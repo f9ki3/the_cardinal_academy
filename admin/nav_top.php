@@ -3,5 +3,4 @@
     <img src="../static/uploads/logo.png" alt="Logo" style="height: 60px; width: auto;" class="me-3">
     <h3 class=" m-0">The Cardinal Academy, Inc.</h3>
   </div>
-  <a href="logout.php" class="btn btn-danger rounded-4">Logout</a>
 </div>

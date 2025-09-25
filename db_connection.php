@@ -1,6 +1,6 @@
 <?php
 // $host = 'localhost';        // usually localhost
-// $db   = 'tca';              // your actual DB name
+// $db   = 'tca1';              // your actual DB name
 // $user = 'root';             // your MySQL username
 // $pass = '';                 // your MySQL password
 
