@@ -147,7 +147,7 @@ include '../db_connection.php';
               <?php if (!empty($assignment['attachment'])): ?>
                 <div class="attachment-box w-100">
                   <i style="opacity: 80%;" class="fas text-muted fa-paperclip"></i>
-                  <a class="text-muted" href="../uploads/<?= htmlspecialchars($assignment['attachment']) ?>" target="_blank"><?= htmlspecialchars($assignment['attachment']) ?></a>
+                  <a class="text-muted" href="../static/uploads/<?= htmlspecialchars($assignment['attachment']) ?>" target="_blank"><?= htmlspecialchars($assignment['attachment']) ?></a>
                 </div>
               <?php else: ?>
                 <div class="attachment-box w-100 text-muted">
@@ -187,7 +187,7 @@ include '../db_connection.php';
               </div>
             </div>
           </div>
-
+          <?php include 'view_submit.php'?>
           <div class="row row-eq-height">
             <div class="col-12">
               <?php if ($submission_result->num_rows > 0): ?>
@@ -203,17 +203,31 @@ include '../db_connection.php';
                     </tr>
                   </thead>
                   <tbody>
-                    <?php $i = 1; while ($row = $submission_result->fetch_assoc()): ?>
-                      <tr>
+                  <?php $i = 1; while ($row = $submission_result->fetch_assoc()): ?>
+                  <?php 
+                    $attachments = json_decode($row['file_path'], true); // decode JSON array
+                    $fileUrl = !empty($row['file_url']) ? $row['file_url'] : '';
+                    ?>
+                    <tr class="submission-row"
+                        data-submission-id="<?= $row['submission_id'] ?>"
+                        data-fullname="<?= htmlspecialchars($row['first_name'] . ' ' . $row['last_name']) ?>"
+                        data-email="<?= htmlspecialchars($row['email']) ?>"
+                        data-submission_date="<?= date('Y-m-d H:i:s', strtotime($row['submission_date'])) ?>"
+                        data-grade="<?= htmlspecialchars($row['grade']) ?>"
+                        data-feedback="<?= htmlspecialchars($row['feedback']) ?>"
+                        data-file-path='<?= htmlspecialchars($row['file_path']) ?>'
+                        data-file-url="<?= htmlspecialchars($fileUrl) ?>">
                         <td><?= $i++ ?></td>
                         <td><?= htmlspecialchars($row['first_name'] . ' ' . $row['last_name']) ?></td>
                         <td><?= htmlspecialchars($row['email']) ?></td>
                         <td><?= date("F j, Y g:i A", strtotime($row['submission_date'])) ?></td>
                         <td><?= !empty($row['grade']) ? htmlspecialchars($row['grade']) : 'Not Graded Yet' ?></td>
                         <td><?= !empty($row['feedback']) ? htmlspecialchars($row['feedback']) : 'No Feedback yet' ?></td>
-                      </tr>
+                    </tr>
                     <?php endwhile; ?>
-                  </tbody>
+
+
+                    </tbody>
                 </table>
               <?php else: ?>
                <div class="d-flex flex-column justify-content-center align-items-center py-4"><p class="text-center mt-5 text-muted mb-3">No student has submitted this assignment yet!</p><img src="../static/images/art7.svg" alt="No records" style="max-width:300px; opacity:70%"></div>
