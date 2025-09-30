@@ -144,7 +144,6 @@ $profile_image = !empty($user['profile']) ? '../static/uploads/' . htmlspecialch
                 </div>
 
             </li>
-
         </ul>
     </div>
 
