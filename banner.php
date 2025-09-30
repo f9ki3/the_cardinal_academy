@@ -1,6 +1,24 @@
 <?php
-$mysqli = new mysqli("localhost", "u429904263_tca", "UsKA?M[7", "u429904263_tca");
+// Database connection
+if ($_SERVER['SERVER_NAME'] === 'localhost') {
+    $host = 'srv596.hstgr.io';   // or '31.220.110.101'
+    $db   = 'u429904263_tca';
+    $user = 'u429904263_tca';
+    $pass = 'UsKA?M[7';
+} else {
+    // Hostinger settings
+    $host = 'localhost';
+    $db   = 'u429904263_tca';
+    $user = 'u429904263_tca';
+    $pass = 'UsKA?M[7';
+}
 
+$mysqli = new mysqli($host, $user, $pass, $db);
+if ($mysqli->connect_error) {
+    die("Connection failed: " . $mysqli->connect_error);
+}
+
+// Fetch announcements
 $announcements = []; // Always define it
 $result = $mysqli->query("SELECT heading, paragraph FROM announcement WHERE visible = 1 ORDER BY id DESC");
 
@@ -8,6 +26,7 @@ if ($result && $result->num_rows > 0) {
     $announcements = $result->fetch_all(MYSQLI_ASSOC);
 }
 ?>
+
 
 
 <!DOCTYPE html>
