@@ -1,10 +1,9 @@
 <?php
 if ($_SERVER['SERVER_NAME'] === 'localhost') {
-    // Local settings
-    $host = 'localhost';
-    $db   = 'tca1';
-    $user = 'root';
-    $pass = '';
+    $host = 'srv596.hstgr.io';   // or '31.220.110.101'
+    $db   = 'u429904263_tca';
+    $user = 'u429904263_tca';
+    $pass = 'UsKA?M[7';
 } else {
     // Hostinger settings
     $host = 'localhost';

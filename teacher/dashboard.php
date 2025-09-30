@@ -119,7 +119,7 @@ include '../db_connection.php';
 
                                 if ($result->num_rows > 0) {
                                     while ($course = $result->fetch_assoc()) {
-                                        $cover = $course['cover_photo'] ? "../static/uploads/" . htmlspecialchars($course['cover_photo']) : "../static/uploads/default_cover.jpg";
+                                        $cover = $course['cover_photo'] ? "../static/uploads/" . htmlspecialchars($course['cover_photo']) : "../static/images/Classroom High School.jpg";
                                         ?>
                                         <div class="col-12 col-md-6 col-lg-4">
                                             <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden">

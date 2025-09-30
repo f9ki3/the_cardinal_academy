@@ -16,36 +16,32 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     // Basic validation for required fields
     if (empty($title) || empty($instructions) || empty($points) || empty($due_date) || empty($due_time)) {
-        echo "<div class='alert alert-danger'>All fields are required!</div>";
+        header("Location: assignment.php?id={$course_id}&status=0"); // 0 = error
         exit();
     }
 
     // Optionally handle file upload
     $attachment = NULL;
     if (isset($_FILES['assignment_file']) && $_FILES['assignment_file']['error'] == UPLOAD_ERR_OK) {
-        // Define the upload directory
-        $uploadDir = '../static/uploads/'; // Ensure this directory is writable by the web server
+        $uploadDir = '../static/uploads/';
         $uploadFile = $uploadDir . basename($_FILES['assignment_file']['name']);
 
-        // Check file size (optional - maximum size of 10MB)
-        if ($_FILES['assignment_file']['size'] > 10485760) { // 10MB in bytes
-            echo "<div class='alert alert-danger'>File size exceeds the limit of 10MB.</div>";
+        if ($_FILES['assignment_file']['size'] > 10485760) { 
+            header("Location: assignment.php?id={$course_id}&status=filesize");
             exit();
         }
 
-        // Check file type (optional - allow only certain file types)
         $allowedTypes = ['pdf', 'docx', 'pptx', 'txt', 'jpg', 'png'];
         $fileExtension = pathinfo($uploadFile, PATHINFO_EXTENSION);
         if (!in_array(strtolower($fileExtension), $allowedTypes)) {
-            echo "<div class='alert alert-danger'>Invalid file type. Allowed types: PDF, DOCX, PPTX, TXT, JPG, PNG.</div>";
+            header("Location: assignment.php?id={$course_id}&status=invalidfile");
             exit();
         }
 
-        // Move the uploaded file to the server's directory
         if (move_uploaded_file($_FILES['assignment_file']['tmp_name'], $uploadFile)) {
-            $attachment = $uploadFile; // Store the file path in the database
+            $attachment = $uploadFile;
         } else {
-            echo "<div class='alert alert-danger'>File upload failed.</div>";
+            header("Location: assignment.php?id={$course_id}&status=uploadfail");
             exit();
         }
     }
@@ -55,11 +51,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             VALUES ('$course_id', '$teacher_id', '$title', '$instructions', $points, '$due_date', '$due_time', '$attachment')";
 
     if (mysqli_query($conn, $sql)) {
-        echo "<div class='alert alert-success'>Assignment saved successfully!</div>";
-        // Optionally redirect to the assignment list page or show success message
-        // header('Location: assignments_list.php'); // Uncomment this if needed
+        // ✅ Redirect with success status
+        header("Location: assignment.php?id={$course_id}&status=1");
+        exit();
     } else {
-        echo "<div class='alert alert-danger'>Error: " . mysqli_error($conn) . "</div>";
+        header("Location: assignment.php?id={$course_id}&status=error");
+        exit();
     }
 
     mysqli_close($conn);

@@ -109,6 +109,13 @@
                     // Add search condition
                     if ($search) {
                         $query .= " AND (c.course_name LIKE ? OR c.subject LIKE ?)";
+                    }
+
+                    // Add ordering: latest first (by id or created_at)
+                    $query .= " ORDER BY c.id DESC"; // use c.created_at DESC if you have timestamp
+
+                    // Prepare statement
+                    if ($search) {
                         $search_param = "%$search%";
                         $stmt = $conn->prepare($query);
                         $stmt->bind_param("iss", $student_id, $search_param, $search_param);
@@ -117,12 +124,13 @@
                         $stmt->bind_param("i", $student_id);
                     }
 
+
                     $stmt->execute();
                     $result = $stmt->get_result();
 
                     if ($result->num_rows > 0) {
                         while ($course = $result->fetch_assoc()) {
-                            $cover = $course['cover_photo'] ? "../static/uploads/" . $course['cover_photo'] : "../static/uploads/default_cover.jpg";
+                            $cover = $course['cover_photo'] ? "../static/uploads/" . $course['cover_photo'] : "../static/images/Classroom High School.jpg";
                             ?>
                             <div class="col-12 col-md-6 col-lg-4">
                                 <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden">

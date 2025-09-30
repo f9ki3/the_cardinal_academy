@@ -103,6 +103,34 @@
                     <?php include 'create_assignment.php'; ?>
                   </div>
                 </div>
+                <div class="py-2">
+                  <?php 
+                  if (isset($_GET['status'])) {
+                      switch ($_GET['status']) {
+                          case '2':
+                              $alert_message = 'The assignment has been removed.';
+                              $alert_type = 'danger';
+                              break;
+                          case '1':
+                              $alert_message = 'Grade and Feedback added.';
+                              $alert_type = 'success'; // ✅ fixed: Bootstrap has 'success' not 'status'
+                              break;
+                          case '3':
+                              $alert_message = 'Updated status';
+                              $alert_type = 'warning'; // ✅ fixed: Bootstrap has 'success' not 'status'
+                              break;
+                      }
+
+                      if (isset($alert_message) && isset($alert_type)) {
+                          echo "
+                          <div class='alert rounded rounded-4 alert-$alert_type alert-dismissible fade show' role='alert'>
+                              $alert_message
+                              <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+                          </div>";
+                      }
+                  }
+                ?>
+                </div>
 
                 <!-- Assignment List -->
                 <div class="row g-3 mb-3">

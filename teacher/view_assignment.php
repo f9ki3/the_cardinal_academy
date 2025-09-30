@@ -116,6 +116,26 @@ include '../db_connection.php';
               </div>
             </div>
           </div>
+          <div class="py-3">
+            <?php 
+                  if (isset($_GET['status'])) {
+                      switch ($_GET['status']) {
+                          case '3':
+                              $alert_message2 = 'The status is updated.';
+                              $alert_type = 'danger';
+                              break;
+                      }
+
+                      if (isset($alert_message2) && isset($alert_type)) {
+                          echo "
+                          <div class='alert alert-$alert_type alert-dismissible fade show' role='alert'>
+                              $alert_message2
+                              <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+                          </div>";
+                      }
+                  }
+                ?>
+          </div>
 
           <div class="row row-eq-height">
             <!-- Left Column -->
@@ -207,7 +227,7 @@ include '../db_connection.php';
                           </div>";
                       }
                   }
-                  ?>
+                ?>
 
               </div>
 
