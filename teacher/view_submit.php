@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
             listItem.style.padding = '0.25rem 0.75rem';
             listItem.innerHTML = `
               <i class="fas fa-paperclip me-2"></i>
-              <a href="../uploads/${file}" target="_blank" class="text-truncate" style="max-width: calc(100% - 24px); display:inline-block;">${file}</a>
+              <a href="../static/uploads/${file}" target="_blank" class="text-truncate" style="max-width: calc(100% - 24px); display:inline-block;">${file}</a>
             `;
             listGroup.appendChild(listItem);
           });

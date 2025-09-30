@@ -185,6 +185,32 @@ include '../db_connection.php';
                   You can now view all students who submitted this assignment.
                 </p>
               </div>
+              <div class="py">
+                <?php 
+                  if (isset($_GET['status'])) {
+                      switch ($_GET['status']) {
+                          case '2':
+                              $alert_message = 'The post has been removed.';
+                              $alert_type = 'danger';
+                              break;
+                          case '1':
+                              $alert_message = 'Grade and Feedback added.';
+                              $alert_type = 'success'; // ✅ fixed: Bootstrap has 'success' not 'status'
+                              break;
+                      }
+
+                      if (isset($alert_message) && isset($alert_type)) {
+                          echo "
+                          <div class='alert alert-$alert_type alert-dismissible fade show' role='alert'>
+                              $alert_message
+                              <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+                          </div>";
+                      }
+                  }
+                  ?>
+
+              </div>
+
             </div>
           </div>
           <?php include 'view_submit.php'?>

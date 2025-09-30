@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt_update->close();
 
         // Redirect back to assignment page
-        header("Location: view_assignment.php?id=" . $assignment_id);
+        header("Location: view_assignment.php?status=1&id=" . $assignment_id);
         exit;
     } else {
         $_SESSION['error'] = "Invalid submission data.";
