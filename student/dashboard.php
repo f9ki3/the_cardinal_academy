@@ -55,6 +55,44 @@
                         <?php include 'join_course.php'?>
                     </div>
                 </div>
+                <?php
+                    if (isset($_GET['status'])) {
+                        switch ($_GET['status']) {
+                            case 'joined_success':
+                                echo "<div class='alert alert-success alert-dismissible fade show rounded-4' role='alert'>
+                                        Successfully joined the course!
+                                        <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+                                    </div>";
+                                break;
+                            case 'already_joined':
+                                echo "<div class='alert alert-warning alert-dismissible fade show rounded-4' role='alert'>
+                                        You are already enrolled in this course.
+                                        <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+                                    </div>";
+                                break;
+                            case 'invalid_code':
+                                echo "<div class='alert alert-danger alert-dismissible fade show rounded-4' role='alert'>
+                                        Invalid join code. Please try again.
+                                        <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+                                    </div>";
+                                break;
+                            case 'join_failed':
+                                echo "<div class='alert alert-danger alert-dismissible fade show rounded-4' role='alert'>
+                                        Failed to join the course. Try again later.
+                                        <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+                                    </div>";
+                                break;
+                            case 'empty_code':
+                                echo "<div class='alert alert-warning alert-dismissible fade show rounded-4' role='alert'>
+                                        Please enter a join code.
+                                        <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+                                    </div>";
+                                break;
+                        }
+                    }
+                    ?>
+
+
 
                 <!-- Courses Grid -->
              <div class="row g-3">

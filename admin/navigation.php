@@ -1,3 +1,10 @@
+<style>
+    .dropdown-container a {
+        font-size: 14px;
+        padding: 5px 0;
+    }
+</style>
+
 <?php
 include 'header.php';
 include 'user_info.php';
@@ -7,14 +14,16 @@ $full_name = isset($user_info['full_name']) ? $user_info['full_name'] : 'Guest';
 $profile_image = isset($user_info['profile_image']) ? $user_info['profile_image'] : 'default.png';
 ?>
 
-<div id="nav_side" class="d-print-none sidebar p-3 border-end sticky-top d-none d-md-block" style="min-height: 100vh; width: 250px; overflow: hidden;">
+<div id="nav_side" class="d-print-none sidebar p-3 border-end sticky-top d-none d-md-flex flex-column" style="min-height: 100vh; width: 250px;">
+    <!-- Profile Section -->
     <div class="profile-pic mb-3 text-center">
         <img src="<?= htmlspecialchars($profile_image) ?>" alt="Profile" class="rounded-circle img-fluid" style="width: 80px; height: 80px; object-fit: cover;">
     </div>
     <h5 class="text-center fw-bolder text-dark mb-3"><?= htmlspecialchars($full_name) ?></h5>
     <hr class="text-dark">
 
-    <div style="overflow-y: auto; max-height: calc(100vh - 200px); padding-right: 5px;">
+    <!-- Scrollable Menu -->
+    <div style="overflow-y: auto; flex-grow: 1; padding-right: 5px;">
         <ul class="nav flex-column">
             <li class="nav-item">
                 <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="dashboard.php">
@@ -41,31 +50,20 @@ $profile_image = isset($user_info['profile_image']) ? $user_info['profile_image'
                     <i class="bi bi-credit-card-2-front me-2"></i>Tuition Payment
                 </a>
             </li>
-            <!-- <li class="nav-item">
-                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="scheduling.php">
-                    <i class="bi bi-calendar-range me-2"></i>Class Scheduling
-                </a>
-            </li> -->
             <li class="nav-item">
                 <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="banner_edit.php?nav_drop=true">
                     <i class="bi bi-journal-bookmark me-2"></i>Banner
                 </a>
             </li>
-
             <li class="nav-item">
                 <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="announcement.php">
                     <i class="bi bi-megaphone me-2"></i>Announcement
                 </a>
-
             </li>
 
-            <!-- Maintenance dropdown -->
+            <!-- Maintenance Dropdown -->
             <li class="nav-item">
-                <!-- <a id="maintenanceDropdown" class="dropdown-btn nav-link text-dark d-flex justify-content-between align-items-center py-2 fs-6" href="javascript:void(0);">
-                    <span><i class="bi bi-tools me-2"></i>Maintenance</span>
-                    <span id="arrow-icon">▼</span>
-                </a> -->
-                <div id="maintenanceMenu" class="dropdown-container border p-3 bg-light rounded rounded-4" >
+                <div id="maintenanceMenu" class="dropdown-container border p-3 bg-light rounded-4">
                     <h6 class="fw-bolder">Maintenance</h6>
                     <hr class="m-0 py-1">
                     <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="students.php?nav_drop=true">
@@ -90,40 +88,11 @@ $profile_image = isset($user_info['profile_image']) ? $user_info['profile_image'
             </li>
         </ul>
     </div>
+
+    <!-- Logout Button at Bottom -->
+    <div class="pt-3 border-top">
+        <a class="nav-link d-flex align-items-center px-3 py-2 rounded-3 text-danger fw-semibold" href="logout.php">
+            <i class="bi bi-box-arrow-right me-2"></i> <span>Logout</span>
+        </a>
+    </div>
 </div>
-<!-- 
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const dropdownBtn = document.getElementById("maintenanceDropdown");
-        const dropdownMenu = document.getElementById("maintenanceMenu");
-        const arrowIcon = document.getElementById("arrow-icon");
-
-        let isOpen = false;
-
-        function toggleDropdown(forceOpen = null) {
-            if (forceOpen !== null) {
-                isOpen = forceOpen;
-            } else {
-                isOpen = !isOpen;
-            }
-
-            dropdownMenu.style.display = isOpen ? "block" : "none";
-            arrowIcon.textContent = isOpen ? "▲" : "▼";
-        }
-
-        dropdownBtn.addEventListener("click", () => toggleDropdown());
-
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get("nav_drop") === "true") {
-            toggleDropdown(true);
-        }
-    });
-</script> -->
-
-<style>
-    .dropdown-container a {
-        font-size: 14px;
-        padding: 5px 0;
-    }
-</style>
-

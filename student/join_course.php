@@ -9,7 +9,7 @@
       </div>
       
       <div class="modal-body">
-        <form action="save_assignment.php" method="POST" enctype="multipart/form-data">
+        <form action="join_student.php" method="POST" enctype="multipart/form-data">
           <div class="mb-3">
             <label for="joinCode" class="form-label">Class Join Code</label>
             <div class="input-group">
