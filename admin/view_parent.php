@@ -2,22 +2,26 @@
 include 'session_login.php'; 
 include '../db_connection.php';
 
-// Fetch subjects
+// Fetch subjects (if needed)
 $subjects_result = $conn->query("SELECT id, subject_code, description FROM subjects");
 
 // Get user ID
 $user_id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 
-// Fetch user data
+// Fetch user data only if it's a parent
 $data = [];
 if ($user_id > 0 && $conn) {
-    $stmt = $conn->prepare("SELECT * FROM users WHERE user_id = ?");
+    $stmt = $conn->prepare("SELECT * FROM users WHERE user_id = ? AND acc_type = 'parent'");
     if ($stmt) {
         $stmt->bind_param("i", $user_id);
         $stmt->execute();
         $result = $stmt->get_result();
         $data = $result->fetch_assoc();
         $stmt->close();
+
+        if (!$data) {
+            die("❌ No parent account found with this ID.");
+        }
     } else {
         die("❌ Database error: " . $conn->error);
     }
@@ -31,7 +35,7 @@ if ($user_id > 0 && $conn) {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AcadeSys Dashboard</title>
+  <title>AcadeSys Dashboard - View Parent</title>
   <?php include 'header.php'; ?>
 </head>
 <body>
@@ -44,13 +48,13 @@ if ($user_id > 0 && $conn) {
     <div class="container py-4">
       <form action="update_parent.php" method="POST" enctype="multipart/form-data">
         <div class="bg-white p-4 rounded-4 shadow-sm">
-          <h2>View Teacher Account</h2>
+          <h2>View Parent Account</h2>
           <p class="mb-4">Note: Please review all information from the form.</p>
           <hr>
 
           <?php if (isset($_GET['status'])): ?>
             <?php if ($_GET['status'] === 'success'): ?>
-              <div class="alert alert-success alert-dismissible fade show">✅ Updated teacher account successfully!
+              <div class="alert alert-success alert-dismissible fade show">✅ Updated parent account successfully!
                 <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
               </div>
             <?php elseif ($_GET['status'] === 'error'): ?>
@@ -72,16 +76,9 @@ if ($user_id > 0 && $conn) {
             <div class="col-md-6">
               <label for="acc_type" class="form-label">Account Type</label>
               <select disabled name="acc_type" id="acc_type" class="form-control" required>
-                <option value="">Select...</option>
-                <?php foreach (['admin', 'teacher', 'parent', 'student'] as $type): ?>
-                  <option value="<?= $type ?>" <?= ($data['acc_type'] ?? '') === $type ? 'selected' : '' ?>>
-                    <?= ucfirst($type) ?>
-                  </option>
-                <?php endforeach; ?>
+                <option value="parent" selected>Parent</option>
               </select>
             </div>
-
-
 
             <!-- Username -->
             <div class="col-md-6">
@@ -130,11 +127,9 @@ if ($user_id > 0 && $conn) {
               <input type="file" id="profile" name="profile" class="form-control">
             </div>
 
-
-
             <!-- Actions -->
             <div class="col-12 text-start pt-2">
-              <button type="submi" class="btn bg-main text-light">Save User</button>
+              <button type="submit" class="btn bg-main text-light">Save User</button>
               <a href="parent.php?nav_drop=true" class="btn btn-secondary ms-2">Back</a>
               <a href="change_password_parent.php?id=<?= urlencode($data['user_id']) ?>&nav_drop=true" class="btn btn-secondary ms-2">Change Password</a>
             </div>

@@ -23,13 +23,12 @@ if (!$count_result) {
 $total = mysqli_fetch_assoc($count_result)['total'];
 $total_pages = ceil($total / $limit);
 
-// Fetch student users
+// Fetch student users (removed enroll_id)
 $query = "SELECT 
             user_id, 
             CONCAT(first_name, ' ', last_name) AS fullname, 
             username, 
-            created_at, 
-            enroll_id 
+            created_at
           FROM users 
           WHERE acc_type = 'student' AND (
               username LIKE '%$search%' 
@@ -106,7 +105,6 @@ if (!$result) {
                       <th>ID</th>
                       <th>Fullname</th>
                       <th>Username</th>
-                      <th>Enroll ID</th>
                       <th>Created At</th>
                     </tr>
                   </thead>
@@ -117,13 +115,12 @@ if (!$result) {
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['user_id']) ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['fullname']) ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['username']) ?></p></td>
-                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['enroll_id']) ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['created_at']) ?></p></td>
                         </tr>
                       <?php endwhile; ?>
                     <?php else: ?>
                       <tr>
-                        <td colspan="5"><p class="text-muted text-center pt-3 pb-3 mb-0">No student data available</p></td>
+                        <td colspan="4"><p class="text-muted text-center pt-3 pb-3 mb-0">No student data available</p></td>
                       </tr>
                     <?php endif; ?>
                   </tbody>
