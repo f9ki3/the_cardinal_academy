@@ -12,7 +12,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $acc_status     = 'active';
     $acc_type       = 'parent';
     $rfid           = null;
-    $enroll_id      = 0;
     $subject_title  = null;  // Optional depending on schema
     $default_pass   = password_hash('parent123', PASSWORD_DEFAULT); // Default secure password
     $profile_path   = 'dummy.jpg'; // Default profile image fallback
@@ -72,19 +71,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $final_username = $base_username . $suffix++;
     }
 
-    // ✅ Insert new parent into users table
+    // ✅ Insert new parent into users table (without enroll_id)
     $insert = $conn->prepare("
         INSERT INTO users (
             acc_type, username, email, password,
             first_name, last_name,
             phone_number, profile, rfid,
-            enroll_id, acc_status, subject
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            acc_status, subject
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
 
     if ($insert) {
         $insert->bind_param(
-            "ssssssssssis",
+            "sssssssssss",
             $acc_type,
             $final_username,
             $email,
@@ -94,7 +93,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $phone_number,
             $profile_path,
             $rfid,
-            $enroll_id,
             $acc_status,
             $subject_title
         );

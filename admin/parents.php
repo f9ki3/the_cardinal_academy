@@ -63,17 +63,33 @@ if (!$result) {
           <div class="rounded p-3 bg-white">
             <div class="container my-4">
               <div class="row mb-3">
-                <div class="col-12 col-md-8">
+                <div class="col-12 col-md-5">
                   <h4>Parent Accounts</h4>
                 </div>
-                <div class="col-12 col-md-4">
-                  <form method="GET" action="">
+                <div class="col-12 col-md-7 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                  <!-- Search Form -->
+                  <form method="GET" action="" class="flex-grow-1">
                     <div class="input-group">
-                      <input type="text" name="search" class="form-control rounded rounded-4" placeholder="Search parent name..." value="<?= htmlspecialchars($search) ?>">
-                      <button class="btn border ms-2 rounded rounded-4" type="submit">Search</button>
+                      <input 
+                        class="form-control rounded rounded-4" 
+                        type="text" 
+                        name="search" 
+                        value="<?= htmlspecialchars($search) ?>" 
+                        placeholder="Search Username or Fullname"
+                      >
+                      <button class="btn border rounded rounded-4 ms-2" type="submit">Search</button>
                     </div>
                   </form>
+
+                  <!-- Create Button -->
+                  <a 
+                    href="create_parent.php" 
+                    class="btn bg-main text-light rounded rounded-4 px-4"
+                  >
+                    + Create
+                  </a>
                 </div>
+
               </div>
 
               <!-- Table -->
