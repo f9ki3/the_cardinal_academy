@@ -13,9 +13,7 @@ $searchEsc = mysqli_real_escape_string($conn, $search);
 // --- Count total rows -------------------------------------------------------
 $count_query = "
     SELECT COUNT(*) AS total
-    FROM student_tuition st
-    JOIN student_information si ON st.student_number = si.student_number
-    JOIN sections es ON st.enrolled_section = es.section_id
+    FROM student_information si
     WHERE (
           si.student_number LIKE '%$searchEsc%'
           OR si.firstname LIKE '%$searchEsc%'
@@ -41,9 +39,7 @@ $query = "
         si.lastname,
         si.email,
         si.phone
-    FROM student_tuition st
-    JOIN student_information si ON st.student_number = si.student_number
-    JOIN sections es ON st.enrolled_section = es.section_id
+    FROM student_information si
     WHERE (
           si.student_number LIKE '%$searchEsc%'
           OR si.firstname LIKE '%$searchEsc%'
@@ -52,7 +48,7 @@ $query = "
           OR si.email LIKE '%$searchEsc%'
           OR si.phone LIKE '%$searchEsc%'
       )
-    ORDER BY st.id DESC
+    ORDER BY si.id DESC
     LIMIT $limit OFFSET $offset
 ";
 $result = mysqli_query($conn, $query);
@@ -60,7 +56,6 @@ if (!$result) {
     die("<p style='color:red;'>Data Query Failed: " . mysqli_error($conn) . "</p>");
 }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -89,15 +84,12 @@ if (!$result) {
                 <div class="col-12 col-md-6">
                   <form method="GET" action="">
                     <div class="input-group">
-                        <!-- Search Box Only -->
                         <input 
                             class="form-control rounded rounded-4" 
                             type="text" 
                             name="search" 
                             value="<?= htmlspecialchars($search ?? '') ?>" 
                             placeholder="Search Student ID, Name, Email or Contact">
-
-                        <!-- Search Button -->
                         <button class="btn border ms-2 rounded rounded-4" type="submit">
                             Search
                         </button>
@@ -157,7 +149,6 @@ if (!$result) {
                             </tr>
                         <?php endif; ?>
                     </tbody>
-
                 </table>
             </div>
 
@@ -165,9 +156,7 @@ if (!$result) {
                 <nav aria-label="Page navigation">
                     <ul class="pagination justify-content-start pagination-sm">
                     <?php 
-                        $query_params = [
-                        'search' => $search
-                        ];
+                        $query_params = ['search' => $search];
                     ?>
 
                     <?php if ($page > 1): ?>
@@ -184,7 +173,7 @@ if (!$result) {
                         $start = max(1, $page - floor($max_links / 2));
                         $end = min($total_pages, $start + $max_links - 1);
                         if ($end - $start < $max_links - 1) {
-                        $start = max(1, $end - $max_links + 1);
+                            $start = max(1, $end - $max_links + 1);
                         }
                     ?>
 
@@ -220,7 +209,6 @@ if (!$result) {
 <?php include 'footer.php'; ?>
 </body>
 </html>
-
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
