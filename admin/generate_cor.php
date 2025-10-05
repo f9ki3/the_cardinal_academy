@@ -135,14 +135,30 @@ if ($result && $row = $result->fetch_assoc()) {
                 <h4 class="mb-0 d-print-none">Certificate of Registration</h4>
               </div>
               <div class="col-md-8 d-flex flex-wrap gap-2 justify-content-md-end d-print-none">
-                <button class="btn btn-sm border text-muted rounded-4" id="sendEmailBtn">
-                  <i class="bi bi-envelope me-1"></i> Send Email
-                </button>
+                <form id="sendCorForm" action="send_cor.php" method="POST">
+                  <input type="hidden" name="cor_link" value="https://acadesys.site/view_cor.php?tuition_id=<?= htmlspecialchars($tuition['tuition_id'] ?? 'N/A') ?>">
+                  <input type="hidden" name="email" value="<?= htmlspecialchars($tuition['email'] ?? 'N/A') ?>">
 
-
-                <form id="sendCorForm" action="send_cor.php" method="POST" class="d-none">
-                  <input type="hidden" name="cor_link" id="corLinkInput">
+                  <button 
+                    class="btn btn-sm border text-muted rounded-4" 
+                    id="sendEmailBtn" 
+                    type="submit">
+                    <i class="bi bi-envelope me-1"></i> Send Email
+                  </button>
                 </form>
+
+
+                <script>
+                document.getElementById("sendEmailBtn").addEventListener("click", function() {
+                  // Example: dynamically set the COR link if needed
+                  const corLink = "https://yourdomain.com/path/to/cor.pdf"; // replace or get dynamically
+                  document.getElementById("corLinkInput").value = corLink;
+
+                  // Submit the hidden form
+                  document.getElementById("sendCorForm").submit();
+                });
+                </script>
+
 
 
                 <button class="btn btn-sm border text-muted rounded-4" onclick="window.print()">

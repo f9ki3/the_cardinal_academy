@@ -5,59 +5,71 @@ use PHPMailer\PHPMailer\Exception;
 require '../vendor/autoload.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $corLink = isset($_POST['cor_link']) ? $_POST['cor_link'] : '';
-    $email = 'N/A';
+    // Get POST values
+    $corLink = $_POST['cor_link'] ?? '';
+    $email = $_POST['email'] ?? '';
 
-    // Parse email from the query string of the link
+    // Extract tuition_id from cor_link (for redirect later)
+    $tuitionId = 'N/A';
     if (!empty($corLink)) {
         $parsedUrl = parse_url($corLink);
         if (isset($parsedUrl['query'])) {
             parse_str($parsedUrl['query'], $queryParams);
-            if (isset($queryParams['email'])) {
-                $email = $queryParams['email'];
+            if (isset($queryParams['tuition_id'])) {
+                $tuitionId = $queryParams['tuition_id'];
             }
         }
     }
 
-    // Validate email before attempting to send
-    if ($email !== 'N/A' && filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        $mail = new PHPMailer(true);
+    // Validate required fields
+    if (empty($corLink) || empty($email)) {
+        die('Missing required data: COR link or email.');
+    }
 
-        try {
-            // Server settings
-            $mail->isSMTP();
-            $mail->Host = 'smtp.hostinger.com';
-            $mail->SMTPAuth = true;
-            $mail->Username = 'tca@acadesys.site'; // Your Hostinger email
-            $mail->Password = '4koSiFyke123*';     // Your email password
-            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-            $mail->Port = 587;
+    // Validate email
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        die('Invalid email address.');
+    }
 
-            // Recipients
-            $mail->setFrom('tca@acadesys.site', 'TCA');
-            $mail->addAddress($email); // Send to extracted email
+    // Send email
+    $mail = new PHPMailer(true);
+    try {
+        // Server settings
+        $mail->isSMTP();
+        $mail->Host = 'smtp.hostinger.com';
+        $mail->SMTPAuth = true;
+        $mail->Username = 'tca@acadesys.site'; // Your Hostinger email
+        $mail->Password = '4koSiFyke123*';     // Your email password
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = 587;
 
-            // Email content
-            $mail->isHTML(true);
-            $mail->Subject = 'Your Certificate of Registration (COR)';
-            $mail->Body    = 'Hi!<br><br>You may view your Certificate of Registration by clicking the link below:<br><a href="' . htmlspecialchars($corLink) . '">' . htmlspecialchars($corLink) . '</a><br><br>Thank you!';
-            $mail->AltBody = 'Hi! View your COR here: ' . $corLink;
+        // Recipients
+        $mail->setFrom('tca@acadesys.site', 'TCA');
+        $mail->addAddress('floterina@gmail.com');
 
-            $mail->send();
-            $email = $_POST['email']; // or wherever you get the email from
+        // Email content
+        $mail->isHTML(true);
+        $mail->Subject = 'Your Certificate of Registration (COR)';
+        $mail->Body = '
+            Hi!<br><br>
+            You may view your Certificate of Registration by clicking the link below:<br>
+            <a href="' . htmlspecialchars($corLink) . '">' . htmlspecialchars($corLink) . '</a><br><br>
+            Thank you!
+        ';
+        $mail->AltBody = 'Hi! View your COR here: ' . $corLink;
 
-            // Sanitize email for output (optional for redirect)
-            $clean_email = urlencode($email);
+        $mail->send();
 
-            // Redirect to another page and pass email
-            header("Location: success_email.php");
-            exit;
-
-        } catch (Exception $e) {
-            echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+        // Redirect on success
+        if ($tuitionId !== 'N/A') {
+            header("Location: generate_cor.php?tuition_id=" . urlencode($tuitionId));
+        } else {
+            header("Location: generate_cor.php");
         }
-    } else {
-        echo 'Invalid or missing email address in link.';
+        exit;
+
+    } catch (Exception $e) {
+        echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
     }
 }
 ?>

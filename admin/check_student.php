@@ -63,18 +63,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="container py-4">
         
         <div class="row">
-            <div class="col-12 col-md-11">
+            <div class="col-12 col-md-8">
                 <h3>Check Student Result</h3>
                 <p>Admission: <?= htmlspecialchars($first_name . " " . $last_name) ?> (ID: <?= htmlspecialchars($student_id) ?>)</p>
             </div>
-            <div class="col-12 col-md-1">
-               
+            <div class="col-12 col-md-4">
+                <a href="view_enrollement_old.php?id=<?= $admission_id; ?>" 
+                    class="btn mb-4 text-muted border rounded rounded-4 mt-3">
+                    <i class="fas fa-arrow-left me-1"></i> Back
+                </a>
             </div>
         </div>
-        <a href="view_enrollement_old.php?id=<?= $admission_id; ?>" 
-            class="btn mb-4 text-muted border rounded rounded-4 mt-3">
-            <i class="fas fa-arrow-left me-1"></i> Back
-        </a>
 
         <?php if ($result->num_rows > 0): ?>
             <div class="table-responsive">
@@ -106,7 +105,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </a>
                                 <a href="check_scholastic.php?id=<?= $admission_id ?>&student_number=<?= urlencode($row['student_number']) ?>" 
                                     class="btn border rounded rounded-4 text-muted">
-                                    <i class="fas fa-book me-1"></i> View Scholastic
+                                    <i class="fas fa-book me-1"></i> Scholastic
+                                </a>
+                                <a href="billing2.php?school_year=&search=<?= urlencode($row['student_number']) ?>" 
+                                    class="btn border rounded rounded-4 text-muted">
+                                    <i class="fas fa-book me-1"></i> Tuition
                                 </a>
 
                             </td>

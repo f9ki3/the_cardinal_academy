@@ -1,58 +1,115 @@
 <?php
 include 'db_connection.php';
 
-$studentName    = isset($_GET['fullname'])        ? urldecode($_GET['fullname'])        : 'N/A';
-$lrn            = isset($_GET['lrn'])             ? urldecode($_GET['lrn'])             : 'N/A';
-$paymentPlan    = isset($_GET['payment_plan'])    ? urldecode($_GET['payment_plan'])    : 'N/A';
-$downpayment    = isset($_GET['downpayment'])     ? urldecode($_GET['downpayment'])     : 'N/A';
-$tuitionFee     = isset($_GET['tuition_fee'])     ? urldecode($_GET['tuition_fee'])     : 'N/A';
-$miscellaneous  = isset($_GET['miscellaneous'])   ? urldecode($_GET['miscellaneous'])   : 'N/A';
-$discount       = isset($_GET['discount'])        ? urldecode($_GET['discount'])        : 'N/A';
-
-
-// Fetch teachers
-$teachers_result = mysqli_query($conn, "SELECT user_id, CONCAT(first_name, ' ', last_name) AS full_name FROM users WHERE acc_type = 'teacher'");
-if (!$teachers_result) {
-    die("Error fetching teachers: " . mysqli_error($conn));
-}
-
-// Fetch subjects
-$subjStmt = $conn->query("SELECT subject_code, description FROM subjects ORDER BY description ASC");
-$subjects = $subjStmt->fetch_all(MYSQLI_ASSOC);
-
-// Validate section ID
-if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-    header('Location: sections.php?status=error');
+// Retrieve tuition_id from URL and validate
+$tuition_id = isset($_GET['tuition_id']) ? intval($_GET['tuition_id']) : 0;
+if ($tuition_id <= 0) {
+    echo json_encode(["error" => "Invalid tuition ID."]);
     exit;
 }
-$sectionId = (int) $_GET['id'];
 
-// Fetch section details
+// Prepare SQL to fetch tuition along with student, section, and teacher info
 $sql = "
-    SELECT s.*, CONCAT(u.first_name, ' ', u.last_name) AS adviser
-    FROM sections s
-    LEFT JOIN users u ON u.user_id = s.teacher_id
-    WHERE s.section_id = ?
+SELECT 
+    st.id AS tuition_id,
+    st.student_number,
+    st.account_number,
+    si.lrn,
+    si.firstname,
+    si.middlename,
+    si.lastname,
+    si.grade_level AS student_grade_level,
+    si.status,
+    si.gender,
+    si.profile_picture,
+    si.email,
+    si.birthday,
+    si.residential_address,
+    st.payment_plan,
+    st.registration_fee,
+    st.tuition_fee,
+    st.miscellaneous,
+    st.uniform,
+    st.uniform_cart,
+    st.discount_type,
+    st.discount_value,
+    st.discount_amount,
+    st.downpayment,
+    st.enrolled_date,
+    sec.section_id,
+    sec.section_name,
+    sec.grade_level AS section_grade_level,
+    sec.teacher_id,
+    sec.room,
+    sec.strand AS section_strand,
+    sec.capacity,
+    sec.enrolled,
+    sec.school_year,
+    u.first_name AS teacher_firstname,
+    u.last_name AS teacher_lastname
+FROM student_tuition st
+INNER JOIN student_information si ON st.student_number = si.student_number
+INNER JOIN sections sec ON st.enrolled_section = sec.section_id
+INNER JOIN users u ON sec.teacher_id = u.user_id
+WHERE st.id = ?
 ";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param('i', $sectionId);
-$stmt->execute();
-$section = $stmt->get_result()->fetch_assoc();
 
-if (!$section) {
-    echo '<div class="alert alert-warning">Section not found.</div>';
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $tuition_id);
+
+if (!$stmt->execute()) {
+    echo json_encode(["error" => "Failed to execute query."]);
     exit;
 }
-// Get the student's full name from the URL
-$studentName = isset($_GET['fullname']) ? urldecode($_GET['fullname']) : 'N/A';
 
+$result = $stmt->get_result();
 
-// Fetch class schedule
-$sched_stmt = $conn->prepare("SELECT * FROM class_schedule WHERE section_id = ? ORDER BY time ASC");
-$sched_stmt->bind_param('i', $sectionId);
-$sched_stmt->execute();
-$schedule = $sched_stmt->get_result();
+if ($result && $row = $result->fetch_assoc()) {
+    $tuition = [
+        "tuition_id"           => $row['tuition_id'],
+        "student_number"       => $row['student_number'],
+        "account_number"       => $row['account_number'],
+        "lrn"                  => $row['lrn'],
+        "firstname"            => $row['firstname'],
+        "middlename"           => $row['middlename'],
+        "lastname"             => $row['lastname'],
+        "student_grade_level"  => $row['student_grade_level'],
+        "status"               => $row['status'],
+        "email"               => $row['email'],
+        "gender"               => $row['gender'],
+        "profile_picture"      => $row['profile_picture'],
+        "birthday"             => $row['birthday'],
+        "residential_address"  => $row['residential_address'],
+        "payment_plan"         => $row['payment_plan'],
+        "registration_fee"     => (float)$row['registration_fee'],
+        "tuition_fee"          => (float)$row['tuition_fee'],
+        "miscellaneous"        => (float)$row['miscellaneous'],
+        "uniform"              => (float)$row['uniform'],
+        "uniform_cart"         => json_decode($row['uniform_cart'], true),
+        "discount_type"        => $row['discount_type'],
+        "discount_value"       => (float)$row['discount_value'],
+        "discount_amount"      => (float)$row['discount_amount'],
+        "downpayment"          => (float)$row['downpayment'],
+        "enrolled_date"        => $row['enrolled_date'],
+        "section_id"           => $row['section_id'],
+        "section_name"         => $row['section_name'],
+        "section_grade_level"  => $row['section_grade_level'],
+        "teacher_id"           => $row['teacher_id'],
+        "room"                 => $row['room'],
+        "section_strand"       => $row['section_strand'],
+        "capacity"             => $row['capacity'],
+        "enrolled"             => $row['enrolled'],
+        "school_year"          => $row['school_year'],
+        "teacher_firstname"    => $row['teacher_firstname'],
+        "teacher_lastname"     => $row['teacher_lastname']
+    ];
+
+    // echo json_encode($tuition);
+} else {
+    echo json_encode(["error" => "Tuition record not found."]);
+}
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -60,11 +117,7 @@ $schedule = $sched_stmt->get_result();
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AcadeSys – Certificate of Registration</title>
-    <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
-
+  <?php include 'header.php'; ?>
 </head>
 <body>
 <div class="d-flex flex-row bg-white">
@@ -76,7 +129,7 @@ $schedule = $sched_stmt->get_result();
 
             <div class="row mt-4 align-items-center mb-4">
               <div class="col-md-4 mb-2">
-                <h4 class="mb-0">Certificate of Registration</h4>
+                <h4 class="mb-0 d-print-none">Certificate of Registration</h4>
               </div>
               <div class="col-md-8 d-flex flex-wrap gap-2 justify-content-md-end d-print-none">
                 <button class="btn btn-sm border text-muted rounded-4" onclick="window.print()">
@@ -84,6 +137,8 @@ $schedule = $sched_stmt->get_result();
                 </button>
                 </div>
             </div>
+
+
             <div class="d-none d-print-flex justify-content-center">
                 <div class="d-flex align-items-center mb-4">
                   <img src="static/uploads/logo.png" alt="Logo" style="height: 70px; width: auto;" class="me-3">
@@ -94,94 +149,62 @@ $schedule = $sched_stmt->get_result();
                   </div>
                 </div>
               </div>
+              
 
-
-            <!-- Modal -->
-            <div class="modal fade" id="addSchedule" tabindex="-1" aria-labelledby="addScheduleLabel" aria-hidden="true">
-              <div class="modal-dialog">
-                <div class="modal-content">
-
-                  <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="addScheduleLabel">Add Class Schedule</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                  </div>
-
-                  <form action="add_class_schedule.php" method="POST">
-                    <input type="hidden" name="section_id" value="<?= htmlspecialchars($sectionId) ?>">
-                    <div class="modal-body">
-                      <div class="mb-3">
-                        <label class="form-label">Subject</label>
-                        <input type="text" id="subjectDescInput" name="description" class="form-control" list="subjectList" autocomplete="off" required>
-                        <datalist id="subjectList">
-                          <?php foreach ($subjects as $s): ?>
-                            <option value="<?= htmlspecialchars($s['description']) ?>" data-code="<?= htmlspecialchars($s['subject_code']) ?>"></option>
-                          <?php endforeach; ?>
-                        </datalist>
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label">Subject Code</label>
-                        <input type="text" id="subjectCodeInput" name="subject_code" class="form-control" readonly required>
-                      </div>
-                      <div class="mb-3">
-                        <label class="form-label">Time</label>
-                        <input type="text" name="time" class="form-control" placeholder="e.g. 08:00 AM – 09:00 AM" required>
-                      </div>
-                      <div class="row g-2">
-                        <div class="col-md-6 mb-3">
-                          <label class="form-label">Advisory Class</label>
-                          <select name="teacher_id" id="teacher_id" class="form-select" required>
-                            <option value="">Select teacher</option>
-                            <?php while ($row = mysqli_fetch_assoc($teachers_result)): ?>
-                              <option value="<?= $row['full_name'] ?>"><?= htmlspecialchars($row['full_name']) ?></option>
-                            <?php endwhile; ?>
-                          </select>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                          <label class="form-label">Room</label>
-                          <input type="text" name="room" class="form-control" required>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                      <button type="submit" class="btn btn-primary">Save</button>
-                    </div>
-                  </form>
-
-                </div>
+              <div class="d-none d-print-flex justify-content-center">
+               <h3>Certificate of Registration</h3>
               </div>
-            </div>
 
-            <script>
-              (function () {
-                const descInput = document.getElementById('subjectDescInput');
-                const codeInput = document.getElementById('subjectCodeInput');
-                const options = [...document.getElementById('subjectList').options];
-
-                function syncCode() {
-                  const opt = options.find(o => o.value === descInput.value);
-                  codeInput.value = opt ? opt.dataset.code : '';
-                }
-
-                document.addEventListener('DOMContentLoaded', syncCode);
-                descInput.addEventListener('input', syncCode);
-                descInput.addEventListener('change', syncCode);
-              })();
-            </script>
 
             <hr>
-           <div class="row" style="font-size: 12px;">
-            <div class="col-md-4"><strong>Student Name:</strong> <?= htmlspecialchars($studentName) ?></div>
-            <div class="col-md-4"><strong>LRN:</strong> <?= htmlspecialchars($lrn) ?></div>
-            <div class="col-md-4"><strong>Adviser:</strong> <?= htmlspecialchars($section['adviser'] ?? 'N/A') ?></div>
-            <div class="col-md-4"><strong>Section Name:</strong> <?= htmlspecialchars($section['section_name']) ?></div>
-            <div class="col-md-4"><strong>Grade Level:</strong> <?= htmlspecialchars($section['grade_level']) ?></div>
-            <div class="col-md-4"><strong>School Year:</strong> <?= htmlspecialchars($section['school_year']) ?></div>
-            <div class="col-md-4"><strong>Room:</strong> <?= htmlspecialchars($section['room'] ?: '—') ?></div>
-            <?php if ($section['strand'] !== 'N/A'): ?>
-                <div class="col-md-4"><strong>Strand:</strong> <?= htmlspecialchars($section['strand']) ?></div>
-            <?php endif; ?>
-          </div>
+            <div class="row" style="font-size: 12px;">
+                <div class="col-md-4">
+                    <strong>Student Name:</strong> 
+                    <?= htmlspecialchars($tuition['firstname'] . ' ' . $tuition['middlename'] . ' ' . $tuition['lastname']) ?>
+                </div>
+                <div class="col-md-4">
+                    <strong>Student Number:</strong> 
+                    <?= htmlspecialchars($tuition['student_number'] ?? 'N/A') ?>
+                </div>
+                <div class="col-md-4">
+                    <strong>Account Number:</strong> 
+                    <?= htmlspecialchars($tuition['account_number'] ?? 'N/A') ?>
+                </div>
+                <div class="col-md-4">
+                    <strong>Adviser:</strong> 
+                    <?php
+                        // Display full teacher name, or 'N/A' if not available
+                        $teacherFullName = trim(
+                            ($tuition['teacher_firstname'] ?? '') . ' ' . ($tuition['teacher_lastname'] ?? '')
+                        );
+
+                        // If both names are missing, show placeholder
+                        echo htmlspecialchars($teacherFullName !== '' ? $teacherFullName : 'N/A');
+                    ?>
+
+                </div>
+                <div class="col-md-4">
+                    <strong>Section:</strong> 
+                    <?= htmlspecialchars($tuition['section_name'] ?? 'N/A') ?>
+                </div>
+                <div class="col-md-4">
+                    <strong>Grade Level:</strong> 
+                    <?= htmlspecialchars($tuition['section_grade_level'] ?? 'N/A') ?>
+                </div>
+                <div class="col-md-4">
+                    <strong>School Year:</strong> 
+                    <?= htmlspecialchars($tuition['school_year'] ?? 'N/A') ?>
+                </div>
+                <div class="col-md-4">
+                    <strong>Room:</strong> 
+                    <?= htmlspecialchars($tuition['room'] ?? 'N/A') ?>
+                </div>
+                <div class="col-md-4">
+                    <strong>Strand:</strong> 
+                    <?= htmlspecialchars($tuition['section_strand'] ?? 'N/A') ?>
+                </div>
+            </div>
+
 
             <hr>
 
@@ -198,71 +221,93 @@ $schedule = $sched_stmt->get_result();
                   </tr>
                 </thead>
                 <tbody style="font-size: 12px">
-                  <?php if ($schedule->num_rows): ?>
-                    <?php $i = 1; while ($row = $schedule->fetch_assoc()): ?>
-                      <tr class="text-muted">
-                        <td><?= $i++ ?></td>
-                        <td><?= htmlspecialchars($row['subject_code']) ?></td>
-                        <td><?= htmlspecialchars($row['description']) ?></td>
-                        <td><?= htmlspecialchars($row['time']) ?></td>
-                        <td><?= htmlspecialchars($row['teacher']) ?></td>
-                        <td><?= htmlspecialchars($row['room']) ?></td>
-                      </tr>
-                    <?php endwhile; ?>
-                  <?php else: ?>
-                    <tr class="text-muted">
-                      <td colspan="7" class="text-start fst-italic">No schedule entries yet.</td>
-                    </tr>
-                  <?php endif; ?>
+                <?php
+                $section_id = htmlspecialchars($tuition['section_id'] ?? 'N/A');
+
+                if ($section_id !== 'N/A') {
+                    $stmt = $conn->prepare("SELECT id, subject_code, description, time, teacher, room 
+                                            FROM class_schedule 
+                                            WHERE section_id = ?");
+                    $stmt->bind_param("i", $section_id); // section_id is integer
+                    $stmt->execute();
+                    $result = $stmt->get_result();
+
+                    $count = 1;
+                    while ($row = $result->fetch_assoc()) {
+                        echo '<tr class="text-muted">';
+                        echo '<td>'. $count++ .'</td>';
+                        echo '<td>'. htmlspecialchars($row['subject_code']) .'</td>';
+                        echo '<td>'. htmlspecialchars($row['description']) .'</td>';
+                        echo '<td>'. htmlspecialchars($row['time']) .'</td>';
+                        echo '<td>'. htmlspecialchars($row['teacher']) .'</td>';
+                        echo '<td>'. htmlspecialchars($row['room']) .'</td>';
+                        echo '</tr>';
+                    }
+                } else {
+                    echo '<tr><td colspan="6" class="text-center">No schedule found.</td></tr>';
+                }
+                ?>
                 </tbody>
+
               </table>
 
 
             </div>
+
             <div class="row">
-              <div class="col-12 col-md-4 mb-3" style="font-size: 12px;">
-                <div style="background-color: #b72029;" class="p-2 mb-3">
-                  <h6 class="mb-1 fw-bolder text-light text-center">School Expense</h6>
+                <div class="col-12 col-md-6 mb-3" style="font-size: 12px;">
+                    <div style="background-color: #b72029;" class="p-2 mb-3">
+                        <h6 class="mb-1 fw-bolder text-light text-center">School Expense</h6>
+                    </div>
+                    <div class="row">
+                        <div class="col-12 col-md-6">
+                            <div class="d-flex justify-content-between">
+                                <span><strong>Payment Plan</strong></span>
+                                <span><?= htmlspecialchars($tuition['payment_plan'] ?? 'N/A') ?></span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span><strong>Tuition Fee</strong></span>
+                                <span>₱<?= number_format($tuition['tuition_fee'] ?? 0, 2) ?></span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span><strong>Registration Fee</strong></span>
+                                <span>₱<?= number_format($tuition['registration_fee'] ?? 0, 2) ?></span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span><strong>Miscellaneous</strong></span>
+                                <span>₱<?= number_format($tuition['miscellaneous'] ?? 0, 2) ?></span>
+                            </div>
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <div class="d-flex justify-content-between">
+                                <span><strong>Uniform</strong></span>
+                                <span>₱<?= number_format($tuition['uniform'] ?? 0, 2) ?></span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span><strong>Discount</strong></span>
+                                <span>₱<?= number_format($tuition['discount_amount'] ?? 0, 2) ?></span>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <span><strong>Downpayment</strong></span>
+                                <span>₱<?= number_format($tuition['downpayment'] ?? 0, 2) ?></span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-
-                <div class="d-flex justify-content-between">
-                  <span><strong>Payment Plan</strong></span>
-                  <span><?= htmlspecialchars($paymentPlan) ?></span>
+                <div class="col-12 col-md-6 d-flex justify-content-end" style="font-size: 12px;">
+                    <div class="d-flex align-items-center flex-column" style="font-size: 12px; width: 50%">
+                        <p class="mb-0 mb-3 mt-3"><strong>Approved by:</strong></p>
+                        <h6 class="mb-0 fw-bolder text-uppercase">MR. CJ A. Escalora</h6>
+                        <p class="mb-0">______________________________________</p>
+                        <p class="mb-0 fw-bolder">Head Registrar</p>
+                    </div>
                 </div>
-                <div class="d-flex justify-content-between">
-                  <span><strong>Tuition Fee</strong></span>
-                  <span>₱<?= number_format((float)$tuitionFee, 2) ?></span>
-                </div>
-                <div class="d-flex justify-content-between">
-                  <span><strong>Registration Fee</strong></span>
-                  <span>₱<?= number_format((float)$downpayment, 2) ?></span>
-                </div>
-                <div class="d-flex justify-content-between">
-                  <span><strong>Miscellaneous</strong></span>
-                  <span>₱<?= number_format((float)$miscellaneous, 2) ?></span>
-                </div>
-                <div class="d-flex justify-content-between">
-                  <span><strong>Discount</strong></span>
-                  <span>₱<?= number_format((float)$discount, 2) ?></span>
-                </div>
-              </div>
-
-
-            <div class="col-12 col-md-8 d-flex justify-content-end" style="font-size: 12px;">
-              <div class="d-flex align-items-center flex-column" style="font-size: 12px; width: 50%">
-                <p class="mb-0 mb-3 mt-3"><strong>Approved by:</strong></p>
-                <h6 class="mb-0 fw-bolder text-uppercase">MR. CJ A. Escalora</h6>
-                <p class="mb-0">______________________________________</p>
-                <p class="mb-0 fw-bolder">Head Registrar</p>
-              </div>
-
-
             </div>
 
-            </div>
 
-            <div class="d-flex justify-content-center" style="background-color: #b72029;" >
-              <div class="p-2 text-center text-light" >
+
+            <div class="d-flex justify-content-center" style="background-color: #b72029;">
+              <div class="p-2 text-center text-light">
                 <p class="mb-0">Keep this certificate. you will be required to present this on your class. thank you.</p>
               </div>
             </div>
@@ -274,6 +319,5 @@ $schedule = $sched_stmt->get_result();
     </div>
   </div>
 </div>
-<?php include 'footer.php'; ?>
 </body>
 </html>

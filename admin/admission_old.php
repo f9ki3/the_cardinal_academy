@@ -79,7 +79,9 @@ $result = mysqli_query($conn, $query) or die("Main Query Failed: " . mysqli_erro
                       </a>
                   </form>
                 </div>
-                <div class="col-12 pt-3">
+                
+              </div>
+<div class="pt-3">
                   <?php
                     // Check if 'status' parameter exists in the URL
                     if (isset($_GET['status'])) {
@@ -106,8 +108,6 @@ $result = mysqli_query($conn, $query) or die("Main Query Failed: " . mysqli_erro
                     ?>
 
                 </div>
-              </div>
-
               <div class="table-responsive">
                 <table class="table table-striped table-hover" style="cursor: pointer">
                   <thead>
