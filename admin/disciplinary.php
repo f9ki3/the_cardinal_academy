@@ -134,7 +134,7 @@ if (!$result) {
                     <tbody>
                         <?php if (mysqli_num_rows($result) > 0): ?>
                             <?php while ($row = mysqli_fetch_assoc($result)): ?>
-                            <tr class="clickable-row" data-href="view_student.php?student_id=<?= urlencode($row['student_number']) ?>">
+                            <tr class="clickable-row" data-href="view_student_diciplinary.php?student_id=<?= urlencode($row['student_number']) ?>">
                                 <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['student_number']) ?></p></td>
                                 <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['firstname']) ?></p></td>
                                 <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['middlename']) ?></p></td>
