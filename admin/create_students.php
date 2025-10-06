@@ -25,7 +25,7 @@ if (!$subjects_result) {
 
     <div class="container py-4">
       <form action="create_student_account.php" method="POST" enctype="multipart/form-data">
-        <div class="bg-white p-4 rounded-4 shadow-sm">
+        <div class="bg-white p-4 rounded-4">
           <h2 class="fw-bold mb-2">Create Student Account</h2>
           <p class="text-muted mb-4">Please fill out all the required fields before submitting the form.</p>
           <hr>

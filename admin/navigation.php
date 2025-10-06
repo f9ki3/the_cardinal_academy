@@ -79,12 +79,12 @@ $profile_image = isset($user_info['profile_image']) ? $user_info['profile_image'
                 <h6 class="fw-bold text-uppercase text-secondary ps-2 mb-2 mt-3">Diciplinary and Medical</h6>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="banner_edit.php?nav_drop=true">
+                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="disciplinary.php?nav_drop=true">
                     <i class="bi bi-journal-bookmark me-2"></i>Diciplinary
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="announcement.php">
+                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="medical.php">
                     <i class="bi bi-megaphone me-2"></i>Medical
                 </a>
             </li>

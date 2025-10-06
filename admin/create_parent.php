@@ -24,7 +24,7 @@ if (!$subjects_result) {
 
     <div class="container py-4">
       <form action="create_parent_account.php" method="POST" enctype="multipart/form-data">
-        <div class="bg-white p-4 rounded-4 shadow-sm">
+        <div class="bg-white p-4 rounded-4">
           <h2 class="mb-2">Create Parent Account</h2>
           <p class="text-muted mb-4">Note: Please review all information from the form before submitting.</p>
           <hr>
