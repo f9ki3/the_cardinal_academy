@@ -4,9 +4,8 @@ include '../db_connection.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Sanitize input
-    $acc_type      = 'teacher';
-    $subject_title = trim($_POST['subject_title']);
-    $username      = trim($_POST['username']);
+    $acc_type      = 'student';
+    $subject_title = trim($_POST['subject_title'] ?? '');
     $email         = trim($_POST['email']);
     $first_name    = trim($_POST['first_name']);
     $last_name     = trim($_POST['last_name']);
@@ -16,16 +15,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $address       = $_POST['address'] ?? null;
     $acc_status    = 'active';
     $profile_path  = '';
-    $rfid          = null;  // assuming not used yet
-    $default_pass  = password_hash('password123', PASSWORD_DEFAULT); // Default password
+    $rfid          = null;  // not used yet
+
+    // Generate a unique username (firstname.lastname + random + ".student")
+    $base_username = strtolower(preg_replace('/\s+/', '', $first_name . '.' . $last_name));
+    do {
+        $rand_suffix = rand(100, 999);
+        $username = $base_username . $rand_suffix . '.student';
+
+        $check_stmt = $conn->prepare("SELECT COUNT(*) FROM users WHERE username = ?");
+        $check_stmt->bind_param("s", $username);
+        $check_stmt->execute();
+        $check_stmt->bind_result($count);
+        $check_stmt->fetch();
+        $check_stmt->close();
+    } while ($count > 0);
+
+    // Generate a random password
+    function generateRandomPassword($length = 10) {
+        $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
+        return substr(str_shuffle($chars), 0, $length);
+    }
+    $plain_password = generateRandomPassword();
+    $hashed_password = password_hash($plain_password, PASSWORD_DEFAULT);
 
     // Handle profile image upload
     if (isset($_FILES['profile']) && $_FILES['profile']['error'] === UPLOAD_ERR_OK) {
         $upload_dir = realpath(__DIR__ . '/../static/uploads');
         if (!is_dir($upload_dir)) {
-            if (!mkdir($upload_dir, 0777, true)) {
-                die("❌ Failed to create upload directory.");
-            }
+            mkdir($upload_dir, 0777, true);
         }
 
         $ext = pathinfo($_FILES['profile']['name'], PATHINFO_EXTENSION);
@@ -35,14 +53,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (move_uploaded_file($_FILES['profile']['tmp_name'], $destination)) {
             $profile_path = '../static/uploads/' . $filename;
         } else {
-            die("❌ Failed to upload profile image.");
+            $profile_path = 'dummy.jpg';
         }
     } else {
-        // Default placeholder image if none uploaded
-        $profile_path = 'dummy.jpg'; // Make sure this file exists
+        $profile_path = 'dummy.jpg';
     }
 
-    // Prepare insert statement (removed enroll_id)
+    // Prepare insert statement
     $stmt = $conn->prepare("
         INSERT INTO users (
             acc_type, username, email, password,
@@ -55,24 +72,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($stmt) {
         $stmt->bind_param(
             "sssssssssssiss",
-            $acc_type, $username, $email, $default_pass,
+            $acc_type, $username, $email, $hashed_password,
             $first_name, $last_name, $gender, $birthdate,
             $phone_number, $address, $profile_path, $rfid,
             $acc_status, $subject_title
         );
 
         if ($stmt->execute()) {
-            header("Location: teacher.php?status=created&nav_drop=true");
-            exit;
+            echo json_encode([
+                "status" => "success",
+                "message" => "Student account created successfully",
+                "data" => [
+                    "username" => $username,
+                    "password" => $plain_password
+                ]
+            ]);
         } else {
-            die("❌ Failed to create account: " . $stmt->error);
+            echo json_encode([
+                "status" => "error",
+                "message" => "Failed to create account: " . $stmt->error
+            ]);
         }
 
         $stmt->close();
     } else {
-        die("❌ Failed to prepare insert statement: " . $conn->error);
+        echo json_encode([
+            "status" => "error",
+            "message" => "Failed to prepare insert statement: " . $conn->error
+        ]);
     }
+
+    $conn->close();
 } else {
-    header("Location: teacher.php?status=invalid_access");
-    exit;
+    echo json_encode([
+        "status" => "error",
+        "message" => "Invalid request method"
+    ]);
 }
+?>

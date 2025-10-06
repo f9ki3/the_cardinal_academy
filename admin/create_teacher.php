@@ -86,11 +86,20 @@ document.getElementById('subject_title').addEventListener('input', function() {
 
 
 
-            <div class="col-md-6">
+            <!-- <div class="col-md-6">
               <label for="username" class="form-label">Username</label>
               <input  type="text" name="username" id="username" class="form-control" value="<?= htmlspecialchars($data['username'] ?? '') ?>" required>
+            </div> -->
+            <div class="col-md-6">
+              <label for="gender" class="form-label">Gender</label>
+              <select name="gender" id="gender" class="form-control">
+                <option value="">Select...</option>
+                <option value="male" <?= ($data['gender'] ?? '') === 'male' ? 'selected' : '' ?>>Male</option>
+                <option value="female" <?= ($data['gender'] ?? '') === 'female' ? 'selected' : '' ?>>Female</option>
+                <option value="other" <?= ($data['gender'] ?? '') === 'other' ? 'selected' : '' ?>>Other</option>
+              </select>
             </div>
-
+            
             <div class="col-md-6">
               <label for="email" class="form-label">Email</label>
               <input type="email" name="email" id="email" class="form-control" value="<?= htmlspecialchars($data['email'] ?? '') ?>" required>
@@ -106,15 +115,7 @@ document.getElementById('subject_title').addEventListener('input', function() {
               <input type="text" name="last_name" id="last_name" class="form-control" value="<?= htmlspecialchars($data['last_name'] ?? '') ?>" required>
             </div>
 
-            <div class="col-md-6">
-              <label for="gender" class="form-label">Gender</label>
-              <select name="gender" id="gender" class="form-control">
-                <option value="">Select...</option>
-                <option value="male" <?= ($data['gender'] ?? '') === 'male' ? 'selected' : '' ?>>Male</option>
-                <option value="female" <?= ($data['gender'] ?? '') === 'female' ? 'selected' : '' ?>>Female</option>
-                <option value="other" <?= ($data['gender'] ?? '') === 'other' ? 'selected' : '' ?>>Other</option>
-              </select>
-            </div>
+            
 
             <div class="col-md-6">
               <label for="birthdate" class="form-label">Birthdate</label>
