@@ -142,7 +142,7 @@ body {
             <!-- Submit Button -->
             <div class="col-12">
                 <button type="submit" class="btn btn-danger rounded-4">Submit Report</button>
-                <a href="view_student_disciplinary.php?student_id=<?php echo $student_id?>" class="btn btn-outline-danger rounded-4">Cancel</a>
+                <a href="view_student_diciplinary.php?student_id=<?php echo $student_id?>" class="btn btn-outline-danger rounded-4">Cancel</a>
             </div>
         </form>
     </div>
