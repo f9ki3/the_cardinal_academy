@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Recipients
         $mail->setFrom('tca@acadesys.site', 'TCA');
-        $mail->addAddress('floterina@gmail.com');
+        $mail->addAddress($email);
 
         // Email content
         $mail->isHTML(true);
@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Redirect on success
         if ($tuitionId !== 'N/A') {
-            header("Location: generate_cor.php?tuition_id=" . urlencode($tuitionId));
+            header("Location: generate_cor.php?status=1&tuition_id=" . urlencode($tuitionId));
         } else {
             header("Location: generate_cor.php");
         }

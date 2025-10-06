@@ -11,7 +11,7 @@ $data = [];
 if ($student_id > 0) {
     $query = "SELECT * FROM student_information WHERE student_number = ?";
     $stmt = $conn->prepare($query);
-    $stmt->bind_param("i", $student_id);
+    $stmt->bind_param("s", $student_id);
     $stmt->execute();
     $result = $stmt->get_result();
     $data = $result->fetch_assoc();

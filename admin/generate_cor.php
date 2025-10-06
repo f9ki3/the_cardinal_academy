@@ -148,19 +148,6 @@ if ($result && $row = $result->fetch_assoc()) {
                 </form>
 
 
-                <script>
-                document.getElementById("sendEmailBtn").addEventListener("click", function() {
-                  // Example: dynamically set the COR link if needed
-                  const corLink = "https://yourdomain.com/path/to/cor.pdf"; // replace or get dynamically
-                  document.getElementById("corLinkInput").value = corLink;
-
-                  // Submit the hidden form
-                  document.getElementById("sendCorForm").submit();
-                });
-                </script>
-
-
-
                 <button class="btn btn-sm border text-muted rounded-4" onclick="window.print()">
                     <i class="bi bi-printer me-1"></i> Print
                 </button>
