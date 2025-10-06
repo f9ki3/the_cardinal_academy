@@ -94,6 +94,10 @@ body {
                 <form class="row g-3">
                     <!-- Health Measurements -->
                     <div class="col-md-4">
+                        <label for="studentID" class="form-label">Student ID</label>
+                        <input type="text" class="form-control" id="studentID" value="<?php echo htmlspecialchars($student_id); ?>" readonly>
+                    </div>
+                    <div class="col-md-4">
                         <label for="height" class="form-label">Height (cm)</label>
                         <input type="number" class="form-control" id="height" min="50" max="250" required>
                         <small class="text-muted">e.g., 160</small>
