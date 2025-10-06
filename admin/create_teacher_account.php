@@ -4,7 +4,7 @@ include '../db_connection.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Sanitize input
-    $acc_type      = 'student';
+    $acc_type      = 'teacher';
     $subject_title = trim($_POST['subject_title'] ?? '');
     $email         = trim($_POST['email']);
     $first_name    = trim($_POST['first_name']);
@@ -17,11 +17,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $profile_path  = '';
     $rfid          = null;  // not used yet
 
-    // Generate a unique username (firstname.lastname + random + ".student")
+    // Generate a unique username (firstname.lastname + random + ".teacher")
     $base_username = strtolower(preg_replace('/\s+/', '', $first_name . '.' . $last_name));
     do {
         $rand_suffix = rand(100, 999);
-        $username = $base_username . $rand_suffix . '.student';
+        $username = $base_username . $rand_suffix . '.teacher';
 
         $check_stmt = $conn->prepare("SELECT COUNT(*) FROM users WHERE username = ?");
         $check_stmt->bind_param("s", $username);
@@ -40,18 +40,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $hashed_password = password_hash($plain_password, PASSWORD_DEFAULT);
 
     // Handle profile image upload
-    if (isset($_FILES['profile']) && $_FILES['profile']['error'] === UPLOAD_ERR_OK) {
-        $upload_dir = realpath(__DIR__ . '/../static/uploads');
-        if (!is_dir($upload_dir)) {
-            mkdir($upload_dir, 0777, true);
-        }
+    $upload_dir = __DIR__ . '/../static/uploads';
+    if (!is_dir($upload_dir)) {
+        mkdir($upload_dir, 0777, true);
+    }
 
+    if (isset($_FILES['profile']) && $_FILES['profile']['error'] === UPLOAD_ERR_OK) {
         $ext = pathinfo($_FILES['profile']['name'], PATHINFO_EXTENSION);
         $filename = 'user_' . uniqid() . '.' . $ext;
         $destination = $upload_dir . '/' . $filename;
 
         if (move_uploaded_file($_FILES['profile']['tmp_name'], $destination)) {
-            $profile_path = '../static/uploads/' . $filename;
+            $profile_path = $filename;
         } else {
             $profile_path = 'dummy.jpg';
         }
@@ -79,34 +79,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         );
 
         if ($stmt->execute()) {
-            echo json_encode([
-                "status" => "success",
-                "message" => "Student account created successfully",
-                "data" => [
-                    "username" => $username,
-                    "password" => $plain_password
-                ]
-            ]);
+            // Redirect to generated_teacher.php with email and password
+            $redirect_url = 'generated_teacher.php?email=' . urlencode($email) . '&password=' . urlencode($plain_password);
+            header("Location: $redirect_url");
+            exit;
         } else {
-            echo json_encode([
-                "status" => "error",
-                "message" => "Failed to create account: " . $stmt->error
-            ]);
+            echo "Failed to create account: " . $stmt->error;
         }
 
         $stmt->close();
     } else {
-        echo json_encode([
-            "status" => "error",
-            "message" => "Failed to prepare insert statement: " . $conn->error
-        ]);
+        echo "Failed to prepare insert statement: " . $conn->error;
     }
 
     $conn->close();
 } else {
-    echo json_encode([
-        "status" => "error",
-        "message" => "Invalid request method"
-    ]);
+    echo "Invalid request method";
 }
 ?>

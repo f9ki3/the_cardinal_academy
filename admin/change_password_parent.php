@@ -47,7 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($update_stmt) {
             $update_stmt->bind_param("si", $hashed_password, $user_id);
             if ($update_stmt->execute()) {
-                header("Location: view_user.php?id=$user_id&status=password_changed&nav_drop=true");
+                header("Location: view_parent.php?id=$user_id&status=password_changed&nav_drop=true");
                 exit;
             } else {
                 $error = "❌ Failed to update password. MySQL Error: " . $update_stmt->error;

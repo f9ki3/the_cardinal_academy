@@ -61,23 +61,22 @@
                 <textarea class="form-control" name="message" id="message" rows="4" required></textarea>
               </div>
 
-              <button type="submit" class="btn btn-success px-4 rounded-4">Submit</button>
+              <button type="submit" class="btn btn-danger px-4 rounded-4">Submit</button>
             </form>
           </div>
         </div>
 
         <!-- Announcements Table -->
         <div class="col-12">
-          <div class="rounded p-4 bg-white mt-4">
+          <div class="rounded p-4 bg-white">
             <h4 class="mb-3">All Announcements</h4>
             <table class="table">
               <thead>
                 <tr>
-                  <th>#</th>
-                  <th>Account Type</th>
-                  <th>Message</th>
-                  <th>Date</th>
-                  <th>Actions</th>
+                  <th width="15%">Date</th>
+                  <th width="15%">Account Type</th>
+                  <th width="50%">Message</th>
+                  <th width="10%">Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -89,11 +88,11 @@
                   while ($row = mysqli_fetch_assoc($result)):
                 ?>
                 <tr>
+                  <td><?= htmlspecialchars($row['date']) ?></td>
                   <td><?= htmlspecialchars(ucfirst($row['acc_type'])) ?></td>
                   <td><?= htmlspecialchars($row['message']) ?></td>
-                  <td><?= htmlspecialchars($row['date']) ?></td>
                   <td>
-                    <a href="announcement_delete.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('Delete this announcement?')">Delete</a>
+                    <a href="announcement_delete.php?id=<?= $row['id'] ?>" class="btn btn-sm" onclick="return confirm('Delete this announcement?')"><i class="bi bi-trash"></i></a>
                   </td>
                 </tr>
                 <?php endwhile; else: ?>

@@ -91,12 +91,11 @@ if (!$result) {
                     </a>
                   </div>
 
-
-                <div class="col-12 pt-3">
+                  <div class="col-12 pt-3">
                   <?php if (isset($_GET['status'])): ?>
-                    <?php if ($_GET['status'] === 'success'): ?>
+                    <?php if ($_GET['status'] === 'created'): ?>
                       <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        ✅ Admission updated successfully!
+                        ✅ Created account successfully!
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                       </div>
                     <?php elseif ($_GET['status'] === 'error'): ?>
@@ -104,43 +103,56 @@ if (!$result) {
                         ❌ Something went wrong. Please try again.
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                       </div>
-                    <?php elseif ($_GET['status'] === 'review'): ?>
+                    <?php elseif ($_GET['status'] === 'deleted'): ?>
                       <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                        ⚠️ Application is under review.
+                        ⚠️ Remove account successfully.
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                       </div>
                     <?php endif; ?>
                   <?php endif; ?>
                 </div>
+
+
+               
               </div>
 
               <div class="table-responsive">
-                <table class="table table-striped table-hover" style="cursor: pointer">
+                <table class="table table-striped table-hover">
                   <thead>
                     <tr>
                       <th>ID</th>
                       <th>Fullname</th>
                       <th>Username</th>
                       <th>Created At</th>
+                      <th>Action</th> <!-- New column for delete -->
                     </tr>
                   </thead>
                   <tbody>
                     <?php if (mysqli_num_rows($result) > 0): ?>
                       <?php while ($row = mysqli_fetch_assoc($result)): ?>
-                        <tr class="clickable-row" data-id="<?= $row['user_id'] ?>">
+                        <tr>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['user_id']) ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['fullname']) ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['username']) ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['created_at']) ?></p></td>
+                          <td class="pt-3 pb-3">
+                            <form method="POST" action="delete_student.php" onsubmit="return confirm('Are you sure you want to delete this student?');">
+                              <input type="hidden" name="user_id" value="<?= $row['user_id'] ?>">
+                              <button type="submit" class="btn btn-sm btn-outline-secondary">
+                                <i class="bi bi-trash"></i> Delete
+                              </button>
+                            </form>
+                          </td>
                         </tr>
                       <?php endwhile; ?>
                     <?php else: ?>
                       <tr>
-                        <td colspan="4"><p class="text-muted text-center pt-3 pb-3 mb-0">No student data available</p></td>
+                        <td colspan="5"><p class="text-muted text-center pt-3 pb-3 mb-0">No student data available</p></td>
                       </tr>
                     <?php endif; ?>
                   </tbody>
                 </table>
+
               </div>
 
               <!-- Pagination -->

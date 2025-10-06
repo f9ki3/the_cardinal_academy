@@ -126,6 +126,31 @@ if ($result && $row = $result->fetch_assoc()) {
   <div class="content flex-grow-1">
     <?php include 'nav_top.php'; ?>
     <div class="container my-4">
+      <?php
+      // --- alerts ---
+            $alert_message = '';
+            $alert_type = '';
+
+            if (isset($_GET['status'])) {
+                switch ($_GET['status']) {
+                    case '2':
+                        $alert_message = 'The post has been removed.';
+                        $alert_type = 'danger';
+                        break;
+                    case '1':
+                        $alert_message = 'Certificate of Registration is successfully email.';
+                        $alert_type = 'success';
+                        break;
+                }
+            }
+
+            if (!empty($alert_message)) {
+                echo '<div class="alert alert-' . $alert_type . ' alert-dismissible mx-3 fade show rounded" role="alert">'
+                    . $alert_message .
+                    '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>';
+            }
+      ?>
       <div class="row g-4">
         <div class="col-12">
           <div class="rounded p-4 bg-white">

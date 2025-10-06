@@ -142,16 +142,6 @@ if ($user_id > 0 && $conn) {
               <input type="number" name="rfid" id="rfid" class="form-control" value="<?= htmlspecialchars($data['rfid'] ?? '') ?>">
             </div>
 
-            <div class="col-md-6">
-              <label for="enroll_id" class="form-label">Enroll ID</label>
-              <input disabled type="number" name="enroll_id" id="enroll_id" class="form-control" value="<?= htmlspecialchars($data['enroll_id'] ?? '') ?>" required>
-            </div>
-
-            <div class="col-md-6">
-              <label for="acc_status" class="form-label">Account Status</label>
-              <input type="text" name="acc_status" id="acc_status" class="form-control" value="<?= htmlspecialchars($data['acc_status'] ?? 'active') ?>" readonly>
-            </div>
-
             <div class="col-12 text-start pt-2">
               <button type="submit" class="btn bg-main text-light">Save User</button>
               <a href="students.php?nav_drop=true" class="btn btn-secondary ms-2">Back</a>

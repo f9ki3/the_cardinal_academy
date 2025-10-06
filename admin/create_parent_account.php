@@ -4,111 +4,91 @@ include '../db_connection.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Sanitize input
-    $email        = trim($_POST['email']);
-    $first_name   = trim($_POST['first_name']);
-    $last_name    = trim($_POST['last_name']);
-    $phone_number = $_POST['phone_number'] ?? null;
+    $acc_type      = 'parent';
+    $email         = trim($_POST['email']);
+    $first_name    = trim($_POST['first_name']);
+    $last_name     = trim($_POST['last_name']);
+    $phone_number  = $_POST['phone_number'] ?? null;
+    $acc_status    = 'active';
+    $profile_path  = '';
+    $rfid          = null;
+    $subject_title = null; // not applicable for parent accounts
 
-    $acc_status     = 'active';
-    $acc_type       = 'parent';
-    $rfid           = null;
-    $subject_title  = null;  // Optional depending on schema
-    $default_pass   = password_hash('parent123', PASSWORD_DEFAULT); // Default secure password
-    $profile_path   = 'dummy.jpg'; // Default profile image fallback
+    // ✅ Generate unique username (firstname.lastname + random + ".parent")
+    $base_username = strtolower(preg_replace('/\s+/', '', $first_name . '.' . $last_name));
+    do {
+        $rand_suffix = rand(100, 999);
+        $username = $base_username . $rand_suffix . '.parent';
 
-    // 🔼 Upload profile image if available
+        $check_stmt = $conn->prepare("SELECT user_id FROM users WHERE username = ?");
+        $check_stmt->bind_param("s", $username);
+        $check_stmt->execute();
+        $check_stmt->store_result();
+        $exists = $check_stmt->num_rows > 0;
+        $check_stmt->close();
+    } while ($exists);
+
+    // ✅ Generate a random password
+    function generateRandomPassword($length = 10) {
+        $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()';
+        return substr(str_shuffle($chars), 0, $length);
+    }
+    $plain_password = generateRandomPassword();
+    $hashed_password = password_hash($plain_password, PASSWORD_DEFAULT);
+
+    // ✅ Handle profile image upload
+    $upload_dir = __DIR__ . '/../static/uploads';
+    if (!is_dir($upload_dir)) {
+        mkdir($upload_dir, 0777, true);
+    }
+
     if (isset($_FILES['profile']) && $_FILES['profile']['error'] === UPLOAD_ERR_OK) {
-        $upload_dir = realpath(__DIR__ . '/../static/uploads');
-        if (!is_dir($upload_dir)) {
-            if (!mkdir($upload_dir, 0777, true)) {
-                die("❌ Failed to create upload directory.");
-            }
-        }
-
         $ext = pathinfo($_FILES['profile']['name'], PATHINFO_EXTENSION);
         $filename = 'user_' . uniqid() . '.' . $ext;
         $destination = $upload_dir . '/' . $filename;
 
         if (move_uploaded_file($_FILES['profile']['tmp_name'], $destination)) {
-            $profile_path = '../static/uploads/' . $filename;
+            $profile_path = $filename;
         } else {
-            die("❌ Failed to upload profile image.");
+            $profile_path = 'dummy.jpg';
         }
+    } else {
+        $profile_path = 'dummy.jpg';
     }
 
-    // 🔁 Check if parent already exists by name
-    $checkSql = "SELECT user_id FROM users WHERE first_name = ? AND last_name = ? AND acc_type = 'parent'";
-    $checkStmt = $conn->prepare($checkSql);
-    $checkStmt->bind_param("ss", $first_name, $last_name);
-    $checkStmt->execute();
-    $checkStmt->store_result();
-    $exists = $checkStmt->num_rows > 0;
-    $checkStmt->close();
-
-    if ($exists) {
-        // ✅ Already exists — redirect with status
-        header("Location: parent.php?status=exists&nav_drop=true");
-        exit;
-    }
-
-    // 🔐 Generate unique username: firstname + lastname + '.parent'
-    $base_username = strtolower($first_name . $last_name . '.parent');
-    $final_username = $base_username;
-    $suffix = 1;
-
-    while (true) {
-        $stmt = $conn->prepare("SELECT user_id FROM users WHERE username = ?");
-        $stmt->bind_param("s", $final_username);
-        $stmt->execute();
-        $stmt->store_result();
-
-        if ($stmt->num_rows === 0) {
-            $stmt->close();
-            break; // Unique username found
-        }
-
-        $stmt->close();
-        $final_username = $base_username . $suffix++;
-    }
-
-    // ✅ Insert new parent into users table (without enroll_id)
-    $insert = $conn->prepare("
+    // ✅ Insert new parent record (even with duplicate email)
+    $stmt = $conn->prepare("
         INSERT INTO users (
             acc_type, username, email, password,
-            first_name, last_name,
-            phone_number, profile, rfid,
-            acc_status, subject
+            first_name, last_name, phone_number,
+            profile, rfid, acc_status, subject
         ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
 
-    if ($insert) {
-        $insert->bind_param(
+    if ($stmt) {
+        $stmt->bind_param(
             "sssssssssss",
-            $acc_type,
-            $final_username,
-            $email,
-            $default_pass,
-            $first_name,
-            $last_name,
-            $phone_number,
-            $profile_path,
-            $rfid,
-            $acc_status,
-            $subject_title
+            $acc_type, $username, $email, $hashed_password,
+            $first_name, $last_name, $phone_number,
+            $profile_path, $rfid, $acc_status, $subject_title
         );
 
-        if ($insert->execute()) {
-            header("Location: parent.php?status=created&nav_drop=true");
+        if ($stmt->execute()) {
+            // Redirect to generated account info page
+            $redirect_url = 'generated_parent.php?email=' . urlencode($email) . '&password=' . urlencode($plain_password);
+            header("Location: $redirect_url");
             exit;
         } else {
-            die("❌ Failed to create account: " . $insert->error);
+            echo "❌ Failed to create parent account: " . $stmt->error;
         }
 
-        $insert->close();
+        $stmt->close();
     } else {
-        die("❌ Failed to prepare insert statement: " . $conn->error);
+        echo "❌ Failed to prepare insert statement: " . $conn->error;
     }
+
+    $conn->close();
 } else {
-    header("Location: parent.php?status=invalid_access");
-    exit;
+    echo "Invalid request method.";
 }
+?>

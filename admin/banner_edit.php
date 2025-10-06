@@ -107,12 +107,12 @@ $announcements = mysqli_query($conn, "SELECT * FROM announcement ORDER BY id ASC
                 <textarea name="paragraph" class="form-control rounded rounded-4" rows="4" required><?= htmlspecialchars($editData['paragraph'] ?? '') ?></textarea>
               </div>
 
-              <button type="submit" class="btn btn-<?= $editData ? 'primary' : 'success' ?> rounded rounded-4 px-4">
+              <button type="submit" class="btn btn-<?= $editData ? 'danger' : 'danger' ?> rounded rounded-4 px-4">
                 <?= $editData ? 'Update' : 'Add' ?>
               </button>
 
               <?php if ($editData): ?>
-                <a href="banner_edit.php" class="btn btn-secondary ms-2">Cancel</a>
+                <a href="banner_edit.php" class="btn btn-secondary rounded rounded-4 ms-2">Cancel</a>
               <?php endif; ?>
             </form>
           </div>
@@ -121,7 +121,7 @@ $announcements = mysqli_query($conn, "SELECT * FROM announcement ORDER BY id ASC
         <div class="col-12">
           <div class="rounded p-4 bg-white mt-4">
             <h4 class="mb-3">All Announcements</h4>
-            <table class="table table-bordered">
+            <table class="table table-striped">
               <thead>
                 <tr>
                   <!-- Removed ID column header -->
@@ -137,12 +137,24 @@ $announcements = mysqli_query($conn, "SELECT * FROM announcement ORDER BY id ASC
                     <td><?= htmlspecialchars($row['heading']) ?></td>
                     <td><?= $row['visible'] ? 'Yes' : 'No' ?></td>
                     <td>
-                      <a href="?edit=<?= $row['id'] ?>" class="btn btn-sm btn-warning">Edit</a>
-                      <a href="?toggle=<?= $row['id'] ?>" class="btn btn-sm btn-secondary">
-                        <?= $row['visible'] ? 'Hide' : 'Show' ?>
+                      <a href="?edit=<?= $row['id'] ?>" class="btn btn-sm " title="Edit">
+                        <i class="bi bi-pencil"></i>
                       </a>
-                      <a href="?delete=<?= $row['id'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('Delete this announcement?')">Delete</a>
+
+                      <a href="?toggle=<?= $row['id'] ?>" class="btn btn-sm" title="Toggle Visibility">
+                        <?php if ($row['visible']) : ?>
+                          <i class="bi bi-eye"></i>
+                        <?php else : ?>
+                          <i class="bi bi-eye-slash"></i>
+                        <?php endif; ?>
+                      </a>
+
+                      <a href="?delete=<?= $row['id'] ?>" class="btn btn-sm" 
+                        onclick="return confirm('Delete this announcement?')" title="Delete">
+                        <i class="bi bi-trash"></i>
+                      </a>
                     </td>
+
                   </tr>
                 <?php endwhile; ?>
                 <?php if (mysqli_num_rows($announcements) === 0): ?>

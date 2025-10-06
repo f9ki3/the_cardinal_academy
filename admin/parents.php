@@ -91,32 +91,89 @@ if (!$result) {
                 </div>
 
               </div>
+                  <?php 
+                  // Handle delete action
+                  if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
+                      $delete_id = (int) $_GET['delete'];
 
+                      $delete_query = "DELETE FROM users WHERE user_id = ? AND acc_type = 'parent'";
+                      $stmt = $conn->prepare($delete_query);
+                      $stmt->bind_param("i", $delete_id);
+
+                      if ($stmt->execute()) {
+                          echo "<script>
+                                  alert('Parent account deleted successfully.');
+                                  window.location.href = 'parents.php';
+                                </script>";
+                          exit;
+                      } else {
+                          echo "<script>
+                                  alert('Failed to delete parent account.');
+                                </script>";
+                      }
+
+                      $stmt->close();
+                  }
+
+                  ?>
+                  <div class="col-12 pt-3">
+                  <?php if (isset($_GET['status'])): ?>
+                    <?php if ($_GET['status'] === 'created'): ?>
+                      <div class="alert alert-success alert-dismissible fade show" role="alert">
+                        ✅ Created account successfully!
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                      </div>
+                    <?php elseif ($_GET['status'] === 'error'): ?>
+                      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        ❌ Something went wrong. Please try again.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                      </div>
+                    <?php elseif ($_GET['status'] === 'deleted'): ?>
+                      <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        ⚠️ Remove account successfully.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                      </div>
+                    <?php endif; ?>
+                  <?php endif; ?>
+                </div>
               <!-- Table -->
               <div class="table-responsive">
-                <table class="table table-striped table-hover" style="cursor: pointer">
-                  <thead>
+                <table class="table table-striped table-hover align-middle">
+                  <thead class="text-muted">
                     <tr>
-                      <th>Full Name</th>
-                      <th>User Name</th>
-                      <th>Created At</th>
+                      <th class="py-3">Full Name</th>
+                      <th class="py-3">Username</th>
+                      <th class="py-3">Created At</th>
+                      <th class="text-center py-3">Action</th>
                     </tr>
                   </thead>
                   <tbody>
                     <?php if (mysqli_num_rows($result) > 0): ?>
                       <?php while ($row = mysqli_fetch_assoc($result)): ?>
                         <tr class="clickable-row" data-id="<?= htmlspecialchars($row['user_id'], ENT_QUOTES) ?>" style="cursor:pointer;">
-                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['fullname']) ?></p></td>
-                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['username']) ?></p></td>
-                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['created_at']) ?></p></td>
+                          <td class="text-muted py-3"><?= htmlspecialchars($row['fullname']) ?></td>
+                          <td class="text-muted py-3"><?= htmlspecialchars($row['username']) ?></td>
+                          <td class="text-muted py-3"><?= htmlspecialchars($row['created_at']) ?></td>
+                          <td class="text-center py-3">
+                            <a href="?delete=<?= $row['user_id'] ?>" 
+                              class="btn btn-sm btn-outline-secondary"
+                              title="Delete Parent"
+                              onclick="return confirm('Are you sure you want to delete this parent account?');">
+                            <i class="bi bi-trash"></i> Delete
+                            </a>
+                          </td>
                         </tr>
                       <?php endwhile; ?>
                     <?php else: ?>
-                      <tr><td colspan="3" class="text-center">No records found.</td></tr>
+                      <tr>
+                        <td colspan="4" class="text-center text-muted py-3">No records found.</td>
+                      </tr>
                     <?php endif; ?>
                   </tbody>
                 </table>
               </div>
+
+
 
               <!-- Pagination -->
               <?php if ($total_pages > 1): ?>

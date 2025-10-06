@@ -25,9 +25,10 @@ if (!$subjects_result) {
     <div class="container py-4">
       <form action="create_parent_account.php" method="POST" enctype="multipart/form-data">
         <div class="bg-white p-4 rounded-4 shadow-sm">
-          <h2>Create Parent Account</h2>
-          <p class="m-0 mb-4">Note: Please review all information from the form before submit.</p>
+          <h2 class="mb-2">Create Parent Account</h2>
+          <p class="text-muted mb-4">Note: Please review all information from the form before submitting.</p>
           <hr>
+
           <div class="row g-3">
             <input type="hidden" name="user_id" value="<?= htmlspecialchars($data['user_id'] ?? '') ?>">
 
@@ -43,33 +44,42 @@ if (!$subjects_result) {
 
             <div class="col-md-6">
               <label for="email" class="form-label">Email</label>
-              <input type="email" name="email" id="email" class="form-control" value="<?= htmlspecialchars($data['email'] ?? '') ?>" required>
+              <input type="email" name="email" id="email" class="form-control"
+                     placeholder="Enter parent's email address"
+                     value="<?= htmlspecialchars($data['email'] ?? '') ?>" required>
             </div>
 
             <div class="col-md-6">
               <label for="first_name" class="form-label">First Name</label>
-              <input type="text" name="first_name" id="first_name" class="form-control" value="<?= htmlspecialchars($data['first_name'] ?? '') ?>" required>
+              <input type="text" name="first_name" id="first_name" class="form-control"
+                     placeholder="Enter parent's first name"
+                     value="<?= htmlspecialchars($data['first_name'] ?? '') ?>" required>
             </div>
 
             <div class="col-md-6">
               <label for="last_name" class="form-label">Last Name</label>
-              <input type="text" name="last_name" id="last_name" class="form-control" value="<?= htmlspecialchars($data['last_name'] ?? '') ?>" required>
+              <input type="text" name="last_name" id="last_name" class="form-control"
+                     placeholder="Enter parent's last name"
+                     value="<?= htmlspecialchars($data['last_name'] ?? '') ?>" required>
             </div>
-
 
             <div class="col-md-6">
               <label for="phone_number" class="form-label">Phone Number</label>
-              <input type="text" name="phone_number" id="phone_number" class="form-control" value="<?= htmlspecialchars($data['phone_number'] ?? '') ?>">
+              <input type="text" name="phone_number" id="phone_number" class="form-control"
+                     placeholder="e.g. 09XXXXXXXXX"
+                     value="<?= htmlspecialchars($data['phone_number'] ?? '') ?>">
             </div>
 
             <div class="col-md-6">
               <label for="profile" class="form-label">Profile Picture</label>
-              <input type="file" name="profile" id="profile" class="form-control">
+              <input type="file" name="profile" id="profile" class="form-control"
+                     accept="image/*">
+              <small class="text-muted">Optional: Upload a profile image.</small>
             </div>
 
-            <div class="col-12 text-start pt-2">
-              <button type="submit" class="btn bg-main text-light">Create Account</button>
-              <a href="parent.php" class="btn btn-secondary ms-2">Back</a>
+            <div class="col-12 text-start pt-3">
+              <button type="submit" class="btn bg-main text-light px-4 rounded-4">Create Account</button>
+              <a href="parent.php" class="btn btn-secondary ms-2 rounded-4 px-4">Back</a>
             </div>
           </div>
         </div>

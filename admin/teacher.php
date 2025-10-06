@@ -140,9 +140,9 @@ if (!$result) {
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['created_at']) ?></p></td>
                           <td>
                             <a href="delete_teacher.php?id=<?= urlencode($row['user_id']) ?>" 
-                              class="btn border rounded rounded-4" 
+                              class="btn btn-sm btn-outline-secondary" 
                               onclick="return confirm('Are you sure you want to remove this teacher?');">
-                              Remove
+                              <i class='bi bi-trash'></i> Delete
                             </a>
                           </td>
                           </tr>
