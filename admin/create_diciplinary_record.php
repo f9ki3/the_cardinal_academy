@@ -79,7 +79,7 @@ body {
         <h5 class="fw-bolder mb-3">Student Disciplinary Report</h5>
 
         <form class="row g-3">
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <label for="studentID" class="form-label">Student ID</label>
                 <input type="text" class="form-control" id="studentID" value="<?php echo htmlspecialchars($student_id); ?>" readonly>
             </div>
@@ -89,7 +89,7 @@ body {
                 <label for="incidentDate" class="form-label">Date of Incident</label>
                 <input type="date" class="form-control" id="incidentDate" required>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <label for="incidentLocation" class="form-label">Location of Incident</label>
                 <input type="text" class="form-control" id="incidentLocation" required>
                 <small class="text-muted">e.g., Classroom, Library</small>
