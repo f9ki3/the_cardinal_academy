@@ -196,7 +196,7 @@ body {
         </div>
         <div class="col-12 col-md-6 d-flex justify-content-md-end gap-2 mt-2 mt-md-0">
             <input type="text" placeholder="Search Record Here..." class="form-control rounded-4" style="max-width: 250px;">
-            <button class="btn btn-sm btn-danger rounded-4">+ Create Record</button>
+            <a href="create_medical_record.php?student_id=<?php echo $student_id?>" class="btn btn-sm btn-danger rounded-4">+ Create Record</a>
         </div>
     </div>
 
