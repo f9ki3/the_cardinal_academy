@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
         $allowed_types = ['jpg', 'jpeg', 'png', 'gif'];
         if (in_array($imageFileType, $allowed_types) && move_uploaded_file($_FILES['profile']['tmp_name'], $target_file)) {
-            $profile_path = "uploads/" . $filename;
+            $profile_path = $filename;
         }
     }
 
