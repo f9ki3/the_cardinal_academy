@@ -74,14 +74,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // Insert into database
+    // Insert into database, including student_number
     $stmt = $conn->prepare("INSERT INTO users 
-        (acc_type, email, username, password, first_name, last_name, gender, birthdate, phone_number, address, rfid, profile) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+        (acc_type, email, username, password, first_name, last_name, gender, birthdate, phone_number, address, rfid, profile, student_number) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
     );
 
+    $student_number = $_POST['student_number']; // get from form
+
     $stmt->bind_param(
-        "ssssssssssss",
+        "sssssssssssss",
         $acc_type,
         $email,
         $username,
@@ -93,8 +95,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $phone_number,
         $address,
         $rfid,
-        $profile_path
+        $profile_path,
+        $student_number
     );
+
 
     if ($stmt->execute()) {
         // Confirmation page (your previous layout)

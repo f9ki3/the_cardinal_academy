@@ -181,7 +181,7 @@ if (!$result) {
                                     row.addEventListener("click", () => {
                                         const tuitionId = row.dataset.id;
                                         if (tuitionId) {
-                                            window.location.href = "generate_cor.php?tuition_id=" + tuitionId;
+                                            window.location.href = "generate_cor.php?create=no&tuition_id=" + tuitionId;
                                         }
                                     });
                                 });

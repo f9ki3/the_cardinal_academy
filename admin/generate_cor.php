@@ -165,7 +165,7 @@ if ($result && $row = $result->fetch_assoc()) {
                   <input type="hidden" name="email" value="<?= htmlspecialchars($tuition['email'] ?? 'N/A') ?>">
 
                   <button 
-                    class="btn btn-sm border text-muted rounded-4" 
+                    class="btn border text-muted rounded-4" 
                     id="sendEmailBtn" 
                     type="submit">
                     <i class="bi bi-envelope me-1"></i> Send Email
@@ -176,6 +176,18 @@ if ($result && $row = $result->fetch_assoc()) {
                 <button class="btn btn-sm border text-muted rounded-4" onclick="window.print()">
                     <i class="bi bi-printer me-1"></i> Print
                 </button>
+                <?php
+                $create = isset($_GET['create']) ? $_GET['create'] : '';
+                ?>
+
+                <?php if ($create !== 'no'): ?>
+                    <a href="create_students.php?tuition_id=<?php echo htmlspecialchars($tuition_id); ?>" 
+                    class="btn btn-danger btn-sm rounded-4 d-flex align-items-center px-3 py-2" 
+                    style="font-weight: 500;">
+                        + Create Account
+                    </a>
+                <?php endif; ?>
+
                 </div>
             </div>
 

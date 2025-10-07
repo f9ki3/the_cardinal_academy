@@ -130,7 +130,7 @@ if (!$result) {
                   <tbody>
                     <?php if (mysqli_num_rows($result) > 0): ?>
                       <?php while ($row = mysqli_fetch_assoc($result)): ?>
-                        <tr>
+                        <tr class="clickable-row" data-id="<?= htmlspecialchars($row['user_id']) ?>">
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['user_id']) ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['fullname']) ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['username']) ?></p></td>

@@ -194,15 +194,25 @@ body {
         <div class="col-12 col-md-6">
             <h5 class="fw-bolder mb-0">Disciplinary Records</h5>
         </div>
-        <div class="col-12 col-md-6 d-flex justify-content-md-end gap-2 mt-2 mt-md-0">
-            <input type="text" placeholder="Search Record Here..." class="form-control rounded-4" style="max-width: 250px;">
-            <a href="create_diciplinary_record.php?student_id=<?php echo $student_id?>" class="btn btn-sm btn-danger rounded-4">+ Create Record</a>
+
+        <div class="col-12 col-md-6 d-flex justify-content-md-end align-items-center gap-2 mt-2 mt-md-0">
+            <input type="text" 
+                placeholder="Search Record Here..." 
+                class="form-control rounded-4" 
+                style="max-width: 250px;">
+
+            <a href="create_diciplinary_record.php?student_id=<?php echo $student_id ?>" 
+            class="btn btn-sm btn-danger rounded-4 d-flex align-items-center px-3 py-2" 
+            style="font-weight: 500;">
+            + Create Record
+            </a>
         </div>
-    </div>
+        </div>
+
 
     <div class="table-responsive">
         <table class="table table-striped">
-            <thead class="table-light">
+            <thead class="">
                 <tr>
                     <th>Date</th>
                     <th>Infraction</th>

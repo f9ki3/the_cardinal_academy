@@ -1,12 +1,54 @@
-<?php include 'session_login.php'; ?>
-<?php include '../db_connection.php'; ?>
+<?php
+include 'session_login.php';
+include '../db_connection.php';
 
-<?php 
-$subjects_result = mysqli_query($conn, "SELECT id, subject_code, description FROM subjects");
-if (!$subjects_result) {
-    die("Error fetching subjects: " . mysqli_error($conn));
+// Retrieve tuition_id from URL and validate
+$tuition_id = isset($_GET['tuition_id']) ? intval($_GET['tuition_id']) : 0;
+if ($tuition_id <= 0) {
+    echo "Invalid tuition ID.";
+    exit;
 }
+
+// Fetch tuition and student info
+$sql = "
+SELECT st.id AS tuition_id, st.student_number, si.firstname, si.middlename, si.lastname, si.gender, si.email, si.birthday, si.residential_address, si.phone
+FROM student_tuition st
+INNER JOIN student_information si ON st.student_number = si.student_number
+WHERE st.id = ?
+";
+
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $tuition_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+$student = $result->fetch_assoc() ?? [];
+$stmt->close();
+
+// Check if account already exists
+$account_sql = "SELECT user_id, rfid FROM users WHERE student_number = ?";
+$acc_stmt = $conn->prepare($account_sql);
+$acc_stmt->bind_param("s", $student['student_number']);
+$acc_stmt->execute();
+$account_result = $acc_stmt->get_result();
+$account = $account_result->fetch_assoc() ?? [];
+$acc_stmt->close();
+
+// Prepare data for form
+$data = [
+    "user_id"    => $account['user_id'] ?? '',
+    "student_id" => $student['student_number'] ?? '',
+    "email"      => $student['email'] ?? '',
+    "first_name" => $student['firstname'] ?? '',
+    "last_name"  => $student['lastname'] ?? '',
+    "rfid"       => $account['rfid'] ?? '', // empty if no account yet
+    "gender"     => $student['gender'] ?? '',
+    "birthdate"  => $student['birthday'] ?? '',
+    "phone"  => $student['phone'] ?? '',
+    "address"    => $student['residential_address'] ?? '',
+];
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -34,7 +76,7 @@ if (!$subjects_result) {
             <input type="hidden" name="user_id" value="<?= htmlspecialchars($data['user_id'] ?? '') ?>">
 
             <!-- Account Type -->
-            <div class="col-md-4">
+            <div class="col-md-3">
               <label for="acc_type" class="form-label">Account Type</label>
               <select disabled name="acc_type" id="acc_type" class="form-select" required>
                 <option value="admin" <?= ($data['acc_type'] ?? '') === 'admin' ? 'selected' : '' ?>>Admin</option>
@@ -44,8 +86,21 @@ if (!$subjects_result) {
               </select>
             </div>
 
+            <div class="col-md-3">
+              <label for="student_number" class="form-label">Student Number</label>
+              <input 
+                type="text" 
+                name="student_number" 
+                id="student_number" 
+                class="form-control" 
+                placeholder="Enter student number"
+                value="<?= htmlspecialchars($data['student_id'] ?? '') ?>" 
+                required
+              >
+            </div>
+
             <!-- Email -->
-            <div class="col-md-4">
+            <div class="col-md-3">
               <label for="email" class="form-label">Email</label>
               <input 
                 type="email" 
@@ -58,8 +113,9 @@ if (!$subjects_result) {
               >
             </div>
 
+
             <!-- RFID -->
-            <div class="col-md-4">
+            <div class="col-md-3">
               <label for="rfid" class="form-label">RFID</label>
               <input 
                 type="text" 
@@ -132,7 +188,7 @@ if (!$subjects_result) {
                 id="phone_number" 
                 class="form-control" 
                 placeholder="Enter phone number"
-                value="<?= htmlspecialchars($data['phone_number'] ?? '') ?>"
+                value="<?= htmlspecialchars($data['phone'] ?? '') ?>"
               >
             </div>
 
