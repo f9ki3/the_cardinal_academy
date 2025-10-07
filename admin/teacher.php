@@ -116,12 +116,12 @@ if (!$result) {
                 <table class="table table-striped table-hover" style="cursor: pointer">
                   <thead>
                     <tr>
-                      <th>ID</th>
-                      <th>Fullname</th>
-                      <th>Username</th>
-                      <th>Subject</th>
-                      <th>Created At</th>
-                      <th>Action</th>
+                      <th width="5%">ID</th>
+                      <th width="10%">Fullname</th>
+                      <th width="10%">Username</th>
+                      <th width="30%">Subject</th>
+                      <th width="10%">Created At</th>
+                      <th width="10%">Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -132,10 +132,10 @@ if (!$result) {
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['fullname']) ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['username']) ?></p></td>
                           <td>
-  <p class="text-muted pt-3 pb-3 mb-0">
-    <?= !empty($row['subject']) ? htmlspecialchars($row['subject']) : 'No Subject Assign' ?>
-  </p>
-</td>
+                            <p class="text-muted pt-3 pb-3 mb-0">
+                            <?= !empty($row['subject']) ? htmlspecialchars($row['subject']) : 'No Subject Assign' ?>
+                            </p>
+                          </td>
 
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['created_at']) ?></p></td>
                           <td>
