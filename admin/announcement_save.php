@@ -7,7 +7,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $message = mysqli_real_escape_string($conn, $_POST['message']);
     $date = date("Y-m-d H:i:s");
 
-    $sql = "INSERT INTO announcement (acc_type, message, date) VALUES ('$acc_type', '$message', '$date')";
+    $sql = "INSERT INTO announcements (acc_type, message, date) VALUES ('$acc_type', '$message', '$date')";
 
     if (mysqli_query($conn, $sql)) {
         header("Location: announcement.php?status=success");

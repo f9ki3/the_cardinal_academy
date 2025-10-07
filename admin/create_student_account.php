@@ -135,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 </div>
                             </div>
 
-                            <div class="mb-3 text-start">
+                            <!-- <div class="mb-3 text-start">
                                 <label class="form-label fw-bold text-muted">Username</label>
                                 <div class="input-group">
                                     <input type="text" class="form-control text-muted" id="usernameField" value="<?= htmlspecialchars($username) ?>" readonly>
@@ -143,7 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                         <i class="bi bi-clipboard"></i> Copy
                                     </button>
                                 </div>
-                            </div>
+                            </div> -->
 
                             <div class="mb-4 text-start">
                                 <label class="form-label fw-bold text-muted">Password</label>

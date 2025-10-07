@@ -7,7 +7,7 @@ if (isset($_GET['id'])) {
     $id = intval($_GET['id']);
 
     // Prepare and execute the delete query
-    $sql = "DELETE FROM announcement WHERE id = $id";
+    $sql = "DELETE FROM announcements WHERE id = $id";
 
     if (mysqli_query($conn, $sql)) {
         // Redirect back to the announcement page with a success message (optional)
