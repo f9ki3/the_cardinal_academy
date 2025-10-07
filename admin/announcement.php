@@ -57,9 +57,13 @@
               </div>
 
               <div class="mb-3">
-                <label for="message" class="form-label">Message</label>
-                <textarea class="form-control" name="message" id="message" rows="4" required></textarea>
+                  <label for="message" class="form-label">Message</label>
+                  <textarea class="form-control" name="message" id="message" rows="4" 
+                            placeholder="Write your announcement here. Keep it clear and concise." 
+                            required></textarea>
               </div>
+
+
 
               <button type="submit" class="btn btn-danger px-4 rounded-4">Submit</button>
             </form>
@@ -81,7 +85,7 @@
               </thead>
               <tbody>
                 <?php
-                $sql = "SELECT * FROM notification ORDER BY date DESC";
+                $sql = "SELECT * FROM announcement ORDER BY date DESC";
                 $result = mysqli_query($conn, $sql);
 
                 if (mysqli_num_rows($result) > 0):
