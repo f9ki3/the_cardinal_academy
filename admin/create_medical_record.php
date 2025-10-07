@@ -3,7 +3,6 @@
 
 <?php
 $student_id = isset($_GET['student_id']) ? trim($_GET['student_id']) : '';
-
 ?>
 
 <!DOCTYPE html>
@@ -13,215 +12,171 @@ $student_id = isset($_GET['student_id']) ? trim($_GET['student_id']) : '';
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Student Medical Records</title>
 <?php include 'header.php'; ?>
+
 <style>
-/* Overall background and text */
 body {
-    background-color: #F7F7F7; /* soft off-white */
-    color: #333; /* smooth dark text */
+    background-color: #F7F7F7;
+    color: #333;
     font-family: 'Segoe UI', sans-serif;
 }
-
-/* Container cards */
-.record-card, .record-section {
-    background-color: #FFFFFF; /* pure white card */
+.record-section {
+    background-color: #FFFFFF;
     border-radius: 1rem;
     padding: 2rem;
     margin-bottom: 2rem;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08); /* subtle shadow */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
 }
-
-
-/* Individual items */
-.record-item {
-    margin-bottom: 1rem;
+.is-invalid {
+    border-color: #dc3545 !important;
 }
-.record-item label {
+.invalid-feedback {
+    display: none;
+    color: #dc3545;
+    font-size: 0.85rem;
+}
+input.is-invalid ~ .invalid-feedback,
+textarea.is-invalid ~ .invalid-feedback {
     display: block;
-    font-weight: 600;
-    font-size: 0.875rem;
-    color: #6C757D; /* muted gray for labels */
-}
-.record-item .data {
-    font-size: 0.95rem;
-    font-weight: 500;
-    color: #2C3E50; /* smooth dark for data */
-}
-
-
-/* Table styling */
-.table-responsive {
-    margin-top: 1.5rem;
-}
-.table {
-    background-color: #FFFFFF;
-    color: #2C3E50;
-    border-radius: 0.5rem;
-    overflow: hidden;
-}
-.table th, .table td {
-    vertical-align: middle;
-    padding: 0.6rem 0.75rem;
-}
-.table thead {
-    background-color: #F1F3F6; /* soft header */
-}
-.table-striped tbody tr:nth-of-type(odd) {
-    background-color: #FAFAFA; /* subtle stripe */
-}
-.table th {
-    font-weight: 600;
-    color: #2C3E50;
-}
-
-
-/* Responsive spacing for columns */
-.row > [class*='col-'] {
-    margin-bottom: 1rem;
 }
 </style>
 </head>
+
 <body>
 <div class="d-flex flex-row">
 <?php include 'navigation.php'; ?>
 
-    <div class="content flex-grow-1">
-        <?php include 'nav_top.php'; ?>
+<div class="content flex-grow-1">
+    <?php include 'nav_top.php'; ?>
 
-        <div class="container pt-3">
-            <div class="record-section">
-                <h5 class="fw-bolder mb-3">Student Medical Survey</h5>
+    <div class="container pt-3">
+        <div class="record-section">
+            <h5 class="fw-bolder mb-3">Student Medical Survey</h5>
 
-                <form class="row g-3">
-                    <!-- Health Measurements -->
-                    <div class="col-md-4">
-                        <label for="studentID" class="form-label">Student ID</label>
-                        <input type="text" class="form-control" id="studentID" value="<?php echo htmlspecialchars($student_id); ?>" readonly>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="height" class="form-label">Height (cm)</label>
-                        <input type="number" class="form-control" id="height" min="50" max="250" required>
-                        <small class="text-muted">e.g., 160</small>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="weight" class="form-label">Weight (kg)</label>
-                        <input type="number" class="form-control" id="weight" min="10" max="200" required>
-                        <small class="text-muted">e.g., 55</small>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="bloodPressure" class="form-label">Blood Pressure</label>
-                        <input type="text" class="form-control" id="bloodPressure" placeholder="e.g., 110/70" required>
-                        <small class="text-muted">e.g., 110/70</small>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="temperature" class="form-label">Temperature (°C)</label>
-                        <input type="number" step="0.1" class="form-control" id="temperature" min="35" max="42" required>
-                        <small class="text-muted">e.g., 36.6</small>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="pulse" class="form-label">Pulse (bpm)</label>
-                        <input type="number" class="form-control" id="pulse" min="40" max="200" required>
-                        <small class="text-muted">e.g., 72</small>
-                    </div>
-                    <div class="col-md-4">
-                        <label for="respiration" class="form-label">Respiration (breaths/min)</label>
-                        <input type="number" class="form-control" id="respiration" min="10" max="40" required>
-                        <small class="text-muted">e.g., 18</small>
-                    </div>
+            <form id="medicalForm" action="create_medical.php" method="POST" class="row g-3 needs-validation" novalidate>
+                <input type="hidden" name="medical_id" value="<?php echo uniqid('med_'); ?>">
 
-                    <!-- Allergies & Medications -->
-                    <div class="col-md-4">
-                        <label class="form-label">Known allergies</label>
-                        <input type="text" class="form-control" id="allergies" required>
-                        <small class="text-muted">e.g., peanuts, pollen</small>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Current medications</label>
-                        <input type="text" class="form-control" id="medications" required>
-                        <small class="text-muted">e.g., vitamin supplements</small>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Chronic illnesses / conditions</label>
-                        <textarea class="form-control" id="conditions" rows="2" required></textarea>
-                        <small class="text-muted">e.g., asthma, diabetes</small>
-                    </div>
+                <div class="col-md-4">
+                    <label for="studentID" class="form-label">Student ID</label>
+                    <input type="text" name="student_id" class="form-control" id="studentID" 
+                           value="<?php echo htmlspecialchars($student_id); ?>" readonly>
+                </div>
 
-                    <!-- Illnesses & Injuries -->
-                    <div class="col-md-6">
-                        <label class="form-label">Recent illnesses / injuries (past 6 months)</label>
-                        <textarea class="form-control" id="recentIllness" rows="2" required></textarea>
-                        <small class="text-muted">e.g., flu, broken arm</small>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Hospitalizations / surgeries</label>
-                        <textarea class="form-control" id="hospitalizations" rows="2" required></textarea>
-                        <small class="text-muted">e.g., appendix removal, tonsil surgery</small>
-                    </div>
+                <!-- Height -->
+                <div class="col-md-4">
+                    <label for="height" class="form-label">Height (cm)</label>
+                    <input type="number" name="height" class="form-control" id="height" min="50" max="250" required>
+                    <small class="text-muted">e.g., 160</small>
+                    <div class="invalid-feedback">Please enter a valid height between 50 and 250 cm.</div>
+                </div>
 
-                    <!-- Vision & Hearing -->
-                    <div class="col-md-4">
-                        <label class="form-label">Vision problems</label>
-                        <input type="text" class="form-control" id="vision" required>
-                        <small class="text-muted">e.g., nearsighted, uses glasses</small>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Hearing problems</label>
-                        <input type="text" class="form-control" id="hearing" required>
-                        <small class="text-muted">e.g., partial hearing loss</small>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Dental issues</label>
-                        <input type="text" class="form-control" id="dental" required>
-                        <small class="text-muted">e.g., braces, cavities</small>
-                    </div>
+                <!-- Weight -->
+                <div class="col-md-4">
+                    <label for="weight" class="form-label">Weight (kg)</label>
+                    <input type="number" name="weight" class="form-control" id="weight" min="10" max="200" required>
+                    <small class="text-muted">e.g., 55</small>
+                    <div class="invalid-feedback">Please enter a valid weight between 10 and 200 kg.</div>
+                </div>
 
-                    <!-- Lifestyle -->
-                    <div class="col-md-4">
-                        <label class="form-label">Physical activity (hours/week)</label>
-                        <input type="number" class="form-control" id="activity" min="0" max="40" required>
-                        <small class="text-muted">e.g., 5</small>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Sleep (hours/night)</label>
-                        <input type="number" class="form-control" id="sleep" min="0" max="16" required>
-                        <small class="text-muted">e.g., 8</small>
-                    </div>
-                    <div class="col-md-4">
-                        <label class="form-label">Dietary habits / restrictions</label>
-                        <input type="text" class="form-control" id="diet" required>
-                        <small class="text-muted">e.g., vegetarian, gluten-free</small>
-                    </div>
+                <!-- Blood Pressure -->
+                <div class="col-md-4">
+                    <label for="bloodPressure" class="form-label">Blood Pressure</label>
+                    <input type="text" name="blood_pressure" class="form-control" id="bloodPressure" 
+                           placeholder="e.g., 110/70" pattern="^\d{2,3}\/\d{2,3}$" required>
+                    <small class="text-muted">e.g., 110/70</small>
+                    <div class="invalid-feedback">Format must be like 120/80.</div>
+                </div>
 
-                    <!-- Mental Health & Concerns -->
-                    <div class="col-md-6">
-                        <label class="form-label">Mental health concerns</label>
-                        <textarea class="form-control" id="mentalHealth" rows="2" required></textarea>
-                        <small class="text-muted">e.g., anxiety, ADHD</small>
-                    </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Additional notes / concerns</label>
-                        <textarea class="form-control" id="notes" rows="2" required></textarea>
-                        <small class="text-muted">Any other concerns</small>
-                    </div>
+                <!-- Temperature -->
+                <div class="col-md-4">
+                    <label for="temperature" class="form-label">Temperature (°C)</label>
+                    <input type="number" step="0.1" name="temperature" class="form-control" id="temperature" min="35" max="42" required>
+                    <small class="text-muted">e.g., 36.6</small>
+                    <div class="invalid-feedback">Temperature must be between 35°C and 42°C.</div>
+                </div>
 
-                    <!-- General Note -->
-                    <div class="col-12">
-                        <label class="form-label">Note</label>
-                        <textarea class="form-control" id="generalNote" rows="3" placeholder="Any other general remarks" required></textarea>
-                    </div>
+                <!-- Pulse -->
+                <div class="col-md-4">
+                    <label for="pulse" class="form-label">Pulse (bpm)</label>
+                    <input type="number" name="pulse" class="form-control" id="pulse" min="40" max="200" required>
+                    <small class="text-muted">e.g., 72</small>
+                    <div class="invalid-feedback">Enter a pulse rate between 40 and 200 bpm.</div>
+                </div>
 
-                    <!-- Submit Button -->
-                    <div class="col-12">
-                        <button type="submit" class="btn btn-danger rounded-4">Submit Survey</button>
-                        <a href="view_student_medical.php?student_id=<?php echo $student_id?>" class="btn btn-outline-danger rounded-4">Cancel</a>
+                <!-- Respiration -->
+                <div class="col-md-4">
+                    <label for="respiration" class="form-label">Respiration (breaths/min)</label>
+                    <input type="number" name="respiration" class="form-control" id="respiration" min="10" max="40" required>
+                    <small class="text-muted">e.g., 18</small>
+                    <div class="invalid-feedback">Respiration must be between 10 and 40.</div>
+                </div>
+
+                <!-- Textarea and other text fields -->
+                <?php
+                $textFields = [
+                    'allergies' => 'Known allergies (e.g., peanuts, pollen)',
+                    'medications' => 'Current medications (e.g., supplements)',
+                    'conditions' => 'Chronic illnesses / conditions (e.g., asthma)',
+                    'recentIllness' => 'Recent illnesses / injuries (past 6 months)',
+                    'hospitalizations' => 'Hospitalizations / surgeries',
+                    'vision' => 'Vision problems (e.g., uses glasses)',
+                    'hearing' => 'Hearing problems (e.g., partial loss)',
+                    'dental' => 'Dental issues (e.g., braces)',
+                    'activity' => 'Physical activity (hours/week)',
+                    'sleep' => 'Sleep (hours/night)',
+                    'diet' => 'Dietary habits / restrictions',
+                    'mentalHealth' => 'Mental health concerns',
+                    'notes' => 'Additional notes / concerns',
+                    'generalNote' => 'General note'
+                ];
+                ?>
+
+                <?php foreach ($textFields as $id => $label): ?>
+                    <div class="col-md-4">
+                        <label for="<?= $id ?>" class="form-label"><?= $label ?></label>
+                        <?php if (in_array($id, ['conditions', 'recentIllness', 'hospitalizations', 'mentalHealth', 'notes', 'generalNote'])): ?>
+                            <textarea name="<?= $id ?>" id="<?= $id ?>" class="form-control" rows="2" required></textarea>
+                        <?php else: ?>
+                            <input type="text" name="<?= $id ?>" id="<?= $id ?>" class="form-control" required>
+                        <?php endif; ?>
+                        <div class="invalid-feedback">This field cannot be empty.</div>
                     </div>
-                </form>
-            </div>
+                <?php endforeach; ?>
+
+                <!-- Submit -->
+                <div class="col-12 mt-3">
+                    <button type="submit" class="btn btn-danger rounded-4">Submit Survey</button>
+                    <a href="view_student_medical.php?student_id=<?php echo $student_id ?>" class="btn btn-outline-danger rounded-4">Cancel</a>
+                </div>
+            </form>
         </div>
-
-
     </div>
-
 </div>
+</div>
+
+<script>
+// Realtime field validation
+document.querySelectorAll('#medicalForm input, #medicalForm textarea').forEach(field => {
+    field.addEventListener('input', () => {
+        if (field.checkValidity()) {
+            field.classList.remove('is-invalid');
+        } else {
+            field.classList.add('is-invalid');
+        }
+    });
+});
+
+// Prevent submit if invalid
+document.getElementById('medicalForm').addEventListener('submit', function(e) {
+    let valid = true;
+    this.querySelectorAll('input, textarea').forEach(field => {
+        if (!field.checkValidity()) {
+            field.classList.add('is-invalid');
+            valid = false;
+        }
+    });
+    if (!valid) e.preventDefault();
+});
+</script>
 
 <?php include 'footer.php'; ?>
 </body>

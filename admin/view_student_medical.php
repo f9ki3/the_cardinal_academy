@@ -16,6 +16,7 @@ if ($student_id > 0) {
 }
 ?>
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -196,7 +197,7 @@ body {
     </div>
 
     <div class="col-12 col-md-6 d-flex justify-content-md-end align-items-center gap-2 mt-2 mt-md-0">
-        <input type="text" placeholder="Search Record Here..." 
+        <input type="text" id="searchInput" placeholder="Search Record Here..." 
             class="form-control rounded-4" style="max-width: 250px;">
 
         <a href="create_medical_record.php?student_id=<?php echo $student_id ?>" 
@@ -207,58 +208,124 @@ body {
     </div>
     </div>
 
+    <?php
+    $status = isset($_GET['status']) ? $_GET['status'] : '';
+    $student_id = isset($_GET['student_id']) ? htmlspecialchars($_GET['student_id']) : '';
+    ?>
+
+    <?php if ($status == 1 && !empty($student_id)): ?>
+    <div class="mt-3">
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <strong>Success!</strong> Medical record for <b>Student ID: <?php echo $student_id; ?></b> has been successfully saved.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+    <?php elseif ($status == 2 && !empty($student_id)): ?>
+    <div class="mt-3">
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Deleted!</strong> Medical record for <b>Student ID: <?php echo $student_id; ?></b> has been deleted.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+    <?php endif; ?>
+
+
 
 
     <div class="table-responsive">
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Height (cm)</th>
-                    <th>Weight (kg)</th>
-                    <th>Blood Pressure</th>
-                    <th>Temperature (°C)</th>
-                    <th>Notes</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td class="text-muted">2025-09-01</td>
-                    <td class="text-muted">160</td>
-                    <td class="text-muted">55</td>
-                    <td class="text-muted">110/70</td>
-                    <td class="text-muted">36.6</td>
-                    <td class="text-muted">Annual check-up, healthy</td>
-                    <td class="text-muted">
-                        <button class="btn btn-sm"><i class="bi bi-trash"></i></button>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="text-muted">2025-03-15</td>
-                    <td class="text-muted">158</td>
-                    <td class="text-muted">54</td>
-                    <td class="text-muted">108/68</td>
-                    <td class="text-muted">36.7</td>
-                    <td class="text-muted">Minor allergy reaction</td>
-                    <td class="text-muted">
-                        <button class="btn btn-sm"><i class="bi bi-trash"></i></button>
-                    </td>
-                </tr>
-                <tr>
-                    <td class="text-muted">2024-12-10</td>
-                    <td class="text-muted">157</td>
-                    <td class="text-muted">53</td>
-                    <td class="text-muted">107/70</td>
-                    <td class="text-muted">36.5</td>
-                    <td class="text-muted">Vaccination completed</td>
-                    <td class="text-muted">
-                        <button class="btn btn-sm"><i class="bi bi-trash"></i></button>
-                    </td>
-                </tr>
-            </tbody>
+        <?php
+            $student_id = isset($_GET['student_id']) ? trim($_GET['student_id']) : '';
 
-        </table>
+            if (empty($student_id)) {
+                echo "<div class='alert alert-warning'>No student selected.</div>";
+                exit;
+            }
+
+            // Fetch all records for this student
+            $query = $conn->prepare("SELECT id, medical_id, height, weight, blood_pressure, temperature, notes, created_at FROM student_health_records WHERE student_id = ? ORDER BY created_at DESC");
+            $query->bind_param("s", $student_id);
+            $query->execute();
+            $result = $query->get_result();
+            ?>
+
+            <div>
+                <table id="medicalRecordsTable" class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Height (cm)</th>
+                            <th>Weight (kg)</th>
+                            <th>Blood Pressure</th>
+                            <th>Temperature (°C)</th>
+                            <th>Notes</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if ($result->num_rows > 0): ?>
+                            <?php while ($row = $result->fetch_assoc()): ?>
+                            <tr style="cursor:pointer;" onclick="window.location.href='view_medical_detail.php?medical_id=<?php echo urlencode($row['medical_id']); ?>&student_id=<?php echo urlencode($student_id); ?>'">
+                                <td class="text-muted"><?php echo date("Y-m-d", strtotime($row['created_at'])); ?></td>
+                                <td class="text-muted"><?php echo htmlspecialchars($row['height']); ?></td>
+                                <td class="text-muted"><?php echo htmlspecialchars($row['weight']); ?></td>
+                                <td class="text-muted"><?php echo htmlspecialchars($row['blood_pressure']); ?></td>
+                                <td class="text-muted"><?php echo htmlspecialchars($row['temperature']); ?></td>
+                                <td class="text-muted"><?php echo htmlspecialchars($row['notes']); ?></td>
+                                <td class="text-muted">
+                                    <a href="delete_medical.php?id=<?php echo $row['id']; ?>&student_id=<?php echo urlencode($student_id); ?>" class="btn btn-sm" onclick="event.stopPropagation(); return confirm('Are you sure you want to delete this record?');">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            <?php endwhile; ?>
+                        <?php else: ?>
+                            <tr class="no-results">
+                                <td colspan="7" class="text-center text-muted">No medical records found.</td>
+                            </tr>
+                        <?php endif; ?>
+                        <!-- Hidden row for search "no results" -->
+                        <tr class="no-results-search" style="display:none;">
+                            <td colspan="7" class="text-center text-muted">No results found.</td>
+                        </tr>
+                    </tbody>
+
+                </table>
+                <script>
+                const searchInput = document.getElementById('searchInput');
+                const table = document.getElementById('medicalRecordsTable');
+                const tbody = table.getElementsByTagName('tbody')[0];
+                const rows = tbody.getElementsByTagName('tr');
+                const noResultsRow = tbody.querySelector('.no-results-search');
+
+                searchInput.addEventListener('input', function() {
+                    const filter = searchInput.value.toLowerCase();
+                    let visibleCount = 0;
+
+                    for (let i = 0; i < rows.length; i++) {
+                        // Skip the "no results" row
+                        if (rows[i].classList.contains('no-results-search')) continue;
+
+                        let rowText = rows[i].innerText.toLowerCase();
+                        if (rowText.indexOf(filter) > -1) {
+                            rows[i].style.display = '';
+                            visibleCount++;
+                        } else {
+                            rows[i].style.display = 'none';
+                        }
+                    }
+
+                    // Show or hide "no results" row
+                    if (visibleCount === 0) {
+                        noResultsRow.style.display = '';
+                    } else {
+                        noResultsRow.style.display = 'none';
+                    }
+                });
+                </script>
+
+
+            </div>
+
     </div>
 </div>
 
