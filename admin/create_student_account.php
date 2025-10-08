@@ -60,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
     // Handle profile picture
-    $profile_path = "uploads/dummy.jpg"; // default
+    $profile_path = "dummy.jpg"; // default
     if (!empty($_FILES['profile']['name'])) {
         $target_dir = "../static/uploads/";
         if (!is_dir($target_dir)) mkdir($target_dir, 0777, true);
