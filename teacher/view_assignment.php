@@ -256,20 +256,23 @@ include '../db_connection.php';
                     ?>
                     <tr class="submission-row"
                         data-submission-id="<?= $row['submission_id'] ?>"
-                        data-fullname="<?= htmlspecialchars($row['first_name'] . ' ' . $row['last_name']) ?>"
-                        data-email="<?= htmlspecialchars($row['email']) ?>"
-                        data-submission_date="<?= date('Y-m-d H:i:s', strtotime($row['submission_date'])) ?>"
-                        data-grade="<?= htmlspecialchars($row['grade']) ?>"
-                        data-feedback="<?= htmlspecialchars($row['feedback']) ?>"
-                        data-file-path='<?= htmlspecialchars($row['file_path']) ?>'
-                        data-file-url="<?= htmlspecialchars($fileUrl) ?>">
+                        data-fullname="<?= htmlspecialchars($row['first_name'] . ' ' . $row['last_name'] ?? '') ?>"
+                        data-email="<?= htmlspecialchars($row['email'] ?? '') ?>"
+                        data-submission_date="<?= !empty($row['submission_date']) ? date('Y-m-d H:i:s', strtotime($row['submission_date'])) : '' ?>"
+                        data-grade="<?= htmlspecialchars($row['grade'] ?? '') ?>"
+                        data-feedback="<?= htmlspecialchars($row['feedback'] ?? '') ?>"
+                        data-file-path='<?= htmlspecialchars($row['file_path'] ?? '') ?>'
+                        data-file-url="<?= htmlspecialchars($fileUrl ?? '') ?>"
+                        data-max-points="<?= $assignment['points'] ?>"
+                    >
                         <td><?= $i++ ?></td>
                         <td><?= htmlspecialchars($row['first_name'] . ' ' . $row['last_name']) ?></td>
                         <td><?= htmlspecialchars($row['email']) ?></td>
-                        <td><?= date("F j, Y g:i A", strtotime($row['submission_date'])) ?></td>
+                        <td><?= !empty($row['submission_date']) ? date("F j, Y g:i A", strtotime($row['submission_date'])) : 'Not Submitted Yet' ?></td>
                         <td><?= !empty($row['grade']) ? htmlspecialchars($row['grade']) : 'Not Graded Yet' ?></td>
                         <td><?= !empty($row['feedback']) ? htmlspecialchars($row['feedback']) : 'No Feedback yet' ?></td>
                     </tr>
+
                     <?php endwhile; ?>
 
 

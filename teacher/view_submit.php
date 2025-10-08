@@ -34,9 +34,9 @@
             </div>
 
             <!-- Right Column -->
-            <div class="col-md-6">
+            <div class="col-md-12">
               <label class="form-label fw-semibold">Grade</label>
-              <input type="number" class="form-control" id="modalGrade" name="grade" min="0" max="100" required>
+              <input type="number" class="form-control" id="modalGrade" name="grade" min="0" max="<?= $assignment['points'] ?>" required>
               <label class="form-label fw-semibold mt-3">Feedback</label>
               <textarea class="form-control" id="modalFeedback" name="feedback" rows="6" placeholder="Write feedback here" required></textarea>
             </div>
@@ -63,54 +63,43 @@
 document.addEventListener("DOMContentLoaded", () => {
   const submissionRows = document.querySelectorAll(".submission-row");
   const editModal = new bootstrap.Modal(document.getElementById("editSubmissionModal"));
+  const gradeInput = document.getElementById("modalGrade");
 
   submissionRows.forEach(row => {
     row.addEventListener("click", () => {
-      // Safely get dataset values (avoid nulls)
-      const getData = (attr) => row.dataset[attr] ? row.dataset[attr] : '';
+      const getData = (attr) => row.dataset[attr] ?? '';
 
+      // Set hidden input & read-only fields
       document.getElementById("submissionId").value = getData("submissionId");
       document.getElementById("modalFullName").textContent = getData("fullname");
       document.getElementById("modalEmail").textContent = getData("email");
-      document.getElementById("modalSubmissionDate").textContent = getData("submissionDate");
+      document.getElementById("modalSubmissionDate").textContent = getData("submission_date") 
+          ? new Date(getData("submission_date")).toLocaleString() 
+          : 'Not Submitted Yet';
 
       // === Attachment File(s) ===
       const fileContainer = document.getElementById("modalAttachmentFile");
       fileContainer.innerHTML = '';
-
       const filePathData = getData("filePath");
       if (filePathData) {
         let files = [];
-        try {
-          files = JSON.parse(filePathData);
-        } catch {
-          files = [filePathData];
-        }
-
+        try { files = JSON.parse(filePathData); } catch { files = [filePathData]; }
         if (Array.isArray(files) && files.length > 0) {
           const listGroup = document.createElement("ul");
           listGroup.className = "list-group list-group-flush";
-
           files.forEach(file => {
-            if (file && typeof file === "string") {
+            if (file) {
               const listItem = document.createElement("li");
               listItem.className = "list-group-item d-flex align-items-center";
               listItem.style.padding = "0.25rem 0.75rem";
-              listItem.innerHTML = `
-                <i class="fas fa-paperclip me-2"></i>
-                <a href="../static/uploads/${file}" target="_blank" class="text-truncate" style="max-width: calc(100% - 24px); display:inline-block;">${file}</a>
-              `;
+              listItem.innerHTML = `<i class="fas fa-paperclip me-2"></i>
+                <a href="../static/uploads/${file}" target="_blank" class="text-truncate" style="max-width: calc(100% - 24px); display:inline-block;">${file}</a>`;
               listGroup.appendChild(listItem);
             }
           });
-
           fileContainer.appendChild(listGroup);
-        } else {
-          fileContainer.textContent = "No file";
-        }
-      } else {
-        fileContainer.textContent = "No file";
-      }
+        } else { fileContainer.textContent = "No file"; }
+      } else { fileContainer.textContent = "No file"; }
 
       // === Attachment URL ===
       const fileUrl = getData("fileUrl");
@@ -118,16 +107,24 @@ document.addEventListener("DOMContentLoaded", () => {
       if (fileUrl) {
         const safeUrl = fileUrl.startsWith("http") ? fileUrl : "#";
         urlDiv.innerHTML = `<a href="${safeUrl}" target="_blank" class="text-truncate">${fileUrl}</a>`;
-      } else {
-        urlDiv.textContent = "No URL";
-      }
+      } else { urlDiv.textContent = "No URL"; }
 
       // === Editable Fields ===
-      document.getElementById("modalGrade").value = getData("grade");
+      const maxPoints = parseFloat(getData("maxPoints")) || 100;
+      gradeInput.max = maxPoints;
+      gradeInput.value = getData("grade");
+      gradeInput.addEventListener("input", () => {
+        if (parseFloat(gradeInput.value) > maxPoints) {
+          gradeInput.value = maxPoints;
+          alert(`Grade cannot exceed the maximum of ${maxPoints} points`);
+        }
+      });
+
       document.getElementById("modalFeedback").value = getData("feedback");
 
       editModal.show();
     });
   });
 });
+
 </script>
