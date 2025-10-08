@@ -135,86 +135,91 @@
                 <!-- Assignment List -->
                 <div class="row g-3 mb-3">
                   <?php
-                      $query = "SELECT assignments.*, courses.course_name 
-                                FROM assignments
-                                INNER JOIN courses ON assignments.course_id = courses.id
-                                WHERE assignments.course_id = '$course_id'
-                                ORDER BY assignments.due_date DESC";
-                      $result = mysqli_query($conn, $query);
+$query = "SELECT assignments.*, courses.course_name 
+          FROM assignments
+          INNER JOIN courses ON assignments.course_id = courses.id
+          WHERE assignments.course_id = '$course_id'
+          ORDER BY assignments.due_date DESC";
+$result = mysqli_query($conn, $query);
 
-                      if (mysqli_num_rows($result) > 0) {
-                          while ($assignment = mysqli_fetch_assoc($result)) {
-                              $assignment_id = $assignment['assignment_id'];
-                              $title = $assignment['title'];
-                              $instructions = $assignment['instructions'];
-                              $points = $assignment['points'];
-                              $due_date = date("Y-m-d H:i A", strtotime($assignment['due_date']));
-                              $accept = $assignment['accept'];
-                              $course_name = $assignment['course_name'];
+if (mysqli_num_rows($result) > 0) {
+    while ($assignment = mysqli_fetch_assoc($result)) {
+        $assignment_id = $assignment['assignment_id'];
+        $title = htmlspecialchars($assignment['title']);
+        $instructions = htmlspecialchars($assignment['instructions']);
+        $points = htmlspecialchars($assignment['points']);
+        $due_date = date('Y-m-d h:i A', strtotime($assignment['due_date']));
+        $accept = $assignment['accept'];
+        $course_name = htmlspecialchars($assignment['course_name']);
 
-                              $iconClass = $accept == 1 ? 'bi-x-circle' : 'bi-check-circle';
-                              $action = $accept == 1 ? 'reject' : 'accept';
-                              $statusText = $action == 'accept' ? 'Open' : 'Close';
+        $iconClass = $accept == 1 ? 'bi-x-circle' : 'bi-check-circle';
+        $action = $accept == 1 ? 'reject' : 'accept';
+        $statusText = $action == 'accept' ? 'Open' : 'Close';
 
-                              echo "<div class='col-12 col-md-6 col-lg-4'>
-                                      <div class='card h-100 shadow-sm border-0 rounded-4 overflow-hidden'>
-                                          <div class='card-body pt-3 d-flex flex-column'>
-                                              <p class='small mb-1 text-muted'>{$course_name}</p>
-                                              <h5 class='fw-bolder'>{$title}</h5>
-                                              <p class='small mb-1 text-muted'>Instructions: {$instructions}</p>
-                                              
-                                              <div class='d-flex justify-content-start'>
-                                                  <p class='small mb-0 d-flex align-items-center text-muted'>
-                                                      <i class='bi bi-patch-check me-2'></i>Points: {$points}
-                                                  </p>
-                                                  <p class='small ms-3 mb-0 d-flex align-items-center text-muted'>
-                                                      <i class='bi bi-calendar-check me-2'></i>Due Date: {$due_date}
-                                                  </p>
-                                              </div>
+        // Limit instructions to 80 characters for display
+        $instructions_display = strlen($instructions) > 80 ? substr($instructions, 0, 77) . '...' : $instructions;
 
-                                              <hr>
+        echo '<div class="col-12 col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden">
+                    <div class="card-body pt-3 d-flex flex-column">
+                        <p class="small mb-1 text-muted">' . $course_name . '</p>
+                        <h5 class="fw-bolder">' . $title . '</h5>
+                        <p class="small mb-1 text-muted" title="' . $instructions . '">Instructions: ' . $instructions_display . '</p>
+                        
+                        <div class="d-flex justify-content-start flex-wrap">
+                            <p class="small mb-0 me-3 d-flex align-items-center text-muted">
+                                <i class="bi bi-patch-check me-2"></i>Points: ' . $points . '
+                            </p>
+                            <p class="small mb-0 d-flex align-items-center text-muted">
+                                <i class="bi bi-calendar-check me-2"></i>Due Date: ' . $due_date . '
+                            </p>
+                        </div>
 
-                                              <div class='mt-auto d-flex justify-content-between align-items-center'>
-                                                  <div class='d-flex gap-2 align-items-center'>
-                                                      <!-- View Button -->
-                                                      <a href='view_assignment.php?id={$assignment_id}' 
-                                                          class='btn btn-sm rounded-circle d-flex align-items-center justify-content-center' 
-                                                          style='width: 36px; height: 36px;' 
-                                                          title='View Assignment'>
-                                                          <i class='bi bi-eye'></i>
-                                                      </a>
-                                                      <!-- Accept/Reject Button -->
-                                                      <a href='#' 
-                                                          class='btn btn-sm rounded-circle d-flex align-items-center justify-content-center toggle-accept' 
-                                                          data-id='{$assignment_id}' 
-                                                          data-action='{$action}' 
-                                                          style='width: 36px; height: 36px;' 
-                                                          title='{$statusText}'>
-                                                          <i class='bi {$iconClass}'></i>
-                                                      </a>
-                                                      <!-- Delete Button -->
-                                                      <a href='delete_assignment.php?id={$assignment_id}&course_id={$course_id}' 
-                                                          class='btn btn-sm rounded-circle d-flex align-items-center justify-content-center' 
-                                                          style='width: 36px; height: 36px;' 
-                                                          title='Delete Assignment' 
-                                                          onclick='return confirm(\"Are you sure you want to delete this assignment?\")'>
-                                                          <i class='bi bi-trash'></i>
-                                                      </a>
+                        <hr>
 
-                                                  </div>
+                        <div class="mt-auto d-flex justify-content-between align-items-center flex-wrap">
+                            <div class="d-flex gap-2 align-items-center flex-wrap">
+                                <!-- View Button -->
+                                <a href="view_assignment.php?id=' . $assignment_id . '" 
+                                   class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center" 
+                                   style="width: 36px; height: 36px;" 
+                                   title="View Assignment">
+                                    <i class="bi bi-eye"></i>
+                                </a>
 
-                                                  <!-- Status Text -->
-                                                  <span class='small fw-semibold text-secondary assignment-status' data-id='{$assignment_id}'>{$statusText}</span>
-                                              </div>
-                                          </div>
-                                      </div>
-                                  </div>";
+                                <!-- Accept/Reject Button -->
+                                <a href="#" 
+                                   class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center toggle-accept" 
+                                   data-id="' . $assignment_id . '" 
+                                   data-action="' . $action . '" 
+                                   style="width: 36px; height: 36px;" 
+                                   title="' . $statusText . '">
+                                    <i class="bi ' . $iconClass . '"></i>
+                                </a>
 
-                          }
-                      } else {
-                          echo "<div class='col-12'><p>No assignments posted for this course.</p></div>";
-                      }
-                  ?>
+                                <!-- Delete Button -->
+                                <a href="delete_assignment.php?id=' . $assignment_id . '&course_id=' . $course_id . '" 
+                                   class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center" 
+                                   style="width: 36px; height: 36px;" 
+                                   title="Delete Assignment" 
+                                   onclick="return confirm(\'Are you sure you want to delete this assignment?\')">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </div>
+
+                            <!-- Status Text -->
+                            <span class="small fw-semibold text-secondary assignment-status" 
+                                  data-id="' . $assignment_id . '">' . $statusText . '</span>
+                        </div>
+                    </div>
+                </div>
+              </div>';
+    }
+} else {
+    echo '<div class="col-12"><p>No assignments posted for this course.</p></div>';
+}
+?>
+
                 </div>
 
                 <!-- AJAX -->

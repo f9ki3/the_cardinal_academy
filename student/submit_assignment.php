@@ -24,12 +24,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         }
 
         $uploadedFiles = [];
-
         foreach ($_FILES['fileInput']['tmp_name'] as $key => $tmpName) {
             if ($_FILES['fileInput']['error'][$key] === UPLOAD_ERR_OK) {
                 $fileName   = time() . "_" . basename($_FILES['fileInput']['name'][$key]);
                 $targetFile = $uploadDir . $fileName;
-
                 if (move_uploaded_file($tmpName, $targetFile)) {
                     $uploadedFiles[] = $fileName;
                 }
@@ -46,6 +44,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $file_url = trim($_POST['urlInput']);
     }
 
+    // === Prevent empty submission ===
+    if (empty($file_path) && empty($file_url)) {
+        die("Cannot submit an empty assignment.");
+    }
+
     // === Insert submission into DB ===
     $sql = "INSERT INTO assignment_submissions 
             (student_id, assignment_id, submission_date, file_path, file_url, grade, feedback) 
@@ -55,28 +58,31 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     if ($stmt->execute()) {
 
-        // ✅ STEP 1: Get teacher_id for this assignment
-        $teacherQuery = "
-            SELECT teacher_id 
-            FROM assignments 
-            WHERE assignment_id = ? LIMIT 1
+        // === Fetch teacher_id, course name, and assignment title in one query ===
+        $infoQuery = "
+            SELECT a.teacher_id, a.title AS assignment_title, c.course_name
+            FROM assignments a
+            JOIN courses c ON a.course_id = c.id
+            WHERE a.assignment_id = ? LIMIT 1
         ";
-        $teacherStmt = $conn->prepare($teacherQuery);
-        $teacherStmt->bind_param("i", $assignment_id);
-        $teacherStmt->execute();
-        $teacherResult = $teacherStmt->get_result();
+        $infoStmt = $conn->prepare($infoQuery);
+        $infoStmt->bind_param("i", $assignment_id);
+        $infoStmt->execute();
+        $infoResult = $infoStmt->get_result();
 
-        if ($teacherResult->num_rows > 0) {
-            $teacher = $teacherResult->fetch_assoc();
-            $teacher_id = $teacher['teacher_id'];
+        if ($infoResult->num_rows > 0) {
+            $info = $infoResult->fetch_assoc();
+            $teacher_id       = $info['teacher_id'];
+            $assignmentTitle  = $info['assignment_title'] ?? 'an assignment';
+            $courseName       = $info['course_name'] ?? 'the course';
 
-            // ✅ STEP 2: Increment teacher’s notification count
+            // === Increment teacher’s notification count ===
             $updateNotif = "UPDATE users SET notification = notification + 1 WHERE user_id = ?";
             $notifStmt = $conn->prepare($updateNotif);
             $notifStmt->bind_param("s", $teacher_id);
             $notifStmt->execute();
 
-            // ✅ STEP 3: Fetch student’s full name
+            // === Fetch student’s full name ===
             $nameQuery = "SELECT first_name, last_name FROM users WHERE user_id = ?";
             $nameStmt = $conn->prepare($nameQuery);
             $nameStmt->bind_param("s", $student_id);
@@ -85,23 +91,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $student = $nameResult->fetch_assoc();
 
             $fullname = $student['first_name'] . " " . $student['last_name'];
-            $message  = "$fullname submitted an assignment";
 
-            // ✅ STEP 4: Insert notification log
+            // === Notification message including assignment title & course name ===
+            $message  = "$fullname submitted an assignment \"$assignmentTitle\" for \"$courseName\"";
+
+            // === Insert notification log ===
             $logQuery = "
                 INSERT INTO notifications (id, user_id, message, link, created_at)
                 VALUES (UUID(), ?, ?, ?, NOW())
             ";
             $logStmt = $conn->prepare($logQuery);
-            
-            // Example link (redirects teacher to the assignment page)
             $link = "view_assignment.php?course_id=$course_id&id=$assignment_id";
-
             $logStmt->bind_param("sss", $teacher_id, $message, $link);
             $logStmt->execute();
         }
 
-        // ✅ STEP 5: Redirect back to assignment view
+        // === Redirect back to assignment view ===
         header("Location: view_assignment.php?course_id=$course_id&id=$assignment_id&success=1");
         exit;
     } else {
