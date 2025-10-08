@@ -1,165 +1,213 @@
 <?php
 include '../db_connection.php';
+// session_start();
 
-// Get user ID (from session)
-$user_id = $_SESSION['user_id'];
+$user_id = $_SESSION['user_id'] ?? 0;
 
-// Fetch notification count
+// Fetch unread notification count
 $count_query = $conn->prepare("SELECT notification FROM users WHERE user_id = ?");
 $count_query->bind_param("i", $user_id);
 $count_query->execute();
 $count_result = $count_query->get_result();
 $count_row = $count_result->fetch_assoc();
 $notif_count = intval($count_row['notification'] ?? 0);
-
-// Fetch notifications with teacher info
-$query = "
-    SELECT n.*, u.first_name, u.last_name 
-    FROM notifications n
-    LEFT JOIN users u ON n.user_id = u.user_id
-    WHERE n.user_id = ?
-    ORDER BY n.created_at DESC
-";
-$stmt = $conn->prepare($query);
-$stmt->bind_param("i", $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
 ?>
 
-<!-- Header with logo and notification -->
-<div class="d-flex border-bottom sticky-top align-items-center justify-content-between px-4 py-3 bg-white">
-    <div class="d-flex align-items-center">
-        <img src="../static/uploads/logo.png" alt="Logo" style="height: 60px; width: auto;" class="me-3">
-        <h3 class="m-0">The Cardinal Academy</h3>
+<!-- HEADER -->
+<header class="border-bottom sticky-top bg-white py-3 px-4 shadow-sm">
+  <div class="container-fluid d-flex align-items-center justify-content-between flex-nowrap">
+    <!-- Logo + Title -->
+    <div class="d-flex align-items-center flex-nowrap">
+      <img src="../static/uploads/logo.png" alt="Logo" 
+           class="me-3 flex-shrink-0" 
+           style="height:60px; width:auto;">
+      <h3 class="m-0 fw-bold text-nowrap">The Cardinal Academy</h3>
     </div>
-    <div class="position-relative">
-        <a id="notifBell" data-bs-toggle="offcanvas" href="#notificationCanvas" role="button" 
-          aria-controls="notificationCanvas" class="btn border rounded-4 me-2 position-relative">
-            <i class="bi bi-bell fs-5"></i>
-            <?php if ($notif_count > 0): ?>
-                <span id="notifBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-                    <?php echo $notif_count; ?>
-                    <span class="visually-hidden">unread notifications</span>
-                </span>
-            <?php endif; ?>
-        </a>
+
+    <!-- Notification Bell -->
+    <div class="position-relative flex-shrink-0">
+      <a id="notifBell" 
+         data-bs-toggle="offcanvas" 
+         href="#notificationCanvas" 
+         aria-controls="notificationCanvas"
+         class="btn border rounded-4 position-relative d-flex align-items-center justify-content-center"
+         style="width:45px; height:45px;">
+        <i class="bi bi-bell fs-5"></i>
+        <span id="notifBadge"
+              class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+              style="display: <?= $notif_count > 0 ? 'inline-block' : 'none'; ?>; min-width:22px; font-size:0.7rem;">
+          <?= $notif_count ?>
+        </span>
+      </a>
     </div>
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        const notifBell = document.getElementById("notifBell");
-        const notifBadge = document.getElementById("notifBadge");
+  </div>
+</header>
 
-        if (notifBell) {
-          notifBell.addEventListener("click", () => {
-            // Hide badge visually
-            if (notifBadge) notifBadge.style.display = "none";
-
-            // Update notification count in database
-            fetch("update_notification.php", {
-              method: "POST"
-            })
-            .then(res => res.json())
-            .then(data => {
-              console.log("Notification reset:", data);
-            })
-            .catch(err => console.error("Error updating notifications:", err));
-          });
-        }
-      });
-    </script>
-
-
-</div>
-
-<style>
-  .nav-item {
-    border: none !important;
-  }
-  .nav-item .nav-link {
-    border: none !important;
-    color: gray !important;
-    background-color: transparent !important;
-  }
-  .nav-item .nav-link.active {
-    color: white !important;
-    background-color: red !important;
-    border-radius: 0 !important;
-  }
-  /* Badge style */
-  .badge {
-    font-size: 0.7rem;
-    padding: 0.4em 0.5em;
-    font-weight: bold;
-  }
-</style>
-<!-- Offcanvas Notification Panel -->
-<div class="offcanvas offcanvas-end" 
-     tabindex="-1" 
-     id="notificationCanvas" 
+<!-- OFFCANVAS NOTIFICATIONS -->
+<div class="offcanvas offcanvas-end"
+     tabindex="-1"
+     id="notificationCanvas"
      aria-labelledby="notificationCanvasLabel"
-     data-bs-scroll="true" 
-     data-bs-backdrop="false"> <!-- allows scroll inside -->
-  
+     data-bs-scroll="true"
+     data-bs-backdrop="false">
+
   <div class="offcanvas-header border-bottom">
     <h5 class="offcanvas-title" id="notificationCanvasLabel">Notifications</h5>
     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   </div>
 
-  <!-- Scrollable body -->
-  <div class="offcanvas-body p-3 overflow-auto" style="max-height: 100vh;">
-    <?php if ($result->num_rows > 0): ?>
-      <div class="list-group border-0">
-        <?php while ($row = $result->fetch_assoc()): ?>
-          <a href="<?php echo htmlspecialchars($row['link']); ?>" 
-             class="list-group-item list-group-item-action mb-2 rounded-4 border shadow-sm d-flex align-items-start hover-notif">
-            <div class="me-3 mt-1">
-              <i class="bi bi-bell fs-4"></i>
-            </div>
-            <div class="flex-grow-1">
-              <p class="mb-1 text-dark">
-                <?php echo htmlspecialchars(mb_strimwidth($row['message'], 0, 100, "...")); ?>
-              </p>
-              <small class="text-muted">
-                <?php echo date("M d, Y h:i A", strtotime($row['created_at'])); ?>
-              </small>
-            </div>
-          </a>
-        <?php endwhile; ?>
+  <div class="offcanvas-body p-3 overflow-auto" style="max-height: 100vh;" id="notifContainer">
+    <div id="notifList" class="list-group border-0"></div>
+
+    <!-- Loader -->
+    <div id="loader" class="text-center my-3" style="display:none;">
+      <div class="spinner-border text-danger" role="status">
+        <span class="visually-hidden">Loading...</span>
       </div>
-    <?php else: ?>
-      <p class="text-muted text-center mt-4">No notifications yet.</p>
-    <?php endif; ?>
+    </div>
+
+    <!-- End text -->
+    <p id="noMore" class="text-muted text-center mt-3" style="display:none;">No more notifications.</p>
   </div>
 </div>
 
+<!-- JS -->
+ <script>
+document.addEventListener("DOMContentLoaded", () => {
+  const notifContainer = document.getElementById('notifContainer');
+  const notifList = document.getElementById('notifList');
+  const loader = document.getElementById('loader');
+  const noMore = document.getElementById('noMore');
+  const notifBell = document.getElementById('notifBell');
+  const notifBadge = document.getElementById('notifBadge');
+  const notifCanvas = document.getElementById('notificationCanvas');
+
+  let offset = 0;
+  const limit = 10;
+  let loading = false;
+  let endReached = false;
+  let initialized = false; // ✅ Prevent reload flicker
+
+  async function loadNotifications(initial = false) {
+    if (loading || endReached) return;
+    loading = true;
+    loader.style.display = 'block';
+    noMore.style.display = 'none';
+
+    try {
+      const res = await fetch(`fetch_notifications_lazy.php?offset=${offset}`);
+      const data = await res.json();
+
+      if (!Array.isArray(data) || data.length === 0) {
+        if (offset === 0 && initial) {
+          notifList.innerHTML = "<p class='text-muted text-center mt-3'>No notifications yet.</p>";
+        } else {
+          endReached = true;
+          noMore.style.display = 'block';
+        }
+      } else {
+        data.forEach(n => {
+          const a = document.createElement('a');
+          a.href = n.link || "#";
+          a.className = 'list-group-item list-group-item-action mb-2 rounded-4 border shadow-sm d-flex align-items-start hover-notif fade-in';
+          a.innerHTML = `
+            <div class="me-3 mt-1"><i class="bi bi-bell fs-4 text-danger"></i></div>
+            <div class="flex-grow-1">
+              <p class="mb-1 text-dark fw-medium">${n.message}</p>
+              <small class="text-muted">${n.created_at}</small>
+            </div>`;
+          notifList.appendChild(a);
+        });
+        offset += limit;
+      }
+    } catch (err) {
+      console.error('Error loading notifications:', err);
+    } finally {
+      loader.style.display = 'none';
+      loading = false;
+    }
+  }
+
+  // ✅ Show notifications only after data is ready
+  notifBell.addEventListener("click", async (e) => {
+    e.preventDefault(); // prevent anchor default
+    notifBadge.style.display = "none";
+
+    // Update notifications in DB (mark as read)
+    fetch('update_notification.php', { method: 'POST' }).catch(err => console.error(err));
+
+    // If already loaded before, just show
+    if (initialized) {
+      const offcanvas = bootstrap.Offcanvas.getOrCreateInstance(notifCanvas);
+      offcanvas.show();
+      return;
+    }
+
+    // First time: show loader, fetch, then open
+    loader.style.display = 'block';
+    await loadNotifications(true);
+
+    const offcanvas = bootstrap.Offcanvas.getOrCreateInstance(notifCanvas);
+    offcanvas.show();
+
+    initialized = true;
+  });
+
+  // Infinite scroll (load more when scrolled to bottom)
+  notifContainer.addEventListener('scroll', () => {
+    const { scrollTop, scrollHeight, clientHeight } = notifContainer;
+    if (scrollTop + clientHeight >= scrollHeight - 10) {
+      loadNotifications();
+    }
+  });
+});
+</script>
+
+
+<!-- STYLES -->
 <style>
+/* Stable header layout */
+header {
+  min-height: 80px;
+}
+
+/* Notification card style */
+.list-group-item {
+  border: 1px solid #dee2e6 !important;
+  transition: all 0.2s ease-in-out;
+  padding: 1rem 1.25rem !important;
+  border-radius: 1rem !important;
+  background-color: #fff !important;
+}
+
+.hover-notif:hover {
+  background-color: #f8f9fa !important;
+  border-color: #adb5bd !important;
+  transform: translateY(-2px);
+}
+
+/* Fade-in animation */
+.fade-in {
+  opacity: 0;
+  animation: fadeIn 0.4s ease forwards;
+}
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+/* Prevent content wrapping or shifting */
+.container-fluid {
+  max-width: 100%;
+  white-space: nowrap;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  header h3 {
+    font-size: 1.1rem;
+  }
   .list-group-item {
-    border: 1px solid #dee2e6 !important;
-    transition: all 0.2s ease-in-out;
+    padding: 0.8rem 1rem !important;
   }
-
-  .hover-notif:hover {
-    background-color: #f8f9fa !important;
-    border-color: #adb5bd !important;
-    transform: translateY(-2px);
-  }
-
-  /* Optional: style the scrollbar for smooth look */
-  .offcanvas-body {
-    scrollbar-width: thin;
-    scrollbar-color: #adb5bd #f8f9fa;
-  }
-
-  .offcanvas-body::-webkit-scrollbar {
-    width: 6px;
-  }
-
-  .offcanvas-body::-webkit-scrollbar-thumb {
-    background-color: #adb5bd;
-    border-radius: 10px;
-  }
-
-  .offcanvas-body::-webkit-scrollbar-thumb:hover {
-    background-color: #6c757d;
-  }
+}
 </style>
