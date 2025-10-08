@@ -51,16 +51,16 @@ if (isset($_GET['post_id'])) {
 
         if ($posts && $posts->num_rows > 0) {
             $post = $posts->fetch_assoc();
-            echo '
-            <div class=" mb-3 border-0">
-                <div>
-                    <h5 class="card-title fw-bolder mb-1">' . htmlspecialchars($post['title']) . '</h5>
-                    <p class="card-text small text-muted mb-1">' . date("M d, Y h:i A", strtotime($post['created_at'])) . '</p>
-                    <hr>
-                    <div class="card-text" style="max-width: 100vh; word-wrap: break-word;">' . $post['description'] . '</div>
-                    <div class="mt-2">';
+            // --- display the post ---
+            echo '<div class="mb-3 border-0">
+                    <div>
+                        <h5 class="card-title fw-bolder mb-1">' . htmlspecialchars($post['title']) . '</h5>
+                        <p class="card-text small text-muted mb-1">' . date("M d, Y h:i A", strtotime($post['created_at'])) . '</p>
+                        <hr>
+                        <div class="card-text" style="max-width: 100%; word-wrap: break-word;">' . $post['description'] . '</div>
+                        <div class="mt-2">';
             
-            // Video
+            // --- Video ---
             if (!empty($post['video_link'])) {
                 $video_url = $post['video_link'];
                 $embed_url = $video_url;
@@ -74,7 +74,7 @@ if (isset($_GET['post_id'])) {
                       </div>';
             }
 
-            // Attachments
+            // --- Attachments ---
             if (!empty($post['attachment'])) {
                 $attachments = json_decode($post['attachment'], true);
                 if (is_array($attachments) && count($attachments) > 0) {
@@ -83,14 +83,13 @@ if (isset($_GET['post_id'])) {
                     foreach ($attachments as $file) {
                         $file = trim($file);
                         if ($file === '') continue;
-
                         $icon = getFileIcon($file);
                         echo '<div class="p-2 border rounded bg-light d-flex align-items-center" style="min-width:200px; max-width:250px;">
                                 <i class="' . $icon . ' me-2" style="font-size:1.5rem;"></i>
                                 <a href="../static/uploads/' . htmlspecialchars($file) . '" download class="text-muted text-decoration-none text-truncate" style="max-width:180px;">
                                     ' . htmlspecialchars($file) . '
                                 </a>
-                            </div>';
+                              </div>';
                     }
                     echo '</div>';
                 }
@@ -98,7 +97,17 @@ if (isset($_GET['post_id'])) {
 
             echo '</div></div></div>';
         } else {
-            echo '<p class="text-center mt-5 text-muted mb-3">Post not found.</p>';
+            // --- BEAUTIFUL "Post Not Found" CARD ---
+            echo '<div class="text-center my-5">
+                    <div class="card mx-auto p-4" style="max-width: 500px; border-radius: 15px; box-shadow:0 4px 15px rgba(0,0,0,0.1);">
+                        <i class="bi bi-exclamation-triangle text-danger" style="font-size: 50px; margin-bottom: 15px;"></i>
+                        <h5 class="fw-bold text-danger mb-3">Post Not Found</h5>
+                        <p class="text-muted mb-4">The post may have been removed by the teacher or does not exist.</p>
+                        <a href="course.php?id=' . intval($course_id) . '" class="btn btn-danger rounded-pill px-4">
+                            <i class="bi bi-arrow-left-circle me-2"></i> Back to Stream
+                        </a>
+                    </div>
+                  </div>';
         }
 
         $post_stmt->close();

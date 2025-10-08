@@ -1,110 +1,67 @@
-<?php include 'session_login.php'; ?>
-<?php include '../db_connection.php'; ?>
+<?php 
+include 'session_login.php';
+include '../db_connection.php';
+
+$course_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+$post_id = isset($_GET['post_id']) ? intval($_GET['post_id']) : 0;
+
+// --- fetch post ---
+$post = null;
+if ($post_id > 0) {
+    $stmt = $conn->prepare("
+        SELECT id, course_id, teacher_id, title, description, video_link, attachment, created_at
+        FROM posts
+        WHERE id = ?
+        LIMIT 1
+    ");
+    $stmt->bind_param("i", $post_id);
+    $stmt->execute();
+    $post = $stmt->get_result()->fetch_assoc();
+    $stmt->close();
+}
+?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Attendance Records</title>
-  <?php include 'header.php' ?>
+  <title>Post Not Found</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
   <style>
-    .rounded-circle:hover{
-      background-color:rgb(240, 249, 255) !important;
+    body {
+        background-color: #f8f9fa;
+    }
+    .card-center {
+        max-width: 500px;
+        margin: 100px auto;
+        text-align: center;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        background-color: #fff;
+    }
+    .btn-back {
+        padding: 10px 25px;
+        font-weight: 500;
+        border-radius: 50px;
+    }
+    .icon-warning {
+        font-size: 50px;
+        color: #dc3545;
+        margin-bottom: 15px;
     }
   </style>
-    <style>
-    .tabs {
-    display: flex;
-    gap: 30px;           
-    padding: 5px;
-    }
-
-    .tab {
-    padding: 8px 0;
-    cursor: pointer;
-    position: relative;
-    }
-
-    .tab p {
-    margin: 0;
-    font-weight: 500;
-    color: #555;
-    }
-
-    /* underline only active tab */
-    .tab.active p {
-    color: #000; /* active text color */
-    }
-
-    .tab.active::after {
-    content: "";
-    position: absolute;
-    bottom: -2px;  /* sits on base line */
-    left: 0;
-    width: 100%;
-    height: 3px;
-    background:rgb(218, 64, 64); /* your active color (green) */
-    border-radius: 2px;
-    }
-    </style>
-
 </head>
 <body>
-<div class="d-flex flex-row bg-light">
-  <?php include 'navigation.php' ?>
-
-  <div class="content flex-grow-1">
-    <?php include 'nav_top.php' ?>
-
-    <div class="container my-4">
-      <div class="row g-4">
-        <div class="col-12">
-          <div>
-            <div class="container my-4">
-              <div class="row mb-3">
-                <div class="col-12 border-bottom col-md-12">
-                  <h4>Stream Class</h4>
-                </div>
-
-                
-              </div>
-
-              <!-- Courses Grid -->
-              <div class="row g-3">
-                <?php $course_id = isset($_GET['id']) ? intval($_GET['id']) : 0; ?>
-                    <div class="tabs d-flex">
-                        <div class="tab active">
-                            <a href="course.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Stream</a>
-                        </div>
-                        <div class="tab">
-                            <a href="attendance.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Attendance</a>
-                        </div>
-                        <div class="tab">
-                            <a href="assignment.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Assignment</a>
-                        </div>
-                        <div class="tab">
-                            <a href="document.php?id=<?= $course_id ?>" style="text-decoration: none; color: black">Files and Documents</a>
-                        </div>
-                    </div>
-
-
-                <!-- Tabs Content -->
-                <div class="p-0" >
-                <?php include 'view_post_details.php'?>
-                
-                </div>
-
-              </div>
-
-            </div> <!-- end inner container -->
-          </div>
-        </div>
-      </div>
-    </div>
+  <div class="card-center">
+    <i class="bi bi-exclamation-triangle icon-warning"></i>
+    <h4 class="fw-bold text-danger mb-3">Post Not Found</h4>
+    <p class="text-muted mb-4">The post may have been removed by the teacher or does not exist.</p>
+    <a href="dashboard.php?id=<?= $course_id ?>" class="btn btn-danger btn-back">
+        <i class="bi bi-arrow-left-circle me-2"></i> Back to Stream
+    </a>
   </div>
-</div>
-
-<?php include 'footer.php'; ?>
 </body>
 </html>
