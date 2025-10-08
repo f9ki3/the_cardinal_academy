@@ -35,117 +35,43 @@ $profile_image = !empty($user['profile']) ? '../static/uploads/' . htmlspecialch
 
     <!-- Scrollable nav -->
     <div class="flex-grow-1 overflow-auto" style="max-height: calc(100vh - 200px);">
-        <ul class="nav flex-column gap-1">
+    <ul class="nav flex-column gap-1">
+        <li class="nav-item">
+        <a href="#" 
+            class="nav-link d-flex align-items-center px-3 py-2 rounded-3"
+            data-bs-toggle="modal" 
+            data-bs-target="#linkStudentModal">
+            <i class="bi bi-plus-circle me-2"></i> 
+            <span>Link Student</span>
+        </a>
+        </li>
 
-            <li class="nav-item">
-                <a href="dashboard.php" class="nav-link d-flex align-items-center px-3 py-2 rounded-3" href="dashboard.php">
-                    <i class="bi bi-house me-2"></i> <span>Home</span>
-                </a>
-            </li>
+        <li class="nav-item">
+        <a href="dashboard.php" class="nav-link d-flex align-items-center px-3 py-2 rounded-3">
+            <i class="bi bi-megaphone me-2"></i> <span>Announcement</span>
+        </a>
+        </li>
 
-            <li class="nav-item">
-                <a href="profile.php" class="nav-link d-flex align-items-center px-3 py-2 rounded-3" href="dashboard.php">
-                    <i class="bi bi-person me-2"></i> <span>Profile</span>
-                </a>
-            </li>
+        <li class="nav-item">
+        <a href="attendance.php" class="nav-link d-flex align-items-center px-3 py-2 rounded-3">
+            <i class="bi bi-calendar-check me-2"></i> <span>Attendance</span>
+        </a>
+        </li>
 
-            <li class="nav-item">
-                <a href="calendar.php" class="nav-link d-flex align-items-center px-3 py-2 rounded-3" href="#">
-                    <i class="bi bi-calendar3 me-2"></i> <span>Calendar</span>
-                </a>
-            </li>
+        <li class="nav-item">
+        <a href="medical.php" class="nav-link d-flex align-items-center px-3 py-2 rounded-3">
+            <i class="bi bi-heart-pulse me-2"></i> <span>Medical</span>
+        </a>
+        </li>
 
-            <li class="nav-item">
-                <a href="archive.php" class="nav-link d-flex align-items-center px-3 py-2 rounded-3" href="#">
-                    <i class="bi bi-archive me-2"></i> <span>Archived Classes</span>
-                </a>
-            </li>
-
-            <!-- Collapsible Teaching Menu -->
-            <li class="nav-item">
-                <a class="nav-link d-flex align-items-center px-3 py-2 rounded-3" 
-                data-bs-toggle="collapse" href="#teachingMenu" role="button" 
-                aria-expanded="false" aria-controls="teachingMenu">
-                    <i class="bi bi-calendar-check me-2"></i> <span>Teacher's Classes</span>
-                    <i class="bi bi-chevron-down ms-auto"></i>
-                </a>
-                <div class="collapse" id="teachingMenu">
-                    <ul class="nav flex-column small ps-0">
-                        <?php
-                        // Fetch teacher's courses
-                        $teacher_id = $_SESSION['user_id'];
-                        $stmt = $conn->prepare("SELECT id, course_name, subject FROM courses WHERE teacher_id = ? AND status='active'");
-                        $stmt->bind_param("i", $teacher_id);
-                        $stmt->execute();
-                        $result = $stmt->get_result();
-
-                        // Define the color palette
-                        $colors = [
-                            '#ffb6c1', // light pink
-                            '#90ee90', // light green
-                            '#add8e6', // light blue
-                            '#ffdab9', // light orange
-                            '#f08080', // light red
-                        ];
-
-                        if ($result->num_rows > 0) {
-                            $i = 0; // index to alternate colors
-                            while ($course = $result->fetch_assoc()) {
-                                $firstLetter = strtoupper(substr($course['subject'], 0, 1));
-                                $bgColor = $colors[$i % count($colors)]; // alternate color
-
-                                // Limit course_name to 20 chars with "..."
-                                $courseName = htmlspecialchars(mb_strimwidth($course['course_name'], 0, 20, "..."));
-
-                                echo '<li class="nav-item">
-                                        <a class="nav-link px-3 d-flex align-items-center py-2" href="course.php?id=' . $course['id'] . '" style="padding-left:0;">
-                                            <span class="rounded-circle text-white d-inline-flex align-items-center justify-content-center me-2" 
-                                                style="width:24px; height:24px; font-size:0.8rem; background-color:' . $bgColor . ';">
-                                                ' . $firstLetter . '
-                                            </span>
-                                            ' . $courseName . '
-                                        </a>
-                                    </li>';
-
-                                $i++;
-                            }
-                        } else {
-                            echo '<li class="nav-item">
-                                    <span class="nav-link text-muted py-2">No courses assigned</span>
-                                </li>';
-                        }
-
-
-                        $stmt->close();
-                        ?>
-                    </ul>
-
-                    <script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        const collapseEl = document.getElementById('teachingMenu');
-
-                        // Restore state from localStorage
-                        const savedState = localStorage.getItem('teachingMenuCollapsed');
-                        if (savedState === 'true') {
-                            collapseEl.classList.remove('show'); // collapsed
-                        } else if (savedState === 'false') {
-                            collapseEl.classList.add('show'); // expanded
-                        }
-
-                        // Listen for Bootstrap collapse events
-                        collapseEl.addEventListener('shown.bs.collapse', () => {
-                            localStorage.setItem('teachingMenuCollapsed', 'false'); // open
-                        });
-                        collapseEl.addEventListener('hidden.bs.collapse', () => {
-                            localStorage.setItem('teachingMenuCollapsed', 'true'); // closed
-                        });
-                    });
-                    </script>
-                </div>
-
-            </li>
-        </ul>
+        <li class="nav-item">
+        <a href="disciplinary.php" class="nav-link d-flex align-items-center px-3 py-2 rounded-3">
+            <i class="bi bi-exclamation-triangle me-2"></i> <span>Disciplinary</span>
+        </a>
+        </li>
+    </ul>
     </div>
+
 
     <!-- Logout at bottom -->
     <div class="mt-auto pt-3 border-top">
@@ -189,3 +115,24 @@ $profile_image = !empty($user['profile']) ? '../static/uploads/' . htmlspecialch
     }
 </style>
 
+
+<div class="modal fade" id="linkStudentModal" tabindex="-1" aria-labelledby="linkStudentModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4">
+      <div class="modal-header">
+        <h5 class="modal-title" id="linkStudentModalLabel">Link Student</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <form id="linkStudentForm">
+          <div class="mb-3">
+            <label for="studentCode" class="form-label">Student Code</label>
+            <input type="text" id="studentCode" name="studentCode" class="form-control rounded-3" placeholder="Enter student code" required>
+          </div>
+          <button type="submit" class="btn btn-danger w-100 rounded-3">Link</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
