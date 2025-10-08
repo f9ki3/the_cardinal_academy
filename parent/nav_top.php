@@ -34,13 +34,6 @@
 
 </style>
 
-<?php
-// Assume session is started and $conn is your DB connection
-
-// Fetch notifications from the database
-$query = "SELECT message FROM notification WHERE acc_type = 'parent' ORDER BY date DESC;";
-$result = mysqli_query($conn, $query);
-?>
 <!-- Offcanvas Notification Panel with Tabs -->
 <div class="offcanvas offcanvas-end" tabindex="-1" id="notificationCanvas" aria-labelledby="notificationCanvasLabel">
   <div class="offcanvas-header">

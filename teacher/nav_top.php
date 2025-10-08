@@ -12,6 +12,17 @@
     </div>
 </div>
 <style>
+@media print {
+  /* Hide the header and notification offcanvas when printing */
+  .border-bottom.sticky-top,
+  .offcanvas {
+    display: none !important;
+    visibility: hidden !important;
+  }
+}
+</style>
+
+<style>
 
   .nav-item {
     border: none !important;

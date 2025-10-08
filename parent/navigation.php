@@ -1,76 +1,191 @@
 <?php
-include 'user_info.php'; // adjust path as needed
+include '../db_connection.php';
 
-$user_info = getUserInfo();
+$user_id = $_SESSION['user_id'];
 
-$full_name = $user_info['full_name'];
-$profile_image = $user_info['profile_image'];
+$sql = "SELECT first_name, last_name, profile FROM users WHERE user_id = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+
+$user = $result->fetch_assoc();
+
+$full_name = htmlspecialchars($user['first_name'] . ', ' . $user['last_name']);
+$profile_image = !empty($user['profile']) ? '../static/uploads/' . htmlspecialchars($user['profile']) : '../static/uploads/dummy.jpg';
 ?>
 
+<div id="nav_side" 
+     class="d-print-none sidebar p-3 border-end sticky-top d-none d-md-flex flex-column" 
+     style="min-height: 100vh; width: 260px; background: #fff; box-shadow: 2px 0 6px rgba(0,0,0,0.05);">
 
-
-<div id="nav_side" class="d-print-none sidebar p-3 border-end sticky-top d-none d-md-block" style="min-height: 100vh; width: 250px; overflow: hidden;">
-     <div class="profile-pic mb-3 w-100 text-center">
+    <!-- Profile Section -->
+    <div class="profile-pic mb-3 w-100 text-center">
         <img 
             src="<?= htmlspecialchars($profile_image) ?>" 
             alt="Profile" 
-            class="rounded-circle img-fluid d-block mx-auto" 
-            style="width: 80px; height: 80px; object-fit: cover;"
+            class="rounded-circle shadow-sm img-fluid d-block mx-auto" 
+            style="width: 90px; height: 90px; object-fit: cover;"
         >
-        </div>
-    <h5 class="text-center fw-bolder text-dark mb-3"><?= htmlspecialchars($full_name) ?></h5>
-    <hr class="text-dark">
+        <h6 class="mt-2 fw-semibold text-dark mb-0"><?= htmlspecialchars($full_name) ?></h6>
+        <small class="text-muted">Parents</small>
+    </div>
 
-    <div style="overflow-y: auto; max-height: calc(100vh - 200px); padding-right: 5px;">
-        <ul class="nav flex-column">
-            <li class="nav-item">
-                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="dashboard.php">
-                    <i class="bi bi-speedometer2 me-2"></i>Dashboard
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
-                    <i class="bi bi-person me-2"></i>Child Profile
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="attendance.php">
-                    <i class="bi bi-calendar4-week me-2"></i>Attendance
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="grades.php">
-                    <i class="bi bi-card-text me-2"></i>Grades
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="assignment.php">
-                    <i class="bi bi-card-checklist me-2"></i>Assignment
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="disciplinary.php">
-                    <i class="bi bi-people me-2"></i>Disciplinary
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="medical.php">
-                    <i class="bi bi-capsule me-2"></i>Medical
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="announcement.php">
-                    <i class="bi bi-megaphone me-2"></i>Announcement
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="#">
-                    <i class="bi bi-cash-coin me-2"></i>Finance
-                </a>
-            </li>
-    
+    <hr class="text-muted">
 
-            
+    <!-- Scrollable nav -->
+    <div class="flex-grow-1 overflow-auto" style="max-height: calc(100vh - 200px);">
+        <ul class="nav flex-column gap-1">
+
+            <li class="nav-item">
+                <a href="dashboard.php" class="nav-link d-flex align-items-center px-3 py-2 rounded-3" href="dashboard.php">
+                    <i class="bi bi-house me-2"></i> <span>Home</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="profile.php" class="nav-link d-flex align-items-center px-3 py-2 rounded-3" href="dashboard.php">
+                    <i class="bi bi-person me-2"></i> <span>Profile</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="calendar.php" class="nav-link d-flex align-items-center px-3 py-2 rounded-3" href="#">
+                    <i class="bi bi-calendar3 me-2"></i> <span>Calendar</span>
+                </a>
+            </li>
+
+            <li class="nav-item">
+                <a href="archive.php" class="nav-link d-flex align-items-center px-3 py-2 rounded-3" href="#">
+                    <i class="bi bi-archive me-2"></i> <span>Archived Classes</span>
+                </a>
+            </li>
+
+            <!-- Collapsible Teaching Menu -->
+            <li class="nav-item">
+                <a class="nav-link d-flex align-items-center px-3 py-2 rounded-3" 
+                data-bs-toggle="collapse" href="#teachingMenu" role="button" 
+                aria-expanded="false" aria-controls="teachingMenu">
+                    <i class="bi bi-calendar-check me-2"></i> <span>Teacher's Classes</span>
+                    <i class="bi bi-chevron-down ms-auto"></i>
+                </a>
+                <div class="collapse" id="teachingMenu">
+                    <ul class="nav flex-column small ps-0">
+                        <?php
+                        // Fetch teacher's courses
+                        $teacher_id = $_SESSION['user_id'];
+                        $stmt = $conn->prepare("SELECT id, course_name, subject FROM courses WHERE teacher_id = ? AND status='active'");
+                        $stmt->bind_param("i", $teacher_id);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+
+                        // Define the color palette
+                        $colors = [
+                            '#ffb6c1', // light pink
+                            '#90ee90', // light green
+                            '#add8e6', // light blue
+                            '#ffdab9', // light orange
+                            '#f08080', // light red
+                        ];
+
+                        if ($result->num_rows > 0) {
+                            $i = 0; // index to alternate colors
+                            while ($course = $result->fetch_assoc()) {
+                                $firstLetter = strtoupper(substr($course['subject'], 0, 1));
+                                $bgColor = $colors[$i % count($colors)]; // alternate color
+
+                                // Limit course_name to 20 chars with "..."
+                                $courseName = htmlspecialchars(mb_strimwidth($course['course_name'], 0, 20, "..."));
+
+                                echo '<li class="nav-item">
+                                        <a class="nav-link px-3 d-flex align-items-center py-2" href="course.php?id=' . $course['id'] . '" style="padding-left:0;">
+                                            <span class="rounded-circle text-white d-inline-flex align-items-center justify-content-center me-2" 
+                                                style="width:24px; height:24px; font-size:0.8rem; background-color:' . $bgColor . ';">
+                                                ' . $firstLetter . '
+                                            </span>
+                                            ' . $courseName . '
+                                        </a>
+                                    </li>';
+
+                                $i++;
+                            }
+                        } else {
+                            echo '<li class="nav-item">
+                                    <span class="nav-link text-muted py-2">No courses assigned</span>
+                                </li>';
+                        }
+
+
+                        $stmt->close();
+                        ?>
+                    </ul>
+
+                    <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        const collapseEl = document.getElementById('teachingMenu');
+
+                        // Restore state from localStorage
+                        const savedState = localStorage.getItem('teachingMenuCollapsed');
+                        if (savedState === 'true') {
+                            collapseEl.classList.remove('show'); // collapsed
+                        } else if (savedState === 'false') {
+                            collapseEl.classList.add('show'); // expanded
+                        }
+
+                        // Listen for Bootstrap collapse events
+                        collapseEl.addEventListener('shown.bs.collapse', () => {
+                            localStorage.setItem('teachingMenuCollapsed', 'false'); // open
+                        });
+                        collapseEl.addEventListener('hidden.bs.collapse', () => {
+                            localStorage.setItem('teachingMenuCollapsed', 'true'); // closed
+                        });
+                    });
+                    </script>
+                </div>
+
+            </li>
         </ul>
     </div>
+
+    <!-- Logout at bottom -->
+    <div class="mt-auto pt-3 border-top">
+        <a class="nav-link d-flex align-items-center px-3 py-2 rounded-3 text-danger fw-semibold" href="logout.php">
+            <i class="bi bi-box-arrow-right me-2"></i> <span>Logout</span>
+        </a>
+    </div>
 </div>
+
+<!-- Styles -->
+<style>
+    #nav_side .nav-link {
+        color: #333 !important;
+        font-size: 0.95rem;
+        transition: all 0.25s ease-in-out;
+    }
+    #nav_side .nav-link i {
+        font-size: 1.1rem;
+        transition: inherit;
+    }
+    #nav_side .nav-link:hover {
+        background: #f1f5ff;
+        color: #0d6efd !important;
+        font-weight: 600;
+    }
+    #nav_side .nav-link:hover i {
+        color: #0d6efd !important;
+    }
+    #nav_side .nav-link.active {
+        background: #e7f1ff;
+        color: #0d6efd !important;
+        font-weight: 700;
+    }
+    #nav_side .collapse .nav-link {
+        font-size: 0.9rem;
+        color: #555 !important;
+    }
+    #nav_side .collapse .nav-link:hover {
+        background: #f8f9fa;
+        color: #0d6efd !important;
+    }
+</style>
+

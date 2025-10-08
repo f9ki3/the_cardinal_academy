@@ -49,6 +49,25 @@
     }
     </style>
 
+    <style>
+    @media print {
+      .print-hide {
+        display: none !important;
+        visibility: hidden !important;
+      }
+      .bg-light {
+        background-color: white !important;
+      }
+      .bg-white {
+        background-color: white !important;
+        padding: 0 !important;
+      }
+      .tabs, .att {
+        display: none !important;
+      }
+    }
+    </style>
+
 </head>
 <body>
 <div class="d-flex flex-row bg-light">
@@ -62,9 +81,25 @@
         <div class="col-12">
           <div>
             <div class="container my-4">
+              <div class="d-none d-print-flex justify-content-center">
+                <div class="d-flex align-items-center mb-4">
+                    <img src="../static/uploads/logo.png" alt="Logo" style="height: 70px; width: auto;" class="me-3">
+                    <div>
+                      <h5 class="mb-0 fw-bold text-center">The Cardinal Academy, Inc.</h5>
+                      <small class="d-block text-center">Sullera Street in Pandayan, Meycauayan, Bulacan </small>
+                      <small class="d-block text-center">Phone: (0912) 345-6789 | Email: info@cardinalacademy.edu.ph</small>
+                    </div>
+                  </div>
+                </div>
+                
+
+                <div class="d-none d-print-flex justify-content-center">
+                <?php $date = isset($_GET['date']) ? $_GET['date'] : ''; ?>
+                <h3 class="mb-4">Student Attendance as of <?php echo $date; ?></h3>
+              </div>
               <div class="row mb-3">
                 <div class="col-12 border-bottom col-md-12">
-                  <h4>Attendance</h4>
+                  <h4 class="att">Attendance</h4>
                 </div>
 
                 
@@ -97,18 +132,26 @@
 
                 <!-- Tabs Content -->
                 <div class="col-12 col-md-12 p-4 bg-white rounded-4">
-                  <div class="row align-items-center mb-4">
-                    <div class="col-12 col-md-10">
-                        <?php $date = isset($_GET['date']) ? $_GET['date'] : '';?>
-                      <h4>Attendance as of <?php echo $date?></h4>
-                    </div>
-                    <div class="col-12 col-md-2 mt-2 mt-md-0">
-                      <a href="attendance.php?id=<?php echo $course_id; ?>" class="btn w-100 btn-outline-danger rounded-4" role="button">
-                        <i class="bi bi-printer"></i> Print
-                      </a>
+                  <!-- Attendance Header Row -->
+                    <div class="row align-items-center mb-4 print-hide">
+                      <div class="col-12 col-md-10">
+                        <h4>Attendance as of <?php echo $date; ?></h4>
+                      </div>
+                      <div class="col-12 d-flex g-2 col-md-2 mt-2 mt-md-0">
+                        <a href="attendance.php?id=<?php echo $course_id; ?>" class="btn me-2 w-100 btn-outline-danger rounded-4" role="button">
+                          <i class="bi bi-arrow-left"></i> Back
+                        </a>
+                        <a href="#" 
+                          class="btn w-100 btn-outline-danger rounded-4" 
+                          role="button" 
+                          onclick="window.print(); return false;">
+                          <i class="bi bi-printer"></i> Print
+                        </a>
 
+                      </div>
                     </div>
-                  </div>
+
+
 
                   <?php if (isset($_GET['message'])): ?>
                         <?php
