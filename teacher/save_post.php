@@ -65,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $teacher = $teacher_result->fetch_assoc();
         $teacher_name = htmlspecialchars($teacher['first_name'] . ' ' . $teacher['last_name']);
 
-        // Fetch students
+        // Fetch students enrolled in this course
         $students_sql = "SELECT student_id FROM course_students WHERE course_id = ?";
         $students_stmt = $conn->prepare($students_sql);
         $students_stmt->bind_param("i", $course_id);
@@ -79,15 +79,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             die("Notification SQL Error: " . $conn->error);
         }
 
-        $message = $teacher_name . " posted a new lesson titled: " .  $title ;
-        $link = "view_post.php?post_id=" . $post_id;
+        $message = $teacher_name . " posted a new lesson titled: " . $title;
+        $link = "view_post.php?post_id=" . $post_id . "&course_id=" . $course_id;
         $now  = date("Y-m-d H:i:s"); // Asia/Manila time
+
+        // Prepare query to increment notification counter
+        $update_notif_stmt = $conn->prepare("UPDATE users SET notification = notification + 1 WHERE user_id = ?");
 
         while ($row = $students_result->fetch_assoc()) {
             $user_id = $row['student_id'];
+
+            // Insert new notification
             $notif_stmt->bind_param("isss", $user_id, $message, $link, $now);
             $notif_stmt->execute();
+
+            // Increment the user's notification count
+            $update_notif_stmt->bind_param("i", $user_id);
+            $update_notif_stmt->execute();
         }
+
+        // Close statements
+        $notif_stmt->close();
+        $update_notif_stmt->close();
+        $students_stmt->close();
 
         header("Location: course.php?id=" . $course_id . "&success=1");
         exit;

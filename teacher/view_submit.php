@@ -6,58 +6,44 @@
         <h5 class="modal-title fw-bold" id="editSubmissionModalLabel">View Submission</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
+
       <div class="modal-body">
         <form action="grade_submit.php" method="POST" enctype="multipart/form-data">
           <input type="hidden" name="submission_id" id="submissionId">
-          
+
           <div class="row g-3">
-            <!-- Left Column: Read-Only Info -->
+            <!-- Left Column -->
             <div class="col-md-6">
-              <div >
-                <label class="form-label fw-semibold">Full Name</label>
-                <p class="form-control-plaintext" id="modalFullName"></p>
-              </div>
+              <label class="form-label fw-semibold">Full Name</label>
+              <p class="form-control-plaintext" id="modalFullName"></p>
             </div>
 
             <div class="col-md-6">
-              <div >
-                <label class="form-label fw-semibold">Submission Date</label>
-                <p class="form-control-plaintext" id="modalSubmissionDate"></p>
-              </div>
+              <label class="form-label fw-semibold">Submission Date</label>
+              <p class="form-control-plaintext" id="modalSubmissionDate"></p>
             </div>
 
             <div class="col-md-6">
-              <div >
-                <label class="form-label fw-semibold">Email</label>
-                <p class="form-control-plaintext" id="modalEmail"></p>
-              </div>
+              <label class="form-label fw-semibold">Email</label>
+              <p class="form-control-plaintext" id="modalEmail"></p>
             </div>
 
             <div class="col-md-6">
-              <div >
-                <label class="form-label fw-semibold">Attachment URL</label>
-                <p class="form-control-plaintext" id="modalAttachmentURL"></p>
-              </div>
+              <label class="form-label fw-semibold">Attachment URL</label>
+              <p class="form-control-plaintext" id="modalAttachmentURL"></p>
             </div>
 
-
-            <!-- Right Column: Editable Fields -->
+            <!-- Right Column -->
             <div class="col-md-6">
-              <div >
-                <label class="form-label fw-semibold">Grade</label>
-                <input type="number" class="form-control" id="modalGrade" name="grade" min="0" max="100" required>
-              </div>
-              <div >
-                <label class="form-label fw-semibold">Feedback</label>
-                <textarea class="form-control" id="modalFeedback" name="feedback" rows="6" placeholder="Write feedback here" required></textarea>
-              </div>
+              <label class="form-label fw-semibold">Grade</label>
+              <input type="number" class="form-control" id="modalGrade" name="grade" min="0" max="100" required>
+              <label class="form-label fw-semibold mt-3">Feedback</label>
+              <textarea class="form-control" id="modalFeedback" name="feedback" rows="6" placeholder="Write feedback here" required></textarea>
             </div>
 
             <div class="col-md-6">
-              <div >
-                <label class="form-label fw-semibold">Attachment File</label>
-                <p class="form-control-plaintext" id="modalAttachmentFile"></p>
-              </div>
+              <label class="form-label fw-semibold">Attachment File</label>
+              <p class="form-control-plaintext" id="modalAttachmentFile"></p>
             </div>
           </div>
 
@@ -80,39 +66,44 @@ document.addEventListener("DOMContentLoaded", () => {
 
   submissionRows.forEach(row => {
     row.addEventListener("click", () => {
-      // Set submission ID and other read-only info
-      document.getElementById("submissionId").value = row.dataset.submissionId || '';
-      document.getElementById("modalFullName").textContent = row.dataset.fullname || '';
-      document.getElementById("modalEmail").textContent = row.dataset.email || '';
-      document.getElementById("modalSubmissionDate").textContent = row.dataset.submission_date || '';
+      // Safely get dataset values (avoid nulls)
+      const getData = (attr) => row.dataset[attr] ? row.dataset[attr] : '';
 
-      // Attachment File(s)
+      document.getElementById("submissionId").value = getData("submissionId");
+      document.getElementById("modalFullName").textContent = getData("fullname");
+      document.getElementById("modalEmail").textContent = getData("email");
+      document.getElementById("modalSubmissionDate").textContent = getData("submissionDate");
+
+      // === Attachment File(s) ===
       const fileContainer = document.getElementById("modalAttachmentFile");
-      const filePathData = row.dataset.filePath;
+      fileContainer.innerHTML = '';
 
-      fileContainer.innerHTML = ''; // clear previous content
-
+      const filePathData = getData("filePath");
       if (filePathData) {
         let files = [];
         try {
-          files = JSON.parse(filePathData); // Parse JSON array
-        } catch (e) {
-          files = [filePathData]; // fallback for single string
+          files = JSON.parse(filePathData);
+        } catch {
+          files = [filePathData];
         }
 
-        if (files.length > 0) {
-          const listGroup = document.createElement('ul');
-          listGroup.className = 'list-group list-group-flush';
+        if (Array.isArray(files) && files.length > 0) {
+          const listGroup = document.createElement("ul");
+          listGroup.className = "list-group list-group-flush";
+
           files.forEach(file => {
-            const listItem = document.createElement('li');
-            listItem.className = 'list-group-item d-flex align-items-center';
-            listItem.style.padding = '0.25rem 0.75rem';
-            listItem.innerHTML = `
-              <i class="fas fa-paperclip me-2"></i>
-              <a href="../static/uploads/${file}" target="_blank" class="text-truncate" style="max-width: calc(100% - 24px); display:inline-block;">${file}</a>
-            `;
-            listGroup.appendChild(listItem);
+            if (file && typeof file === "string") {
+              const listItem = document.createElement("li");
+              listItem.className = "list-group-item d-flex align-items-center";
+              listItem.style.padding = "0.25rem 0.75rem";
+              listItem.innerHTML = `
+                <i class="fas fa-paperclip me-2"></i>
+                <a href="../static/uploads/${file}" target="_blank" class="text-truncate" style="max-width: calc(100% - 24px); display:inline-block;">${file}</a>
+              `;
+              listGroup.appendChild(listItem);
+            }
           });
+
           fileContainer.appendChild(listGroup);
         } else {
           fileContainer.textContent = "No file";
@@ -121,22 +112,22 @@ document.addEventListener("DOMContentLoaded", () => {
         fileContainer.textContent = "No file";
       }
 
-      // Attachment URL
-      const fileUrl = row.dataset.fileUrl;
+      // === Attachment URL ===
+      const fileUrl = getData("fileUrl");
       const urlDiv = document.getElementById("modalAttachmentURL");
       if (fileUrl) {
-        urlDiv.innerHTML = `<a href="${fileUrl}" target="_blank" class="text-truncate">${fileUrl}</a>`;
+        const safeUrl = fileUrl.startsWith("http") ? fileUrl : "#";
+        urlDiv.innerHTML = `<a href="${safeUrl}" target="_blank" class="text-truncate">${fileUrl}</a>`;
       } else {
         urlDiv.textContent = "No URL";
       }
 
-      // Editable fields
-      document.getElementById("modalGrade").value = row.dataset.grade || '';
-      document.getElementById("modalFeedback").value = row.dataset.feedback || '';
+      // === Editable Fields ===
+      document.getElementById("modalGrade").value = getData("grade");
+      document.getElementById("modalFeedback").value = getData("feedback");
 
       editModal.show();
     });
   });
 });
 </script>
-

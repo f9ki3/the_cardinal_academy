@@ -66,14 +66,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $teacher_name = htmlspecialchars($teacher['first_name'] . ' ' . $teacher['last_name']);
 
         // Fetch course name
-        // Fetch course name
         $course_stmt = $conn->prepare("SELECT course_name FROM courses WHERE id = ?");
-        $course_stmt->bind_param("i", $course_id); // $course_id is still from your POST
+        $course_stmt->bind_param("i", $course_id);
         $course_stmt->execute();
         $course_result = $course_stmt->get_result();
         $course = $course_result->fetch_assoc();
         $course_name = htmlspecialchars($course['course_name']);
-
 
         // Fetch students in the course
         $students_stmt = $conn->prepare("SELECT student_id FROM course_students WHERE course_id = ?");
@@ -89,10 +87,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $user_id = $row['student_id'];
             $message = $teacher_name . " posted a new assignment in " . $course_name . ": " . $title;
             $link = "view_assignment.php?id=" . $assignment_id . "&course_id=" . $course_id;
+
+            // Insert new notification
             $notif_stmt->bind_param("isss", $user_id, $message, $link, $now);
             $notif_stmt->execute();
-        }
 
+            // Increment user's notification count
+            $update_notif = $conn->prepare("UPDATE users SET notification = notification + 1 WHERE user_id = ?");
+            $update_notif->bind_param("i", $user_id);
+            $update_notif->execute();
+            $update_notif->close();
+        }
 
         header("Location: assignment.php?id={$course_id}&status=1");
         exit();
