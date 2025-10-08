@@ -251,12 +251,12 @@ include '../db_connection.php';
                   <tbody>
                   <?php $i = 1; while ($row = $submission_result->fetch_assoc()): ?>
                   <?php 
-                    $attachments = json_decode($row['file_path'], true); // decode JSON array
+                    $attachments = !empty($row['file_path']) ? json_decode($row['file_path'], true) : []; // decode JSON array safely
                     $fileUrl = !empty($row['file_url']) ? $row['file_url'] : '';
                     ?>
                     <tr class="submission-row"
                         data-submission-id="<?= $row['submission_id'] ?>"
-                        data-fullname="<?= htmlspecialchars($row['first_name'] . ' ' . $row['last_name'] ?? '') ?>"
+                        data-fullname="<?= htmlspecialchars(($row['first_name'] ?? '') . ' ' . ($row['last_name'] ?? '')) ?>"
                         data-email="<?= htmlspecialchars($row['email'] ?? '') ?>"
                         data-submission_date="<?= !empty($row['submission_date']) ? date('Y-m-d H:i:s', strtotime($row['submission_date'])) : '' ?>"
                         data-grade="<?= htmlspecialchars($row['grade'] ?? '') ?>"
@@ -266,12 +266,13 @@ include '../db_connection.php';
                         data-max-points="<?= $assignment['points'] ?>"
                     >
                         <td><?= $i++ ?></td>
-                        <td><?= htmlspecialchars($row['first_name'] . ' ' . $row['last_name']) ?></td>
-                        <td><?= htmlspecialchars($row['email']) ?></td>
+                        <td><?= htmlspecialchars(($row['first_name'] ?? '') . ' ' . ($row['last_name'] ?? '')) ?></td>
+                        <td><?= htmlspecialchars($row['email'] ?? '') ?></td>
                         <td><?= !empty($row['submission_date']) ? date("F j, Y g:i A", strtotime($row['submission_date'])) : 'Not Submitted Yet' ?></td>
                         <td><?= !empty($row['grade']) ? htmlspecialchars($row['grade']) : 'Not Graded Yet' ?></td>
                         <td><?= !empty($row['feedback']) ? htmlspecialchars($row['feedback']) : 'No Feedback yet' ?></td>
                     </tr>
+
 
                     <?php endwhile; ?>
 

@@ -28,10 +28,11 @@
               <p class="form-control-plaintext" id="modalEmail"></p>
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-6 d-flex flex-column">
               <label class="form-label fw-semibold">Attachment URL</label>
-              <p class="form-control-plaintext" id="modalAttachmentURL"></p>
+              <p class="form-control-plaintext flex-grow-1 text-truncate" id="modalAttachmentURL" style="max-width: 100%;"></p>
             </div>
+
 
             <!-- Right Column -->
             <div class="col-md-12">

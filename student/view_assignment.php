@@ -163,7 +163,7 @@ $isClosed = (int)$assignment['accept'] === 1;
 
         <?php else: ?>
           <!-- Submission form -->
-          <form action="submit_assignment.php" method="POST" enctype="multipart/form-data" class="mt-3">
+          <form action="submit_assignment.php" method="POST" enctype="multipart/form-data" class="mt-3" id="submissionForm">
             <input type="hidden" name="assignment_id" value="<?= $assignment_id ?>" />
             <input type="hidden" name="course_id" value="<?= $course_id ?>" />
 
@@ -188,6 +188,29 @@ $isClosed = (int)$assignment['accept'] === 1;
 
             <button type="submit" class="btn btn-danger w-100" <?= $isClosed ? "disabled" : "" ?>>Turn In</button>
           </form>
+          <script>
+            document.getElementById("submissionForm").addEventListener("submit", function(e){
+              const type = document.getElementById("submissionType").value;
+              
+              if(type === "file"){
+                  const files = document.getElementById("fileInput").files;
+                  if(!files || files.length === 0){
+                      alert("Please select at least one file to submit.");
+                      e.preventDefault(); // stop form submission
+                      return false;
+                  }
+              } else if(type === "url"){
+                  const url = document.getElementById("urlInput").value.trim();
+                  if(url === ""){
+                      alert("Please enter a URL for your submission.");
+                      e.preventDefault(); // stop form submission
+                      return false;
+                  }
+              }
+          });
+
+          </script>
+
         <?php endif; ?>
       </div>
     </div>

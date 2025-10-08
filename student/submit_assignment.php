@@ -84,7 +84,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $nameResult = $nameStmt->get_result();
             $student = $nameResult->fetch_assoc();
 
-            $fullname = $student['firstname'] . " " . $student['lastname'];
+            $fullname = $student['first_name'] . " " . $student['last_name'];
             $message  = "$fullname submitted an assignment";
 
             // ✅ STEP 4: Insert notification log
