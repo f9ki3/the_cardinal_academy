@@ -122,23 +122,26 @@
                         $due_date = date("Y-m-d H:i A", strtotime($assignment['due_date']));
                         $status = $assignment['accept'];
 
-                        echo "<div class='col-12 col-md-6 col-lg-4 assignment-card'>
+                        // Limit instructions to 100 characters
+                        $short_instructions = strlen($instructions) > 100 ? substr($instructions, 0, 100) . "..." : $instructions;
+
+                        echo "<div class='col-12 col-md-6 col-lg-4 mb-4 assignment-card'>
                                 <div class='card h-100 shadow-sm border-0 rounded-4 overflow-hidden'>
                                   <div class='card-body pt-3 d-flex flex-column'>
                                     <p class='small mb-1 text-muted course-name'>$course_name</p>
                                     <h5 class='fw-bolder assignment-title'>$title</h5>
-                                    <p class='small mb-1 text-muted instructions'>Instructions: $instructions</p>
+                                    <p class='small mb-2 text-muted instructions'>Instructions: $short_instructions</p>
                                     
-                                    <div class='d-flex justify-content-start'>
+                                    <div class='d-flex flex-wrap justify-content-start gap-3 mb-2'>
                                       <p class='small mb-0 d-flex align-items-center text-muted'>
                                         <i class='bi bi-patch-check me-2'></i>Points: $points
                                       </p>
-                                      <p class='small ms-3 mb-0 d-flex align-items-center text-muted'>
+                                      <p class='small mb-0 d-flex align-items-center text-muted'>
                                         <i class='bi bi-calendar-check me-2'></i>Due Date: $due_date
                                       </p>
                                     </div>
 
-                                    <hr>
+                                    <hr class='my-2'>
 
                                     <div class='mt-auto d-flex justify-content-between align-items-center'>
                                         <a href='view_assignment.php?id=$assignment_id&course_id=$course_id' 
