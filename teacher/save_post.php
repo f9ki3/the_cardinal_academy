@@ -1,8 +1,11 @@
 <?php
 session_start();
+
+// Set timezone to Asia/Manila
+date_default_timezone_set('Asia/Manila');
+
 include '../db_connection.php';
 
-// Validate required inputs
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title       = trim($_POST['title']);
     $description = trim($_POST['description']);
@@ -14,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die("Missing required fields.");
     }
 
-    // Handle multiple attachments
+    // Handle file uploads
     $uploaded_files = [];
     if (!empty($_FILES['attachments']['name'][0])) {
         $upload_dir = "../static/uploads/";
@@ -38,13 +41,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // Convert to JSON so we can store multiple filenames
     $attachments_json = !empty($uploaded_files) ? json_encode($uploaded_files) : null;
 
     // Insert post
     $sql = "INSERT INTO posts (course_id, teacher_id, title, description, video_link, attachment) 
             VALUES (?, ?, ?, ?, ?, ?)";
-
     $stmt = $conn->prepare($sql);
     if (!$stmt) {
         die("SQL Error: " . $conn->error);
@@ -53,6 +54,41 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param("iissss", $course_id, $teacher_id, $title, $description, $video_link, $attachments_json);
 
     if ($stmt->execute()) {
+        $post_id = $stmt->insert_id;
+
+        // Fetch teacher name
+        $teacher_sql = "SELECT first_name, last_name FROM users WHERE user_id = ?";
+        $teacher_stmt = $conn->prepare($teacher_sql);
+        $teacher_stmt->bind_param("i", $teacher_id);
+        $teacher_stmt->execute();
+        $teacher_result = $teacher_stmt->get_result();
+        $teacher = $teacher_result->fetch_assoc();
+        $teacher_name = htmlspecialchars($teacher['first_name'] . ' ' . $teacher['last_name']);
+
+        // Fetch students
+        $students_sql = "SELECT student_id FROM course_students WHERE course_id = ?";
+        $students_stmt = $conn->prepare($students_sql);
+        $students_stmt->bind_param("i", $course_id);
+        $students_stmt->execute();
+        $students_result = $students_stmt->get_result();
+
+        // Prepare notification insertion
+        $notif_sql = "INSERT INTO notifications (user_id, message, link, created_at) VALUES (?, ?, ?, ?)";
+        $notif_stmt = $conn->prepare($notif_sql);
+        if (!$notif_stmt) {
+            die("Notification SQL Error: " . $conn->error);
+        }
+
+        $message = $teacher_name . " posted a new lesson titled: " .  $title ;
+        $link = "view_post.php?post_id=" . $post_id;
+        $now  = date("Y-m-d H:i:s"); // Asia/Manila time
+
+        while ($row = $students_result->fetch_assoc()) {
+            $user_id = $row['student_id'];
+            $notif_stmt->bind_param("isss", $user_id, $message, $link, $now);
+            $notif_stmt->execute();
+        }
+
         header("Location: course.php?id=" . $course_id . "&success=1");
         exit;
     } else {
@@ -61,3 +97,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 } else {
     die("Invalid request.");
 }
+?>

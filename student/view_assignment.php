@@ -60,7 +60,7 @@ $isClosed = (int)$assignment['accept'] === 1;
 <?php include 'nav_top.php'; ?>
 
 <div class="container my-4">
-  <div class="row g-3">
+  <div class="row submission-box g-3">
     <!-- Assignment Details -->
     <div class="col-12 col-md-7">
       <?php if ($assignment): ?>
@@ -111,7 +111,7 @@ $isClosed = (int)$assignment['accept'] === 1;
 
     <!-- Submission Section -->
     <div class="col-12 col-md-5">
-      <div class="submission-box pb-4">
+      <div class="pb-4">
         <div class="d-flex justify-content-between align-items-center">
           <h5 class="mb-3 mt-3">Your Work:</h5>
           <?php if($isClosed): ?>

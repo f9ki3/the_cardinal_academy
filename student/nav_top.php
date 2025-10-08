@@ -32,57 +32,57 @@
 
 </style>
 
-<!-- Offcanvas Notification Panel with Tabs -->
+<?php
+// Get user ID (from session or GET)
+$user_id = $_SESSION['user_id'];
+
+// Fetch notifications with teacher info
+$query = "
+    SELECT n.*, u.first_name, u.last_name 
+    FROM notifications n
+    LEFT JOIN users u ON n.user_id = u.user_id
+    WHERE n.user_id = ?
+    ORDER BY n.created_at DESC
+";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+?>
+<!-- Offcanvas Notification Panel -->
 <div class="offcanvas offcanvas-end" tabindex="-1" id="notificationCanvas" aria-labelledby="notificationCanvasLabel">
   <div class="offcanvas-header">
     <h5 class="offcanvas-title" id="notificationCanvasLabel">Notifications</h5>
     <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
   </div>
-  <div class="bg-white p-0 m-0 offcanvas-body">
 
-    <!-- Tabs Navigation -->
-   <ul class="nav sticky-top bg-white nav-tabs mb-3 border-bottom d-flex w-100" id="notificationTabs" role="tablist">
-  <li class="nav-item flex-fill" role="presentation">
-    <button class="nav-link active w-100 text-start" id="announcement-tab" data-bs-toggle="tab" data-bs-target="#announcement" type="button" role="tab" aria-controls="announcement" aria-selected="true">
-      Announcement
-    </button>
-  </li>
-</ul>
-
-
-
-    <!-- Tabs Content -->
-   <div class="tab-content" id="notificationTabsContent">
-  <!-- Announcement Tab -->
-  <div class="tab-pane fade show active" id="announcement" role="tabpanel" aria-labelledby="announcement-tab">
-    <ul class="list-group">
-      <?php if (mysqli_num_rows($result) > 0): ?>
-        <?php while ($row = mysqli_fetch_assoc($result)): ?>
-          <li class="list-group-item">
-            <div class="fw-bold text-muted">Announcement</div>
-            <p class="text-muted mb-0"><?= htmlspecialchars($row['message']) ?></p>
-          </li>
+  <div class="offcanvas-body p-3">
+    <?php if ($result->num_rows > 0): ?>
+      <div class="list-group">
+        <?php while ($row = $result->fetch_assoc()): ?>
+          <a href="<?php echo htmlspecialchars($row['link']); ?>" class="list-group-item list-group-item-action mb-2 rounded-3 d-flex align-items-start">
+            <!-- Icon -->
+            <div class="me-3">
+              <i class="bi bi-bell text-muted fs-4"></i>
+            </div>
+            <!-- Message and timestamp -->
+            <div class="flex-grow-1">
+              <p class="mb-1 text-dark">
+                <?php 
+                  // Limit message to 20 characters and add "..." if longer
+                  echo htmlspecialchars(mb_strimwidth($row['message'], 0, 100, "...")); 
+                ?>
+              </p>
+              <small class="text-muted">
+                <?php echo date("M d, Y h:i A", strtotime($row['created_at'])); ?>
+              </small>
+            </div>
+          </a>
         <?php endwhile; ?>
-      <?php else: ?>
-        <li class="list-group-item">No announcements available.</li>
-      <?php endif; ?>
-    </ul>
-  </div>
-
-  <!-- Attendance Tab -->
-  <div class="tab-pane fade" id="attendance" role="tabpanel" aria-labelledby="attendance-tab">
-    <ul class="list-group">
-      <li class="list-group-item">
-        <div class="fw-bold text-muted">Student Attendance</div>
-        <p class="text-muted mb-0">John Doe — July 15, 2025<br>Time In: 7:45 AM | Time Out: 4:00 PM</p>
-      </li>
-      <li class="list-group-item">
-        <div class="fw-bold text-muted">Student Attendance</div>
-        <p class="text-muted mb-0">Jane Smith — July 15, 2025<br>Time In: 7:50 AM | Time Out: 3:55 PM</p>
-      </li>
-    </ul>
+      </div>
+    <?php else: ?>
+      <p class="text-muted text-center mt-4">No notifications yet.</p>
+    <?php endif; ?>
   </div>
 </div>
 
-  </div>
-</div>

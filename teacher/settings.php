@@ -135,12 +135,12 @@
                           <!-- Left Column -->
                           <div class="col-12 col-md-6">
                               <div class="mb-3">
-                                  <label for="courseName" class="form-label">Joined ID</label>
+                                  <label for="courseName" class="form-label">Course ID</label>
                                   <input type="text" class="form-control" id="courseName" name="course_name" placeholder="Enter course name" required value="<?= htmlspecialchars($course_name) ?>">
                               </div> 
 
                               <div class="mb-3">
-                                    <label for="joinedId" class="form-label">Course ID</label>
+                                    <label for="joinedId" class="form-label">Joined ID</label>
                                     <div class="input-group">
                                         <input type="text" class="form-control" id="joinedId" readonly 
                                             value="<?= htmlspecialchars($joined_id) ?>">
