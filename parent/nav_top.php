@@ -108,7 +108,7 @@ document.addEventListener("DOMContentLoaded", () => {
       } else {
         data.forEach(n => {
           const a = document.createElement('a');
-          a.href = n.link || "#";
+          a.href = decodeURIComponent(n.link || "#").replace(/&amp;/g, '&');
           a.className = 'list-group-item list-group-item-action mb-2 rounded-4 border shadow-sm d-flex align-items-start hover-notif fade-in';
           a.innerHTML = `
             <div class="me-3 mt-1"><i class="bi bi-bell fs-4"></i></div>
