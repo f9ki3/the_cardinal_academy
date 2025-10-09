@@ -97,8 +97,8 @@ $conn->close();
                       <div class="container my-4">
                         <div class="d-flex att justify-content-between align-items-center mb-3">
                           <div>
-                            <h4 class="mb-0">Attendance Records</h4>
-                            <p class="text-muted mb-0">Below are the attendance logs of your linked students.</p>
+                            <h4>Attendance Records</h4>
+                            <p>Below are the attendance logs of your linked students.</p>
                           </div>
                           <div>
                             <button class="btn rounded-4 btn-danger" onclick="window.print();">
