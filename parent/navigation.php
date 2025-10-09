@@ -48,7 +48,19 @@ $profile_image = !empty($user['profile']) ? '../static/uploads/' . htmlspecialch
 
         <li class="nav-item">
         <a href="dashboard.php" class="nav-link d-flex align-items-center px-3 py-2 rounded-3">
+            <i class="bi bi-people me-2"></i> <span>Students</span>
+        </a>
+        </li>
+
+        <li class="nav-item">
+        <a href="announcement.php" class="nav-link d-flex align-items-center px-3 py-2 rounded-3">
             <i class="bi bi-megaphone me-2"></i> <span>Announcement</span>
+        </a>
+        </li>
+
+        <li class="nav-item">
+        <a href="tuition.php" class="nav-link d-flex align-items-center px-3 py-2 rounded-3">
+            <i class="bi bi-credit-card me-2"></i> <span>Tuition</span>
         </a>
         </li>
 
@@ -67,6 +79,12 @@ $profile_image = !empty($user['profile']) ? '../static/uploads/' . htmlspecialch
         <li class="nav-item">
         <a href="disciplinary.php" class="nav-link d-flex align-items-center px-3 py-2 rounded-3">
             <i class="bi bi-exclamation-triangle me-2"></i> <span>Disciplinary</span>
+        </a>
+        </li>
+
+        <li class="nav-item">
+        <a href="profile.php" class="nav-link d-flex align-items-center px-3 py-2 rounded-3">
+            <i class="bi bi-person me-2"></i> <span>My Account</span>
         </a>
         </li>
     </ul>
@@ -116,23 +134,48 @@ $profile_image = !empty($user['profile']) ? '../static/uploads/' . htmlspecialch
 </style>
 
 
+<!-- Modal (Join Class) -->
 <div class="modal fade" id="linkStudentModal" tabindex="-1" aria-labelledby="linkStudentModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content rounded-4">
-      <div class="modal-header">
-        <h5 class="modal-title" id="linkStudentModalLabel">Link Student</h5>
+  <div class="modal-dialog modal-dialog-scrollable modal-lg">
+    <div class="modal-content">
+
+      <!-- Header -->
+      <div class="modal-header bg-light">
+        <h5 class="modal-title fw-bold" id="linkStudentModalLabel">Link Student</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
 
+      <!-- Body -->
       <div class="modal-body">
-        <form id="linkStudentForm">
+        <form action="link_student.php" method="POST" enctype="multipart/form-data">
           <div class="mb-3">
-            <label for="studentCode" class="form-label">Student Code</label>
-            <input type="text" id="studentCode" name="studentCode" class="form-control rounded-3" placeholder="Enter student code" required>
+            <label for="studentCode" class="form-label">Student ID</label>
+            <div class="input-group">
+              <input 
+                type="text" 
+                class="form-control" 
+                id="studentCode" 
+                name="student_code" 
+                placeholder="Enter student id" 
+                required 
+              >
+            </div>
+            <div class="form-text mt-3">
+              Enter the student id provided by the student to link them to your account.
+            </div>
           </div>
-          <button type="submit" class="btn btn-danger w-100 rounded-3">Link</button>
+
+          <div class="d-flex justify-content-start mt-4">
+            <button type="submit" class="btn btn-danger rounded-4 px-4 me-2">
+              <i class="bi bi-link-45deg me-2"></i> Link Student
+            </button>
+            <button type="button" class="btn btn-outline-danger rounded-4 px-4" data-bs-dismiss="modal">
+              Cancel
+            </button>
+          </div>
         </form>
       </div>
+
     </div>
   </div>
 </div>

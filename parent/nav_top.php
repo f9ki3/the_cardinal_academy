@@ -111,9 +111,9 @@ document.addEventListener("DOMContentLoaded", () => {
           a.href = n.link || "#";
           a.className = 'list-group-item list-group-item-action mb-2 rounded-4 border shadow-sm d-flex align-items-start hover-notif fade-in';
           a.innerHTML = `
-            <div class="me-3 mt-1"><i class="bi bi-bell fs-4 text-danger"></i></div>
+            <div class="me-3 mt-1"><i class="bi bi-bell fs-4"></i></div>
             <div class="flex-grow-1">
-              <p class="mb-1 text-dark fw-medium">${n.message}</p>
+              <p class="mb-1 fw-medium">${n.message}</p>
               <small class="text-muted">${n.created_at}</small>
             </div>`;
           notifList.appendChild(a);
@@ -209,5 +209,36 @@ header {
   .list-group-item {
     padding: 0.8rem 1rem !important;
   }
+}
+</style>
+  <style>
+/* Existing styles here... */
+
+/* Hide header and notifications when printing */
+@media print {
+    header,
+    #notificationCanvas,
+    .btn, /* optional: hide buttons if needed */
+    #notifBell {
+        display: none !important;
+    }
+
+    body {
+        background: #fff !important;
+        color: #000 !important;
+    }
+
+    .att{
+      display: none !important;
+    }
+
+    .table-responsive {
+        overflow: visible !important; /* Ensure table prints fully */
+        padding: 0px !important;
+        margin: 0px !important;
+    }
+    .bg-light{
+      background-color: white !important;
+    }
 }
 </style>
