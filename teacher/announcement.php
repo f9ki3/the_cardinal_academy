@@ -58,7 +58,7 @@ $stmt->close();
             <div class="row mb-3">
                 <div class="col-12 col-md-5">
                     <h4>Teacher Announcements</h4>
-                    <p class="text-muted">View the latest announcements from teachers here.</p>
+                    <p class="text-muted">View the latest announcements for teachers here.</p>
                 </div>
             </div>
 

@@ -2,9 +2,9 @@
 include 'session_login.php';
 include '../db_connection.php';
 
-// Fetch teacher announcements only
+// Fetch student announcements only
 $announcements = [];
-$stmt = $conn->prepare("SELECT * FROM announcements WHERE acc_type = 'teacher' ORDER BY date DESC");
+$stmt = $conn->prepare("SELECT * FROM announcements WHERE acc_type = 'student' ORDER BY date DESC");
 $stmt->execute();
 $result = $stmt->get_result();
 while ($row = $result->fetch_assoc()) {
@@ -17,7 +17,7 @@ $stmt->close();
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Teacher Announcements</title>
+<title>Student Announcements</title>
 <?php include 'header.php'; ?>
 <style>
 .announcement-card {
@@ -57,8 +57,8 @@ $stmt->close();
         <div class="container my-4">
             <div class="row mb-3">
                 <div class="col-12 col-md-5">
-                    <h4>Teacher Announcements</h4>
-                    <p class="text-muted">View the latest announcements from teachers here.</p>
+                    <h4>Student Announcements</h4>
+                    <p class="text-muted">View the latest announcements for students here.</p>
                 </div>
             </div>
 
@@ -101,7 +101,7 @@ $stmt->close();
                     <?php endforeach; ?>
                 <?php else: ?>
                     <div class="col-12">
-                        <p class="text-muted">No teacher announcements found.</p>
+                        <p class="text-muted">No student announcements found.</p>
                     </div>
                 <?php endif; ?>
             </div>
