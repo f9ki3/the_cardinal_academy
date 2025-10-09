@@ -191,31 +191,21 @@ body {
         <h5 class="fw-bolder">Disciplinary Details</h5>
         <?php if (!empty($record)): ?>
         <div class="row mt-2">
-            <div class="col-md-4 record-item">
-                <label>Disciplinary ID</label>
-                <div class="data"><?= htmlspecialchars($record['disciplinary_id']) ?></div>
-            </div>
-            <div class="col-md-4 record-item">
-                <label>Date of Incident</label>
-                <div class="data"><?= htmlspecialchars($record['incident_date']) ?></div>
-            </div>
-            <div class="col-md-4 record-item">
-                <label>Violation Type</label>
-                <div class="data"><?= htmlspecialchars($record['violation_type']) ?></div>
-            </div>
-            <div class="col-md-4 record-item">
-                <label>Action Taken</label>
-                <div class="data"><?= htmlspecialchars($record['disciplinary_action']) ?></div>
-            </div>
-            <div class="col-md-4 record-item">
-                <label>Notes / Remarks</label>
-                <div class="data"><?= htmlspecialchars($record['remarks'] ?? '-') ?></div>
-            </div>
-            <div class="col-md-4 record-item">
-                <label>Witnesses</label>
-                <div class="data"><?= htmlspecialchars($record['witnesses'] ?? '-') ?></div>
-            </div>
+            <div class="col-md-4 record-item"><label>Created At</label><div class="data"><?= htmlspecialchars($record['created_at']) ?></div></div>
+            <div class="col-md-4 record-item"><label>Disciplinary ID</label><div class="data"><?= htmlspecialchars($record['disciplinary_id']) ?></div></div>
+            <div class="col-md-4 record-item"><label>Student ID</label><div class="data"><?= htmlspecialchars($record['student_id']) ?></div></div>
+
+            <div class="col-md-4 record-item"><label>Incident Date</label><div class="data"><?= htmlspecialchars($record['incident_date']) ?></div></div>
+            <div class="col-md-4 record-item"><label>Incident Location</label><div class="data"><?= htmlspecialchars($record['incident_location']) ?></div></div>
+            <div class="col-md-4 record-item"><label>Description</label><div class="data"><?= htmlspecialchars($record['incident_description']) ?></div></div>
+
+            <div class="col-md-4 record-item"><label>Violation Type</label><div class="data"><?= htmlspecialchars($record['violation_type']) ?></div></div>
+            <div class="col-md-4 record-item"><label>Action Taken</label><div class="data"><?= htmlspecialchars($record['disciplinary_action']) ?></div></div>
+            <div class="col-md-4 record-item"><label>Witnesses</label><div class="data"><?= htmlspecialchars($record['witnesses'] ?? '-') ?></div></div>
+
+            <div class="col-md-4 record-item"><label>Remarks</label><div class="data"><?= htmlspecialchars($record['remarks'] ?? '-') ?></div></div>
         </div>
+
         <?php else: ?>
         <p class="text-muted">Disciplinary record not found for this student.</p>
         <?php endif; ?>

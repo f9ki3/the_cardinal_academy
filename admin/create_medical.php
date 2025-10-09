@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !empty($student_number)) {
 
     $stmt->bind_param(
         "ssddsdii" . str_repeat("s", 7) . "ii" . str_repeat("s", 5),
-        $medical_id, $student_id, $height, $weight, $bloodPressure, $temperature, $pulse, $respiration,
+        $medical_id, $student_number, $height, $weight, $bloodPressure, $temperature, $pulse, $respiration,
         $allergies, $medications, $conditions, $recentIllness, $hospitalizations, $vision, $hearing, $dental,
         $activity, $sleep, $diet, $mentalHealth, $notes, $generalNote
     );
