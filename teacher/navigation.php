@@ -55,6 +55,13 @@ $profile_image = !empty($user['profile']) ? '../static/uploads/' . htmlspecialch
                 </a>
             </li>
 
+
+            <li class="nav-item">
+                <a href="announcement.php" class="nav-link d-flex align-items-center px-3 py-2 rounded-3" href="dashboard.php">
+                    <i class="bi bi-megaphone me-2"></i> <span>Announcemnet</span>
+                </a>
+            </li>
+
             <li class="nav-item">
                 <a href="archive.php" class="nav-link d-flex align-items-center px-3 py-2 rounded-3" href="#">
                     <i class="bi bi-archive me-2"></i> <span>Archived Classes</span>
