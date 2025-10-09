@@ -133,11 +133,11 @@ $conn->close();
                                     <?php if (!empty($attendance_records)): ?>
                                         <?php foreach ($attendance_records as $row): ?>
                                             <tr>
-                                                <td><?= htmlspecialchars($row['date']); ?></td>
-                                                <td><?= date('h:i A', strtotime($row['time_in'])); ?></td>
-                                                <td><?= htmlspecialchars($row['rfid']); ?></td>
-                                                <td><?= htmlspecialchars($row['first_name']); ?></td>
-                                                <td><?= htmlspecialchars($row['last_name']); ?></td>
+                                                <td class="py-3 text-muted"><?= htmlspecialchars($row['date']); ?></td>
+                                                <td class="py-3 text-muted"><?= date('h:i A', strtotime($row['time_in'])); ?></td>
+                                                <td class="py-3 text-muted"><?= htmlspecialchars($row['rfid']); ?></td>
+                                                <td class="py-3 text-muted"><?= htmlspecialchars($row['first_name']); ?></td>
+                                                <td class="py-3 text-muted"><?= htmlspecialchars($row['last_name']); ?></td>
                                             </tr>
                                         <?php endforeach; ?>
                                     <?php else: ?>
