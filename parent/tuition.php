@@ -2,6 +2,32 @@
 include 'session_login.php';
 include '../db_connection.php';
 
+$parent_id = $_SESSION['user_id'];
+
+// --- Get linked student numbers for this parent ---
+$linked_students = [];
+$link_query = "
+    SELECT u.student_number 
+    FROM parent_link pl
+    JOIN users u ON pl.student_id = u.user_id
+    WHERE pl.parent_id = ?
+";
+$stmt = $conn->prepare($link_query);
+$stmt->bind_param("i", $parent_id);
+$stmt->execute();
+$result_link = $stmt->get_result();
+
+while ($row = $result_link->fetch_assoc()) {
+    $linked_students[] = $row['student_number'];
+}
+
+// Stop if no linked students found
+if (empty($linked_students)) {
+    $linked_students_list = "''"; // prevent SQL error
+} else {
+    $linked_students_list = "'" . implode("','", array_map('mysqli_real_escape_string', array_fill(0, count($linked_students), $conn), $linked_students)) . "'";
+}
+
 // --- Pagination & Search ---
 $limit  = 10;
 $page   = isset($_GET['page']) && is_numeric($_GET['page']) ? (int) $_GET['page'] : 1;
@@ -23,7 +49,7 @@ if ($sy_result && mysqli_num_rows($sy_result) > 0) {
 }
 
 // --- Build WHERE Condition ---
-$where = "1=1";
+$where = "st.student_number IN ($linked_students_list)";
 if (!empty($school_year)) {
     $where .= " AND es.school_year = '$schoolYearEsc'";
 }
@@ -71,6 +97,7 @@ if (!$result) {
     die("<p style='color:red;'>Data Query Failed: " . mysqli_error($conn) . "</p>");
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -122,7 +149,7 @@ if (!$result) {
           </li>
           <li class="nav-item"><a href="dashboard.php" class="nav-link d-flex align-items-center px-3 py-2 rounded-3"><i class="bi bi-people me-2"></i>Students</a></li>
           <li class="nav-item"><a href="announcement.php" class="nav-link d-flex align-items-center px-3 py-2 rounded-3"><i class="bi bi-megaphone me-2"></i>Announcement</a></li>
-          <li class="nav-item"><a href="tuition.php" class="nav-link d-flex align-items-center px-3 py-2 rounded-3 active"><i class="bi bi-credit-card me-2"></i>Tuition</a></li>
+          <li class="nav-item"><a href="tuition.php" class="nav-link d-flex align-items-center px-3 py-2 rounded-3"><i class="bi bi-credit-card me-2"></i>Tuition</a></li>
           <li class="nav-item"><a href="attendance.php" class="nav-link d-flex align-items-center px-3 py-2 rounded-3"><i class="bi bi-calendar-check me-2"></i>Attendance</a></li>
           <li class="nav-item"><a href="medical.php" class="nav-link d-flex align-items-center px-3 py-2 rounded-3"><i class="bi bi-heart-pulse me-2"></i>Medical</a></li>
           <li class="nav-item"><a href="disciplinary.php" class="nav-link d-flex align-items-center px-3 py-2 rounded-3"><i class="bi bi-exclamation-triangle me-2"></i>Disciplinary</a></li>
@@ -166,7 +193,7 @@ if (!$result) {
     <div class="container my-4">
       <div class="row g-4">
         <div class="col-12">
-          <div class="rounded p-3 bg-white shadow-sm">
+          <div class="rounded p-3 bg-white">
             <div class="d-flex justify-content-between align-items-center mb-3">
               <h4>Tuition Payment</h4>
             </div>
@@ -201,11 +228,11 @@ if (!$result) {
                   <?php if (mysqli_num_rows($result) > 0): ?>
                     <?php while ($row = mysqli_fetch_assoc($result)): ?>
                       <tr class="clickable-row" data-id="<?= htmlspecialchars($row['tuition_id']) ?>">
-                        <td><?= htmlspecialchars($row['account_number']) ?></td>
-                        <td><?= htmlspecialchars($row['student_number']) ?></td>
-                        <td><?= htmlspecialchars($row['fullname']) ?></td>
-                        <td><?= htmlspecialchars($row['status']) ?></td>
-                        <td><?= htmlspecialchars($row['info_grade_level']) ?></td>
+                        <td class="py-3 text-muted"><?= htmlspecialchars($row['account_number']) ?></td>
+                        <td class="py-3 text-muted"><?= htmlspecialchars($row['student_number']) ?></td>
+                        <td class="py-3 text-muted"><?= htmlspecialchars($row['fullname']) ?></td>
+                        <td class="py-3 text-muted"><?= htmlspecialchars($row['status']) ?></td>
+                        <td class="py-3 text-muted"><?= htmlspecialchars($row['info_grade_level']) ?></td>
                       </tr>
                     <?php endwhile; ?>
                   <?php else: ?>
