@@ -46,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $insert->bind_param("ii", $parent_id, $student_id);
 
     if ($insert->execute()) {
-        echo "<script>alert('Student linked successfully!'); window.location.href='dashboard.php';</script>";
+        echo "<script>alert('Student linked successfully!'); window.location.href='dashboard.php?status=1';</script>";
     } else {
         echo "<script>alert('Error linking student. Please try again.'); window.history.back();</script>";
     }
