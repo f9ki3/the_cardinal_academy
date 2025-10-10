@@ -24,8 +24,8 @@ $password = isset($_GET['password']) ? htmlspecialchars($_GET['password']) : '';
 
     <div class="container py-4">
         <div class="card mt-5 shadow-sm border-0 rounded-3 mx-auto" style="max-width: 500px;">
-            <div class="card-body text-center p-4">
-                <h3 class="card-title text-success mb-3">
+            <div class="card-body p-4">
+                <h3 class="card-title text-center text-success mb-3">
                     <i class="bi bi-check-circle-fill"></i> Parent Account Created!
                 </h3>
                 <p class="text-muted mb-4">The account has been successfully created. You can copy the credentials below:</p>

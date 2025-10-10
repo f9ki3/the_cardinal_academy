@@ -12,7 +12,7 @@ $password = isset($_GET['password']) ? htmlspecialchars($_GET['password']) : '';
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Teacher Account Created</title>
+  <title>Admin Account Created</title>
   <?php include 'header.php'; ?>
 </head>
 <body>
@@ -24,9 +24,9 @@ $password = isset($_GET['password']) ? htmlspecialchars($_GET['password']) : '';
 
     <div class="container py-4">
         <div class="card mt-5 shadow-sm border-0 rounded-3 mx-auto" style="max-width: 500px;">
-            <div class="card-body  p-4">
-                <h3 class="card-title text-center text-success mb-3">
-                    <i class="bi bi-check-circle-fill"></i> Teacher Account Created!
+            <div class="card-body p-4">
+                <h3 class="card-title text-success mb-3">
+                    <i class="bi text-center bi-check-circle-fill"></i> Admin Account Created!
                 </h3>
                 <p class="text-muted mb-4">The account has been successfully created. You can copy the credentials below:</p>
 
@@ -50,8 +50,8 @@ $password = isset($_GET['password']) ? htmlspecialchars($_GET['password']) : '';
                     </div>
                 </div>
 
-                <a href="teacher.php" class="btn btn-danger btn-lg w-100">
-                    <i class="bi bi-arrow-left-circle"></i> Back to Teacher List
+                <a href="parents.php" class="btn btn-danger btn-lg w-100">
+                    <i class="bi bi-arrow-left-circle"></i> Back to Parent List
                 </a>
             </div>
         </div>

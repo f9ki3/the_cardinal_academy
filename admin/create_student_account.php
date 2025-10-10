@@ -117,8 +117,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <?php include 'nav_top.php'; ?>
                 <div class="container py-4">
                     <div class="card mt-5 shadow-sm border-0 rounded-3 mx-auto" style="max-width: 500px;">
-                        <div class="card-body text-center p-4">
-                            <h3 class="card-title text-success mb-3">
+                        <div class="card-body p-4">
+                            <h3 class="card-title text-center text-success mb-3">
                                 <i class="bi bi-check-circle-fill"></i> Student Account Created!
                             </h3>
                             <p class="text-muted mb-4">
@@ -126,9 +126,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </p>
 
                             <div class="mb-3 text-start">
-                                <label class="form-label fw-bold text-muted">Email</label>
+                                <label class="form-label fw-bold text-muted">Username</label>
                                 <div class="input-group">
-                                    <input type="text" class="form-control text-muted" id="emailField" value="<?= htmlspecialchars($email) ?>" readonly>
+                                    <input type="text" class="form-control text-muted" id="emailField" value="<?= htmlspecialchars($username) ?>" readonly>
                                     <button class="btn border" type="button" onclick="copyToClipboard('emailField')">
                                         <i class="bi bi-clipboard"></i> Copy
                                     </button>

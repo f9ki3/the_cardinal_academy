@@ -108,6 +108,11 @@ $profile_image = isset($user_info['profile_image']) ? $user_info['profile_image'
                 </a>
             </li>
             <li class="nav-item">
+                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="admin.php">
+                    <i class="bi bi-lock me-2"></i>Admin Accounts
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="tuition.php?nav_drop=true">
                     <i class="bi bi-currency-dollar me-2"></i>Manage Tuition
                 </a>
