@@ -37,7 +37,6 @@ if ($medical_id) {
 <style>
 /* Overall background and text */
 body {
-    background-color: #F7F7F7; /* soft off-white */
     color: #333; /* smooth dark text */
     font-family: 'Segoe UI', sans-serif;
 }
@@ -45,7 +44,6 @@ body {
 /* Container cards */
 .record-card, .record-section {
     background-color: #FFFFFF; /* pure white card */
-    border-radius: 1rem;
     padding: 2rem;
     margin-bottom: 2rem;
 }

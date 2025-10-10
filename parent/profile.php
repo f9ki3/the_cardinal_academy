@@ -16,7 +16,7 @@ include '../db_connection.php';
     </style>
 </head>
 <body>
-    <div class="d-flex flex-row bg-light">
+    <div class="d-flex flex-row">
         <?php include 'navigation.php' ?>
 
         <div class="content flex-grow-1">
@@ -26,7 +26,7 @@ include '../db_connection.php';
                 <div class="row g-4">
                     <div class="col-12">
                         <div class="container my-4">
-                            <div class="row mb-3">
+                            <div class="row">
                                 <div class="col-12 col-md-5">
                                     <h4>My Profile</h4>
                                     <p>You may now view or update your information here.</p>

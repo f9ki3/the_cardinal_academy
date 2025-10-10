@@ -37,13 +37,11 @@ if ($disciplinary_id) {
 <?php include 'header.php'; ?>
 <style>
 body {
-    background-color: #F7F7F7;
     color: #333;
     font-family: 'Segoe UI', sans-serif;
 }
 .record-card, .record-section {
     background-color: #FFFFFF;
-    border-radius: 1rem;
     padding: 2rem;
     margin-bottom: 2rem;
 }
