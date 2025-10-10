@@ -45,7 +45,7 @@ $last_name = $user['last_name'];
 $stmt->close();
 
 // 2️⃣ Find linked parent_id
-$parent_id = null;
+$parent_id = 0; // Default to 0 if no parent
 $pstmt = $conn->prepare("SELECT parent_id FROM parent_link WHERE student_id = ?");
 if ($pstmt) {
     $pstmt->bind_param("i", $user_id);
@@ -105,16 +105,16 @@ if ($stmt->execute()) {
     $message = "Attendance recorded for $first_name $last_name at $time_in_display.";
     $alertType = "success";
 
-    // 6️⃣ Log to parent_attendance table
-    if (!empty($parent_id)) {
-        $p_att = $conn->prepare("INSERT INTO parent_attendance (date, time_in, course_name, rfid, user_id, first_name, last_name) VALUES (?, ?, ?, ?, ?, ?, ?)");
-        if ($p_att) {
-            $p_att->bind_param("ssssiss", $today, $time_in_db, $course_name, $rfid, $user_id, $first_name, $last_name);
-            $p_att->execute();
-            $p_att->close();
-        }
+    // 6️⃣ Log to parent_attendance table (always insert, parent_id 0 if no linked parent)
+    $p_att = $conn->prepare("INSERT INTO parent_attendance (date, time_in, course_name, rfid, user_id, first_name, last_name, parent_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+    if ($p_att) {
+        $p_att->bind_param("ssssissi", $today, $time_in_db, $course_name, $rfid, $user_id, $first_name, $last_name, $parent_id);
+        $p_att->execute();
+        $p_att->close();
+    }
 
-        // 7️⃣ Insert notification log
+    // 7️⃣ Only send notifications if parent exists
+    if ($parent_id != 0) {
         $notif_message = "$first_name $last_name time in at $time_in_display for the subject $course_name.";
         $notif_link = "attendance.php";
         $created_at = date('Y-m-d H:i:s');
@@ -134,6 +134,7 @@ if ($stmt->execute()) {
             $update_notif->close();
         }
     }
+
 } else {
     $message = "Error recording attendance: " . $stmt->error;
     $alertType = "danger";
