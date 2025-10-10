@@ -76,7 +76,7 @@ $conn->close();
         }
     </style>
 </head>
-<body class="bg-light">
+<body>
     <div class="d-flex flex-row">
         <?php include 'navigation.php'; ?>
 
@@ -123,7 +123,7 @@ $conn->close();
                         <?php endif; ?>
 
                         <!-- ✅ Attendance Table -->
-                        <div class="table-responsive p-4 bg-white rounded-4 mt-4">
+                        <div class="table-responsive bg-white rounded-4">
                             <table class="table table-striped">
                                 <thead>
                                     <tr>

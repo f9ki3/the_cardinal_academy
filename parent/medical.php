@@ -92,7 +92,7 @@ $records = $stmt->get_result();
   .clickable-row:hover { background-color:#f8f9fa; }
 </style>
 </head>
-<body class="bg-light">
+<body>
 <div class="d-flex flex-row">
 <?php include 'navigation.php'; ?>
 <div class="content flex-grow-1">
@@ -115,7 +115,7 @@ $records = $stmt->get_result();
           </div>
         </div>
 
-        <div class="table-responsive p-4 bg-white rounded-4 mt-4 shadow-sm">
+        <div class="table-responsive bg-white rounded-4">
           <table class="table table-striped table-hover">
             <thead>
               <tr>

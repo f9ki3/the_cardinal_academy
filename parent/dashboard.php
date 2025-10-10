@@ -4,143 +4,144 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Parent Dashboard - Demo</title>
+<title>Parent Dashboard | Student Overview</title>
 
 <?php include 'header.php'; ?>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
 <style>
-.student-card {
-    border-radius: 1rem;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    background-color: #fff;
-    padding: 1.5rem;
-    margin-bottom: 2rem;
-}
-.student-card h5 {
-    font-weight: 600;
-}
-.subject-table th, .subject-table td {
-    vertical-align: middle;
-}
+    .bg-accent-blue {
+        background-color: #e8f2ff !important; /* soft light blue */
+    }
 </style>
+
 </head>
-<body class="bg-light">
+<body>
 <div class="d-flex">
     <?php include 'navigation.php'; ?>
     <div class="flex-grow-1">
         <?php include 'nav_top.php'; ?>
 
-        <div class="container py-4">
-            <h4 class="mb-4">Your Children (Demo)</h4>
+        <div class="container py-5">
+            <!-- Student Card -->
+            <div class="p-4 rounded-4 mb-4 position-relative">
+                <div class="card-body">
+                    <div class="row align-items-center">
+                        <!-- Student Info -->
+                        <div class="col-lg-6 mb-4 mb-lg-0">
+                            <h4 class="fw-bold mb-3"><i class="fa-solid fa-graduation-cap me-2"></i>Juan Dela Cruz</h4>
+                            <div class="row g-3">
+                                <div class="col-md-4 col-6">
+                                    <div class=" text-md-start">
+                                        <span class="fw-semibold text-muted d-block">ID/Ref:</span>
+                                        <span>#JDC-9876</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-6">
+                                    <div class=" text-md-start">
+                                        <span class="fw-semibold text-muted d-block">Birthday:</span>
+                                        <span>January 15, 2010</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-6">
+                                    <div class=" text-md-start">
+                                        <span class="fw-semibold text-muted d-block">Gender:</span>
+                                        <span>Male</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-6">
+                                    <div class=" text-md-start">
+                                        <span class="fw-semibold text-muted d-block">Phone:</span>
+                                        <span>0912-345-6789</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 col-6">
+                                    <div class=" text-md-start">
+                                        <span class="fw-semibold text-muted d-block">Email:</span>
+                                        <span>juan.delacruz@email.com</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-            <!-- Hard-coded student 1 -->
-            <div class="student-card">
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <h5>Juan Dela Cruz</h5>
-                        <p class="mb-1"><strong>Age:</strong> 15</p>
-                        <p class="mb-1"><strong>Email:</strong> juan@example.com</p>
-                        <p class="mb-1"><strong>Contact:</strong> 09123456789</p>
-                    </div>
-                    <div class="col-md-6 text-md-end">
-                        <p class="mb-1"><strong>Total Assignments:</strong> 12</p>
-                        <p class="mb-1"><strong>Total Lessons:</strong> 30</p>
-                        <p class="mb-1"><strong>Total Attendance:</strong> 28</p>
-                    </div>
-                </div>
+                        <!-- Overall Progress -->
+                        <div class="col-lg-6 d-flex flex-column align-items-start align-items-lg-end">
+    <div class="d-flex w-100 justify-content-between align-items-center mb-3">
+        <h6 class="fw-semibold text-secondary mb-0">Overall Progress</h6>
+        <button class="btn btn-sm btn-outline-danger">
+            <i class="bi bi-trash"></i> Delete
+        </button>
+    </div>
 
-                <h6>Subjects Overview</h6>
-                <div class="table-responsive">
-                    <table class="table table-bordered subject-table">
-                        <thead>
-                            <tr>
-                                <th>Subject</th>
-                                <th>Lessons</th>
-                                <th>Assignments</th>
-                                <th>Attendance</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Mathematics</td>
-                                <td>10</td>
-                                <td>4</td>
-                                <td>9</td>
-                            </tr>
-                            <tr>
-                                <td>Science</td>
-                                <td>8</td>
-                                <td>3</td>
-                                <td>8</td>
-                            </tr>
-                            <tr>
-                                <td>English</td>
-                                <td>12</td>
-                                <td>5</td>
-                                <td>11</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+    <div class="row w-100 g-2 mt-2 justify-content-center justify-content-lg-end">
+        <div class="col-4">
+            <div class="text-center p-3 bg-accent-blue text-primary rounded w-100">
+                <div class="fs-2 fw-bold">5</div>
+                <div class="small">Assignments</div>
             </div>
-
-            <!-- Hard-coded student 2 -->
-            <div class="student-card">
-                <div class="row mb-3">
-                    <div class="col-md-6">
-                        <h5>Maria Santos</h5>
-                        <p class="mb-1"><strong>Age:</strong> 13</p>
-                        <p class="mb-1"><strong>Email:</strong> maria@example.com</p>
-                        <p class="mb-1"><strong>Contact:</strong> 09987654321</p>
-                    </div>
-                    <div class="col-md-6 text-md-end">
-                        <p class="mb-1"><strong>Total Assignments:</strong> 8</p>
-                        <p class="mb-1"><strong>Total Lessons:</strong> 25</p>
-                        <p class="mb-1"><strong>Total Attendance:</strong> 24</p>
-                    </div>
-                </div>
-
-                <h6>Subjects Overview</h6>
-                <div class="table-responsive">
-                    <table class="table table-bordered subject-table">
-                        <thead>
-                            <tr>
-                                <th>Subject</th>
-                                <th>Lessons</th>
-                                <th>Assignments</th>
-                                <th>Attendance</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Mathematics</td>
-                                <td>9</td>
-                                <td>3</td>
-                                <td>8</td>
-                            </tr>
-                            <tr>
-                                <td>Science</td>
-                                <td>8</td>
-                                <td>2</td>
-                                <td>8</td>
-                            </tr>
-                            <tr>
-                                <td>English</td>
-                                <td>8</td>
-                                <td>3</td>
-                                <td>8</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
+        </div>
+        <div class="col-4">
+            <div class="text-center p-3 bg-accent-blue text-primary rounded w-100">
+                <div class="fs-2 fw-bold">20</div>
+                <div class="small">Lessons</div>
             </div>
-
+        </div>
+        <div class="col-4">
+            <div class="text-center p-3 bg-accent-blue text-primary rounded w-100">
+                <div class="fs-2 fw-bold">25</div>
+                <div class="small">Attendance</div>
+            </div>
         </div>
     </div>
 </div>
 
+
+                    </div>
+
+
+                    <hr class="my-4">
+
+                    <h6 class="fw-bold text-secondary mb-3"><i class="fa-solid fa-chart-line me-2"></i>Subjects Overview</h6>
+                    <div class="table-responsive">
+                        <table class="table table-striped mb-0 align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="text-start">Subject</th>
+                                    <th class="text-center">Lessons</th>
+                                    <th class="text-center">Assignments Progress</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="text-start fw-semibold text-secondary">Mathematics</td>
+                                    <td class="text-center text-secondary">10</td>
+                                    <td>
+                                        <div class="mb-1 small fw-semibold text-secondary text-center">4 / 5 Submitted (80%)</div>
+                                        <div class="progress" style="height: 8px;">
+                                            <div class="progress-bar bg-primary" role="progressbar" style="width: 80%;"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function deleteStudent(studentId) {
+    if (confirm("Are you sure you want to remove this student from your dashboard? This action cannot be undone.")) {
+        window.location.href = `delete_student.php?id=${studentId}`;
+    }
+}
+</script>
+
 <?php include 'footer.php'; ?>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
