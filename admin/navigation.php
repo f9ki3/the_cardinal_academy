@@ -132,6 +132,12 @@ $profile_image = isset($user_info['profile_image']) ? $user_info['profile_image'
                     <i class="bi bi-journal-bookmark me-2"></i>Subjects & Units
                 </a>
             </li>
+
+            <li class="nav-item">
+                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="profile.php?nav_drop=true">
+                    <i class="bi bi-journal-bookmark me-2"></i>My Account
+                </a>
+            </li>
         </ul>
     </div>
 
