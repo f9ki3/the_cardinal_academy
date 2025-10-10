@@ -75,7 +75,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($stmt->execute()) {
             // Redirect to generated account info page
-            $redirect_url = 'generated_parent.php?email=' . urlencode($email) . '&password=' . urlencode($plain_password);
+            $redirect_url = 'generated_parent.php?email=' . urlencode($username) . '&password=' . urlencode($plain_password);
             header("Location: $redirect_url");
             exit;
         } else {

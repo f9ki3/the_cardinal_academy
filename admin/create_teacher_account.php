@@ -80,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($stmt->execute()) {
             // Redirect to generated_teacher.php with email and password
-            $redirect_url = 'generated_teacher.php?email=' . urlencode($email) . '&password=' . urlencode($plain_password);
+            $redirect_url = 'generated_teacher.php?email=' . urlencode($username) . '&password=' . urlencode($plain_password);
             header("Location: $redirect_url");
             exit;
         } else {

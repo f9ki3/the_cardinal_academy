@@ -31,7 +31,7 @@ $password = isset($_GET['password']) ? htmlspecialchars($_GET['password']) : '';
                 <p class="text-muted mb-4">The account has been successfully created. You can copy the credentials below:</p>
 
                 <div class="mb-3">
-                    <label class="form-label fw-bold">Email</label>
+                    <label class="form-label fw-bold">Username</label>
                     <div class="input-group">
                         <input type="text" class="form-control" id="emailField" value="<?php echo $email; ?>" readonly>
                         <button class="btn border" type="button" onclick="copyToClipboard('emailField')">
