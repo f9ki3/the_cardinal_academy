@@ -103,7 +103,7 @@ if (!$result) {
                       if ($stmt->execute()) {
                           echo "<script>
                                   alert('Parent account deleted successfully.');
-                                  window.location.href = 'parents.php';
+                                  window.location.href = 'parents.php?status=deleted';
                                 </script>";
                           exit;
                       } else {
