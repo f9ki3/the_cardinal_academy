@@ -207,7 +207,7 @@ if (!$result) {
                           <option value="<?= htmlspecialchars($sy) ?>" <?= ($school_year === $sy) ? 'selected' : '' ?>><?= htmlspecialchars($sy) ?></option>
                       <?php endforeach; ?>
                   </select>
-                  <input type="text" name="search" value="<?= htmlspecialchars($search) ?>" class="form-control rounded rounded-4 ms-2" placeholder="Search Student ID or Fullname">
+                  <input type="text" name="search" value="<?= htmlspecialchars($search) ?>" class="form-control rounded rounded-4 ms-2" placeholder="Search Account Number or Student ID or Fullname">
                   <button class="btn border ms-2 rounded rounded-4" type="submit">Search</button>
               </div>
             </form>
