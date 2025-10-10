@@ -41,10 +41,17 @@ if (isset($_GET['success'])) {
 $attendance_records = [];
 if ($parent_id) {
     $query = "
-        SELECT date, time_in, rfid, first_name, last_name
-        FROM attendance
-        WHERE parent_id = ?
-        ORDER BY date DESC, time_in DESC
+        SELECT 
+            a.date, 
+            a.time_in, 
+            a.rfid, 
+            a.first_name, 
+            a.last_name,
+            c.course_name
+        FROM attendance AS a
+        LEFT JOIN courses AS c ON a.course_id = c.id
+        WHERE a.parent_id = ?
+        ORDER BY a.date DESC, a.time_in DESC
     ";
 
     $stmt = $conn->prepare($query);
@@ -79,19 +86,19 @@ $conn->close();
             <div class="container my-4">
                 <div class="d-none mt-5 d-print-flex justify-content-center">
                     <div class="d-flex align-items-center mb-4">
-                    <img src="../static/uploads/logo.png" alt="Logo" style="height: 70px; width: auto;" class="me-3">
-                    <div>
-                        <h5 class="mb-0 fw-bold text-center">The Cardinal Academy, Inc.</h5>
-                        <small class="d-block text-center">Sullera Street in Pandayan, Meycauayan, Bulacan </small>
-                        <small class="d-block text-center">Phone: (0912) 345-6789 | Email: info@cardinalacademy.edu.ph</small>
-                    </div>
+                        <img src="../static/uploads/logo.png" alt="Logo" style="height: 70px; width: auto;" class="me-3">
+                        <div>
+                            <h5 class="mb-0 fw-bold text-center">The Cardinal Academy, Inc.</h5>
+                            <small class="d-block text-center">Sullera Street in Pandayan, Meycauayan, Bulacan</small>
+                            <small class="d-block text-center">Phone: (0912) 345-6789 | Email: info@cardinalacademy.edu.ph</small>
+                        </div>
                     </div>
                 </div>
-                
 
                 <div class="d-none d-print-flex justify-content-center">
-                <h3>Attendance Records</h3>
+                    <h3>Attendance Records</h3>
                 </div>
+
                 <div class="row g-4">
                     <div class="col-12">
                       <div class="container my-4">
@@ -102,12 +109,10 @@ $conn->close();
                           </div>
                           <div>
                             <button class="btn rounded-4 btn-danger" onclick="window.print();">
-                            <i class="bi bi-printer me-1"></i> Print
+                              <i class="bi bi-printer me-1"></i> Print
                             </button>
-
                           </div>
                         </div>
-
 
                         <!-- ✅ Alert Message -->
                         <?php if (!empty($alert_message)): ?>
@@ -127,6 +132,7 @@ $conn->close();
                                         <th>RFID</th>
                                         <th>First Name</th>
                                         <th>Last Name</th>
+                                        <th>Course</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -138,11 +144,12 @@ $conn->close();
                                                 <td class="py-3 text-muted"><?= htmlspecialchars($row['rfid']); ?></td>
                                                 <td class="py-3 text-muted"><?= htmlspecialchars($row['first_name']); ?></td>
                                                 <td class="py-3 text-muted"><?= htmlspecialchars($row['last_name']); ?></td>
+                                                <td class="py-3 text-muted"><?= htmlspecialchars($row['course_name'] ?? 'N/A'); ?></td>
                                             </tr>
                                         <?php endforeach; ?>
                                     <?php else: ?>
                                         <tr>
-                                            <td colspan="5" class="text-center text-muted">No attendance records found.</td>
+                                            <td colspan="6" class="text-center text-muted">No attendance records found.</td>
                                         </tr>
                                     <?php endif; ?>
                                 </tbody>
