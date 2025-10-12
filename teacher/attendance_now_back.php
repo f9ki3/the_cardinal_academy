@@ -24,6 +24,9 @@ if (empty($rfid)) {
 
 // 1️⃣ Get student info from RFID
 $stmt = $conn->prepare("SELECT user_id, first_name, last_name FROM users WHERE rfid = ?");
+if (!$stmt) {
+    die("Prepare failed (users select): " . $conn->error);
+}
 $stmt->bind_param("s", $rfid);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -42,30 +45,40 @@ $last_name = $user['last_name'];
 $stmt->close();
 
 // 2️⃣ Find linked parent_id
-$parent_id = 0;
+$parent_id = 0; // Default to 0 if no parent
 $pstmt = $conn->prepare("SELECT parent_id FROM parent_link WHERE student_id = ?");
-$pstmt->bind_param("i", $user_id);
-$pstmt->execute();
-$presult = $pstmt->get_result();
-if ($presult->num_rows > 0) {
-    $parent_id = $presult->fetch_assoc()['parent_id'];
+if ($pstmt) {
+    $pstmt->bind_param("i", $user_id);
+    $pstmt->execute();
+    $presult = $pstmt->get_result();
+
+    if ($presult->num_rows > 0) {
+        $prow = $presult->fetch_assoc();
+        $parent_id = $prow['parent_id'];
+    }
+    $pstmt->close();
 }
-$pstmt->close();
 
 // 3️⃣ Get course name
 $course_name = '';
 $cstmt = $conn->prepare("SELECT course_name FROM courses WHERE id = ?");
-$cstmt->bind_param("i", $course_id);
-$cstmt->execute();
-$cresult = $cstmt->get_result();
-if ($cresult->num_rows > 0) {
-    $course_name = $cresult->fetch_assoc()['course_name'];
+if ($cstmt) {
+    $cstmt->bind_param("i", $course_id);
+    $cstmt->execute();
+    $cresult = $cstmt->get_result();
+    if ($cresult->num_rows > 0) {
+        $crow = $cresult->fetch_assoc();
+        $course_name = $crow['course_name'];
+    }
+    $cstmt->close();
 }
-$cstmt->close();
 
 // 4️⃣ Check if attendance for today already exists
 $today = date('Y-m-d');
 $stmt = $conn->prepare("SELECT id FROM attendance WHERE rfid = ? AND course_id = ? AND date = ?");
+if (!$stmt) {
+    die("Prepare failed (attendance check): " . $conn->error);
+}
 $stmt->bind_param("sis", $rfid, $course_id, $today);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -83,84 +96,43 @@ $time_in_db = date('H:i:s');
 $time_in_display = date('h:i A');
 
 $stmt = $conn->prepare("INSERT INTO attendance (date, time_in, course_id, rfid, user_id, first_name, last_name, parent_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+if (!$stmt) {
+    die("Prepare failed (attendance insert): " . $conn->error);
+}
 $stmt->bind_param("ssisissi", $today, $time_in_db, $course_id, $rfid, $user_id, $first_name, $last_name, $parent_id);
 
 if ($stmt->execute()) {
     $message = "Attendance recorded for $first_name $last_name at $time_in_display.";
     $alertType = "success";
 
-    // 6️⃣ Log to parent_attendance
+    // 6️⃣ Log to parent_attendance table (always insert, parent_id 0 if no linked parent)
     $p_att = $conn->prepare("INSERT INTO parent_attendance (date, time_in, course_name, rfid, user_id, first_name, last_name, parent_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-    $p_att->bind_param("ssssissi", $today, $time_in_db, $course_name, $rfid, $user_id, $first_name, $last_name, $parent_id);
-    $p_att->execute();
-    $p_att->close();
+    if ($p_att) {
+        $p_att->bind_param("ssssissi", $today, $time_in_db, $course_name, $rfid, $user_id, $first_name, $last_name, $parent_id);
+        $p_att->execute();
+        $p_att->close();
+    }
 
-    // 7️⃣ Notify parent in-app
+    // 7️⃣ Only send notifications if parent exists
     if ($parent_id != 0) {
         $notif_message = "$first_name $last_name time in at $time_in_display for the subject $course_name.";
         $notif_link = "attendance.php";
         $created_at = date('Y-m-d H:i:s');
 
         $notif_stmt = $conn->prepare("INSERT INTO notifications (user_id, message, link, created_at) VALUES (?, ?, ?, ?)");
-        $notif_stmt->bind_param("isss", $parent_id, $notif_message, $notif_link, $created_at);
-        $notif_stmt->execute();
-        $notif_stmt->close();
+        if ($notif_stmt) {
+            $notif_stmt->bind_param("isss", $parent_id, $notif_message, $notif_link, $created_at);
+            $notif_stmt->execute();
+            $notif_stmt->close();
+        }
 
-        // Increment notification count
+        // 8️⃣ Increment parent's notification count
         $update_notif = $conn->prepare("UPDATE users SET notification = notification + 1 WHERE user_id = ?");
-        $update_notif->bind_param("i", $parent_id);
-        $update_notif->execute();
-        $update_notif->close();
-
-        // 8️⃣ Get parent's phone number
-        $phone_number = null;
-        $phone_stmt = $conn->prepare("SELECT phone_number FROM users WHERE user_id = ?");
-        $phone_stmt->bind_param("i", $parent_id);
-        $phone_stmt->execute();
-        $phone_result = $phone_stmt->get_result();
-        if ($phone_result->num_rows > 0) {
-            $phone_number = $phone_result->fetch_assoc()['phone_number'];
+        if ($update_notif) {
+            $update_notif->bind_param("i", $parent_id);
+            $update_notif->execute();
+            $update_notif->close();
         }
-        $phone_stmt->close();
-
-        // 9️⃣ Send SMS notification (only if phone number exists)
-        if (!empty($phone_number)) {
-            $sms_url = 'https://sms.iprogtech.com/api/v1/sms_messages';
-
-            $sms_message = "Attendance Alerts: $first_name $last_name has timed in at $time_in_display for the subject $course_name.";
-
-            // ✅ SMS data in JSON format
-            $sms_data = [
-                "api_token" => "1b10cd2edce5586d01b037c643075e19dd49270f",
-                "phone_number" => $phone_number,
-                "message" => $sms_message
-            ];
-
-            // ✅ Append query parameters for redundancy (as required by your format)
-            $query_url = $sms_url . '?api_token=' . urlencode($sms_data['api_token'])
-                . '&message=' . urlencode($sms_data['message'])
-                . '&phone_number=' . urlencode($sms_data['phone_number']);
-
-            // ✅ Initialize cURL
-            $ch = curl_init($query_url);
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_POST, true);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                'Content-Type: application/json'
-            ]);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($sms_data));
-
-            $response = curl_exec($ch);
-
-            if (curl_errno($ch)) {
-                error_log("SMS sending failed: " . curl_error($ch));
-            } else {
-                error_log("SMS sent successfully: " . $response);
-            }
-
-            curl_close($ch);
-        }
-
     }
 
 } else {
@@ -171,7 +143,7 @@ if ($stmt->execute()) {
 $stmt->close();
 $conn->close();
 
-// 🔟 Redirect back with message
+// 9️⃣ Redirect back with message
 header("Location: start_attendance.php?id=$course_id&message=" . urlencode($message) . "&alertType=$alertType");
 exit();
 ?>
