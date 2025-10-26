@@ -13,7 +13,10 @@ $profile_image = isset($user_info['profile_image']) ? $user_info['profile_image'
     <div class="text-center mb-3">
         <img src="<?= htmlspecialchars($profile_image) ?>" alt="Profile" class="rounded-circle img-fluid" style="width: 80px; height: 80px; object-fit: cover;">
         <h5 class="fw-bolder text-dark mt-2"><?= htmlspecialchars($full_name) ?></h5>
-        <p>Administrator</p>
+        <p>
+            <?= isset($_SESSION['role']) ? ucfirst(htmlspecialchars($_SESSION['role'])) : 'Unknown Role' ?>
+        </p>
+
         <hr class="text-dark">
     </div>
 
@@ -83,11 +86,20 @@ $profile_image = isset($user_info['profile_image']) ? $user_info['profile_image'
                     <i class="bi bi-journal-bookmark me-2"></i>Diciplinary
                 </a>
             </li>
+            <?php 
+            $allowed_roles = ['Administrator', 'Assistant Principal', 'School Nurse'];
+            $is_allowed = isset($_SESSION['role']) && in_array($_SESSION['role'], $allowed_roles);
+            ?>
             <li class="nav-item">
-                <a class="nav-link text-dark d-flex align-items-center py-2 fs-6" href="medical.php">
+                <a 
+                    class="nav-link d-flex align-items-center py-2 fs-6 <?= $is_allowed ? 'text-dark' : 'text-muted disabled' ?>" 
+                    href="<?= $is_allowed ? 'medical.php' : '#' ?>" 
+                    <?= $is_allowed ? '' : 'tabindex="-1" aria-disabled="true"' ?>
+                >
                     <i class="bi bi-megaphone me-2"></i>Medical
                 </a>
             </li>
+
             <!-- System Management -->
             <li class="nav-item">
                 <h6 class="fw-bold text-uppercase text-secondary ps-2 mb-2 mt-3">System Management</h6>

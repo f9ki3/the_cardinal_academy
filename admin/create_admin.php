@@ -39,11 +39,11 @@
           <div class="col-md-3">
             <label for="role" class="form-label">Account Role</label>
             <select name="role" id="role" class="form-control" required>
-              <option value="guidance" selected>Guidance</option>
-              <option value="school_nurse">School Nurse</option>
-              <option value="assistant_principal">Assistant Principal</option>
-              <option value="registrar">Registrar</option>
-              <option value="accounting">Accounting</option>
+              <option value="Guidance" selected>Guidance</option>
+              <option value="School Nurse">School Nurse</option>
+              <option value="Assistant Principal">Assistant Principal</option>
+              <option value="Registrar">Registrar</option>
+              <option value="Accounting">Accounting</option>
             </select>
           </div>
 

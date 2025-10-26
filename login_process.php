@@ -25,6 +25,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $_SESSION['user_id'] = $user['user_id'];
             $_SESSION['username'] = $user['username'];
             $_SESSION['acc_type'] = $user['acc_type'];
+            $_SESSION['role'] = $user['role'];
 
             // Redirect based on account type
             switch ($user['acc_type']) {

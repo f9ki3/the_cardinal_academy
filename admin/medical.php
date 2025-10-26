@@ -132,23 +132,24 @@ if (!$result) {
                         </tr>
                     </thead>
                     <tbody>
-                        <?php if (mysqli_num_rows($result) > 0): ?>
-                            <?php while ($row = mysqli_fetch_assoc($result)): ?>
-                            <tr class="clickable-row" data-href="view_student_medical.php?student_id=<?= urlencode($row['student_number']) ?>">
-                                <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['student_number']) ?></p></td>
-                                <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['firstname']) ?></p></td>
-                                <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['middlename']) ?></p></td>
-                                <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['lastname']) ?></p></td>
-                                <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['email']) ?></p></td>
-                                <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['phone']) ?></p></td>
-                            </tr>
-                            <?php endwhile; ?>
-                        <?php else: ?>
-                            <tr>
-                                <td colspan="6"><p class="text-muted text-center pt-3 pb-3 mb-0">No student data available</p></td>
-                            </tr>
-                        <?php endif; ?>
-                    </tbody>
+                      <?php if (mysqli_num_rows($result) > 0): ?>
+                          <?php while ($row = mysqli_fetch_assoc($result)): ?>
+                          <tr class="clickable-row" data-href="view_student_medical.php?student_id=<?= urlencode($row['student_number'] ?? '-') ?>">
+                              <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['student_number'] ?? '-') ?></p></td>
+                              <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['firstname'] ?? '-') ?></p></td>
+                              <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['middlename'] ?? '-') ?></p></td>
+                              <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['lastname'] ?? '-') ?></p></td>
+                              <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['email'] ?? '-') ?></p></td>
+                              <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['phone'] ?? '-') ?></p></td>
+                          </tr>
+                          <?php endwhile; ?>
+                      <?php else: ?>
+                          <tr>
+                              <td colspan="6"><p class="text-muted text-center pt-3 pb-3 mb-0">No student data available</p></td>
+                          </tr>
+                      <?php endif; ?>
+                  </tbody>
+
                 </table>
             </div>
 
