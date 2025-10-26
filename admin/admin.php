@@ -24,7 +24,7 @@ $total_pages = ceil($total / $limit);
 $query = "SELECT 
             user_id, 
             CONCAT(first_name, ' ', last_name) AS fullname, 
-            username, 
+            username, role,
             created_at
           FROM users 
           WHERE acc_type = 'admin' AND (
@@ -135,6 +135,7 @@ if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
                     <tr>
                       <th class="py-3">Full Name</th>
                       <th class="py-3">Username</th>
+                      <th class="py-3">Role</th>
                       <th class="py-3">Created At</th>
                       <th class="text-center py-3">Action</th>
                     </tr>
@@ -144,6 +145,7 @@ if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
                       <?php while ($row = mysqli_fetch_assoc($result)): ?>
                         <tr class="clickable-row" data-id="<?= htmlspecialchars($row['user_id'], ENT_QUOTES) ?>" style="cursor:pointer;">
                           <td class="text-muted py-3"><?= htmlspecialchars($row['fullname']) ?></td>
+                          <td class="text-muted py-3"><?= htmlspecialchars($row['role']) ?></td>
                           <td class="text-muted py-3"><?= htmlspecialchars($row['username']) ?></td>
                           <td class="text-muted py-3"><?= htmlspecialchars($row['created_at']) ?></td>
                           <td class="text-center py-3">

@@ -26,26 +26,27 @@
           <div class="row g-3">
             <input type="hidden" name="user_id" value="<?= htmlspecialchars($data['user_id'] ?? '') ?>">
 
-            <div class="col-md-3">
-              <label for="acc_type" class="form-label">Account Type</label>
-              <select disabled name="acc_type" id="acc_type" class="form-control" required>
-                <option selected value="admin">Admin</option>
-                <option value="parent">Parent</option>
-                <option value="teacher">Teacher</option>
-                <option value="student">Student</option>
-              </select>
-            </div>
+           <div class="col-md-3">
+            <label for="acc_type" class="form-label">Account Type</label>
+            <select name="acc_type" id="acc_type" class="form-control" required>
+              <option value="admin" selected>Admin</option>
+              <option value="parent">Parent</option>
+              <option value="teacher">Teacher</option>
+              <option value="student">Student</option>
+            </select>
+          </div>
 
-            <div class="col-md-3">
-              <label for="acc_type" class="form-label">Account Role</label>
-              <select name="acc_type" id="acc_type" class="form-control" required>
-                <option selected value="guidance">Guidance</option>
-                <option value="school_nurse">School Nurse</option>
-                <option value="assistant_principal">Assistant Prinicipal</option>
-                <option value="registar">Registar</option>
-                <option value="accounting">Accounting</option>
-              </select>
-            </div>
+          <div class="col-md-3">
+            <label for="role" class="form-label">Account Role</label>
+            <select name="role" id="role" class="form-control" required>
+              <option value="guidance" selected>Guidance</option>
+              <option value="school_nurse">School Nurse</option>
+              <option value="assistant_principal">Assistant Principal</option>
+              <option value="registrar">Registrar</option>
+              <option value="accounting">Accounting</option>
+            </select>
+          </div>
+
 
             <div class="col-md-6">
               <label for="email" class="form-label">Email</label>

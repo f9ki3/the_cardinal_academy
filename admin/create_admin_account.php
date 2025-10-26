@@ -3,22 +3,29 @@ include 'session_login.php';
 include '../db_connection.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Sanitize input
-    $acc_type      = 'admin';
-    $email         = trim($_POST['email']);
-    $first_name    = trim($_POST['first_name']);
-    $last_name     = trim($_POST['last_name']);
+
+    // Safe input handling with defaults
+    $acc_type      = isset($_POST['acc_type']) ? trim($_POST['acc_type']) : 'staff'; // default acc_type
+    $role          = isset($_POST['role']) ? trim($_POST['role']) : 'Guidance';      // default role
+    $email         = isset($_POST['email']) ? trim($_POST['email']) : '';
+    $first_name    = isset($_POST['first_name']) ? trim($_POST['first_name']) : '';
+    $last_name     = isset($_POST['last_name']) ? trim($_POST['last_name']) : '';
     $phone_number  = $_POST['phone_number'] ?? null;
     $acc_status    = 'active';
     $profile_path  = '';
     $rfid          = null;
-    $subject_title = null; // not applicable for admin accounts
+    $subject_title = null; // not applicable for these accounts
 
-    // Generate unique username (firstname.lastname + random + ".admin")
+    // Check required fields
+    if (empty($email) || empty($first_name) || empty($last_name)) {
+        die("❌ Email, first name, and last name are required.");
+    }
+
+    // Generate unique username (firstname.lastname + random + "." + acc_type)
     $base_username = strtolower(preg_replace('/\s+/', '', $first_name . '.' . $last_name));
     do {
         $rand_suffix = rand(100, 999);
-        $username = $base_username . $rand_suffix . '.admin';
+        $username = $base_username . $rand_suffix . '.' . strtolower($acc_type);
 
         $check_stmt = $conn->prepare("SELECT user_id FROM users WHERE username = ?");
         $check_stmt->bind_param("s", $username);
@@ -54,30 +61,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $profile_path = 'dummy.jpg';
     }
 
-    // Insert new admin record
+    // Insert new account record
     $stmt = $conn->prepare("
         INSERT INTO users (
-            acc_type, username, email, password,
+            acc_type, role, username, email, password,
             first_name, last_name, phone_number,
             profile, rfid, acc_status, subject
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     ");
 
     if ($stmt) {
         $stmt->bind_param(
-            "sssssssssss",
-            $acc_type, $username, $email, $hashed_password,
+            "ssssssssssss",
+            $acc_type, $role, $username, $email, $hashed_password,
             $first_name, $last_name, $phone_number,
             $profile_path, $rfid, $acc_status, $subject_title
         );
 
         if ($stmt->execute()) {
-            // Redirect to generated admin account info page
+            // Redirect to generated account info page
             $redirect_url = 'generated_admin.php?email=' . urlencode($username) . '&password=' . urlencode($plain_password);
             header("Location: $redirect_url");
             exit;
         } else {
-            echo "❌ Failed to create admin account: " . $stmt->error;
+            echo "❌ Failed to create account: " . $stmt->error;
         }
 
         $stmt->close();
@@ -86,6 +93,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $conn->close();
+
 } else {
     echo "Invalid request method.";
 }

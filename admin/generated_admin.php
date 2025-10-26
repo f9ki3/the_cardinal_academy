@@ -50,8 +50,8 @@ $password = isset($_GET['password']) ? htmlspecialchars($_GET['password']) : '';
                     </div>
                 </div>
 
-                <a href="parents.php" class="btn btn-danger btn-lg w-100">
-                    <i class="bi bi-arrow-left-circle"></i> Back to Parent List
+                <a href="admin.php" class="btn btn-danger btn-lg w-100">
+                    <i class="bi bi-arrow-left-circle"></i> Back to Admin List
                 </a>
             </div>
         </div>
