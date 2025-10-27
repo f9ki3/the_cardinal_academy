@@ -47,7 +47,7 @@ if ($user_id > 0 && $conn) {
 
     <div class="container py-4">
       <form action="update_parent.php" method="POST" enctype="multipart/form-data">
-        <div class="bg-white p-4 rounded-4 shadow-sm">
+        <div class="bg-white p-4 rounded-4">
           <h2>View Parent Account</h2>
           <p class="mb-4">Note: Please review all information from the form.</p>
           <hr>

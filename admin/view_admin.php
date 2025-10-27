@@ -44,7 +44,7 @@ if ($user_id > 0 && $conn) {
 
         <div class="container py-4">
             <form action="update_admin.php" method="POST" enctype="multipart/form-data">
-                <div class="bg-white p-4 rounded-4 shadow-sm">
+                <div class="bg-white p-4 rounded-4">
 
                     <h2 class="mb-3">View Admin Account</h2>
                     <p class="text-muted mb-4">Review all information before making changes.</p>

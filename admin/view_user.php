@@ -42,7 +42,7 @@ if ($user_id > 0 && $conn) {
 
     <div class="container py-4">
       <form action="update_student.php" method="POST" enctype="multipart/form-data">
-        <div class="bg-white p-4 rounded-4 shadow-sm">
+        <div class="bg-white p-4 rounded-4">
           <h2>View Student Account</h2>
           <p class="m-0 mb-4">Note: Please review all information from the form.</p>
           <hr>
