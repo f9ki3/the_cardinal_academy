@@ -14,7 +14,7 @@ $notif_count = intval($count_row['notification'] ?? 0);
 ?>
 
 <!-- HEADER -->
-<header class="border-bottom sticky-top bg-white py-3 px-4 shadow-sm">
+<header class="border-bottom sticky-top bg-white py-3 px-4">
   <div class="container-fluid d-flex align-items-center justify-content-between flex-nowrap">
     <!-- Logo + Title -->
     <div class="d-flex align-items-center flex-nowrap">
