@@ -121,7 +121,7 @@ if ($user_id > 0 && $conn) {
                         <!-- Action Buttons -->
                         <div class="col-12 text-start pt-3">
                             <button type="submit" class="btn btn-danger me-2">Save Admin</button>
-                            <a href="admins.php?nav_drop=true" class="btn btn-secondary me-2">Back</a>
+                            <a href="admin.php?nav_drop=true" class="btn btn-secondary me-2">Back</a>
                             <a href="change_password_admin.php?id=<?= urlencode($data['user_id']) ?>&nav_drop=true" class="btn btn-secondary">Change Password</a>
                         </div>
                     </div>
