@@ -98,9 +98,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($stmt->execute()) {
 
         // --- Notifications ---
-        $link = ($status === 'new') ? 'admission.php' : 'admission_old.php';
+        $link = ($status === 'New Student') ? 'admission.php' : 'admission_old.php';
         $full_name = trim("$first_name $middle_name $last_name");
-        $message = "New admission: $full_name (Grade: $grade_level, LRN: $lrn)";
+        $message = "New admission: $full_name for grade $grade_level level)";
 
         $roles = ['Administrator','Assistant Principal','Registrar'];
         $role_placeholders = implode(',', array_fill(0, count($roles), '?'));
