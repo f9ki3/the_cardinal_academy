@@ -188,42 +188,42 @@ if (!empty($grade_level)) {
                   <ul class="list-group list-group-flush">
 
                     <!-- Registration Fee -->
-                    <li class="list-group-item d-flex justify-content-between align-items-center p-2">
+                    <li class="list-group-items-iii d-flex justify-content-between align-items-center p-2">
                       <span class="text-muted">Registration Fee</span>
                       <span class="">₱0</span>
                     </li>
 
                     <!-- Tuition Fee -->
-                    <li class="list-group-item d-flex justify-content-between align-items-center p-2">
+                    <li class="list-group-items-iii d-flex justify-content-between align-items-center p-2">
                       <span class="text-muted">Tuition Fee</span>
                       <span class="">₱0</span>
                     </li>
 
                     <!-- Miscellaneous -->
-                    <li class="list-group-item d-flex justify-content-between align-items-center p-2">
+                    <li class="list-group-items-iii d-flex justify-content-between align-items-center p-2">
                       <span class="text-muted">Miscellaneous</span>
                       <span class="">₱0</span>
                     </li>
 
 
-                    <li class="list-group-item d-flex justify-content-between align-items-center p-2">
+                    <li class="list-group-items-iii d-flex justify-content-between align-items-center p-2">
                       <span class="text-muted">Uniform</span>
                       <span class="">₱0</span>
                     </li>
 
                     <!-- Discount -->
-                    <li class="list-group-item d-flex justify-content-between align-items-center p-2">
+                    <li class="list-group-items-iii d-flex justify-content-between align-items-center p-2">
                       <span class="text-muted">Discount</span>
                       <span class="">₱0</span>
                     </li>
 
                     <!-- Discount -->
-                    <li class="list-group-item d-flex justify-content-between align-items-center p-2">
+                    <li class="list-group-items-iii d-flex justify-content-between align-items-center p-2">
                       <span class="text-muted">Downpayment</span>
                       <span class="">₱0</span>
                     </li>
 
-                    <li class="list-group-item d-flex justify-content-between align-items-center p-2">
+                    <li class="list-group-items-iii d-flex justify-content-between align-items-center p-2">
                       <span class="fw-bold">Amount to Pay</span>
                       <span class="fw-bold">₱0</span>
                     </li>
@@ -397,7 +397,7 @@ if (!empty($grade_level)) {
                       } else {
                         // create new item with delete button
                         let li = document.createElement("li");
-                        li.className = "list-group-item d-flex justify-content-between align-items-center p-2";
+                        li.className = "list-group-items-iii d-flex justify-content-between align-items-center p-2";
                         li.setAttribute("data-id", id);
                         li.innerHTML = `
                           <div>
@@ -550,7 +550,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const downInput = document.getElementById("down");
 
   // Summary spans
-  const summary = document.querySelectorAll(".list-group-item span:last-child");
+  const summary = document.querySelectorAll(".list-group-items-iii span:last-child");
 
   function parsePeso(value) {
     return parseFloat(value.replace(/[₱,]/g, "")) || 0;
