@@ -98,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($stmt->execute()) {
 
         // --- Notifications ---
-        $link = ($status === 'new') ? '/admission.php' : '/admission_old.php';
+        $link = ($status === 'new') ? 'admission.php' : 'admission_old.php';
         $message = 'Student admission';
 
         $roles = ['Administrator','Assistant Principal','Registrar'];
