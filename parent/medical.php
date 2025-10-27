@@ -29,14 +29,72 @@ $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $parent_id);
 $stmt->execute();
 $result = $stmt->get_result();
+
 $students = [];
 while ($row = $result->fetch_assoc()) {
     $students[$row['student_number']] = $row['first_name'] . ' ' . $row['last_name'];
 }
 $stmt->close();
 
+// ✅ If no linked students, just show table with message
 if (empty($students)) {
-    echo "<div class='alert alert-warning'>No students linked to this parent.</div>";
+    ?>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="UTF-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Medical Records</title>
+      <?php include 'header.php'; ?>
+      <style>
+        .clickable-row { cursor:pointer; }
+        .clickable-row:hover { background-color:#f8f9fa; }
+      </style>
+    </head>
+    <body>
+      <div class="d-flex flex-row">
+        <?php include 'navigation.php'; ?>
+        <div class="content flex-grow-1">
+          <?php include 'nav_top.php'; ?>
+
+          <div class="container my-4">
+            <div class="row align-items-center mb-3">
+              <div class="col-md-6">
+                <h4>Student Medical Records</h4>
+                <p class="text-muted mb-0">You can now view student medical records here.</p>
+              </div>
+            </div>
+
+            <div class="table-responsive bg-white rounded-4 shadow-sm">
+              <table class="table table-striped table-hover mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>Date</th>
+                    <th>Medical ID</th>
+                    <th>Student Name</th>
+                    <th>Student Number</th>
+                    <th>Height (cm)</th>
+                    <th>Weight (kg)</th>
+                    <th>Blood Pressure</th>
+                    <th>Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td colspan="8" class="text-center text-muted py-4">
+                      No students linked to this parent account.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <?php include 'footer.php'; ?>
+    </body>
+    </html>
+    <?php
     exit;
 }
 
@@ -64,9 +122,10 @@ $countStmt = $conn->prepare($countSql);
 $countStmt->bind_param($types, ...$params);
 $countStmt->execute();
 $countResult = $countStmt->get_result()->fetch_assoc();
-$totalRows = $countResult['total'];
+$totalRows = $countResult['total'] ?? 0;
 $countStmt->close();
-$totalPages = ceil($totalRows / $limit);
+
+$totalPages = max(1, ceil($totalRows / $limit));
 
 // ✅ Add limit & offset for current page
 $sql .= " ORDER BY created_at DESC LIMIT ?, ?";
@@ -94,89 +153,86 @@ $records = $stmt->get_result();
 </head>
 <body>
 <div class="d-flex flex-row">
-<?php include 'navigation.php'; ?>
-<div class="content flex-grow-1">
-<?php include 'nav_top.php'; ?>
+  <?php include 'navigation.php'; ?>
+  <div class="content flex-grow-1">
+    <?php include 'nav_top.php'; ?>
 
-<div class="container my-4">
-  <div class="row g-4">
-    <div class="col-12">
-      <div class="container my-4">
-        <div class="row align-items-center mb-3">
-          <div class="col-md-6">
-            <h4>Student Medical Records</h4>
-            <p class="text-muted mb-0">You can now view student medical records here.</p>
-          </div>
-          <div class="col-md-6">
-            <form method="get" class="d-flex">
-              <input type="text" name="search" class="form-control me-2" placeholder="Search Student Record here" value="<?= htmlspecialchars($search) ?>">
-              <button class="btn btn-danger">Search</button>
-            </form>
-          </div>
+    <div class="container my-4">
+      <div class="row align-items-center mb-3">
+        <div class="col-md-6">
+          <h4>Student Medical Records</h4>
+          <p class="text-muted mb-0">You can now view student medical records here.</p>
         </div>
-
-        <div class="table-responsive bg-white rounded-4">
-          <table class="table table-striped table-hover">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Medical ID</th>
-                <th>Student Name</th>
-                <th>Student Number</th>
-                <th>Height (cm)</th>
-                <th>Weight (kg)</th>
-                <th>Blood Pressure</th>
-                <th>Notes</th>
-              </tr>
-            </thead>
-            <tbody>
-              <?php if ($records->num_rows > 0): ?>
-                <?php while ($row = $records->fetch_assoc()): ?>
-                  <tr class="clickable-row" onclick="window.location='view_medical_detail.php?medical_id=<?= urlencode($row['medical_id']) ?>&student_id=<?= urlencode($row['student_id']) ?>'">
-                    <td class="text-muted py-4"><?= htmlspecialchars(date("Y-m-d", strtotime($row['created_at']))) ?></td>
-                    <td class="text-muted py-4"><?= htmlspecialchars($row['medical_id']) ?></td>
-                    <td class="text-muted py-4"><?= htmlspecialchars($students[$row['student_id']] ?? 'Unknown Student') ?></td>
-                    <td class="text-muted py-4"><?= htmlspecialchars($row['student_id']) ?></td>
-                    <td class="text-muted py-4"><?= htmlspecialchars($row['height']) ?></td>
-                    <td class="text-muted py-4"><?= htmlspecialchars($row['weight']) ?></td>
-                    <td class="text-muted py-4"><?= htmlspecialchars($row['blood_pressure']) ?></td>
-                    <td class="text-muted py-4"><?= htmlspecialchars($row['notes']) ?></td>
-                  </tr>
-                <?php endwhile; ?>
-              <?php else: ?>
-                <tr><td colspan="8" class="text-center text-muted">No medical records found.</td></tr>
-              <?php endif; ?>
-            </tbody>
-          </table>
-
-          <!-- Pagination -->
-          <?php if ($totalPages > 1): ?>
-            <nav>
-              <ul class="pagination justify-content-center">
-                <?php if($page > 1): ?>
-                  <li class="page-item"><a class="page-link" href="?page=<?= $page-1 ?>&search=<?= urlencode($search) ?>">Previous</a></li>
-                <?php endif; ?>
-
-                <?php for($i=1; $i<=$totalPages; $i++): ?>
-                  <li class="page-item <?= $i==$page?'active':'' ?>">
-                    <a class="page-link" href="?page=<?= $i ?>&search=<?= urlencode($search) ?>"><?= $i ?></a>
-                  </li>
-                <?php endfor; ?>
-
-                <?php if($page < $totalPages): ?>
-                  <li class="page-item"><a class="page-link" href="?page=<?= $page+1 ?>&search=<?= urlencode($search) ?>">Next</a></li>
-                <?php endif; ?>
-              </ul>
-            </nav>
-          <?php endif; ?>
-
+        <div class="col-md-6">
+          <form method="get" class="d-flex">
+            <input type="text" name="search" class="form-control me-2" placeholder="Search Student Record here" value="<?= htmlspecialchars($search) ?>">
+            <button class="btn btn-danger">Search</button>
+          </form>
         </div>
       </div>
+
+      <div class="table-responsive bg-white rounded-4 shadow-sm">
+        <table class="table table-striped table-hover mb-0">
+          <thead class="table-light">
+            <tr>
+              <th>Date</th>
+              <th>Medical ID</th>
+              <th>Student Name</th>
+              <th>Student Number</th>
+              <th>Height (cm)</th>
+              <th>Weight (kg)</th>
+              <th>Blood Pressure</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php if ($records->num_rows > 0): ?>
+              <?php while ($row = $records->fetch_assoc()): ?>
+                <tr class="clickable-row" onclick="window.location='view_medical_detail.php?medical_id=<?= urlencode($row['medical_id']) ?>&student_id=<?= urlencode($row['student_id']) ?>'">
+                  <td class="text-muted py-3"><?= htmlspecialchars($row['created_at'] ? date("Y-m-d", strtotime($row['created_at'])) : '-') ?></td>
+                  <td class="text-muted py-3"><?= htmlspecialchars($row['medical_id'] ?? '-') ?></td>
+                  <td class="text-muted py-3"><?= htmlspecialchars($students[$row['student_id']] ?? 'Unknown Student') ?></td>
+                  <td class="text-muted py-3"><?= htmlspecialchars($row['student_id'] ?? '-') ?></td>
+                  <td class="text-muted py-3"><?= htmlspecialchars($row['height'] ?: '-') ?></td>
+                  <td class="text-muted py-3"><?= htmlspecialchars($row['weight'] ?: '-') ?></td>
+                  <td class="text-muted py-3"><?= htmlspecialchars($row['blood_pressure'] ?: '-') ?></td>
+                  <td class="text-muted py-3"><?= htmlspecialchars($row['notes'] ?: '-') ?></td>
+                </tr>
+              <?php endwhile; ?>
+            <?php else: ?>
+              <tr>
+                <td colspan="8" class="text-center text-muted py-4">
+                  No medical records found.
+                </td>
+              </tr>
+            <?php endif; ?>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- ✅ Pagination -->
+      <?php if ($totalPages > 1): ?>
+      <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+          <?php if($page > 1): ?>
+            <li class="page-item"><a class="page-link" href="?page=<?= $page-1 ?>&search=<?= urlencode($search) ?>">Previous</a></li>
+          <?php endif; ?>
+
+          <?php for($i=1; $i<=$totalPages; $i++): ?>
+            <li class="page-item <?= $i==$page?'active':'' ?>">
+              <a class="page-link" href="?page=<?= $i ?>&search=<?= urlencode($search) ?>"><?= $i ?></a>
+            </li>
+          <?php endfor; ?>
+
+          <?php if($page < $totalPages): ?>
+            <li class="page-item"><a class="page-link" href="?page=<?= $page+1 ?>&search=<?= urlencode($search) ?>">Next</a></li>
+          <?php endif; ?>
+        </ul>
+      </nav>
+      <?php endif; ?>
+
     </div>
   </div>
-</div>
-
-</div>
 </div>
 
 <?php include 'footer.php'; ?>
