@@ -235,7 +235,7 @@ $conn->close();
             <?php else: ?>
                 <!-- No Student Linked Placeholder -->
                 <div class="d-flex flex-column justify-content-center align-items-center mt-5 py-5">
-                    <img src="../static/images/empty_student.svg" alt="No Student Linked" style="max-width:200px;" class="mb-4">
+                    <img style="opacity: 60%; max-width:200px;" src="../static/images/empty_student.svg" alt="No Student Linked" class="mb-4">
                     <h4 class="text-muted fw-bold">No Student Linked</h4>
                     <p class="text-muted text-center">You currently have no students linked to your account. Once a student is linked, their progress and courses will appear here.</p>
                 </div>
