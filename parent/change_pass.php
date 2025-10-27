@@ -8,14 +8,14 @@
             <div class="mb-3">
                 <label for="firstName" class="form-label">First name</label>
                 <input type="text" class="form-control" id="firstName" name="first_name"
-                       value="<?php echo htmlspecialchars($user['first_name'] ?? ''); ?>" required>
+                       value="<?php echo htmlspecialchars((string)($user['first_name'] ?? '')); ?>" required>
             </div>
         </div>
         <div class="col-6">
             <div class="mb-3">
                 <label for="lastName" class="form-label">Last name</label>
                 <input type="text" class="form-control" id="lastName" name="last_name"
-                       value="<?php echo htmlspecialchars($user['last_name'] ?? ''); ?>" required>
+                       value="<?php echo htmlspecialchars((string)($user['last_name'] ?? '')); ?>" required>
             </div>
         </div>
     </div>
@@ -25,14 +25,14 @@
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
                 <input type="email" class="form-control" id="email" name="email"
-                       value="<?php echo htmlspecialchars($user['email'] ?? ''); ?>" required>
+                       value="<?php echo htmlspecialchars((string)($user['email'] ?? '')); ?>" required>
             </div>
         </div>
         <div class="col-6">
             <div class="mb-3">
                 <label for="phone" class="form-label">Phone</label>
                 <input type="text" class="form-control" id="phone" name="phone_number"
-                       value="<?php echo htmlspecialchars($user['phone_number'] ?? ''); ?>">
+                       value="<?php echo htmlspecialchars((string)($user['phone_number'] ?? '')); ?>">
             </div>
         </div>
     </div>
@@ -42,7 +42,7 @@
             <div class="mb-3">
                 <label for="birthdate" class="form-label">Birthdate</label>
                 <input type="date" class="form-control" id="birthdate" name="birthdate"
-                       value="<?php echo htmlspecialchars($user['birthdate'] ?? ''); ?>">
+                       value="<?php echo htmlspecialchars((string)($user['birthdate'] ?? '')); ?>">
             </div>
         </div>
         <div class="col-4">
@@ -50,9 +50,9 @@
                 <label for="gender" class="form-label">Gender</label>
                 <select class="form-control" id="gender" name="gender">
                     <option value="">Select gender</option>
-                    <option value="male" <?php echo (($user['gender'] ?? '') === 'male') ? 'selected' : ''; ?>>Male</option>
-                    <option value="female" <?php echo (($user['gender'] ?? '') === 'female') ? 'selected' : ''; ?>>Female</option>
-                    <option value="other" <?php echo (($user['gender'] ?? '') === 'other') ? 'selected' : ''; ?>>Other</option>
+                    <option value="male" <?php echo ((string)($user['gender'] ?? '') === 'male') ? 'selected' : ''; ?>>Male</option>
+                    <option value="female" <?php echo ((string)($user['gender'] ?? '') === 'female') ? 'selected' : ''; ?>>Female</option>
+                    <option value="other" <?php echo ((string)($user['gender'] ?? '') === 'other') ? 'selected' : ''; ?>>Other</option>
                 </select>
             </div>
         </div>
@@ -66,7 +66,7 @@
 
     <div class="mb-3">
         <label for="address" class="form-label">Address</label>
-        <textarea class="form-control" id="address" name="address" rows="3"><?php echo htmlspecialchars($user['address'] ?? ''); ?></textarea>
+        <textarea class="form-control" id="address" name="address" rows="3"><?php echo htmlspecialchars((string)($user['address'] ?? '')); ?></textarea>
     </div>
 
     <input type="hidden" name="user_id" value="<?php echo intval($user_id ?? 0); ?>">
