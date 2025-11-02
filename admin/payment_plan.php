@@ -187,52 +187,57 @@ if (!empty($grade_level)) {
 
                   <ul class="list-group list-unstyled list-group-flush">
 
-                  <!-- Group: Fees & Discounts -->
-                  <li class="list-group-items-iii p-2 bg-light text-muted fw-bold">
-                    Fees & Discounts
-                  </li>
-                  <li class="list-group-items-iii d-flex justify-content-between align-items-center p-2">
-                    <span class="text-muted">Tuition Fee</span>
-                    <span>₱0</span>
-                  </li>
-                  <li class="list-group-items-iii d-flex justify-content-between align-items-center p-2">
-                    <span class="text-muted">Miscellaneous</span>
-                    <span>₱0</span>
-                  </li>
-                  <li class="list-group-items-iii d-flex justify-content-between align-items-center p-2">
-                    <span class="text-muted">Discount</span>
-                    <span>₱0</span>
-                  </li>
+                    <!-- Group: Fees & Discounts -->
+                    <li class="list-group-items-iii p-2 bg-light text-muted fw-bold">
+                      Fees & Discounts
+                    </li>
+                    <li class="list-group-items-iii d-flex justify-content-between align-items-center p-2">
+                      <span class="text-muted">Tuition Fee</span>
+                      <span>₱0</span>
+                    </li>
+                    <li class="list-group-items-iii d-flex justify-content-between align-items-center p-2">
+                      <span class="text-muted">Miscellaneous</span>
+                      <span>₱0</span>
+                    </li>
+                    <li class="list-group-items-iii d-flex justify-content-between align-items-center p-2">
+                      <span class="text-muted">Discount</span>
+                      <span>₱0</span>
+                    </li>
+                    <li class="list-group-items-iii d-flex justify-content-between align-items-center p-2 border-top">
+                      <span class="fw-bold">Tuition + Misc - Discount</span>
+                      <span class="fw-bold">₱0</span>
+                    </li>
 
-                  <!-- Horizontal line separator -->
-                  <li class="list-group-items-iii p-0">
-                    <hr class="my-2">
-                  </li>
+                    <!-- Horizontal line separator -->
+                    <li class="list-group-items-iii p-0">
+                      <hr class="my-2">
+                    </li>
 
-                  <!-- Group: Initial Payments -->
-                  <li class="list-group-items-iii p-2 bg-light text-muted fw-bold">
-                    Initial Payments
-                  </li>
-                  <li class="list-group-items-iii d-flex justify-content-between align-items-center p-2">
-                    <span class="text-muted">Registration Fee</span>
-                    <span>₱0</span>
-                  </li>
-                  <li class="list-group-items-iii d-flex justify-content-between align-items-center p-2">
-                    <span class="text-muted">Uniform</span>
-                    <span>₱0</span>
-                  </li>
-                  <li class="list-group-items-iii d-flex justify-content-between align-items-center p-2">
-                    <span class="text-muted">Downpayment</span>
-                    <span>₱0</span>
-                  </li>
+                    <!-- Group: Initial Payments -->
+                    <li class="list-group-items-iii p-2 bg-light text-muted fw-bold">
+                      Initial Payments
+                    </li>
+                    <li class="list-group-items-iii d-flex justify-content-between align-items-center p-2">
+                      <span class="text-muted">Registration Fee</span>
+                      <span>₱0</span>
+                    </li>
+                    <li class="list-group-items-iii d-flex justify-content-between align-items-center p-2">
+                      <span class="text-muted">Uniform</span>
+                      <span>₱0</span>
+                    </li>
+                    <li class="list-group-items-iii d-flex justify-content-between align-items-center p-2">
+                      <span class="text-muted">Downpayment</span>
+                      <span>₱0</span>
+                    </li>
 
-                  <!-- Group: Total -->
-                  <li class="list-group-items-iii d-flex justify-content-between align-items-center p-2 mt-2 border-top">
-                    <span class="fw-bold">Amount to Pay</span>
-                    <span class="fw-bold">₱0</span>
-                  </li>
+                    <!-- Group: Total -->
+                    <li class="list-group-items-iii d-flex justify-content-between align-items-center p-2 mt-2 border-top">
+                      <span class="fw-bold">Amount to Pay Today</span>
+                      <span class="fw-bold">₱0</span>
+                    </li>
 
-                </ul>
+                  </ul>
+
 
 
                   <!-- Checkbox -->
@@ -584,20 +589,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const down = parseFloat(downInput.value) || 0;
 
-    // Amount to Pay = Reg Fee + Uniform + Downpayment
-    const amountToPay = regFee + uniform + down;
+    // Compute Tuition + Misc - Discount (just for display)
+    const tuitionMiscLessDiscount = tuition + misc - discount;
 
-    // Update summary UI in correct order
-    // summaryLis mapping:
-    // 0: Tuition Fee
-    // 1: Miscellaneous
-    // 2: Discount
-    // 3: <hr> -> skip
-    // 4: Registration Fee
-    // 5: Uniform
-    // 6: Downpayment
-    // 7: Amount to Pay
+    // Compute Amount to Pay Today (only initial payments)
+    const amountToPayToday = regFee + uniform + down;
 
+    // Update summary UI
     summaryLis.forEach((li) => {
       const label = li.querySelector("span:first-child")?.textContent.trim();
       const valueSpan = li.querySelector("span:last-child");
@@ -613,6 +611,9 @@ document.addEventListener("DOMContentLoaded", function () {
         case "Discount":
           valueSpan.textContent = formatPeso(discount);
           break;
+        case "Tuition + Misc - Discount":
+          valueSpan.textContent = formatPeso(tuitionMiscLessDiscount);
+          break;
         case "Registration Fee":
           valueSpan.textContent = formatPeso(regFee);
           break;
@@ -622,12 +623,13 @@ document.addEventListener("DOMContentLoaded", function () {
         case "Downpayment":
           valueSpan.textContent = formatPeso(down);
           break;
-        case "Amount to Pay":
-          valueSpan.textContent = formatPeso(amountToPay);
+        case "Amount to Pay Today":
+          valueSpan.textContent = formatPeso(amountToPayToday);
           break;
       }
     });
   };
+
 
   // Enable/disable discount input
   discountType.addEventListener("change", () => {
