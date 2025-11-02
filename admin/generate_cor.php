@@ -308,47 +308,100 @@ if ($result && $row = $result->fetch_assoc()) {
             </div>
 
             <div class="row">
-                <div class="col-12 col-md-6 mb-3" style="font-size: 12px;">
+                <!-- LEFT COLUMN: School Expense -->
+                <div class="col-12 col-md-6 mb-3" style="font-size: 12px !important;">
                     <div style="background-color: #b72029;" class="p-2 mb-3">
-                        <h6 class="mb-1 fw-bolder text-light text-center">School Expense</h6>
+                        <h6 class="mb-1 fw-bolder text-light text-center" style="font-size:12px !important;">School Expense</h6>
                     </div>
-                    <div class="row">
-                        <div class="col-12 col-md-6">
-                            <div class="d-flex justify-content-between">
-                                <span><strong>Payment Plan</strong></span>
-                                <span><?= htmlspecialchars($tuition['payment_plan'] ?? 'N/A') ?></span>
+                    <?php
+                        $paymentPlan = $tuition['payment_plan'] ?? 'N/A';
+                        $tuitionFee = $tuition['tuition_fee'] ?? 0;
+                        $miscellaneous = $tuition['miscellaneous'] ?? 0;
+                        $registrationFee = $tuition['registration_fee'] ?? 0;
+                        $uniform = $tuition['uniform'] ?? 0;
+                        $discount = $tuition['discount_amount'] ?? 0;
+                        $downpayment = $tuition['downpayment'] ?? 0;
+
+                        $tuitionTotal = ($tuitionFee + $miscellaneous) - $discount;
+                        $remainingBalance = $tuitionTotal - $downpayment;
+
+                        switch(strtolower($paymentPlan)) {
+                            case 'semestiral':
+                            case 'semestre':
+                            case 'semester': $installments = 2; break;
+                            case 'quarterly': $installments = 4; break;
+                            case 'monthly': $installments = 9; break;
+                            case 'annual': $installments = 1; break;
+                            default: $installments = 1;
+                        }
+
+                        $perInstallment = $remainingBalance / $installments;
+                        $paymentToday = $registrationFee + $uniform + $downpayment;
+                    ?>
+                    
+                    <div class="row" style="font-size: 12px !important;">
+
+                        <!-- Payments Overview -->
+                        <div class="col-12 col-md-6 mb-3">
+                            <h6 class="fw-bold mb-2" style="font-size:12px !important;">Payments Overview</h6>
+                            <div class="d-flex justify-content-between" style="font-size:12px !important;">
+                                <span>Registration Fee</span>
+                                <span>₱<?= number_format($registrationFee, 2) ?></span>
                             </div>
-                            <div class="d-flex justify-content-between">
-                                <span><strong>Tuition Fee</strong></span>
-                                <span>₱<?= number_format($tuition['tuition_fee'] ?? 0, 2) ?></span>
+                            <div class="d-flex justify-content-between" style="font-size:12px !important;">
+                                <span>Uniform Fee</span>
+                                <span>₱<?= number_format($uniform, 2) ?></span>
                             </div>
-                            <div class="d-flex justify-content-between">
-                                <span><strong>Registration Fee</strong></span>
-                                <span>₱<?= number_format($tuition['registration_fee'] ?? 0, 2) ?></span>
+                            <div class="d-flex justify-content-between" style="font-size:12px !important;">
+                                <span>Downpayment</span>
+                                <span>₱<?= number_format($downpayment, 2) ?></span>
                             </div>
-                            <div class="d-flex justify-content-between">
-                                <span><strong>Miscellaneous</strong></span>
-                                <span>₱<?= number_format($tuition['miscellaneous'] ?? 0, 2) ?></span>
+                            <hr>
+                            <div class="d-flex justify-content-between fw-bold" style="font-size:12px !important;">
+                                <span>Total Payment Today</span>
+                                <span>₱<?= number_format($paymentToday, 2) ?></span>
+                            </div>
+                            <div class="d-flex justify-content-between mt-2" style="font-size:12px !important;">
+                                <span>Remaining Balance</span>
+                                <span>₱<?= number_format($remainingBalance, 2) ?></span>
+                            </div>
+                            <div class="d-flex justify-content-between" style="font-size:12px !important;">
+                                <span>Payment Plan</span>
+                                <span><?= htmlspecialchars($paymentPlan) ?></span>
+                            </div>
+                            <div class="d-flex justify-content-between text-muted" style="font-size:12px !important;">
+                                <span>Per <?= $installments ?> Installment(s)</span>
+                                <span>₱<?= number_format($perInstallment, 2) ?></span>
                             </div>
                         </div>
-                        <div class="col-12 col-md-6">
-                            <div class="d-flex justify-content-between">
-                                <span><strong>Uniform</strong></span>
-                                <span>₱<?= number_format($tuition['uniform'] ?? 0, 2) ?></span>
+                        <!-- Fees Breakdown -->
+                        <div class="col-12 col-md-6 mb-3">
+                            <h6 class="fw-bold mb-2" style="font-size:12px !important;">Fees Breakdown</h6>
+                            <div class="d-flex justify-content-between" style="font-size:12px !important;">
+                                <span>Tuition Fee</span>
+                                <span>₱<?= number_format($tuitionFee, 2) ?></span>
                             </div>
-                            <div class="d-flex justify-content-between">
-                                <span><strong>Discount</strong></span>
-                                <span>₱<?= number_format($tuition['discount_amount'] ?? 0, 2) ?></span>
+                            <div class="d-flex justify-content-between" style="font-size:12px !important;">
+                                <span>Miscellaneous</span>
+                                <span>₱<?= number_format($miscellaneous, 2) ?></span>
                             </div>
-                            <div class="d-flex justify-content-between">
-                                <span><strong>Downpayment</strong></span>
-                                <span>₱<?= number_format($tuition['downpayment'] ?? 0, 2) ?></span>
+                            <div class="d-flex justify-content-between" style="font-size:12px !important;">
+                                <span>Discount</span>
+                                <span>-₱<?= number_format($discount, 2) ?></span>
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between fw-bold" style="font-size:12px !important;">
+                                <span>Total Tuition</span>
+                                <span>₱<?= number_format($tuitionTotal, 2) ?></span>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-12 col-md-6 d-flex justify-content-end" style="font-size: 12px;">
-                    <div class="d-flex align-items-center flex-column" style="font-size: 12px; width: 50%">
+
+
+                <!-- RIGHT COLUMN: Approval Section -->
+                <div class="col-12 col-md-6 mb-3 d-flex align-items-center justify-content-center" style="font-size: 12px;">
+                    <div class="text-center w-100">
                         <p class="mb-0 mb-3 mt-3"><strong>Approved by:</strong></p>
                         <h6 class="mb-0 fw-bolder text-uppercase">MR. CJ A. Escalora</h6>
                         <p class="mb-0">______________________________________</p>
@@ -356,6 +409,7 @@ if ($result && $row = $result->fetch_assoc()) {
                     </div>
                 </div>
             </div>
+
 
 
 
@@ -375,3 +429,36 @@ if ($result && $row = $result->fetch_assoc()) {
 <?php include 'footer.php'; ?>
 </body>
 </html>
+<style>
+/* Force no margins when printing */
+@media print {
+    @page {
+        margin: 0;
+        size: auto; /* Optional: let browser auto-scale */
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center; /* horizontal center */
+        align-items: center;     /* vertical center */
+        min-height: 100vh;       /* full printable height */
+    }
+
+    .container, .content, .row, .col-12, .col-md-6 {
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    /* Hide elements that are not for printing */
+    .d-print-none {
+        display: none !important;
+    }
+
+    /* Make sure everything else takes full width */
+    .d-print-flex {
+        display: flex !important;
+    }
+}
+</style>
