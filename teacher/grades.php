@@ -31,7 +31,7 @@ $students = [];
 if ($course_id > 0) {
     $stmt = $conn->prepare("
         SELECT 
-            u.user_id, u.first_name, u.last_name, u.profile,
+            u.user_id, u.student_number, u.first_name, u.last_name, u.profile,
             cs.q1, cs.q2, cs.q3, cs.q4
         FROM course_students cs
         INNER JOIN users u ON cs.student_id = u.user_id
@@ -68,6 +68,7 @@ if ($course_id > 0) {
 }
 
 /* Excel-style table */
+/* Excel-style table */
 .table-excel {
     width: 100%;
     border-collapse: collapse;
@@ -82,8 +83,12 @@ if ($course_id > 0) {
     background-color: #f4f4f4;
     font-weight: 600;
 }
+/* Stripe effect */
+.table-excel tr:nth-child(odd) {
+    background-color: #ffffff; /* white stripe */
+}
 .table-excel tr:nth-child(even) {
-    background-color: #fbfbfb;
+    background-color: #f9f9f9; /* light gray stripe */
 }
 .table-excel input.grade-input {
     width: 100%;
@@ -93,6 +98,7 @@ if ($course_id > 0) {
     background-color: transparent;
     outline: none;
 }
+
 
 /* Rounded profile */
 .rounded-circle:hover { background-color: rgb(240, 249, 255) !important; }
@@ -162,6 +168,7 @@ $(document).ready(function(){
     <table class="table-excel mb-4">
         <thead>
             <tr>
+                <th class="text-start">Student Number</th>
                 <th class="text-start">Student</th>
                 <th>Q1</th>
                 <th>Q2</th>
@@ -175,19 +182,31 @@ $(document).ready(function(){
                     $profilePath = !empty($student['profile']) ? '../static/uploads/'.$student['profile'] : '../static/uploads/dummy.jpg';
                 ?>
                 <tr>
-                    <td style="text-align: left;">
+                    <td style="text-align: left; width: 15%">
+                        <span><?= htmlspecialchars($student['student_number']) ?></span>
+                    </td>
+
+                    <td style="text-align: left; width: 20%">
                         <span><?= htmlspecialchars($student['first_name'].' '.$student['last_name']) ?></span>
                     </td>
 
                     <?php for($i=1;$i<=4;$i++): ?>
-                    <td>
-                        <input type="number" min="0" max="100" 
-                               class="grade-input" 
-                               value="<?= htmlspecialchars($student['q'.$i]) ?>" 
-                               data-student="<?= $student['user_id'] ?>" 
-                               data-field="q<?= $i ?>">
-                    </td>
-                    <?php endfor; ?>
+                      <td>
+                          <input type="text" 
+                                class="grade-input" 
+                                value="<?= htmlspecialchars($student['q'.$i]) ?>" 
+                                data-student="<?= $student['user_id'] ?>" 
+                                data-field="q<?= $i ?>"
+                                maxlength="3" 
+                                pattern="\d{1,3}" 
+                                oninput="
+                                    this.value = this.value.replace(/[^0-9]/g,''); 
+                                    if(this.value > 100) this.value = 100;
+                                "
+                                onkeydown="return event.keyCode !== 38 && event.keyCode !== 40;">
+                      </td>
+                      <?php endfor; ?>
+
                 </tr>
                 <?php endforeach; ?>
             <?php else: ?>
