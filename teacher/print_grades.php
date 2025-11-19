@@ -106,7 +106,7 @@ h3 { text-align: center; margin: 10px 0; }
 .table-excel tr:nth-child(even) { background-color: #f9f9f9; }
 
 @media print {
-    body { background: none; padding: 0; display: block !important; }
+    body { background: none !important; padding: 0 !important; display: block !important; }
     .print-page { box-shadow: none; border: none !important; margin: 0 !important; }
     .no-print { display: none; }
 }
@@ -179,8 +179,13 @@ h3 { text-align: center; margin: 10px 0; }
     
 </div>
 
-<div class="mt-3 no-print">
-    <button onclick="window.print()" class="btn btn-primary rounded rounded-4">Print</button>
+<!-- Make sure you include Bootstrap Icons in your head -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+<div class="mt-3 no-print text-center">
+    <button onclick="window.print()" class="btn btn-danger rounded-4">
+        <i class="bi bi-printer me-2"></i> Print
+    </button>
 </div>
 
 </body>
