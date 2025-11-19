@@ -125,7 +125,7 @@
                       </div>
                       <div class="col-12 col-md-2 mt-2 mt-md-0">
                         <a href="start_attendance.php?id=<?= $course_id ?>" class="btn btn-danger rounded rounded-4 w-100">
-                          <i class="bi bi-play-circle me-2"></i> Start Attendance
+                          <i class="bi bi-play-circle me-2"></i> Start
                         </a>
                       </div>
                     </div>

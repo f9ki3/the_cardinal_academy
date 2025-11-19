@@ -68,7 +68,6 @@ if ($course_id > 0) {
 }
 
 /* Excel-style table */
-/* Excel-style table */
 .table-excel {
     width: 100%;
     border-collapse: collapse;
@@ -99,6 +98,17 @@ if ($course_id > 0) {
     outline: none;
 }
 
+/* Highlighted row */
+.table-excel tbody tr.highlighted {
+    background-color: #dc3545; /* Bootstrap danger */
+    color: #fff;
+    font-weight: 700;
+}
+.table-excel tbody tr.highlighted input.grade-input {
+    color: #fff;
+    font-weight: 700;
+    background-color: transparent;
+}
 
 /* Rounded profile */
 .rounded-circle:hover { background-color: rgb(240, 249, 255) !important; }
@@ -106,6 +116,8 @@ if ($course_id > 0) {
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(document).ready(function(){
+
+    // Grade input AJAX update
     $(".grade-input").on('change', function(){
         let studentId = $(this).data('student');
         let field = $(this).data('field');
@@ -125,6 +137,66 @@ $(document).ready(function(){
             }
         });
     });
+
+    // Click to highlight row and focus first input
+    $(".table-excel tbody tr").click(function(){
+        $(".table-excel tbody tr").removeClass("highlighted");
+        $(this).addClass("highlighted");
+        $(this).find("input.grade-input").first().focus();
+    });
+
+    // Arrow key navigation with cursor movement inside input
+    $(document).keydown(function(e){
+        let highlighted = $(".table-excel tbody tr.highlighted");
+        if(highlighted.length === 0) return;
+
+        let focusedInput = $("input.grade-input:focus");
+        if(focusedInput.length === 0) return;
+
+        let row = highlighted;
+        let focusable = row.find("span, input.grade-input").toArray();
+        let currentIndex = focusable.indexOf(focusedInput[0] || document.activeElement);
+
+        let valLength = focusedInput.val().length;
+        let cursorPos = focusedInput[0].selectionStart;
+
+        if(e.key === "ArrowDown"){
+            e.preventDefault();
+            let nextRow = row.next("tr");
+            if(nextRow.length){
+                row.removeClass("highlighted");
+                nextRow.addClass("highlighted");
+                let nextFocusable = nextRow.find("span, input.grade-input").toArray()[currentIndex];
+                if(nextFocusable) $(nextFocusable).focus();
+            }
+        } else if(e.key === "ArrowUp"){
+            e.preventDefault();
+            let prevRow = row.prev("tr");
+            if(prevRow.length){
+                row.removeClass("highlighted");
+                prevRow.addClass("highlighted");
+                let prevFocusable = prevRow.find("span, input.grade-input").toArray()[currentIndex];
+                if(prevFocusable) $(prevFocusable).focus();
+            }
+        } else if(e.key === "ArrowRight"){
+            if(cursorPos === valLength){ // end of input → move to next
+                e.preventDefault();
+                if(currentIndex < focusable.length - 1){
+                    $(focusable[currentIndex + 1]).focus();
+                }
+            }
+            // else default cursor movement inside input
+        } else if(e.key === "ArrowLeft"){
+            if(cursorPos === 0){ // start of input → move to previous
+                e.preventDefault();
+                if(currentIndex > 0){
+                    $(focusable[currentIndex - 1]).focus();
+                }
+            }
+            // else default cursor movement inside input
+        }
+    });
+
 });
 </script>
 </head>
@@ -136,7 +208,7 @@ $(document).ready(function(){
 
 <div class="container my-4">
     <div class="row mb-3 border-bottom">
-        <div class="col-12"><h4>Students List</h4></div>
+        <div class="col-12"><h4>Students Grades</h4></div>
     </div>
 
     <!-- Tabs -->
@@ -151,15 +223,20 @@ $(document).ready(function(){
         ?>
     </div>
 
-    <!-- User Banner -->
     <div class="rounded-4 p-4 text-white mb-4" style="
         background-image: url('../static/images/Front gate.jpg'); background-size: cover;
         background-position: center; position: relative; min-height: 150px;">
         <div style="position: absolute; top:0; left:0; right:0; bottom:0; background-color: rgba(0,0,0,0.5); border-radius:1rem;"></div>
         <div class="row position-relative" style="z-index:1;">
-            <div class="col-12 col-md-10"><h1 class="fw-bolder"><?= $full_name ?></h1><p><?= $email ?></p></div>
+            <div class="col-12 col-md-10">
+                <h1 class="fw-bolder"><?= $full_name ?></h1>
+                <p><?= $email ?></p>
+            </div>
             <div class="col-12 col-md-2 d-flex align-items-center justify-content-md-end mt-2 mt-md-0">
-                <button onclick="window.print()" class="btn btn-danger rounded-4">Print Grades</button>
+                <!-- Print Button -->
+                <a href="print_grades.php?id=<?= $course_id ?>" target="_blank" class="btn btn-danger rounded-4 d-flex align-items-center">
+                    <i class="bi bi-printer-fill me-2"></i> Print Grades
+                </a>
             </div>
         </div>
     </div>
@@ -178,18 +255,14 @@ $(document).ready(function(){
         </thead>
         <tbody>
             <?php if(!empty($students)): ?>
-                <?php foreach($students as $student): 
-                    $profilePath = !empty($student['profile']) ? '../static/uploads/'.$student['profile'] : '../static/uploads/dummy.jpg';
-                ?>
+                <?php foreach($students as $student): ?>
                 <tr>
                     <td style="text-align: left; width: 15%">
                         <span><?= htmlspecialchars($student['student_number']) ?></span>
                     </td>
-
                     <td style="text-align: left; width: 20%">
                         <span><?= htmlspecialchars($student['first_name'].' '.$student['last_name']) ?></span>
                     </td>
-
                     <?php for($i=1;$i<=4;$i++): ?>
                       <td>
                           <input type="text" 
@@ -199,19 +272,14 @@ $(document).ready(function(){
                                 data-field="q<?= $i ?>"
                                 maxlength="3" 
                                 pattern="\d{1,3}" 
-                                oninput="
-                                    this.value = this.value.replace(/[^0-9]/g,''); 
-                                    if(this.value > 100) this.value = 100;
-                                "
-                                onkeydown="return event.keyCode !== 38 && event.keyCode !== 40;">
+                                oninput="this.value=this.value.replace(/[^0-9]/g,''); if(this.value>100)this.value=100;">
                       </td>
-                      <?php endfor; ?>
-
+                    <?php endfor; ?>
                 </tr>
                 <?php endforeach; ?>
             <?php else: ?>
                 <tr>
-                    <td colspan="5" class="text-center text-secondary py-3">
+                    <td colspan="6" class="text-center text-secondary py-3">
                         No students enrolled in this course.
                     </td>
                 </tr>
@@ -222,7 +290,6 @@ $(document).ready(function(){
 </div>
 </div>
 </div>
-
 <?php include 'footer.php'; ?>
 </body>
 </html>
