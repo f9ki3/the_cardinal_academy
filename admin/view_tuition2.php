@@ -119,7 +119,7 @@ if ($result && $row = $result->fetch_assoc()) {
     $total_payment = $payment_row['total_payment'] ?? 0;
 
     // ✅ Calculate balance
-    $balance = $tuition['tuition_fee'];
+    $balance = $tuition['tuition_fee'] + $tuition['miscellaneous'] - $tuition['discount_value'] - $tuition['downpayment'];
     $remaining_balance = $balance - $total_payment;
 
     // Add to response
