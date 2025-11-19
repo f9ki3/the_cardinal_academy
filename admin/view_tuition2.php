@@ -164,7 +164,7 @@ if ($result && $row = $result->fetch_assoc()) {
                       <div class="col-12 d-flex flex-column col-md-6">
                           <span class="me-3 text-muted">Student No: <?= htmlspecialchars($tuition['student_number'] ?? 'N/A') ?></span>
                           <span class="me-3 text-muted">Transaction Date: <?php echo $tuition['enrolled_date']; ?> </span>
-                          </span><span class="me-3 text-muted">Tuition Fee: PHP <?php echo $tuition['tuition_fee']; ?></span>
+                          </span><span class="me-3 text-muted">Tuition Fee: PHP <?php echo $balance ?></span>
                       </div>
 
                      </div>
