@@ -138,12 +138,38 @@ $(document).ready(function(){
         });
     });
 
-    // Click to highlight row and focus first input
-    $(".table-excel tbody tr").click(function(){
+    // Click row or cell → highlight row; if cell has input, focus inside that input
+    $(".table-excel tbody tr td").click(function(e){
+        e.stopPropagation(); // allow our outside click handler to work correctly
+
+        let row = $(this).closest("tr");
+
+        // Highlight row
         $(".table-excel tbody tr").removeClass("highlighted");
-        $(this).addClass("highlighted");
-        $(this).find("input.grade-input").first().focus();
+        row.addClass("highlighted");
+
+        // If this cell contains an input → focus that exact input
+        let input = $(this).find("input.grade-input");
+        if (input.length) {
+            input.focus();
+
+            // Move cursor to end of current value
+            let val = input.val();
+            input[0].setSelectionRange(val.length, val.length);
+        }
     });
+
+
+    // Click outside table → remove highlight
+    $(document).mouseup(function(e) {
+        let table = $(".table-excel");
+
+        // If the click is NOT inside the table
+        if (!table.is(e.target) && table.has(e.target).length === 0) {
+            $(".table-excel tbody tr").removeClass("highlighted");
+        }
+    });
+
 
     // Arrow key navigation with cursor movement inside input
     $(document).keydown(function(e){
