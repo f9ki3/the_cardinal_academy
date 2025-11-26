@@ -115,112 +115,202 @@ if ($course_id > 0) {
 </style>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-$(document).ready(function(){
+$(document).ready(function () {
 
-    // Grade input AJAX update
-    $(".grade-input").on('change', function(){
-        let studentId = $(this).data('student');
-        let field = $(this).data('field');
-        let value = $(this).val();
+    // =============================
+    //  FUNCTION: Sanitize Empty Inputs
+    // =============================
+    function fixEmpty(input) {
+        let v = input.val().trim();
+        if (v === "" || isNaN(v)) {
+            input.val("0");
+        }
+    }
 
-        $.ajax({
-            url: 'update_grade.php',
-            type: 'POST',
-            data: { student_id: studentId, field: field, value: value, course_id: <?= $course_id ?> },
-            success: function(response){
-                if(!response.success){
-                    alert('Update failed: ' + response.message);
-                }
-            },
-            error: function(){
-                alert('An error occurred.');
-            }
+    // =============================
+    //  AJAX UPDATE GRADE
+    // =============================
+    $(".grade-input").on("change", function () {
+        fixEmpty($(this));
+
+        $.post("update_grade.php", {
+            student_id: $(this).data("student"),
+            field: $(this).data("field"),
+            value: $(this).val(),
+            course_id: <?= $course_id ?>
         });
     });
 
-    // Click row or cell → highlight row; if cell has input, focus inside that input
-    $(".table-excel tbody tr td").click(function(e){
-        e.stopPropagation(); // allow our outside click handler to work correctly
+    // =============================
+    //  ARROW KEY MOVEMENT (robust)
+    // =============================
+    $(document).on("keydown", ".grade-input", function (e) {
+        const $input = $(this);
+        const $td = $input.closest("td");
+        const $tr = $td.closest("tr");
 
+        // use tbody rows to compute indices (ignores thead)
+        const $tbody = $tr.closest("tbody");
+        const $rows = $tbody.children("tr");
+
+        const colIndex = $td.index();
+        const rowIndex = $rows.index($tr); // index within tbody
+
+        let inputEl = $input[0];
+        let caretPos = inputEl.selectionStart;
+        let valLen = inputEl.value.length;
+
+        // helper: focus target cell input (if exists)
+        function focusCell($row, col) {
+            if (!$row || $row.length === 0) return false;
+            const $cell = $row.children().eq(col);
+            if ($cell.length === 0) return false;
+            const $nextInput = $cell.find(".grade-input");
+            if ($nextInput.length) {
+                $rows.removeClass("highlighted");
+                $row.addClass("highlighted");
+                $nextInput.focus();
+                // place caret at end
+                const el = $nextInput[0];
+                el.setSelectionRange(el.value.length, el.value.length);
+                return true;
+            }
+            return false;
+        }
+
+        // LEFT
+        if (e.key === "ArrowLeft") {
+            // allow normal caret movement unless caret at position 0 (start)
+            if (caretPos > 0) return;
+            // move left to previous td that contains an input
+            for (let c = colIndex - 1; c >= 0; c--) {
+                if (focusCell($tr, c)) { e.preventDefault(); return; }
+            }
+            e.preventDefault();
+        }
+
+        // RIGHT
+        else if (e.key === "ArrowRight") {
+            // allow caret movement unless at end
+            if (caretPos < valLen) return;
+            // move right to next td that contains an input
+            const lastCol = $tr.children().length - 1;
+            for (let c = colIndex + 1; c <= lastCol; c++) {
+                if (focusCell($tr, c)) { e.preventDefault(); return; }
+            }
+            e.preventDefault();
+        }
+
+        // UP
+        else if (e.key === "ArrowUp") {
+            // find previous row with an input in same column (if missing skip)
+            for (let r = rowIndex - 1; r >= 0; r--) {
+                const $targetRow = $rows.eq(r);
+                if (focusCell($targetRow, colIndex)) { e.preventDefault(); return; }
+                // if not found in same col, optionally try searching nearby cols:
+                // (commented out — your cells for grades are consistent so usually not needed)
+                // for (let c = colIndex - 1; c >= 0; c--) if (focusCell($targetRow, c)) { e.preventDefault(); return; }
+            }
+            e.preventDefault();
+        }
+
+        // DOWN
+        else if (e.key === "ArrowDown") {
+            const rowCount = $rows.length;
+            for (let r = rowIndex + 1; r < rowCount; r++) {
+                const $targetRow = $rows.eq(r);
+                if (focusCell($targetRow, colIndex)) { e.preventDefault(); return; }
+            }
+            e.preventDefault();
+        }
+
+    });
+
+    // =============================
+    // REAL-TIME GWA CALCULATION
+    // =============================
+    function calculateRow(row) {
+        let grades = [];
+        row.find("input.grade-input").each(function () {
+            let v = parseFloat($(this).val());
+            if (!isNaN(v)) grades.push(v);
+        });
+
+        let gwaCell = row.find(".gwa-cell");
+        let statusCell = row.find(".status-cell");
+
+        if (grades.length === 0) {
+            gwaCell.html("<span class='text-muted'>N/A</span>");
+            statusCell.text("-");
+            statusCell.removeClass("pass-status fail-status");
+            return;
+        }
+
+        let avg = grades.reduce((a,b)=>a+b,0) / grades.length;
+        gwaCell.text(avg.toFixed(2));
+
+        if (avg >= 75) {
+            statusCell.text("PASS").removeClass("fail-status").addClass("pass-status");
+        } else {
+            statusCell.text("FAIL").removeClass("pass-status").addClass("fail-status");
+        }
+    }
+
+    $(".grade-input").on("input", function () {
+        calculateRow($(this).closest("tr"));
+    });
+
+    $("tbody tr").each(function () { calculateRow($(this)); });
+
+    // =============================
+    // ROW FOCUS ON CLICK
+    // =============================
+    $(".table-excel tbody tr td").click(function () {
         let row = $(this).closest("tr");
 
-        // Highlight row
         $(".table-excel tbody tr").removeClass("highlighted");
         row.addClass("highlighted");
 
-        // If this cell contains an input → focus that exact input
         let input = $(this).find("input.grade-input");
         if (input.length) {
             input.focus();
-
-            // Move cursor to end of current value
-            let val = input.val();
-            input[0].setSelectionRange(val.length, val.length);
+            input[0].setSelectionRange(input.val().length, input.val().length);
         }
     });
 
-
-    // Click outside table → remove highlight
-    $(document).mouseup(function(e) {
+    // =============================
+    // CLICK OUTSIDE → SET EMPTY TO 0
+    // =============================
+    $(document).mouseup(function (e) {
         let table = $(".table-excel");
 
-        // If the click is NOT inside the table
         if (!table.is(e.target) && table.has(e.target).length === 0) {
+            $(".grade-input").each(function () {
+                fixEmpty($(this));
+            });
             $(".table-excel tbody tr").removeClass("highlighted");
         }
     });
 
+    // =============================
+    // ESC KEY
+    // =============================
+    $(document).on("keydown", function (e) {
+        if (e.key === "Escape") {
+            $(".grade-input").each(function () {
+                fixEmpty($(this));
+            });
 
-    // Arrow key navigation with cursor movement inside input
-    $(document).keydown(function(e){
-        let highlighted = $(".table-excel tbody tr.highlighted");
-        if(highlighted.length === 0) return;
-
-        let focusedInput = $("input.grade-input:focus");
-        if(focusedInput.length === 0) return;
-
-        let row = highlighted;
-        let focusable = row.find("span, input.grade-input").toArray();
-        let currentIndex = focusable.indexOf(focusedInput[0] || document.activeElement);
-
-        let valLength = focusedInput.val().length;
-        let cursorPos = focusedInput[0].selectionStart;
-
-        if(e.key === "ArrowDown"){
-            e.preventDefault();
-            let nextRow = row.next("tr");
-            if(nextRow.length){
-                row.removeClass("highlighted");
-                nextRow.addClass("highlighted");
-                let nextFocusable = nextRow.find("span, input.grade-input").toArray()[currentIndex];
-                if(nextFocusable) $(nextFocusable).focus();
-            }
-        } else if(e.key === "ArrowUp"){
-            e.preventDefault();
-            let prevRow = row.prev("tr");
-            if(prevRow.length){
-                row.removeClass("highlighted");
-                prevRow.addClass("highlighted");
-                let prevFocusable = prevRow.find("span, input.grade-input").toArray()[currentIndex];
-                if(prevFocusable) $(prevFocusable).focus();
-            }
-        } else if(e.key === "ArrowRight"){
-            if(cursorPos === valLength){ // end of input → move to next
-                e.preventDefault();
-                if(currentIndex < focusable.length - 1){
-                    $(focusable[currentIndex + 1]).focus();
-                }
-            }
-            // else default cursor movement inside input
-        } else if(e.key === "ArrowLeft"){
-            if(cursorPos === 0){ // start of input → move to previous
-                e.preventDefault();
-                if(currentIndex > 0){
-                    $(focusable[currentIndex - 1]).focus();
-                }
-            }
-            // else default cursor movement inside input
+            $(".table-excel tbody tr").removeClass("highlighted");
+            $(".grade-input").blur();
         }
+    });
+
+    // =============================
+    // BLUR FIX EMPTY
+    // =============================
+    $(".grade-input").on("blur", function () {
+        fixEmpty($(this));
     });
 
 });
@@ -271,45 +361,40 @@ $(document).ready(function(){
     <table class="table-excel mb-4">
         <thead>
             <tr>
-                <th class="text-start">Student Number</th>
-                <th class="text-start">Student</th>
-                <th>Q1</th>
-                <th>Q2</th>
-                <th>Q3</th>
-                <th>Q4</th>
+                <th width="15%" class="text-start">Student Number</th>
+                <th width="15%" class="text-start">Student</th>
+                <th width="8%">Q1</th>
+                <th width="8%">Q2</th>
+                <th width="8%">Q3</th>
+                <th width="8%">Q4</th>
+                <th width="15%">GWA</th>
+                <th width="15%">Status</th>
             </tr>
         </thead>
+
         <tbody>
-            <?php if(!empty($students)): ?>
-                <?php foreach($students as $student): ?>
-                <tr>
-                    <td style="text-align: left; width: 15%">
-                        <span><?= htmlspecialchars($student['student_number']) ?></span>
-                    </td>
-                    <td style="text-align: left; width: 20%">
-                        <span><?= htmlspecialchars($student['first_name'].' '.$student['last_name']) ?></span>
-                    </td>
-                    <?php for($i=1;$i<=4;$i++): ?>
-                      <td>
-                          <input type="text" 
-                                class="grade-input" 
-                                value="<?= htmlspecialchars($student['q'.$i]) ?>" 
-                                data-student="<?= $student['user_id'] ?>" 
-                                data-field="q<?= $i ?>"
-                                maxlength="3" 
-                                pattern="\d{1,3}" 
-                                oninput="this.value=this.value.replace(/[^0-9]/g,''); if(this.value>100)this.value=100;">
-                      </td>
-                    <?php endfor; ?>
-                </tr>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <tr>
-                    <td colspan="6" class="text-center text-secondary py-3">
-                        No students enrolled in this course.
-                    </td>
-                </tr>
-            <?php endif; ?>
+            <?php foreach ($students as $student): ?>
+            <tr>
+                <td class="text-start"><?= $student['student_number'] ?></td>
+                <td class="text-start"><?= $student['first_name'] . ' ' . $student['last_name'] ?></td>
+
+                <?php for ($i=1; $i<=4; $i++): ?>
+                <td>
+                    <input type="text"
+                           class="grade-input"
+                           value="<?= $student['q'.$i] ?>"
+                           data-student="<?= $student['user_id'] ?>"
+                           data-field="q<?= $i ?>"
+                           maxlength="3"
+                           oninput="this.value=this.value.replace(/[^0-9]/g,''); if(this.value>100)this.value=100;">
+                </td>
+                <?php endfor; ?>
+
+                <!-- GWA + STATUS (Live JS Updated) -->
+                <td class="gwa-cell">0.00</td>
+                <td class="status-cell fw-bold">-</td>
+            </tr>
+            <?php endforeach; ?>
         </tbody>
     </table>
 
