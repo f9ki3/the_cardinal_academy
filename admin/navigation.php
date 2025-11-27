@@ -21,6 +21,8 @@ $access = [
     'tuition' => ['Administrator', 'Assistant Principal', 'Accounting'],
     'disciplinary' => ['Administrator', 'Assistant Principal', 'Guidance'],
     'medical' => ['Administrator', 'Assistant Principal', 'School Nurse'],
+    'grades' => ['Administrator', 'Assistant Principal', 'Registrar'],
+    
 ];
 ?>
 
@@ -71,6 +73,7 @@ $access = [
             renderLink('student_informtion.php', 'bi bi-person', 'Student Info', $role, $access['student_info']);
             renderLink('cor_issuance2.php', 'bi bi-file-earmark-text', 'COR Issuance', $role, $access['cor']);
             renderLink('billing2.php', 'bi bi-credit-card-2-front', 'Tuition Payment', $role, $access['tuition']);
+            renderLink('final_grade.php', 'bi bi bi-dropbox', 'Student Grades', $role, $access['grades']);
             ?>
 
             <!-- Content Management -->
