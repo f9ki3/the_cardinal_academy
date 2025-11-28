@@ -1,56 +1,42 @@
-<?php
-include 'session_login.php';
-include '../db_connection.php';
+<?php include 'session_login.php'; ?>
+<?php include '../db_connection.php'; ?>
 
-// --- Pagination & search ----------------------------------------------------
-$limit  = 10;
-$page   = isset($_GET['page']) && is_numeric($_GET['page']) ? (int) $_GET['page'] : 1;
+<?php
+// Pagination and Search
+$limit = 10;
+$page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int) $_GET['page'] : 1;
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 $offset = ($page - 1) * $limit;
 
-$searchEsc = mysqli_real_escape_string($conn, $search);
+// Count total student users
+$count_query = "SELECT COUNT(*) as total FROM users 
+                WHERE acc_type = 'student' AND (
+                    username LIKE '%$search%' 
+                    OR CONCAT(first_name, ' ', last_name) LIKE '%$search%'
+                )";
 
-// --- Count total rows -------------------------------------------------------
-$count_query = "
-    SELECT COUNT(*) AS total
-    FROM student_information si
-    WHERE (
-          si.student_number LIKE '%$searchEsc%'
-          OR si.firstname LIKE '%$searchEsc%'
-          OR si.middlename LIKE '%$searchEsc%'
-          OR si.lastname LIKE '%$searchEsc%'
-          OR si.email LIKE '%$searchEsc%'
-          OR si.phone LIKE '%$searchEsc%'
-      )
-";
 $count_result = mysqli_query($conn, $count_query);
 if (!$count_result) {
     die("<p style='color:red;'>Count Query Failed: " . mysqli_error($conn) . "</p>");
 }
-$total        = mysqli_fetch_assoc($count_result)['total'];
-$total_pages  = ceil($total / $limit);
 
-// --- Fetch paginated rows ---------------------------------------------------
-$query = "
-    SELECT 
-        si.student_number,
-        si.firstname,
-        si.middlename,
-        si.lastname,
-        si.email,
-        si.phone
-    FROM student_information si
-    WHERE (
-          si.student_number LIKE '%$searchEsc%'
-          OR si.firstname LIKE '%$searchEsc%'
-          OR si.middlename LIKE '%$searchEsc%'
-          OR si.lastname LIKE '%$searchEsc%'
-          OR si.email LIKE '%$searchEsc%'
-          OR si.phone LIKE '%$searchEsc%'
-      )
-    ORDER BY si.id DESC
-    LIMIT $limit OFFSET $offset
-";
+$total = mysqli_fetch_assoc($count_result)['total'];
+$total_pages = ceil($total / $limit);
+
+// Fetch student users (removed enroll_id)
+$query = "SELECT 
+            student_number, 
+            CONCAT(first_name, ' ', last_name) AS fullname, 
+            username, 
+            email
+          FROM users 
+          WHERE acc_type = 'student' AND (
+              username LIKE '%$search%' 
+              OR CONCAT(first_name, ' ', last_name) LIKE '%$search%'
+          )
+          ORDER BY created_at DESC
+          LIMIT $limit OFFSET $offset";
+
 $result = mysqli_query($conn, $query);
 if (!$result) {
     die("<p style='color:red;'>Data Query Failed: " . mysqli_error($conn) . "</p>");
@@ -62,11 +48,11 @@ if (!$result) {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>AcadeSys - Students Information</title>
+  <title>AcadeSys - Manage Students</title>
   <?php include 'header.php'; ?>
 </head>
 <body>
-<div class="d-flex flex-row bg-white">
+<div class="d-flex flex-row bg-light">
   <?php include 'navigation.php'; ?>
 
   <div class="content flex-grow-1">
@@ -75,33 +61,41 @@ if (!$result) {
     <div class="container my-4">
       <div class="row g-4">
         <div class="col-12">
-          <div class="rounded p-3">
+          <div class="rounded p-3 bg-white">
             <div class="container my-4">
               <div class="row mb-3">
-                <div class="col-12 col-md-6">
+                <div class="col-12 col-md-5">
                   <h4>Student Grades</h4>
                 </div>
-                <div class="col-12 col-md-6">
-                  <form method="GET" action="">
-                    <div class="input-group">
+                <div class="col-12 col-md-7 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <!-- Search Form -->
+                    <form method="GET" action="" class="flex-grow-1">
+                      <div class="input-group">
                         <input 
-                            class="form-control rounded rounded-4" 
-                            type="text" 
-                            name="search" 
-                            value="<?= htmlspecialchars($search ?? '') ?>" 
-                            placeholder="Search Student ID, Name, Email or Contact">
-                        <button class="btn border ms-2 rounded rounded-4" type="submit">
-                            Search
-                        </button>
-                    </div>
-                  </form>
-                </div>
+                          class="form-control rounded rounded-4" 
+                          type="text" 
+                          name="search" 
+                          value="<?= htmlspecialchars($search) ?>" 
+                          placeholder="Search Username or Fullname"
+                        >
+                        <button class="btn border rounded rounded-4 ms-2" type="submit">Search</button>
+                      </div>
+                    </form>
 
-                <div class="col-12 pt-3">
+                    <!-- Create Button -->
+                    <a 
+                      href="create_students.php?nav_drop=true" 
+                      class="btn bg-main text-light rounded rounded-4 px-4"
+                    >
+                      + Create
+                    </a>
+                  </div>
+
+                  <div class="col-12 pt-3">
                   <?php if (isset($_GET['status'])): ?>
-                    <?php if ($_GET['status'] === 'success'): ?>
+                    <?php if ($_GET['status'] === 'created'): ?>
                       <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        ✅ Admission updated successfully!
+                        ✅ Created account successfully!
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                       </div>
                     <?php elseif ($_GET['status'] === 'error'): ?>
@@ -109,93 +103,80 @@ if (!$result) {
                         ❌ Something went wrong. Please try again.
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                       </div>
-                    <?php elseif ($_GET['status'] === 'review'): ?>
+                    <?php elseif ($_GET['status'] === 'deleted'): ?>
                       <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                        ⚠️ Application is under review.
+                        ⚠️ Remove account successfully.
                         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                       </div>
                     <?php endif; ?>
                   <?php endif; ?>
                 </div>
+
+
+               
               </div>
 
               <div class="table-responsive">
                 <table class="table table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th>Student Number</th>
-                            <th>Firstname</th>
-                            <th>Middlename</th>
-                            <th>Lastname</th>
-                            <th>Email</th>
-                            <th>Contact</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+                  <thead>
+                    <tr>
+                      <th>Student Number</th>
+                      <th>Fullname</th>
+                      <th>Username</th>
+                      <th>Email</th>
+                    </tr>
+                  </thead>
+                  <tbody>
                     <?php if (mysqli_num_rows($result) > 0): ?>
-                        <?php while ($row = mysqli_fetch_assoc($result)): ?>
-                        <tr class="clickable-row" data-href="view_student_grades.php?student_id=<?= urlencode($row['student_number']) ?>">
-                            <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['student_number'] ?? 'N/A') ?></p></td>
-                            <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['firstname'] ?: 'N/A') ?></p></td>
-                            <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['middlename'] ?: 'N/A') ?></p></td>
-                            <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['lastname'] ?: 'N/A') ?></p></td>
-                            <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['email'] ?: 'N/A') ?></p></td>
-                            <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['phone'] ?: 'N/A') ?></p></td>
+                      <?php while ($row = mysqli_fetch_assoc($result)): ?>
+                        <tr class="clickable-row" data-id="<?= htmlspecialchars($row['student_number']) ?>">
+                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['student_number']) ?></p></td>
+                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['fullname']) ?></p></td>
+                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['username']) ?></p></td>
+                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['email']) ?></p></td>
                         </tr>
-                        <?php endwhile; ?>
+                      <?php endwhile; ?>
                     <?php else: ?>
-                        <tr>
-                            <td colspan="6"><p class="text-muted text-center pt-3 pb-3 mb-0">No student data available</p></td>
-                        </tr>
+                      <tr>
+                        <td colspan="5"><p class="text-muted text-center pt-3 pb-3 mb-0">No student data available</p></td>
+                      </tr>
                     <?php endif; ?>
-                    </tbody>
-
+                  </tbody>
                 </table>
-            </div>
 
+              </div>
+
+              <!-- Pagination -->
               <?php if ($total_pages > 1): ?>
                 <nav aria-label="Page navigation">
-                    <ul class="pagination justify-content-start pagination-sm">
-                    <?php 
-                        $query_params = ['search' => $search];
-                    ?>
-
+                  <ul class="pagination justify-content-start pagination-sm">
                     <?php if ($page > 1): ?>
-                        <li class="page-item">
-                        <a class="page-link text-muted" 
-                            href="?<?= http_build_query(array_merge($query_params, ['page' => $page - 1])) ?>">
-                            Previous
-                        </a>
-                        </li>
+                      <li class="page-item">
+                        <a class="page-link text-muted" href="?search=<?= urlencode($search) ?>&page=<?= $page - 1 ?>">Previous</a>
+                      </li>
                     <?php endif; ?>
 
                     <?php
-                        $max_links = 5;
-                        $start = max(1, $page - floor($max_links / 2));
-                        $end = min($total_pages, $start + $max_links - 1);
-                        if ($end - $start < $max_links - 1) {
-                            $start = max(1, $end - $max_links + 1);
-                        }
+                      $max_links = 5;
+                      $start = max(1, $page - floor($max_links / 2));
+                      $end = min($total_pages, $start + $max_links - 1);
+                      if ($end - $start < $max_links - 1) {
+                        $start = max(1, $end - $max_links + 1);
+                      }
                     ?>
 
                     <?php for ($i = $start; $i <= $end; $i++): ?>
-                        <li class="page-item">
-                        <a class="page-link text-muted <?= $i == $page ? 'fw-bold' : '' ?>" 
-                            href="?<?= http_build_query(array_merge($query_params, ['page' => $i])) ?>">
-                            <?= $i ?>
-                        </a>
-                        </li>
+                      <li class="page-item">
+                        <a class="page-link text-muted <?= $i == $page ? 'fw-bold' : '' ?>" href="?search=<?= urlencode($search) ?>&page=<?= $i ?>"><?= $i ?></a>
+                      </li>
                     <?php endfor; ?>
 
                     <?php if ($page < $total_pages): ?>
-                        <li class="page-item">
-                        <a class="page-link text-muted" 
-                            href="?<?= http_build_query(array_merge($query_params, ['page' => $page + 1])) ?>">
-                            Next
-                        </a>
-                        </li>
+                      <li class="page-item">
+                        <a class="page-link text-muted" href="?search=<?= urlencode($search) ?>&page=<?= $page + 1 ?>">Next</a>
+                      </li>
                     <?php endif; ?>
-                    </ul>
+                  </ul>
                 </nav>
               <?php endif; ?>
 
@@ -212,11 +193,13 @@ if (!$result) {
 </html>
 
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    document.querySelectorAll(".clickable-row").forEach(function(row) {
-        row.addEventListener("click", function() {
-            window.location.href = this.dataset.href;
-        });
+  document.addEventListener('DOMContentLoaded', function () {
+    const rows = document.querySelectorAll('.clickable-row');
+    rows.forEach(row => {
+      row.addEventListener('click', () => {
+        const id = row.getAttribute('data-id');
+        window.location.href = `view_student_grades.php?student_id=${id}&nav_drop=true`;
+      });
     });
-});
+  });
 </script>
