@@ -126,7 +126,20 @@ body{background:#F7F7F7;font-family:'Segoe UI';}
 
     <!-- Student Details -->
     <div class="record-section">
-        <h5 class="fw-bolder">Student Details</h5>
+        <div class="row d-flex align-items-center">
+            <div class="col-12 col-md-10">
+                <h5 class="fw-bolder">Student Details</h5>
+            </div>
+            <div class="col-12 col-md-2">
+                <button disabled class="btn rounded rounded-4 btn-sm border">
+                    <i class="bi bi-check-circle me-1"></i> Approve
+                </button>
+                <button class="btn rounded rounded-4 btn-sm border">
+                    <i class="bi bi-printer me-1"></i> Print
+                </button>
+            </div>
+
+        </div>
         <div class="row">
             <div class="col-md-4 record-item">
                 <label>Student Number</label>
@@ -167,12 +180,8 @@ body{background:#F7F7F7;font-family:'Segoe UI';}
         </div>
 
         <hr>
-
-        <!-- Grades Table -->
-        <h5 class="fw-bolder mb-3">Student Grades</h5>
-
-        <table class="table table-sm table-striped align-middle">
-            <thead class="table-light">
+        <table class="table  table-sm table-striped align-middle">
+            <thead>
                 <tr>
                     <th>Subject</th>
                     <th>Q1</th>
