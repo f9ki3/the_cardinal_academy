@@ -83,12 +83,12 @@ if (!$result) {
                     </form>
 
                     <!-- Create Button -->
-                    <a 
+                    <!-- <a 
                       href="create_students.php?nav_drop=true" 
                       class="btn bg-main text-light rounded rounded-4 px-4"
                     >
                       + Create
-                    </a>
+                    </a> -->
                   </div>
 
                   <div class="col-12 pt-3">

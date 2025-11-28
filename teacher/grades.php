@@ -367,7 +367,7 @@ $(document).ready(function () {
                 <th width="8%">Q2</th>
                 <th width="8%">Q3</th>
                 <th width="8%">Q4</th>
-                <th width="15%">GWA</th>
+                <th width="15%">Average</th>
                 <th width="15%">Status</th>
             </tr>
         </thead>
