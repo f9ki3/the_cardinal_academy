@@ -46,7 +46,7 @@ if (!empty($student_id)) {
             cs.q4
         FROM course_students cs
         JOIN courses ON cs.course_id = courses.id
-        WHERE cs.student_id = ?
+        WHERE cs.student_id = ? AND cs.status = 'pending'
     ";
     $stmt2 = $conn->prepare($sql);
     $stmt2->bind_param("i", $user_id);
