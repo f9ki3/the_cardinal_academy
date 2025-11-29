@@ -33,7 +33,7 @@ if (!empty($student_id)) {
     /* --------------------------
         2. FETCH STUDENT INFORMATION
     ---------------------------*/
-    $query = "SELECT * FROM student_information WHERE student_number = ?";
+    $query = "SELECT * FROM users WHERE student_number = ?";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("s", $student_id);
     $stmt->execute();
@@ -149,7 +149,7 @@ body{background:#F7F7F7;font-family:'Segoe UI';}
             <div class="col-md-4 record-item">
                 <label>Full Name</label>
                 <div class="data">
-                    <?= htmlspecialchars(($student['firstname'] ?? '') . ' ' . ($student['middlename'] ?? '') . ' ' . ($student['lastname'] ?? '')) ?>
+                    <?= htmlspecialchars(($student['first_name'] ?? '') . ' '. ' ' . ($student['last_name'] ?? '')) ?>
                 </div>
             </div>
 
@@ -160,7 +160,7 @@ body{background:#F7F7F7;font-family:'Segoe UI';}
 
             <div class="col-md-4 record-item">
                 <label>Phone</label>
-                <div class="data"><?= htmlspecialchars($student['phone'] ?? '-') ?></div>
+                <div class="data"><?= htmlspecialchars($student['phone_number'] ?? '-') ?></div>
             </div>
 
             <div class="col-md-4 record-item">
@@ -170,12 +170,12 @@ body{background:#F7F7F7;font-family:'Segoe UI';}
 
             <div class="col-md-4 record-item">
                 <label>Birth Date</label>
-                <div class="data"><?= htmlspecialchars($student['birthday'] ?? '-') ?></div>
+                <div class="data"><?= htmlspecialchars($student['birthdate'] ?? '-') ?></div>
             </div>
 
             <div class="col-md-4 record-item">
                 <label>Address</label>
-                <div class="data"><?= htmlspecialchars($student['residential_address'] ?? '-') ?></div>
+                <div class="data"><?= htmlspecialchars($student['address'] ?? '-') ?></div>
             </div>
         </div>
 
@@ -206,7 +206,7 @@ body{background:#F7F7F7;font-family:'Segoe UI';}
                         </tr>
                     <?php endforeach; ?>
                 <?php else: ?>
-                    <tr><td colspan="7" class="text-center text-muted">No grade records found.</td></tr>
+                    <tr><td colspan="7" class="text-center text-muted">No Active Subjects Enrolled.</td></tr>
                 <?php endif; ?>
             </tbody>
         </table>
