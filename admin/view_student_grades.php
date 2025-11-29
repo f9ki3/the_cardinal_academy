@@ -151,7 +151,7 @@ body{background:#F7F7F7;font-family:'Segoe UI';}
 
             <div class="col-12 col-md-4 d-flex justify-content-end">
                 <!-- type="button" so it doesn't submit the form -->
-                <button id="approveBtn" type="button" disabled class="btn me-2 rounded rounded-4 btn-sm border">
+                <button id="approveBtn" type="button" disabled style="background-color: #c71515ff" class="btn text-light me-2 rounded rounded-4 btn-sm border">
                     <i class="bi bi-check-circle me-1"></i> Approve
                 </button>
 
@@ -309,12 +309,18 @@ body{background:#F7F7F7;font-family:'Segoe UI';}
 <?php include 'footer.php'; ?>
 </body>
 </html>
+<!-- SweetAlert2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+
+<!-- SweetAlert2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
     let gwa = parseFloat("<?= $gwa ?>");
     const approveBtn = document.getElementById("approveBtn");
+    
 
     // Enable/disable approve button
     if (!isNaN(gwa) && gwa >= 75) {
@@ -340,7 +346,9 @@ document.addEventListener("DOMContentLoaded", function () {
         <?php endforeach; ?>
     ];
 
-    // ---------- ON APPROVE CLICK ----------
+    
+
+   // ---------- ON APPROVE CLICK ----------
     approveBtn.addEventListener("click", function () {
 
         const form = document.getElementById("mainForm");
@@ -364,13 +372,55 @@ document.addEventListener("DOMContentLoaded", function () {
             method: "POST",
             body: formData
         })
-        .then(res => res.text())
+        .then(res => res.json()) // Expect JSON response from PHP
         .then(data => {
             console.log("Server Response:", data);
-            window.location.reload();
+
+            const swalOptions = {
+                title: data.status === "success" ? 'Success!' : 'Error',
+                text: data.message,
+                icon: data.status === "success" ? 'success' : 'error',
+                confirmButtonText: 'OK',
+                customClass: {
+                    confirmButton: 'swal-confirm-teal-rounded'
+                }
+            };
+
+            Swal.fire(swalOptions).then(() => {
+                if (data.status === "success") {
+                    window.location.reload();
+                }
+            });
         })
-        .catch(err => console.error("Error saving:", err));
+        .catch(err => {
+            console.error("Error saving:", err);
+            Swal.fire({
+                title: 'Error',
+                text: 'Failed to save data. Please try again.',
+                icon: 'error',
+                confirmButtonText: 'OK',
+                customClass: {
+                    confirmButton: 'swal-confirm-teal-rounded'
+                }
+            });
+        });
     });
+
+
 });
 </script>
 
+<style>
+.swal-confirm-teal-rounded {
+    background-color: #c71515ff !important; /* teal */
+    color: white !important;
+    border-radius: 50px !important;       /* fully rounded */
+    padding: 0.5rem 1.5rem !important;
+    border: none !important;
+    font-weight: bold;
+}
+
+.swal-confirm-teal-rounded:hover {
+    background-color: #940b0bff !important; /* darker teal on hover */
+}
+</style>
