@@ -12,44 +12,45 @@ function generateUniqueJoinedId($conn) {
         $stmt->bind_result($count);
         $stmt->fetch();
         $stmt->close();
-    } while ($count > 0); // repeat if already exists
+    } while ($count > 0);
     return $joined_id;
 }
 
-// Check if the form is submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
     $teacher_id = $_SESSION['user_id'];
-    
-    // Collect and sanitize input
+
+    // Collect inputs
     $course_name = trim($_POST['course_name'] ?? '');
     $description = trim($_POST['description'] ?? '');
     $day = $_POST['day'] ?? '';
     $start_time = $_POST['start_time'] ?? '';
     $end_time = $_POST['end_time'] ?? '';
-    $section = trim($_POST['section'] ?? '');
+    $grade_level = trim($_POST['grade_level'] ?? '');  // UPDATED
     $subject = trim($_POST['subject'] ?? '');
     $room = trim($_POST['room'] ?? '');
 
-    // Validate required fields
+    // Validate inputs
     $errors = [];
     if (!$course_name) $errors[] = "Course Name is required.";
     if (!$day) $errors[] = "Day is required.";
     if (!$start_time || !$end_time) $errors[] = "Start and End Time are required.";
     if ($start_time >= $end_time) $errors[] = "Start Time must be earlier than End Time.";
-    if (!$section) $errors[] = "Section is required.";
+    if (!$grade_level) $errors[] = "Grade Level is required."; // UPDATED
     if (!$subject) $errors[] = "Subject is required.";
     if (!$room) $errors[] = "Room is required.";
 
-    // Handle file upload
+    // File upload
     $cover_photo_path = null;
     if (isset($_FILES['cover_photo']) && $_FILES['cover_photo']['error'] === UPLOAD_ERR_OK) {
+
         $upload_dir = '../static/uploads/';
         $filename = time() . '_' . basename($_FILES['cover_photo']['name']);
         $target_file = $upload_dir . $filename;
 
-        // Validate file type
         $file_type = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
         $allowed_types = ['jpg','jpeg','png','gif','svg'];
+
         if (!in_array($file_type, $allowed_types)) {
             $errors[] = "Invalid file type for cover photo.";
         } else {
@@ -62,42 +63,44 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (count($errors) > 0) {
-        // Display errors
         foreach ($errors as $err) {
             echo "<p style='color:red;'>$err</p>";
         }
         exit;
     }
 
-    // Generate unique 8-digit joined_id
+    // Generate course join code
     $joined_id = generateUniqueJoinedId($conn);
 
-    // Insert into database with joined_id
-    $stmt = $conn->prepare("INSERT INTO courses 
-        (joined_id, teacher_id, course_name, description, day, start_time, end_time, section, subject, room, cover_photo) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+    // Insert into database
+    $stmt = $conn->prepare("
+        INSERT INTO courses 
+        (joined_id, teacher_id, course_name, description, day, start_time, end_time, grade_level, subject, room, cover_photo) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ");
+
     $stmt->bind_param(
-        "iisssssssss", 
+        "iisssssssss",
         $joined_id,
-        $teacher_id, 
-        $course_name, 
-        $description, 
-        $day, 
-        $start_time, 
-        $end_time, 
-        $section, 
-        $subject, 
-        $room, 
+        $teacher_id,
+        $course_name,
+        $description,
+        $day,
+        $start_time,
+        $end_time,
+        $grade_level,  // UPDATED
+        $subject,
+        $room,
         $cover_photo_path
     );
 
     if ($stmt->execute()) {
-        // Success, redirect
         header("Location: dashboard.php?success=1");
         exit;
     } else {
         echo "<p style='color:red;'>Failed to save course: " . $stmt->error . "</p>";
     }
+
 } else {
     echo "<p>Invalid request.</p>";
 }

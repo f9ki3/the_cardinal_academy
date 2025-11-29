@@ -54,6 +54,28 @@
             <!-- Right Column -->
             <div class="col-12 col-md-6">
               <div class="mb-3">
+                <label for="grade_level" class="form-label">Grade Level</label>
+                <select class="form-control" id="grade_level" name="grade_level" required>
+                    <option value="" disabled selected>Select grade level</option>
+                    <option value="Nursery">Nursery</option>
+                    <option value="Kinder 1">Kinder 1</option>
+                    <option value="Kinder 2">Kinder 2</option>
+                    <option value="Grade 1">Grade 1</option>
+                    <option value="Grade 2">Grade 2</option>
+                    <option value="Grade 3">Grade 3</option>
+                    <option value="Grade 4">Grade 4</option>
+                    <option value="Grade 5">Grade 5</option>
+                    <option value="Grade 6">Grade 6</option>
+                    <option value="Grade 7">Grade 7</option>
+                    <option value="Grade 8">Grade 8</option>
+                    <option value="Grade 9">Grade 9</option>
+                    <option value="Grade 10">Grade 10</option>
+                    <option value="Grade 11">Grade 11</option>
+                </select>
+            </div>
+
+              
+              <div class="mb-3">
                 <label for="section" class="form-label">Section</label>
                 <input type="text" class="form-control" id="section" name="section" placeholder="e.g. Section A, BSIT-2C" required>
               </div>
