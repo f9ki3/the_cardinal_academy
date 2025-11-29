@@ -151,7 +151,7 @@ body{background:#F7F7F7;font-family:'Segoe UI';}
 
             <div class="col-12 col-md-4 d-flex justify-content-end">
                 <!-- type="button" so it doesn't submit the form -->
-                <button id="approveBtn" type="button" disabled style="background-color: #c71515ff" class="btn text-light me-2 rounded rounded-4 btn-sm border">
+                <button id="approveBtn" type="button" disabled style="background-color: #c71515ff" class="btn text-light me-2 rounded rounded-4 btn-sm">
                     <i class="bi bi-check-circle me-1"></i> Approve
                 </button>
 
