@@ -157,28 +157,58 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <h5 class="modal-title">Add Scholastic Record</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
       </div>
+
       <form id="addRecordForm">
         <div class="modal-body">
           <div class="row g-3">
-            <div class="col-md-12"><label>Subject</label><input type="text" name="subject" class="form-control" required></div>
-            <div class="col-md-3"><label>Q1</label><input type="number" name="q1" class="form-control" required></div>
-            <div class="col-md-3"><label>Q2</label><input type="number" name="q2" class="form-control" required></div>
-            <div class="col-md-3"><label>Q3</label><input type="number" name="q3" class="form-control" required></div>
-            <div class="col-md-3"><label>Q4</label><input type="number" name="q4" class="form-control" required></div>
-            <div class="col-md-6"><label>Final Rating</label><input type="number" name="final" class="form-control" required></div>
-            <div class="col-md-6"><label>Remarks</label>
+
+            <div class="col-md-12">
+              <label>Subject</label>
+              <input type="text" name="subject" class="form-control" required>
+            </div>
+
+            <div class="col-md-3">
+              <label>Q1</label>
+              <input type="number" step="any" name="q1" class="form-control" required>
+            </div>
+
+            <div class="col-md-3">
+              <label>Q2</label>
+              <input type="number" step="any" name="q2" class="form-control" required>
+            </div>
+
+            <div class="col-md-3">
+              <label>Q3</label>
+              <input type="number" step="any" name="q3" class="form-control" required>
+            </div>
+
+            <div class="col-md-3">
+              <label>Q4</label>
+              <input type="number" step="any" name="q4" class="form-control" required>
+            </div>
+
+            <div class="col-md-6">
+              <label>Final Rating</label>
+              <input type="number" step="any" name="final" class="form-control" required>
+            </div>
+
+            <div class="col-md-6">
+              <label>Remarks</label>
               <select name="remarks" class="form-select" required>
                 <option value="Passed">Passed</option>
                 <option value="Failed">Failed</option>
               </select>
             </div>
+
           </div>
         </div>
+
         <div class="modal-footer">
           <button type="button" class="btn btn-outline-danger" data-bs-dismiss="modal">Close</button>
           <button type="submit" class="btn btn-danger">Add Record</button>
         </div>
       </form>
+
     </div>
   </div>
 </div>

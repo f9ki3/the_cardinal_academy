@@ -134,8 +134,8 @@ if (isset($_GET['delete']) && is_numeric($_GET['delete'])) {
                   <thead class="text-muted">
                     <tr>
                       <th class="py-3">Full Name</th>
-                      <th class="py-3">Username</th>
                       <th class="py-3">Role</th>
+                      <th class="py-3">Username</th>
                       <th class="py-3">Created At</th>
                       <th class="text-center py-3">Action</th>
                     </tr>
