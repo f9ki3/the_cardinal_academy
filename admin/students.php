@@ -81,14 +81,6 @@ if (!$result) {
                         <button class="btn border rounded rounded-4 ms-2" type="submit">Search</button>
                       </div>
                     </form>
-
-                    <!-- Create Button -->
-                    <a 
-                      href="create_students.php?nav_drop=true" 
-                      class="btn bg-main text-light rounded rounded-4 px-4"
-                    >
-                      + Create
-                    </a>
                   </div>
 
                   <div class="col-12 pt-3">
