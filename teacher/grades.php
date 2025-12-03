@@ -252,7 +252,7 @@ $(document).ready(function () {
         if (avg >= 75) {
             statusCell.text("PASS").removeClass("fail-status").addClass("pass-status");
         } else {
-            statusCell.text("FAIL").removeClass("pass-status").addClass("fail-status");
+            statusCell.text("Pending").removeClass("pass-status").addClass("fail-status");
         }
     }
 
