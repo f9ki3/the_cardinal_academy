@@ -145,9 +145,17 @@ body {
                 <label>Address</label>
                 <div class="data"><?= htmlspecialchars($data['residential_address'] ?? '-') ?></div>
             </div>
+            
+            <div class="col-md-4 record-item">
+                <label>Guardian's Name</label>
+                <div class="data"><?= htmlspecialchars($data['guardian_name'] ?? '-') ?></div>
+            </div>
+            <div class="col-md-4 record-item">
+                <label>Guardian's Contact</label>
+                <div class="data"><?= htmlspecialchars($data['guardian_contact'] ?? '-') ?></div>
+            </div>
         </div>
-        <hr class="text-muted">
-        <h5 class="fw-bolder">Emergency Contacts</h5>
+        <!-- <h5 class="fw-bolder">Emergency Contacts</h5>
         <div class="row">
             <div class="col-md-4 record-item">
                 <label>Father's Name</label>
@@ -187,7 +195,7 @@ body {
                 <label>Guardian's Occupation</label>
                 <div class="data"><?= htmlspecialchars($data['guardian_occupation'] ?? '-') ?></div>
             </div>
-        </div>
+        </div> -->
     </div>
     
     <div class="record-section">
