@@ -85,7 +85,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <th>Last Name</th>
                             <th>First Name</th>
                             <th>Middle Name</th>
-                            <th>Grade Level</th>
+                            <!-- <th>Grade Level</th> -->
                             <th>Email</th>
                             <th>Action</th>
                         </tr>
