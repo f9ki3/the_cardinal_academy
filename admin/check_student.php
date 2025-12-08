@@ -24,7 +24,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Match column names from admission_old
     $student_id  = trim($admission_data['student_id']);   
     $first_name  = trim($admission_data['first_name']);   
-    $last_name   = trim($admission_data['last_name']);    
+    $last_name   = trim($admission_data['last_name']);  
+    $grade_level_enroll   = trim($admission_data['grade_level']);    
 
     // Search in student_information table
     $sql = "SELECT * FROM student_information 
@@ -99,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <td class="pt-4 pb-4"><?= htmlspecialchars($row['grade_level'] ?? 'N/A') ?></td>
                             <td class="pt-4 pb-4"><?= htmlspecialchars($row['email'] ?? 'N/A') ?></td>
                             <td class="pt-4 pb-4">
-                                <a href="payment_plan2.php?student_number=<?= urlencode($row['student_number']) ?>&grade=<?= htmlspecialchars($row['grade_level'] ?? 'N/A') ?>&id=<?= $admission_id; ?>" 
+                                <a href="payment_plan2.php?student_number=<?= urlencode($row['student_number']) ?>&grade=<?= htmlspecialchars($grade_level_enroll ?? 'N/A') ?>&id=<?= $admission_id; ?>" 
                                     class="btn border rounded rounded-4 text-muted">
                                     <i class="fas fa-user-graduate me-1"></i> Enroll
                                 </a>
