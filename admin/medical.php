@@ -6,49 +6,22 @@ include '../db_connection.php';
 $limit  = 10;
 $page   = isset($_GET['page']) && is_numeric($_GET['page']) ? (int) $_GET['page'] : 1;
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
-// --- NEW: Capture the selected filter column ---
-$filter_by = isset($_GET['filter_by']) ? $_GET['filter_by'] : 'all'; // Default to 'all'
 $offset = ($page - 1) * $limit;
 
 $searchEsc = mysqli_real_escape_string($conn, $search);
-
-// --- Determine the WHERE clause based on filter_by ---
-$where_clause = "";
-if (!empty($search)) {
-    switch ($filter_by) {
-        case 'student_number':
-            $where_clause = "WHERE si.student_number LIKE '%$searchEsc%'";
-            break;
-        case 'firstname':
-            $where_clause = "WHERE si.firstname LIKE '%$searchEsc%'";
-            break;
-        case 'lastname':
-            $where_clause = "WHERE si.lastname LIKE '%$searchEsc%'";
-            break;
-        case 'email':
-            $where_clause = "WHERE si.email LIKE '%$searchEsc%'";
-            break;
-        default:
-            // 'all' or invalid filter: search across all relevant fields
-            $where_clause = "
-                WHERE (
-                    si.student_number LIKE '%$searchEsc%'
-                    OR si.firstname LIKE '%$searchEsc%'
-                    OR si.middlename LIKE '%$searchEsc%'
-                    OR si.lastname LIKE '%$searchEsc%'
-                    OR si.email LIKE '%$searchEsc%'
-                    OR si.phone LIKE '%$searchEsc%'
-                )
-            ";
-            break;
-    }
-}
 
 // --- Count total rows -------------------------------------------------------
 $count_query = "
     SELECT COUNT(*) AS total
     FROM student_information si
-    {$where_clause}
+    WHERE (
+          si.student_number LIKE '%$searchEsc%'
+          OR si.firstname LIKE '%$searchEsc%'
+          OR si.middlename LIKE '%$searchEsc%'
+          OR si.lastname LIKE '%$searchEsc%'
+          OR si.email LIKE '%$searchEsc%'
+          OR si.phone LIKE '%$searchEsc%'
+      )
 ";
 $count_result = mysqli_query($conn, $count_query);
 if (!$count_result) {
@@ -67,7 +40,14 @@ $query = "
         si.email,
         si.phone
     FROM student_information si
-    {$where_clause}
+    WHERE (
+          si.student_number LIKE '%$searchEsc%'
+          OR si.firstname LIKE '%$searchEsc%'
+          OR si.middlename LIKE '%$searchEsc%'
+          OR si.lastname LIKE '%$searchEsc%'
+          OR si.email LIKE '%$searchEsc%'
+          OR si.phone LIKE '%$searchEsc%'
+      )
     ORDER BY si.id DESC
     LIMIT $limit OFFSET $offset
 ";
@@ -98,50 +78,25 @@ if (!$result) {
           <div class="rounded p-3">
             <div class="container my-4">
               <div class="row mb-3">
-                <div class="col-12 col-md-4">
+                <div class="col-12 col-md-6">
                   <h4>Medical Records</h4>
                 </div>
-                
-                <div class="col-12 col-md-8">
-                  <form method="GET" action="" class="d-flex justify-content-end" id="filterForm">
-                    <div class="input-group" style="max-width: 600px;">
-                        
-                        <select 
-                            class="form-select rounded-start-4" 
-                            name="filter_by" 
-                            style="flex: 0 0 auto; width: 140px;"
-                            onchange="document.getElementById('filterForm').submit();">
-                            
-                            <?php 
-                            $options = [
-                                'all' => 'All Fields',
-                                'student_number' => 'Student ID',
-                                'firstname' => 'First Name',
-                                'lastname' => 'Last Name',
-                                'email' => 'Email',
-                            ];
-                            foreach ($options as $value => $label): ?>
-                                <option 
-                                    value="<?= $value ?>" 
-                                    <?= ($filter_by == $value) ? 'selected' : '' ?>>
-                                    <?= $label ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-
+                <div class="col-12 col-md-6">
+                  <form method="GET" action="">
+                    <div class="input-group">
                         <input 
-                            class="form-control" 
+                            class="form-control rounded rounded-4" 
                             type="text" 
                             name="search" 
                             value="<?= htmlspecialchars($search ?? '') ?>" 
-                            placeholder="Search keyword...">
-                            
-                        <button class="btn btn-primary rounded-end-4" type="submit">
-                            <i class="bi bi-search me-1"></i> Search
+                            placeholder="Search Student ID, Name, Email or Contact">
+                        <button class="btn border ms-2 rounded rounded-4" type="submit">
+                            Search
                         </button>
                     </div>
                   </form>
                 </div>
+
                 <div class="col-12 pt-3">
                   <?php if (isset($_GET['status'])): ?>
                     <?php if ($_GET['status'] === 'success'): ?>
@@ -202,8 +157,7 @@ if (!$result) {
                 <nav aria-label="Page navigation">
                     <ul class="pagination justify-content-start pagination-sm">
                     <?php 
-                        // Update query parameters to include filter_by
-                        $query_params = ['search' => $search, 'filter_by' => $filter_by];
+                        $query_params = ['search' => $search];
                     ?>
 
                     <?php if ($page > 1): ?>
@@ -259,7 +213,6 @@ if (!$result) {
 
 <script>
 document.addEventListener("DOMContentLoaded", function() {
-    // Make the table rows clickable to view details
     document.querySelectorAll(".clickable-row").forEach(function(row) {
         row.addEventListener("click", function() {
             window.location.href = this.dataset.href;
