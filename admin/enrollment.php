@@ -73,20 +73,52 @@ $result = mysqli_query($conn, $query);
                 </div>
                 <div class="col-12 col-md-6">
                   <form method="GET" action="">
-                    <div class="input-group">
-                      <input class="form-control rounded rounded-4" type="text" name="search" value="<?= htmlspecialchars($search) ?>" placeholder="Search LRN, CODE or Fullname">
-                      <button class="btn border ms-2 rounded rounded-4" type="submit">Search</button>
-                      <a href="enrollment_old.php" class="btn border ms-2 rounded rounded-4">
-                        <i class="bi bi-person-badge me-1"></i> Old Student
-                      </a>
+                      <div class="d-flex align-items-center mb-3">
+                          <div class="input-group flex-grow-1 me-2">
+                              <input class="form-control rounded rounded-4" type="text" name="search" value="<?= htmlspecialchars($search) ?>" placeholder="Search LRN, CODE or Fullname">
+                              <button class="btn border rounded-4 ms-2" type="submit">
+                                  <i class="bi bi-search"></i> Search
+                              </button>
+                          </div>
 
-                      <a href="enrollment.php" class="btn border ms-2 rounded rounded-4">
-                        <i class="bi bi-person-plus me-1"></i> New Student
-                      </a>
-
-                    </div>
+                          <div class="w-50">
+                              <?php
+                              // Determine the current page filename
+                              $currentPage = basename($_SERVER['PHP_SELF']);
+                              ?>
+                              <select id="studentTypeSelect" class="form-select rounded rounded-4" onchange="window.location.href=this.value;">
+                                  <option
+                                      value="enrollment_old.php"
+                                      <?= ($currentPage == 'enrollment_old.php') ? 'selected' : '' ?>
+                                  >
+                                      Old Student
+                                  </option>
+                                  <option
+                                      value="enrollment.php"
+                                      <?= ($currentPage == 'enrollment.php') ? 'selected' : '' ?>
+                                  >
+                                      New Student
+                                  </option>
+                              </select>
+                          </div>
+                      </div>
                   </form>
-                </div>
+              </div>
+
+              <script>
+              // Keep the JavaScript function for clarity and robustness, even though it's in the HTML
+              document.addEventListener('DOMContentLoaded', function() {
+                  const studentTypeSelect = document.getElementById('studentTypeSelect');
+                  if (studentTypeSelect) {
+                      studentTypeSelect.addEventListener('change', function() {
+                          if (this.value) {
+                              // Ensure the base URL is correct if required, but the value should be the direct link
+                              window.location.href = this.value;
+                          }
+                      });
+                  }
+              });
+              </script>
                 <div class="col-12 pt-3">
                   <?php
                     // Check if 'status' parameter exists in the URL
