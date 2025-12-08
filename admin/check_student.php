@@ -97,7 +97,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             <td class="pt-4 pb-4"><?= htmlspecialchars($row['lastname']) ?></td>
                             <td class="pt-4 pb-4"><?= htmlspecialchars($row['firstname']) ?></td>
                             <td class="pt-4 pb-4"><?= htmlspecialchars($row['middlename'] ?? 'N/A') ?></td>
-                            <td class="pt-4 pb-4"><?= htmlspecialchars($row['grade_level'] ?? 'N/A') ?></td>
                             <td class="pt-4 pb-4"><?= htmlspecialchars($row['email'] ?? 'N/A') ?></td>
                             <td class="pt-4 pb-4">
                                 <a href="payment_plan2.php?student_number=<?= urlencode($row['student_number']) ?>&grade=<?= htmlspecialchars($grade_level_enroll ?? 'N/A') ?>&id=<?= $admission_id; ?>" 
