@@ -101,8 +101,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     );
 
     if ($stmt->execute()) {
-        // ✅ Store que_code in session or pass to success page
-        header("Location: success.php?que_code=" . urlencode($que_code));
+        // --- Notifications ---
+        $link = ($status === 'New Student') ? 'admission.php' : 'admission_old.php';
+        $full_name = trim("$first_name $middle_name $last_name");
+        $message = "New admission: $full_name for grade $grade_level level";
+
+        $roles = ['Administrator','Assistant Principal','Registrar'];
+        $role_placeholders = implode(',', array_fill(0, count($roles), '?'));
+        $types_roles = str_repeat('s', count($roles));
+
+        $user_stmt = $conn->prepare("SELECT user_id FROM users WHERE role IN ($role_placeholders)");
+        $user_stmt->bind_param($types_roles, ...$roles);
+        $user_stmt->execute();
+        $result = $user_stmt->get_result();
+
+        while ($user = $result->fetch_assoc()) {
+            $user_id = $user['user_id'];
+
+            $notif_stmt = $conn->prepare("INSERT INTO notifications (id, user_id, message, link) VALUES (UUID(), ?, ?, ?)");
+            $notif_stmt->bind_param('sss', $user_id, $message, $link);
+            $notif_stmt->execute();
+            $notif_stmt->close();
+
+            $conn->query("UPDATE users SET notification = notification + 1 WHERE user_id = '$user_id'");
+        }
+
+        $user_stmt->close();
+        
+        header("Location: success.php");
         exit();
     } else {
         echo "Error: " . $stmt->error;
