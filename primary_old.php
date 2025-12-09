@@ -48,8 +48,8 @@
           </style>
 
           <div class="tab-buttons">
-            <a href="old_preschool.php" class="tab-btn active text-decoration-none">Old Student</a>
-            <a href="preschool.php" class="tab-btn text-muted text-decoration-none">New Student</a>
+            <a href="old_primary.php" class="tab-btn active text-decoration-none">Old Student</a>
+            <a href="primary.php" class="tab-btn text-muted text-decoration-none">New Student</a>
           </div>
          
         <div class="row g-3">
