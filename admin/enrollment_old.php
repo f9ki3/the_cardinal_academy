@@ -261,7 +261,6 @@ $current_sort_order = $_GET['sort_order'] ?? $default_sort_order;
                       <th scope="col" style="width: 25%;">Fullname <?= get_sort_link('fullname', $current_sort_by, $current_sort_order, $search) ?></th>
                       <th scope="col" style="width: 13%;">Grade Level <?= get_sort_link('grade_level', $current_sort_by, $current_sort_order, $search) ?></th>
                       <th scope="col" style="width: 15%;">Strand <?= get_sort_link('strand', $current_sort_by, $current_sort_order, $search) ?></th>
-                      <th scope="col" style="width: 10%;">Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -276,11 +275,6 @@ $current_sort_order = $_GET['sort_order'] ?? $default_sort_order;
                             <td>
                                 <p class="text-muted pt-3 pb-3 mb-0">
                                     <?= !empty($row['strand']) ? htmlspecialchars($row['strand']) : 'N/A' ?>
-                                </p>
-                            </td>
-                            <td>
-                                <p class="pt-3 pb-3 mb-0">
-                                    <a href="enroll_action_old.php?id=<?= $row['id'] ?>" class="btn btn-sm btn-primary">Enroll</a>
                                 </p>
                             </td>
                             </tr>
