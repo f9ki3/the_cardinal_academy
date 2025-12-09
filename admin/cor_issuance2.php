@@ -156,7 +156,7 @@ if (!$result) {
                             <th>Student Number</th>
                             <th>Fullname</th>
                             <th>Status</th>
-                            <th>Info Grade Level</th>
+                            <th>Grade Level</th>
                         </tr>
                         </thead>
                         <tbody>
