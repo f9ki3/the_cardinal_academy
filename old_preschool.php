@@ -58,7 +58,7 @@
             <label for="grade_level" class="form-label text-muted">Grade Level </label>
             <select readonly name="grade_level" id="grade_level" class="form-select">
               <option value="">Select grade level</option>
-              <option selected>Kinder Garten</option>
+              <option selected>Kinder</option>
             </select>
             <div id="grade_level-error" class="invalid-feedback d-none">Grade Level is required.</div>
           </div>

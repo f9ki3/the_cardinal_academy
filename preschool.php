@@ -73,7 +73,7 @@
             <select name="grade_level" id="grade_level" class="form-select">
               <option value="">Select grade level </option>
               <option>Nursery</option>
-              <option>Kinder Garten</option>
+              <option>Kinder</option>
             </select>
             <div id="grade_level-error" class="invalid-feedback d-none">Grade Level is required.</div>
           </div>
