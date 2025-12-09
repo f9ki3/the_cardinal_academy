@@ -11,7 +11,7 @@ $general_note = $_POST['additional_notes'] ?? ''; // Maps to 'general_note' in s
 
 // FIX: Change nurse source. Form field is DISABLED, so $_POST['nurse_incharge'] will be empty.
 // Use the session variable $full_name (assumed available from session_login.php)
-$nurse_incharge_name = isset($full_name) ? $full_name : 'Unknown Nurse'; 
+$nurse_incharge_name = isset($_POST['nurse_incharge']) ? trim($_POST['nurse_incharge']) : '';
 // --- END FIX ---
 
 
