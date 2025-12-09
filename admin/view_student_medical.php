@@ -207,12 +207,324 @@ body {
     <div class="col-12 col-md-6 d-flex justify-content-md-end align-items-center gap-2 mt-2 mt-md-0">
         <input type="text" id="searchInput" placeholder="Search Record Here..." 
             class="form-control rounded-4" style="max-width: 250px;">
-
-        <a href="create_medical_record.php?student_id=<?php echo $student_id ?>" 
-        class="btn btn-sm btn-danger rounded-4 d-flex align-items-center px-3 py-2" 
-        style="font-weight: 500;">
-        + Create Record
+        <a href="#" 
+            class="btn btn-sm btn-danger rounded-4 d-flex align-items-center px-3 py-2" 
+            style="font-weight: 500;"
+            data-bs-toggle="offcanvas" 
+            data-bs-target="#createRecordOffcanvas"
+            data-student-id="<?php echo htmlspecialchars($student_id) ?>"> 
+            + Create Record
         </a>
+
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="createRecordOffcanvas" aria-labelledby="createRecordOffcanvasLabel" style="width: 100vw; max-width: 50vw;">
+            <div class="offcanvas-header">
+                <h5 class="offcanvas-title" id="createRecordOffcanvasLabel">Create New Medical Record</h5>
+                <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            
+            <div class="offcanvas-body">
+                <form id="medicalForm" action="create_medical.php" method="POST" class="row g-3 needs-validation" novalidate>
+                    <input type="hidden" name="medical_id" value="<?php echo uniqid('med_'); ?>">
+                    <div class="col-12 mb-0">
+                        <label class="form-label d-block fw-semibold">Select Record Type</label>
+                        <div class="d-flex justify-content-between gap-2">
+                            <input type="radio" class="btn-check record-type-radio" name="record_type" id="type_checkup" value="Check Up" autocomplete="off" required checked>
+                            <label class="btn btn-outline-danger w-100 py-3" for="type_checkup">
+                                <i class="fas fa-stethoscope d-block mb-1"></i> Check Up
+                            </label>
+
+                            <input type="radio" class="btn-check record-type-radio" name="record_type" id="type_medicine" value="Request Medicine" autocomplete="off">
+                            <label class="btn btn-outline-danger w-100 py-3" for="type_medicine">
+                                <i class="fas fa-pills d-block mb-1"></i> Request Medicine
+                            </label>
+
+                            <input type="radio" class="btn-check record-type-radio" name="record_type" id="type_visit" value="Clinic Visit" autocomplete="off">
+                            <label class="btn btn-outline-danger w-100 py-3" for="type_visit">
+                                <i class="fas fa-user-md d-block mb-1"></i> Clinic Visit
+                            </label>
+                            <div class="invalid-feedback col-12">Please select a record type.</div>
+                        </div>
+                    </div>
+                    
+                    
+                    <div class="col-12 row g-3 mb-0 mt-0" id="dynamicFieldsContainer">
+
+                        <div class="col-12 row g-3" id="checkUpFields">
+                            <input type="hidden" name="student_id" class="form-control" id="studentID" value="<?= htmlspecialchars($data['student_number'] ?? '-') ?>" readonly>
+                    
+                            <div class="col-12"><h6 class="fw-semibold fw-semibold mt-2">Vitals & Health Survey</h6></div>
+
+                            <div class="col-md-4">
+                                <label for="height" class="form-label">Height (cm)</label>
+                                <input type="number" name="height" class="form-control checkup-field" id="height" min="50" max="250">
+                                <small class="text-muted">e.g., 160</small>
+                                <div class="invalid-feedback">Please enter a valid height between 50 and 250 cm.</div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="weight" class="form-label">Weight (kg)</label>
+                                <input type="number" name="weight" class="form-control checkup-field" id="weight" min="10" max="200">
+                                <small class="text-muted">e.g., 55</small>
+                                <div class="invalid-feedback">Please enter a valid weight between 10 and 200 kg.</div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="bloodPressure" class="form-label">Blood Pressure</label>
+                                <input type="text" name="blood_pressure" class="form-control checkup-field" id="bloodPressure" 
+                                    placeholder="e.g., 110/70" pattern="^\d{2,3}\/\d{2,3}$">
+                                <small class="text-muted">e.g., 110/70</small>
+                                <div class="invalid-feedback">Format must be like 120/80.</div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="temperature" class="form-label">Temperature (°C)</label>
+                                <input type="number" step="0.1" name="temperature" class="form-control checkup-field" id="temperature" min="35" max="42">
+                                <small class="text-muted">e.g., 36.6</small>
+                                <div class="invalid-feedback">Temperature must be between 35°C and 42°C.</div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="pulse" class="form-label">Pulse (bpm)</label>
+                                <input type="number" name="pulse" class="form-control checkup-field" id="pulse" min="40" max="200">
+                                <small class="text-muted">e.g., 72</small>
+                                <div class="invalid-feedback">Enter a pulse rate between 40 and 200 bpm.</div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="respiration" class="form-label">Respiration (breaths/min)</label>
+                                <input type="number" name="respiration" class="form-control checkup-field" id="respiration" min="10" max="40">
+                                <small class="text-muted">e.g., 18</small>
+                                <div class="invalid-feedback">Respiration must be between 10 and 40.</div>
+                            </div>
+
+                            <?php
+                            $checkUpTextFields = [
+                                'allergies' => 'Known allergies (e.g., peanuts, pollen)',
+                                'medications' => 'Current medications (e.g., supplements)',
+                                'conditions' => 'Chronic illnesses / conditions (e.g., asthma)',
+                                'recentIllness' => 'Recent illnesses / injuries (past 6 months)',
+                                'hospitalizations' => 'Hospitalizations / surgeries',
+                                'vision' => 'Vision problems (e.g., uses glasses)',
+                                'hearing' => 'Hearing problems (e.g., partial loss)',
+                                'dental' => 'Dental issues (e.g., braces)',
+                                'activity' => 'Physical activity (hours/week)',
+                                'sleep' => 'Sleep (hours/night)',
+                                'diet' => 'Dietary habits / restrictions',
+                                'mentalHealth' => 'Mental health concerns',
+                            ];
+                            ?>
+
+                            <?php foreach ($checkUpTextFields as $id => $label): ?>
+                                <div class="col-md-4">
+                                    <label for="<?= $id ?>" class="form-label"><?= $label ?></label>
+                                    <?php if (in_array($id, ['conditions', 'recentIllness', 'hospitalizations', 'mentalHealth'])): ?>
+                                        <textarea name="<?= $id ?>" id="<?= $id ?>" class="form-control checkup-field" rows="2"></textarea>
+                                    <?php else: ?>
+                                        <input type="text" name="<?= $id ?>" id="<?= $id ?>" class="form-control checkup-field">
+                                    <?php endif; ?>
+                                    <div class="invalid-feedback">This field is required for Check Up.</div>
+                                </div>
+                            <?php endforeach; ?>
+                        </div>
+                        <div class="col-12 row g-3" id="medicineFields" style="display: none;">
+                            <div class="col-12"><h6 class="fw-semibold mt-2">Medicine Request Details</h6></div>
+                            
+                            <div class="col-md-6">
+                                <label for="medicine_requested" class="form-label">Medicine Requested</label>
+                                <input type="text" name="medicine_requested" id="medicine_requested" class="form-control medicine-field">
+                                <div class="invalid-feedback">This field is required for Medicine Request.</div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label for="medicine_used" class="form-label">Medicine Used</label>
+                                <input type="text" name="medicine_used" id="medicine_used" class="form-control medicine-field">
+                                <div class="invalid-feedback">This field is required for Medicine Request.</div>
+                            </div>
+                        </div>
+                        <div class="col-12 row g-3" id="visitFields" style="display: none;">
+                            <div class="col-12"><h6 class="fw-semibold mt-2">Clinic Visit Details</h6></div>
+                            
+                            <div class="col-md-12">
+                                <label for="reason_for_visit" class="form-label">Reason for Visit</label>
+                                <textarea name="reason_for_visit" id="reason_for_visit" class="form-control visit-field" rows="3"></textarea>
+                                <div class="invalid-feedback">This field is required for Clinic Visit.</div>
+                            </div>
+                        </div>
+                        </div>
+                    <div class="col-12"><h6 class="fw-semibold fw-semibold mt-2">General Record Details</h6></div>
+                    
+                    <div class="col-md-6 mb-0 mt-0">
+                        <label for="additional_notes" class="form-label">Additional Notes</label>
+                        <textarea name="additional_notes" id="additional_notes" class="form-control common-field" rows="2" required></textarea>
+                        <div class="invalid-feedback">Additional Notes are required.</div>
+                    </div>
+
+                    <div class="col-md-6 mb-0 mt-0">
+                        <label for="nurse_incharge" class="form-label">School Nurse Incharge</label>
+                        <input type="text" name="nurse_incharge" id="nurse_incharge" value="<?= htmlspecialchars($full_name) ?>" disabled class="form-control common-field" required>
+                        <div class="invalid-feedback">Nurse in charge is required.</div>
+                    </div>
+
+                    <div class="col-12 mt-3">
+                        <button type="submit" class="btn btn-danger rounded-4">Save Record</button>
+                        <button type="button" class="btn btn-outline-danger rounded-4" data-bs-dismiss="offcanvas">Cancel</button>
+                    </div>
+                </form>
+
+            </div>
+        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const createRecordOffcanvas = document.getElementById('createRecordOffcanvas');
+                const medicalForm = document.getElementById('medicalForm');
+                const recordTypeRadios = document.querySelectorAll('.record-type-radio');
+
+                const checkUpFields = document.getElementById('checkUpFields');
+                const medicineFields = document.getElementById('medicineFields');
+                const visitFields = document.getElementById('visitFields');
+
+                // --- Core Logic: Show/Hide Fields and Manage Required Attributes ---
+                const toggleFields = (selectedType) => {
+                    // Define all field groups and their corresponding container
+                    const fieldGroups = {
+                        'Check Up': { container: checkUpFields, selector: '.checkup-field' },
+                        'Request Medicine': { container: medicineFields, selector: '.medicine-field' },
+                        'Clinic Visit': { container: visitFields, selector: '.visit-field' }
+                    };
+
+                    Object.keys(fieldGroups).forEach(type => {
+                        const { container, selector } = fieldGroups[type];
+                        const fields = container.querySelectorAll(selector);
+
+                        if (type === selectedType) {
+                            // Show container and set fields as required/enabled
+                            container.style.display = 'flex';
+                            container.classList.add('row'); // Re-add row class for grid
+                            fields.forEach(field => field.setAttribute('required', 'required'));
+                        } else {
+                            // Hide container and remove required/disabled attributes
+                            container.style.display = 'none';
+                            container.classList.remove('row');
+                            fields.forEach(field => {
+                                field.removeAttribute('required');
+                                field.classList.remove('is-invalid', 'is-valid'); // Clear validation state when hidden
+                            });
+                        }
+                    });
+                    
+                    // Re-apply required status to common fields (always visible)
+                    document.querySelectorAll('.common-field').forEach(field => field.setAttribute('required', 'required'));
+                };
+
+
+                // --- Event Listeners ---
+                
+                // 1. Offcanvas Open Listener (Pass student ID & set default form)
+                if (createRecordOffcanvas) {
+                    createRecordOffcanvas.addEventListener('show.bs.offcanvas', function (event) {
+                        const button = event.relatedTarget; 
+                        const studentId = button.getAttribute('data-student-id'); 
+                        const studentIdInput = createRecordOffcanvas.querySelector('#studentID');
+                        const studentIdDisplay = createRecordOffcanvas.querySelector('#studentIdDisplay');
+                        
+                        if (studentIdInput) {
+                            studentIdInput.value = studentId;
+                        }
+                        
+                        if (studentIdDisplay) {
+                            studentIdDisplay.textContent = studentId;
+                        }
+
+                        // Reset form state on show
+                        medicalForm.reset();
+                        
+                        // FIX: Explicitly set "Check Up" radio button as checked and show/validate fields
+                        const defaultRadio = document.getElementById('type_checkup');
+                        if (defaultRadio) {
+                            defaultRadio.checked = true;
+                            toggleFields(defaultRadio.value);
+                        }
+
+                        // Ensure the required check on radios is maintained
+                        recordTypeRadios.forEach(radio => radio.setAttribute('required', 'required'));
+                    });
+                }
+
+                // 2. Record Type Change Listener
+                recordTypeRadios.forEach(radio => {
+                    radio.addEventListener('change', function() {
+                        if (this.checked) {
+                            toggleFields(this.value);
+                        }
+                    });
+                });
+
+                // 3. Form Validation Logic
+                if (medicalForm) {
+                    const validateField = (field) => {
+                        // Determine if the field's container is visible (Check Up, Medicine, or Visit container)
+                        const parentContainer = field.closest('.col-12.row.g-3');
+                        const isVisible = !parentContainer || parentContainer.style.display !== 'none';
+                        
+                        // Only validate if required AND visible
+                        if (field.hasAttribute('required') && isVisible) {
+                            if (!field.checkValidity()) {
+                                field.classList.remove('is-valid');
+                                field.classList.add('is-invalid');
+                                return false;
+                            }
+                        }
+
+                        // Clear validation state if not required or valid
+                        field.classList.remove('is-invalid');
+                        if (field.value.trim() !== '') {
+                            field.classList.add('is-valid');
+                        } else {
+                            field.classList.remove('is-valid');
+                        }
+                        return true;
+                    };
+
+                    // Realtime validation
+                    medicalForm.querySelectorAll('input:not([type="hidden"]), textarea').forEach(field => {
+                        field.addEventListener('input', () => validateField(field));
+                        // Also run validation when a radio button is clicked (to clear fields that become hidden)
+                        field.addEventListener('change', () => validateField(field));
+                    });
+
+                    // Prevent submit if invalid
+                    medicalForm.addEventListener('submit', function(e) {
+                        let valid = true;
+                        
+                        // Check all fields, focusing only on those that are visible or common/required
+                        this.querySelectorAll('input:not([type="hidden"]):not([readonly]), textarea').forEach(field => {
+                            // Check if common field OR if the field belongs to a visible dynamic group
+                            const isCommon = field.classList.contains('common-field');
+                            const parentContainer = field.closest('.col-12.row.g-3');
+                            const isVisibleDynamic = parentContainer && parentContainer.style.display !== 'none';
+                            
+                            if (isCommon || isVisibleDynamic) {
+                                if (!validateField(field)) {
+                                    valid = false;
+                                }
+                            }
+                        });
+                        
+                        if (!valid) {
+                            e.preventDefault();
+                            
+                            // Scroll to the first invalid field
+                            const firstInvalid = this.querySelector('.is-invalid');
+                            if (firstInvalid) {
+                                firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                            }
+                        }
+                        
+                        medicalForm.classList.add('was-validated');
+                    });
+                }
+            });
+        </script>
     </div>
     </div>
 
