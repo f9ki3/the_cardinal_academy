@@ -1,18 +1,113 @@
-<?php include 'session_login.php'; ?>
-<?php include '../db_connection.php'; ?>
+<?php 
+include 'session_login.php'; 
+include '../db_connection.php'; 
 
-<?php
-// Pagination and Search
+// --- SORTING PARAMETERS ---
+$default_sort_by = 'created_at'; // Changed default to 'created_at' as it was used in the original query
+$default_sort_order = 'DESC'; 
+
+$sort_by = isset($_GET['sort_by']) ? $_GET['sort_by'] : $default_sort_by;
+$sort_order = isset($_GET['sort_order']) ? strtoupper($_GET['sort_order']) : $default_sort_order;
+
+// Validate and map $sort_by to a database column
+$allowed_sort_columns = [
+    'user_id' => 'user_id',
+    'fullname' => 'fullname', // Alias for CONCAT
+    'username' => 'username',
+    'created_at' => 'created_at',
+];
+$sort_column = $allowed_sort_columns[$sort_by] ?? $allowed_sort_columns[$default_sort_by];
+
+// Validate $sort_order
+$sort_order = ($sort_order === 'ASC' || $sort_order === 'DESC') ? $sort_order : $default_sort_order;
+
+// Build the ORDER BY clause dynamically
+$order_by_clause = "ORDER BY $sort_column $sort_order, user_id ASC"; 
+// -----------------------------------------------------------------------------
+
+
+// --- Helper functions for dynamic links ---
+
+// Helper function to build query string for pagination/sorting links
+function build_query_string($page = null, $search = null, $sort_by = null, $sort_order = null) {
+    
+    $params = [];
+    
+    // Determine current values based on GET or defaults
+    $current_search = $_GET['search'] ?? '';
+    $current_sort_by = $_GET['sort_by'] ?? 'created_at';
+    $current_sort_order = $_GET['sort_order'] ?? 'DESC';
+
+    // Set parameters
+    $params['page'] = $page !== null ? $page : ($_GET['page'] ?? 1);
+    $params['search'] = $search !== null ? $search : $current_search;
+    $params['sort_by'] = $sort_by !== null ? $sort_by : $current_sort_by;
+    $params['sort_order'] = $sort_order !== null ? $sort_order : $current_sort_order;
+    
+    // Reset page to 1 if sorting/filtering parameters are explicitly passed or changed
+    if ($page === null && ($sort_by !== null || $sort_order !== null || $search !== null)) {
+        $params['page'] = 1;
+    }
+    // Handle case where function is called with explicit page number for pagination
+    if ($page !== null) {
+        $params['page'] = $page;
+    } else {
+        // If sorting or searching, reset to page 1
+        if ($sort_by !== null || $sort_order !== null || $search !== null) {
+            $params['page'] = 1;
+        }
+    }
+
+
+    // Filter out empty search to keep URLs cleaner
+    $params = array_filter($params, fn($value, $key) => 
+        ($key !== 'search') || 
+        ($key === 'search' && $value !== ''), 
+        ARRAY_FILTER_USE_BOTH
+    );
+    
+    return '?' . http_build_query($params);
+}
+
+// Function to generate the sort link for a column header
+function get_sort_link($column_name, $current_sort_by, $current_sort_order, $search) {
+    $new_order = 'ASC';
+    // If we are currently sorting by this column, flip the order
+    if ($current_sort_by === $column_name) {
+        $new_order = ($current_sort_order === 'ASC') ? 'DESC' : 'ASC';
+    }
+
+    // Build the query string for the new sort (always set page to 1 for a new sort, passing 1 explicitly)
+    $query_string = build_query_string(1, $search, $column_name, $new_order);
+
+    // Determine the icon to display (using Bootstrap Icons)
+    $icon = 'bi-chevron-expand'; // Default icon
+    if ($current_sort_by === $column_name) {
+        $icon = ($current_sort_order === 'ASC') ? 'bi-chevron-up' : 'bi-chevron-down';
+    }
+
+    // Return the link and icon for the table header
+    return '<a href="' . htmlspecialchars($query_string) . '" class="text-decoration-none text-body">
+                <i class="bi ' . $icon . ' small"></i>
+            </a>';
+}
+// -----------------------------------------------------------------------------
+
+
+// --- Pagination & Search ---
 $limit = 10;
 $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int) $_GET['page'] : 1;
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 $offset = ($page - 1) * $limit;
+$searchEsc = mysqli_real_escape_string($conn, $search);
+
 
 // Count total student users
+$fullname_concat = "CONCAT(first_name, ' ', last_name)";
 $count_query = "SELECT COUNT(*) as total FROM users 
                 WHERE acc_type = 'student' AND (
-                    username LIKE '%$search%' 
-                    OR CONCAT(first_name, ' ', last_name) LIKE '%$search%'
+                    username LIKE '%$searchEsc%' 
+                    OR $fullname_concat LIKE '%$searchEsc%'
                 )";
 
 $count_result = mysqli_query($conn, $count_query);
@@ -23,24 +118,28 @@ if (!$count_result) {
 $total = mysqli_fetch_assoc($count_result)['total'];
 $total_pages = ceil($total / $limit);
 
-// Fetch student users (removed enroll_id)
+// Fetch student users (with sorting applied)
 $query = "SELECT 
             user_id, 
-            CONCAT(first_name, ' ', last_name) AS fullname, 
+            $fullname_concat AS fullname, 
             username, 
             created_at
           FROM users 
           WHERE acc_type = 'student' AND (
-              username LIKE '%$search%' 
-              OR CONCAT(first_name, ' ', last_name) LIKE '%$search%'
+              username LIKE '%$searchEsc%' 
+              OR $fullname_concat LIKE '%$searchEsc%'
           )
-          ORDER BY created_at DESC
+          $order_by_clause
           LIMIT $limit OFFSET $offset";
 
 $result = mysqli_query($conn, $query);
 if (!$result) {
     die("<p style='color:red;'>Data Query Failed: " . mysqli_error($conn) . "</p>");
 }
+
+// Extract current sort parameters (kept for UI state)
+$current_sort_by = $_GET['sort_by'] ?? $default_sort_by;
+$current_sort_order = $_GET['sort_order'] ?? $default_sort_order;
 ?>
 
 <!DOCTYPE html>
@@ -64,26 +163,52 @@ if (!$result) {
           <div class="rounded p-3 bg-white">
             <div class="container my-4">
               <div class="row mb-3">
-                <div class="col-12 col-md-5">
+                <div class="col-12 col-md-3">
                   <h4>Student Accounts</h4>
                 </div>
-                <div class="col-12 col-md-7 d-flex justify-content-between align-items-center flex-wrap gap-2">
-                    <!-- Search Form -->
-                    <form method="GET" action="" class="flex-grow-1">
-                      <div class="input-group">
-                        <input 
-                          class="form-control rounded rounded-4" 
-                          type="text" 
-                          name="search" 
-                          value="<?= htmlspecialchars($search) ?>" 
-                          placeholder="Search Username or Fullname"
-                        >
-                        <button class="btn border rounded rounded-4 ms-2" type="submit">Search</button>
-                      </div>
-                    </form>
-                  </div>
+                
+                <div class="col-12 col-md-9 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <form id="filterForm" method="GET" action="" class="w-100">
+                        <input type="hidden" name="page" value="<?= htmlspecialchars($page) ?>">
+                        
+                        <div class="row g-2 mb-3 align-items-center">
+                            <div class="col-12 col-lg-7">
+                                <div class="d-flex align-items-center gap-2">
+                                    <label class="text-muted text-nowrap d-none d-xl-block">Sort By:</label>
 
-                  <div class="col-12 pt-3">
+                                    <select id="sort_by" name="sort_by" class="form-select rounded-4 auto-submit-dropdown" style="min-width: 100px;">
+                                        <option value="fullname" <?= $sort_by == 'fullname' ? 'selected' : '' ?>>Fullname</option>
+                                        <option value="user_id" <?= $sort_by == 'user_id' ? 'selected' : '' ?>>ID</option>
+                                        <option value="username" <?= $sort_by == 'username' ? 'selected' : '' ?>>Username</option>
+                                        <option value="created_at" <?= $sort_by == 'created_at' ? 'selected' : '' ?>>Created At</option>
+                                    </select>
+
+                                    <select id="sort_order" name="sort_order" class="form-select rounded-4 auto-submit-dropdown" style="max-width: 120px;">
+                                        <option value="ASC" <?= $sort_order == 'ASC' ? 'selected' : '' ?>>Ascending</option>
+                                        <option value="DESC" <?= $sort_order == 'DESC' ? 'selected' : '' ?>>Descending</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-lg-5">
+                                <div class="input-group">
+                                    <input 
+                                        class="form-control rounded-4" 
+                                        type="text" 
+                                        name="search" 
+                                        value="<?= htmlspecialchars($search ?? '') ?>" 
+                                        placeholder="Search Username or Fullname"
+                                    >
+                                    <button class="btn border rounded-4 ms-2" type="submit">
+                                        <i class="bi bi-search"></i> Search
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="col-12 pt-3">
                   <?php if (isset($_GET['status'])): ?>
                     <?php if ($_GET['status'] === 'created'): ?>
                       <div class="alert alert-success alert-dismissible fade show" role="alert">
@@ -103,21 +228,29 @@ if (!$result) {
                     <?php endif; ?>
                   <?php endif; ?>
                 </div>
-
-
-               
               </div>
 
               <div class="table-responsive">
                 <table class="table table-striped table-hover">
                   <thead>
                     <tr>
-                      <th>ID</th>
-                      <th>Fullname</th>
-                      <th>Username</th>
-                      <th>Created At</th>
-                      <th>Action</th> <!-- New column for delete -->
-                    </tr>
+                      <th>
+                        ID
+                        <?= get_sort_link('user_id', $current_sort_by, $current_sort_order, $search) ?>
+                      </th>
+                      <th>
+                        Fullname
+                        <?= get_sort_link('fullname', $current_sort_by, $current_sort_order, $search) ?>
+                      </th>
+                      <th>
+                        Username
+                        <?= get_sort_link('username', $current_sort_by, $current_sort_order, $search) ?>
+                      </th>
+                      <th>
+                        Created At
+                        <?= get_sort_link('created_at', $current_sort_by, $current_sort_order, $search) ?>
+                      </th>
+                      <th>Action</th> </tr>
                   </thead>
                   <tbody>
                     <?php if (mysqli_num_rows($result) > 0): ?>
@@ -147,13 +280,24 @@ if (!$result) {
 
               </div>
 
-              <!-- Pagination -->
               <?php if ($total_pages > 1): ?>
                 <nav aria-label="Page navigation">
                   <ul class="pagination justify-content-start pagination-sm">
+                    <?php 
+                        // Re-fetch current params including sort
+                        $query_params = [
+                            'search' => $search,
+                            'sort_by' => $current_sort_by,
+                            'sort_order' => $current_sort_order,
+                        ];
+                    ?>
+
                     <?php if ($page > 1): ?>
                       <li class="page-item">
-                        <a class="page-link text-muted" href="?search=<?= urlencode($search) ?>&page=<?= $page - 1 ?>">Previous</a>
+                        <a class="page-link text-muted" 
+                            href="<?= build_query_string($page - 1, $search, $current_sort_by, $current_sort_order) ?>">
+                            Previous
+                        </a>
                       </li>
                     <?php endif; ?>
 
@@ -168,13 +312,19 @@ if (!$result) {
 
                     <?php for ($i = $start; $i <= $end; $i++): ?>
                       <li class="page-item">
-                        <a class="page-link text-muted <?= $i == $page ? 'fw-bold' : '' ?>" href="?search=<?= urlencode($search) ?>&page=<?= $i ?>"><?= $i ?></a>
+                        <a class="page-link text-muted <?= $i == $page ? 'fw-bold' : '' ?>" 
+                            href="<?= build_query_string($i, $search, $current_sort_by, $current_sort_order) ?>">
+                            <?= $i ?>
+                        </a>
                       </li>
                     <?php endfor; ?>
 
                     <?php if ($page < $total_pages): ?>
                       <li class="page-item">
-                        <a class="page-link text-muted" href="?search=<?= urlencode($search) ?>&page=<?= $page + 1 ?>">Next</a>
+                        <a class="page-link text-muted" 
+                            href="<?= build_query_string($page + 1, $search, $current_sort_by, $current_sort_order) ?>">
+                            Next
+                        </a>
                       </li>
                     <?php endif; ?>
                   </ul>
@@ -195,12 +345,33 @@ if (!$result) {
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
+    // --- Clickable Row navigation ---
     const rows = document.querySelectorAll('.clickable-row');
     rows.forEach(row => {
-      row.addEventListener('click', () => {
+      row.addEventListener('click', (event) => {
+        // Prevent click if the action button/form was clicked
+        if (event.target.closest('form') || event.target.closest('button')) {
+          return;
+        }
         const id = row.getAttribute('data-id');
         window.location.href = `view_user.php?id=${id}&nav_drop=true`;
       });
+    });
+
+    // --- Auto-Submit Dropdowns ---
+    const filterForm = document.getElementById('filterForm');
+    const autoSubmitDropdowns = document.querySelectorAll('.auto-submit-dropdown');
+    
+    autoSubmitDropdowns.forEach(dropdown => {
+        dropdown.addEventListener('change', function() {
+            // Set the hidden page input to 1 when changing filters/sorts
+            const pageInput = document.querySelector('input[name="page"]');
+            if(pageInput) {
+                pageInput.value = 1;
+            }
+            // Submit the form
+            filterForm.submit();
+        });
     });
   });
 </script>
