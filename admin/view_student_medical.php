@@ -224,7 +224,7 @@ body {
             
             <div class="offcanvas-body">
                 <form id="medicalForm" action="create_medical.php" method="POST" class="row g-3 needs-validation" novalidate>
-                    <input type="hidden" name="medical_id" value="<?php echo uniqid('med_'); ?>">
+                    <input type="hidden" name="medical_id" value="">
                     <div class="col-12 mb-0">
                         <label class="form-label d-block fw-semibold">Select Record Type</label>
                         <div class="d-flex justify-content-between gap-2">
@@ -361,7 +361,7 @@ body {
 
                     <div class="col-md-6 mb-0 mt-0">
                         <label for="nurse_incharge" class="form-label">School Nurse Incharge</label>
-                        <input type="text" name="nurse_incharge" id="nurse_incharge" value="<?= htmlspecialchars($full_name) ?>" disabled class="form-control common-field" required>
+                        <input type="text" name="nurse_incharge" id="nurse_incharge" readonly value="<?= htmlspecialchars($full_name) ?>" readonly class="form-control common-field" required>
                         <div class="invalid-feedback">Nurse in charge is required.</div>
                     </div>
 
@@ -553,78 +553,82 @@ body {
 
 
     <div class="table-responsive">
-        <?php
-            $student_id = isset($_GET['student_id']) ? trim($_GET['student_id']) : '';
+    <?php
+        $student_id = isset($_GET['student_id']) ? trim($_GET['student_id']) : '';
 
-            if (empty($student_id)) {
-                echo "<div class='alert alert-warning'>No student selected.</div>";
-                exit;
-            }
+        if (empty($student_id)) {
+            echo "<div class='alert alert-warning'>No student selected.</div>";
+            exit;
+        }
 
-            // Fetch all records for this student
-            $query = $conn->prepare("SELECT id, medical_id, height, weight, blood_pressure, temperature, notes, created_at FROM student_health_records WHERE student_id = ? ORDER BY created_at DESC");
-            $query->bind_param("s", $student_id);
-            $query->execute();
-            $result = $query->get_result();
-            ?>
+        // Fetch all records for this student
+        // FIX: Removed the trailing comma after 'general_note' and corrected the column name
+        $query = $conn->prepare("SELECT id, medical_id, created_at, types, general_note FROM student_health_records WHERE student_id = ? ORDER BY created_at DESC");
+        $query->bind_param("s", $student_id);
+        $query->execute();
+        $result = $query->get_result();
+        ?>
 
-            <div>
-                <table id="medicalRecordsTable" class="table table-striped table-hover">
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Height (cm)</th>
-                            <th>Weight (kg)</th>
-                            <th>Blood Pressure</th>
-                            <th>Temperature (°C)</th>
-                            <th>Notes</th>
-                            <th>Action</th>
+        <div>
+            <table id="medicalRecordsTable" class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th>Medical ID</th>
+                        <th>Date</th>
+                        <th>Type</th>
+                        <th>Notes</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php if ($result->num_rows > 0): ?>
+                        <?php while ($row = $result->fetch_assoc()): ?>
+                        <tr style="cursor:pointer;" onclick="window.location.href='view_medical_detail.php?medical_id=<?php echo urlencode($row['medical_id']); ?>&student_id=<?php echo urlencode($student_id); ?>'">
+                            <td class="text-muted"><?php echo htmlspecialchars($row['medical_id']); ?></td>
+                            
+                            <td class="text-muted"><?php echo date("Y-m-d", strtotime($row['created_at'])); ?></td>
+                            
+                            <td class="text-muted"><?php echo htmlspecialchars($row['types']); ?></td>
+                            
+                            <td class="text-muted text-truncate" style="max-width: 200px;" title="<?php echo htmlspecialchars($row['general_note']); ?>">
+                                <?php echo htmlspecialchars(substr($row['general_note'], 0, 50)) . (strlen($row['general_note']) > 50 ? '...' : ''); ?>
+                            </td>
+                            
+                            <td class="text-muted">
+                                <a href="delete_medical.php?id=<?php echo $row['id']; ?>&student_id=<?php echo urlencode($student_id); ?>" class="btn btn-sm" onclick="event.stopPropagation(); return confirm('Are you sure you want to delete this record?');">
+                                    <i class="bi bi-trash"></i>
+                                </a>
+                            </td>
                         </tr>
-                    </thead>
-                    <tbody>
-                        <?php if ($result->num_rows > 0): ?>
-                            <?php while ($row = $result->fetch_assoc()): ?>
-                            <tr style="cursor:pointer;" onclick="window.location.href='view_medical_detail.php?medical_id=<?php echo urlencode($row['medical_id']); ?>&student_id=<?php echo urlencode($student_id); ?>'">
-                                <td class="text-muted"><?php echo date("Y-m-d", strtotime($row['created_at'])); ?></td>
-                                <td class="text-muted"><?php echo htmlspecialchars($row['height']); ?></td>
-                                <td class="text-muted"><?php echo htmlspecialchars($row['weight']); ?></td>
-                                <td class="text-muted"><?php echo htmlspecialchars($row['blood_pressure']); ?></td>
-                                <td class="text-muted"><?php echo htmlspecialchars($row['temperature']); ?></td>
-                                <td class="text-muted"><?php echo htmlspecialchars($row['notes']); ?></td>
-                                <td class="text-muted">
-                                    <a href="delete_medical.php?id=<?php echo $row['id']; ?>&student_id=<?php echo urlencode($student_id); ?>" class="btn btn-sm" onclick="event.stopPropagation(); return confirm('Are you sure you want to delete this record?');">
-                                        <i class="bi bi-trash"></i>
-                                    </a>
-                                </td>
-                            </tr>
-                            <?php endwhile; ?>
-                        <?php else: ?>
-                            <tr class="no-results">
-                                <td colspan="7" class="text-center text-muted">No medical records found.</td>
-                            </tr>
-                        <?php endif; ?>
-                        <!-- Hidden row for search "no results" -->
-                        <tr class="no-results-search" style="display:none;">
-                            <td colspan="7" class="text-center text-muted">No results found.</td>
+                        <?php endwhile; ?>
+                    <?php else: ?>
+                        <tr class="no-results">
+                            <td colspan="5" class="text-center text-muted">No medical records found.</td>
                         </tr>
-                    </tbody>
+                    <?php endif; ?>
+                    <tr class="no-results-search" style="display:none;">
+                        <td colspan="5" class="text-center text-muted">No results found.</td>
+                    </tr>
+                </tbody>
 
-                </table>
-                <script>
-                const searchInput = document.getElementById('searchInput');
-                const table = document.getElementById('medicalRecordsTable');
-                const tbody = table.getElementsByTagName('tbody')[0];
-                const rows = tbody.getElementsByTagName('tr');
-                const noResultsRow = tbody.querySelector('.no-results-search');
+            </table>
+            <script>
+            // Ensure searchInput element is defined on the page for this script to work
+            const searchInput = document.getElementById('searchInput');
+            const table = document.getElementById('medicalRecordsTable');
+            const tbody = table.getElementsByTagName('tbody')[0];
+            const rows = tbody.getElementsByTagName('tr');
+            const noResultsRow = tbody.querySelector('.no-results-search');
 
+            if (searchInput) {
                 searchInput.addEventListener('input', function() {
                     const filter = searchInput.value.toLowerCase();
                     let visibleCount = 0;
 
                     for (let i = 0; i < rows.length; i++) {
-                        // Skip the "no results" row
-                        if (rows[i].classList.contains('no-results-search')) continue;
-
+                        // Skip the initial "no results" row if it's there
+                        if (rows[i].classList.contains('no-results-search') || rows[i].classList.contains('no-results')) continue;
+                        
                         let rowText = rows[i].innerText.toLowerCase();
                         if (rowText.indexOf(filter) > -1) {
                             rows[i].style.display = '';
@@ -634,19 +638,28 @@ body {
                         }
                     }
 
-                    // Show or hide "no results" row
-                    if (visibleCount === 0) {
+                    // Show or hide "no results" row based on filter count
+                    if (visibleCount === 0 && tbody.querySelector('.no-results')) {
+                        // If there are no results, hide the default "no results" message
+                        // and show the "search no results" message if the default one is present
+                        const defaultNoResults = tbody.querySelector('.no-results');
+                        if (defaultNoResults) defaultNoResults.style.display = 'none';
                         noResultsRow.style.display = '';
-                    } else {
+                    } else if (visibleCount === 0) {
+                        // If there were records but none match the filter
+                        noResultsRow.style.display = '';
+                    } 
+                     else {
+                        // If results are found, hide the "no results" rows
                         noResultsRow.style.display = 'none';
+                        const defaultNoResults = tbody.querySelector('.no-results');
+                        if (defaultNoResults) defaultNoResults.style.display = 'none';
                     }
                 });
-                </script>
-
-
-            </div>
-
-    </div>
+            }
+            </script>
+        </div>
+</div>
 </div>
 
 </div>
