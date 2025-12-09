@@ -472,8 +472,8 @@ body {
                 </div>
 
                 <div class="col-12 mt-4">
-                    <a href="#" id="view_delete_link" class="btn btn-outline-danger rounded-4">Delete Record</a>
-                    <button type="button" class="btn btn-outline-secondary rounded-4" data-bs-dismiss="offcanvas">Close</button>
+                    <a href="#" id="view_delete_link" class="btn btn-danger rounded-4">Delete Record</a>
+                    <button type="button" class="btn btn-outline-danger rounded-4" data-bs-dismiss="offcanvas">Close</button>
                 </div>
             </div>
         </div>
@@ -522,11 +522,11 @@ body {
             <table id="medicalRecordsTable" class="table table-striped table-hover">
                 <thead>
                     <tr>
-                        <th>Medical ID</th>
-                        <th>Date</th>
-                        <th>Type</th>
-                        <th>Notes</th>
-                        <th>Actions</th>
+                        <th width="20%">Medical ID</th>
+                        <th width="20%">Date</th>
+                        <th width="20%">Type</th>
+                        <th width="30%">Notes</th>
+                        <th width="5%">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
