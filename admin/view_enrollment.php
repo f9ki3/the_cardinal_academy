@@ -7,6 +7,8 @@ $admission_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
 // Fetch admission data
 $data = [];
+$lrn_from_db = ''; // Initialize LRN variable
+
 if ($admission_id > 0) {
     $query = "SELECT * FROM admission_form WHERE id = ?";
     $stmt = $conn->prepare($query);
@@ -15,7 +17,13 @@ if ($admission_id > 0) {
     $result = $stmt->get_result();
     $data = $result->fetch_assoc();
     $stmt->close();
+    
+    // Store LRN for PHP condition check
+    $lrn_from_db = $data['lrn'] ?? ''; 
 }
+
+// Determine if the LRN is initially empty
+$is_lrn_empty = empty($lrn_from_db);
 ?>
 
 <!DOCTYPE html>
@@ -37,8 +45,7 @@ if ($admission_id > 0) {
      <form action="update_admission.php" method="POST">
         <div class="bg-white p-4 rounded-4">
 
-        <!-- Learner Profile -->
-<fieldset>
+        <fieldset>
   <h4><strong>Student Profile</strong></h4>
   <p class="m-0">Note: Please review all information from the form before proceed to payment plan</p>
   <div class="row g-3">
@@ -85,7 +92,7 @@ if ($admission_id > 0) {
 
     <div class="col-12 col-md-6">
       <label class="form-label text-muted">LRN</label>
-      <input type="text" name="lrn" class="form-control" value="<?= htmlspecialchars($data['lrn'] ?? '') ?>">
+      <input type="text" name="lrn" id="lrn-input" class="form-control" value="<?= htmlspecialchars($data['lrn'] ?? '') ?>" oninput="checkLrnAndToggleProceed()">
     </div>
     
     <div class="col-md-6">
@@ -179,12 +186,10 @@ if ($admission_id > 0) {
   </div>
 </fieldset>
 
-<!-- Guardian Profile -->
 <fieldset>
   <h4 class="mt-5 mb-5"><strong> Requirements</strong></h4>
  
   <div class="row g-3">
-    <!-- Student Requirements Checkboxes -->
     <div class="col-md-4">
       <div class="form-check">
         <input class="form-check-input" type="checkbox" name="requirements[]" value="birth_cert" id="birth_cert"
@@ -277,7 +282,13 @@ if ($admission_id > 0) {
     </div>
 
     <div class="col-12 col-md-2">
-      <button type="button" onclick="proceedToPayment()" class="btn btn-danger rounded-4 mt-3 w-100">Proceed</button>
+      <button type="button" 
+              onclick="proceedToPayment()" 
+              class="btn btn-danger rounded-4 mt-3 w-100"
+              id="proceed-btn"
+              <?= $is_lrn_empty ? 'disabled' : '' ?>>
+        Proceed
+      </button>
     </div>
 
     <div class="col-12 col-md-2">
@@ -316,16 +327,50 @@ if ($admission_id > 0) {
 </html>
 
 <script>
+/**
+ * Toggles the disabled state of the 'Proceed' button based on the LRN input value.
+ */
+function checkLrnAndToggleProceed() {
+    const lrnInput = document.getElementById('lrn-input');
+    const proceedBtn = document.getElementById('proceed-btn');
+    
+    // Trim to check for empty or just whitespace
+    const lrnValue = lrnInput.value.trim();
+
+    // Disable the button if LRN is empty, otherwise enable it
+    proceedBtn.disabled = lrnValue === '';
+}
+
+/**
+ * Handles the navigation to the payment plan page.
+ * It now checks both LRN and Grade Level before proceeding.
+ */
 function proceedToPayment() {
-    const grade = document.querySelector('select[name="grade_level"]').value;
+    const lrnInput = document.getElementById('lrn-input');
+    const lrn = lrnInput.value.trim();
+
+    if (!lrn) {
+        alert("Please enter the LRN before proceeding to the payment plan.");
+        lrnInput.focus();
+        return;
+    }
+
+    const gradeSelect = document.querySelector('select[name="grade_level"]');
+    const grade = gradeSelect.value;
     const admissionId = <?= json_encode($admission_id) ?>;
 
     if (!grade) {
         alert("Please select a grade level before proceeding.");
+        gradeSelect.focus();
         return;
     }
 
+    // Proceed to payment_plan.php
     const url = `payment_plan.php?id=${admissionId}&grade=${encodeURIComponent(grade)}`;
     window.location.href = url;
 }
+
+// Initial call to ensure the button state is correct immediately after page load 
+// in case the LRN was empty but the PHP condition was missed or bypassed.
+document.addEventListener('DOMContentLoaded', checkLrnAndToggleProceed);
 </script>
