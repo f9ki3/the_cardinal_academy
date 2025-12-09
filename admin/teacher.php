@@ -172,7 +172,7 @@ $current_sort_order = $_GET['sort_order'] ?? $default_sort_order;
                                 <div class="d-flex align-items-center gap-2">
                                     <label class="text-muted text-nowrap d-none d-xl-block">Sort By:</label>
 
-                                    <select id="sort_by" name="sort_by" class="form-select rounded-4 auto-submit-dropdown" style="min-width: 100px;">
+                                    <select id="sort_by" name="sort_by" class="form-select rounded-4 auto-submit-dropdown">
                                         <option value="fullname" <?= $sort_by == 'fullname' ? 'selected' : '' ?>>Fullname</option>
                                         <option value="user_id" <?= $sort_by == 'user_id' ? 'selected' : '' ?>>ID</option>
                                         <option value="username" <?= $sort_by == 'username' ? 'selected' : '' ?>>Username</option>
@@ -180,7 +180,7 @@ $current_sort_order = $_GET['sort_order'] ?? $default_sort_order;
                                         <option value="created_at" <?= $sort_by == 'created_at' ? 'selected' : '' ?>>Created At</option>
                                     </select>
 
-                                    <select id="sort_order" name="sort_order" class="form-select rounded-4 auto-submit-dropdown" style="max-width: 120px;">
+                                    <select id="sort_order" name="sort_order" class="form-select rounded-4 auto-submit-dropdown flex-grow-1">
                                         <option value="ASC" <?= $sort_order == 'ASC' ? 'selected' : '' ?>>Ascending</option>
                                         <option value="DESC" <?= $sort_order == 'DESC' ? 'selected' : '' ?>>Descending</option>
                                     </select>
@@ -275,7 +275,7 @@ $current_sort_order = $_GET['sort_order'] ?? $default_sort_order;
                             <a href="delete_teacher.php?id=<?= urlencode($row['user_id']) ?>&search=<?= urlencode($search) ?>&sort_by=<?= urlencode($current_sort_by) ?>&sort_order=<?= urlencode($current_sort_order) ?>&page=<?= urlencode($page) ?>" 
                               class="btn btn-sm btn-outline-secondary" 
                               onclick="return confirm('Are you sure you want to remove this teacher?');">
-                              <i class='bi bi-trash'></i> Delete
+                              <i class='bi bi-trash'></i> 
                             </a>
                           </td>
                           </tr>

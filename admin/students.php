@@ -168,22 +168,23 @@ $current_sort_order = $_GET['sort_order'] ?? $default_sort_order;
                 </div>
                 
                 <div class="col-12 col-md-9 d-flex justify-content-between align-items-center flex-wrap gap-2">
-                    <form id="filterForm" method="GET" action="" class="w-100">
+                    <form id="filterForm" method="GET" action="" class="flex-grow-1">
                         <input type="hidden" name="page" value="<?= htmlspecialchars($page) ?>">
                         
                         <div class="row g-2 mb-3 align-items-center">
+                            
                             <div class="col-12 col-lg-7">
                                 <div class="d-flex align-items-center gap-2">
                                     <label class="text-muted text-nowrap d-none d-xl-block">Sort By:</label>
 
-                                    <select id="sort_by" name="sort_by" class="form-select rounded-4 auto-submit-dropdown" style="min-width: 100px;">
+                                    <select id="sort_by" name="sort_by" class="form-select rounded-4 auto-submit-dropdown "> 
                                         <option value="fullname" <?= $sort_by == 'fullname' ? 'selected' : '' ?>>Fullname</option>
-                                        <option value="user_id" <?= $sort_by == 'user_id' ? 'selected' : '' ?>>ID</option>
+                                        <option value="user_id" <?= $sort_id == 'user_id' ? 'selected' : '' ?>>ID</option>
                                         <option value="username" <?= $sort_by == 'username' ? 'selected' : '' ?>>Username</option>
                                         <option value="created_at" <?= $sort_by == 'created_at' ? 'selected' : '' ?>>Created At</option>
                                     </select>
 
-                                    <select id="sort_order" name="sort_order" class="form-select rounded-4 auto-submit-dropdown" style="max-width: 120px;">
+                                    <select id="sort_order" name="sort_order" class="form-select rounded-4 auto-submit-dropdown flex-grow-1">
                                         <option value="ASC" <?= $sort_order == 'ASC' ? 'selected' : '' ?>>Ascending</option>
                                         <option value="DESC" <?= $sort_order == 'DESC' ? 'selected' : '' ?>>Descending</option>
                                     </select>
@@ -197,7 +198,7 @@ $current_sort_order = $_GET['sort_order'] ?? $default_sort_order;
                                         type="text" 
                                         name="search" 
                                         value="<?= htmlspecialchars($search ?? '') ?>" 
-                                        placeholder="Search Username or Fullname"
+                                        placeholder="Search ..."
                                     >
                                     <button class="btn border rounded-4 ms-2" type="submit">
                                         <i class="bi bi-search"></i> Search

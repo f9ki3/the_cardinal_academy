@@ -1,20 +1,108 @@
-<?php include 'session_login.php'; ?>
-<?php include '../db_connection.php'; ?>
+<?php 
+include 'session_login.php'; 
+include '../db_connection.php'; 
 
-<?php
+// --- SORTING PARAMETERS ---
+$default_sort_by = 'grade_level'; 
+$default_sort_order = 'ASC'; 
+
+$sort_by = isset($_GET['sort_by']) ? $_GET['sort_by'] : $default_sort_by;
+$sort_order = isset($_GET['sort_order']) ? strtoupper($_GET['sort_order']) : $default_sort_order;
+
+// Validate and map $sort_by to a database column
+$allowed_sort_columns = [
+    'id' => 'id',
+    'grade_level' => 'grade_level',
+    'gender' => 'gender',
+    'classification' => 'classification',
+    'type' => 'type',
+    'size' => 'size',
+    'price' => 'price',
+];
+$sort_column = $allowed_sort_columns[$sort_by] ?? $allowed_sort_columns[$default_sort_by];
+
+// Validate $sort_order
+$sort_order = ($sort_order === 'ASC' || $sort_order === 'DESC') ? $sort_order : $default_sort_order;
+
+// Build the ORDER BY clause dynamically
+$order_by_clause = "ORDER BY $sort_column $sort_order, id ASC"; 
+// -----------------------------------------------------------------------------
+
+
+// --- Helper functions for dynamic links ---
+
+// Helper function to build query string for pagination/sorting links
+function build_query_string($page = null, $search = null, $sort_by = null, $sort_order = null) {
+    
+    $params = ['nav_drop' => 'true']; // Always include nav_drop
+    
+    // Determine current values based on GET or defaults
+    $current_search = $_GET['search'] ?? '';
+    $current_sort_by = $_GET['sort_by'] ?? 'grade_level';
+    $current_sort_order = $_GET['sort_order'] ?? 'ASC';
+
+    // Set parameters
+    $params['page'] = $page !== null ? $page : ($_GET['page'] ?? 1);
+    $params['search'] = $search !== null ? $search : $current_search;
+    $params['sort_by'] = $sort_by !== null ? $sort_by : $current_sort_by;
+    $params['sort_order'] = $sort_order !== null ? $sort_order : $current_sort_order;
+    
+    // Handle page reset for new sort/search actions
+    if ($page === null) {
+        if ($sort_by !== null || $sort_order !== null || $search !== null) {
+            $params['page'] = 1;
+        }
+    }
+
+    // Filter out empty search to keep URLs cleaner
+    $params = array_filter($params, fn($value, $key) => 
+        ($key !== 'search') || 
+        ($key === 'search' && $value !== ''), 
+        ARRAY_FILTER_USE_BOTH
+    );
+    
+    return '?' . http_build_query($params);
+}
+
+// Function to generate the sort link for a column header
+function get_sort_link($column_name, $current_sort_by, $current_sort_order, $search) {
+    $new_order = 'ASC';
+    // If we are currently sorting by this column, flip the order
+    if ($current_sort_by === $column_name) {
+        $new_order = ($current_sort_order === 'ASC') ? 'DESC' : 'ASC';
+    }
+
+    // Build the query string for the new sort (passing 1 explicitly to reset page)
+    $query_string = build_query_string(1, $search, $column_name, $new_order);
+
+    // Determine the icon to display (using Bootstrap Icons)
+    $icon = 'bi-chevron-expand'; // Default icon
+    if ($current_sort_by === $column_name) {
+        $icon = ($current_sort_order === 'ASC') ? 'bi-chevron-up' : 'bi-chevron-down';
+    }
+
+    // Return the link and icon for the table header
+    return '<a href="' . htmlspecialchars($query_string) . '" class="text-decoration-none text-body">
+                <i class="bi ' . $icon . ' small"></i>
+            </a>';
+}
+// -----------------------------------------------------------------------------
+
+
 // Pagination and Search
 $limit = 10;
 $page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int) $_GET['page'] : 1;
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
 $offset = ($page - 1) * $limit;
+$searchEsc = mysqli_real_escape_string($conn, $search);
 
 // Count total uniforms
 $count_query = "SELECT COUNT(*) as total FROM uniforms 
-                WHERE grade_level LIKE '%$search%' 
-                   OR gender LIKE '%$search%' 
-                   OR classification LIKE '%$search%' 
-                   OR type LIKE '%$search%' 
-                   OR size LIKE '%$search%'";
+                WHERE grade_level LIKE '%$searchEsc%' 
+                   OR gender LIKE '%$searchEsc%' 
+                   OR classification LIKE '%$searchEsc%' 
+                   OR type LIKE '%$searchEsc%' 
+                   OR size LIKE '%$searchEsc%'";
 
 $count_result = mysqli_query($conn, $count_query);
 if (!$count_result) {
@@ -24,20 +112,24 @@ if (!$count_result) {
 $total = mysqli_fetch_assoc($count_result)['total'];
 $total_pages = ceil($total / $limit);
 
-// Get uniforms
+// Get uniforms (UPDATED to include sorting)
 $query = "SELECT * FROM uniforms
-          WHERE grade_level LIKE '%$search%' 
-             OR gender LIKE '%$search%' 
-             OR classification LIKE '%$search%' 
-             OR type LIKE '%$search%' 
-             OR size LIKE '%$search%'
-          ORDER BY grade_level ASC, gender ASC
+          WHERE grade_level LIKE '%$searchEsc%' 
+             OR gender LIKE '%$searchEsc%' 
+             OR classification LIKE '%$searchEsc%' 
+             OR type LIKE '%$searchEsc%' 
+             OR size LIKE '%$searchEsc%'
+          $order_by_clause
           LIMIT $limit OFFSET $offset";
 
 $result = mysqli_query($conn, $query);
 if (!$result) {
     die("<p style='color:red;'>Data Query Failed: " . mysqli_error($conn) . "</p>");
 }
+
+// Extract current sort parameters (kept for UI state)
+$current_sort_by = $_GET['sort_by'] ?? $default_sort_by;
+$current_sort_order = $_GET['sort_order'] ?? $default_sort_order;
 ?>
 
 <!DOCTYPE html>
@@ -61,31 +153,59 @@ if (!$result) {
           <div class="rounded p-3 bg-white">
             <div class="container my-4">
               <div class="row mb-3">
-                <div class="col-12 col-md-5">
+                <div class="col-12 col-md-3">
                   <h4>Manage Uniforms</h4>
                 </div>
-                <div class="col-12 col-md-7 d-flex justify-content-between align-items-center flex-wrap gap-2">
-                  <!-- Search Form -->
-                  <form method="GET" action="" class="flex-grow-1">
-                    <input type="hidden" name="nav_drop" value="true">
-                    <div class="input-group">
-                        <input 
-                        class="form-control rounded rounded-4" 
-                        type="text" 
-                        name="search" 
-                        value="<?= htmlspecialchars($search ?? '') ?>" 
-                        placeholder="Search by Grade, Gender, Type, Size"
-                        >
-                        <button class="btn border ms-2 rounded rounded-4" type="submit">Search</button>
-                    </div>
-                  </form>
+                
+                <div class="col-12 col-md-9 d-flex justify-content-between align-items-center flex-wrap gap-2">
+                    <form id="filterForm" method="GET" action="" class="flex-grow-1">
+                        <input type="hidden" name="page" value="<?= htmlspecialchars($page) ?>">
+                        <input type="hidden" name="nav_drop" value="true">
+                        
+                        <div class="row g-2 align-items-center">
+                            
+                            <div class="col-12 col-lg-7">
+                                <div class="d-flex align-items-center gap-2">
+                                    <label class="text-muted text-nowrap d-none d-xl-block">Sort By:</label>
 
-                  <!-- Create Button -->
-                  <a href="create_uniform.php?nav_drop=true" class="btn bg-main text-light rounded rounded-4 px-4">
+                                    <select id="sort_by" name="sort_by" class="form-select rounded-4 auto-submit-dropdown ">
+                                        <option value="grade_level" <?= $sort_by == 'grade_level' ? 'selected' : '' ?>>Grade Level</option>
+                                        <option value="id" <?= $sort_by == 'id' ? 'selected' : '' ?>>ID</option>
+                                        <option value="gender" <?= $sort_by == 'gender' ? 'selected' : '' ?>>Gender</option>
+                                        <option value="classification" <?= $sort_by == 'classification' ? 'selected' : '' ?>>Classification</option>
+                                        <option value="type" <?= $sort_by == 'type' ? 'selected' : '' ?>>Type</option>
+                                        <option value="size" <?= $sort_by == 'size' ? 'selected' : '' ?>>Size</option>
+                                        <option value="price" <?= $sort_by == 'price' ? 'selected' : '' ?>>Price</option>
+                                    </select>
+
+                                    <select id="sort_order" name="sort_order" class="form-select rounded-4 auto-submit-dropdown flex-grow-1">
+                                        <option value="ASC" <?= $sort_order == 'ASC' ? 'selected' : '' ?>>Ascending</option>
+                                        <option value="DESC" <?= $sort_order == 'DESC' ? 'selected' : '' ?>>Descending</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-lg-5">
+                                <div class="input-group">
+                                    <input 
+                                        class="form-control rounded-4" 
+                                        type="text" 
+                                        name="search" 
+                                        value="<?= htmlspecialchars($search ?? '') ?>" 
+                                        placeholder="Search ..."
+                                    >
+                                    <button class="btn border ms-2 rounded-4" type="submit">
+                                        <i class="bi bi-search"></i> Search
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                  <a href="create_uniform.php?nav_drop=true" class="btn bg-main text-light rounded rounded-4 px-4 text-nowrap">
                     + Add Uniform
                   </a>
                 </div>
-
                 <div class="col-12 pt-3">
                   <?php if (isset($_GET['status'])): ?>
                     <?php if ($_GET['status'] === 'created'): ?>
@@ -112,14 +232,35 @@ if (!$result) {
                 <table class="table table-striped" style="cursor: pointer">
                   <thead>
                     <tr>
-                      <th>ID</th>
-                      <th>Grade Level</th>
-                      <th>Gender</th>
-                      <th>Classification</th>
-                      <th>Type</th>
-                      <th>Size</th>
-                      <th>Price</th>
-                      <th>Action</th>
+                      <th width="5%">
+                        ID
+                        <?= get_sort_link('id', $current_sort_by, $current_sort_order, $search) ?>
+                      </th>
+                      <th width="15%">
+                        Grade Level
+                        <?= get_sort_link('grade_level', $current_sort_by, $current_sort_order, $search) ?>
+                      </th>
+                      <th width="10%">
+                        Gender
+                        <?= get_sort_link('gender', $current_sort_by, $current_sort_order, $search) ?>
+                      </th>
+                      <th width="15%">
+                        Classification
+                        <?= get_sort_link('classification', $current_sort_by, $current_sort_order, $search) ?>
+                      </th>
+                      <th width="15%">
+                        Type
+                        <?= get_sort_link('type', $current_sort_by, $current_sort_order, $search) ?>
+                      </th>
+                      <th width="10%">
+                        Size
+                        <?= get_sort_link('size', $current_sort_by, $current_sort_order, $search) ?>
+                      </th>
+                      <th width="15%">
+                        Price
+                        <?= get_sort_link('price', $current_sort_by, $current_sort_order, $search) ?>
+                      </th>
+                      <th width="15%">Action</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -135,7 +276,7 @@ if (!$result) {
                           <td class="text-muted py-3">₱<?= number_format($row['price'], 2) ?></td>
                           <td class="py-3">
                             <a href="update_uniform.php?id=<?= $row['id'] ?>" class="btn border rounded rounded-4 btn-sm">Edit</a>
-                            <a href="delete_uniform.php?id=<?= $row['id'] ?>"
+                            <a href="delete_uniform.php?id=<?= $row['id'] ?>&search=<?= urlencode($search) ?>&sort_by=<?= urlencode($current_sort_by) ?>&sort_order=<?= urlencode($current_sort_order) ?>&page=<?= urlencode($page) ?>"
                               class="btn border rounded rounded-4 btn-sm"
                               onclick="return confirm('Are you sure you want to delete this uniform?');">
                               Remove
@@ -154,13 +295,12 @@ if (!$result) {
                 </table>
               </div>
 
-              <!-- Pagination -->
               <?php if ($total_pages > 1): ?>
               <nav aria-label="Page navigation">
                 <ul class="pagination justify-content-start pagination-sm">
                   <?php if ($page > 1): ?>
                   <li class="page-item">
-                    <a class="page-link text-muted" href="?search=<?= urlencode($search) ?>&page=<?= $page - 1 ?>&nav_drop=true">Previous</a>
+                    <a class="page-link text-muted" href="<?= build_query_string($page - 1, $search, $current_sort_by, $current_sort_order) ?>">Previous</a>
                   </li>
                   <?php endif; ?>
 
@@ -175,13 +315,13 @@ if (!$result) {
 
                   <?php for ($i = $start; $i <= $end; $i++): ?>
                   <li class="page-item">
-                    <a class="page-link text-muted <?= $i == $page ? 'fw-bold' : '' ?>" href="?search=<?= urlencode($search) ?>&page=<?= $i ?>&nav_drop=true"><?= $i ?></a>
+                    <a class="page-link text-muted <?= $i == $page ? 'fw-bold' : '' ?>" href="<?= build_query_string($i, $search, $current_sort_by, $current_sort_order) ?>"><?= $i ?></a>
                   </li>
                   <?php endfor; ?>
 
                   <?php if ($page < $total_pages): ?>
                   <li class="page-item">
-                    <a class="page-link text-muted" href="?search=<?= urlencode($search) ?>&page=<?= $page + 1 ?>&nav_drop=true">Next</a>
+                    <a class="page-link text-muted" href="<?= build_query_string($page + 1, $search, $current_sort_by, $current_sort_order) ?>">Next</a>
                   </li>
                   <?php endif; ?>
                 </ul>
@@ -197,5 +337,25 @@ if (!$result) {
 </div>
 
 <?php include 'footer.php'; ?>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    // --- Auto-Submit Dropdowns ---
+    const filterForm = document.getElementById('filterForm');
+    const autoSubmitDropdowns = document.querySelectorAll('.auto-submit-dropdown');
+    
+    autoSubmitDropdowns.forEach(dropdown => {
+        dropdown.addEventListener('change', function() {
+            // Set the hidden page input to 1 when changing filters/sorts
+            const pageInput = document.querySelector('input[name="page"]');
+            if(pageInput) {
+                pageInput.value = 1;
+            }
+            // Submit the form
+            filterForm.submit();
+        });
+    });
+  });
+</script>
 </body>
 </html>
