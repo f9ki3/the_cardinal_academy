@@ -4,7 +4,7 @@ include '../db_connection.php';
 
 // --- SORTING PARAMETERS ---
 $default_sort_by = 'fullname';
-$default_sort_order = 'DESC'; // Changed default to DESC to show recent entries first
+$default_sort_order = 'ASC'; // Default sort order is ASC
 $hardcoded_default_sy = ''; // Used to manage SY filter logic
 
 $sort_by = isset($_GET['sort_by']) ? $_GET['sort_by'] : $default_sort_by;
@@ -15,8 +15,9 @@ $allowed_sort_columns = [
     'account_number' => 'st.account_number',
     'student_number' => 'st.student_number',
     'fullname' => 'fullname', // Alias for CONCAT
-    'status' => 'si.status',
     'grade_level' => 'si.grade_level',
+    'section_name' => 'es.section_name', // ADDED section_name for sorting
+    // 'status' removed
 ];
 $sort_column = $allowed_sort_columns[$sort_by] ?? $allowed_sort_columns[$default_sort_by];
 
@@ -32,8 +33,8 @@ $order_by_clause = "ORDER BY $sort_column $sort_order";
 $limit  = 10;
 $page   = isset($_GET['page']) && is_numeric($_GET['page']) ? (int) $_GET['page'] : 1;
 $search = isset($_GET['search']) ? trim($_GET['search']) : '';
-// The school_year variable should be set from GET or default to ''
-$school_year = isset($_GET['school_year']) ? trim($_GET['school_year']) : ''; 
+// The school_year variable should be set from GET or default to a specific year/range
+$school_year = isset($_GET['school_year']) ? trim($_GET['school_year']) : '2025-2026';
 $offset = ($page - 1) * $limit;
 
 $searchEsc = mysqli_real_escape_string($conn, $search);
@@ -58,7 +59,7 @@ if ($school_year !== '') {
     $schoolYearCondition = "es.school_year IN ('$current_year-$next_year')";
 }
 
-// --- Helper functions for dynamic links (Copied from previous example) --------
+// --- Helper functions for dynamic links --------------------------------------
 
 // Helper function to build query string for pagination/sorting links
 function build_query_string($page = null, $search = null, $school_year = null, $sort_by = null, $sort_order = null) {
@@ -69,7 +70,8 @@ function build_query_string($page = null, $search = null, $school_year = null, $
     $current_search = $_GET['search'] ?? '';
     $current_sy = $_GET['school_year'] ?? ''; 
     $current_sort_by = $_GET['sort_by'] ?? 'fullname';
-    $current_sort_order = $_GET['sort_order'] ?? 'DESC';
+    // UPDATED: Default sort order passed to the function should be ASC
+    $current_sort_order = $_GET['sort_order'] ?? 'ASC'; 
 
     // Set parameters
     $params['page'] = $page !== null ? $page : ($_GET['page'] ?? 1);
@@ -119,7 +121,7 @@ function get_sort_link($column_name, $current_sort_by, $current_sort_order, $sea
 }
 // -----------------------------------------------------------------------------
 
-// --- Count total rows (MODIFIED: Added COALESCE to middlename in CONCAT for consistency) ---
+// --- Count total rows (Count query remains the same as it doesn't select extra columns) ---
 $count_query = "
     SELECT COUNT(*) AS total
     FROM student_tuition st
@@ -139,7 +141,7 @@ if (!$count_result) {
 $total        = mysqli_fetch_assoc($count_result)['total'];
 $total_pages  = ceil($total / $limit);
 
-// --- Fetch paginated rows (MODIFIED: Applied ORDER BY clause) -------------------------------
+// --- Fetch paginated rows (MODIFIED: Added es.section_name, Removed si.status) -------------
 $fullname_concat = "CONCAT(si.firstname, ' ', COALESCE(si.middlename,''), ' ', si.lastname)";
 
 $query = "
@@ -148,8 +150,9 @@ $query = "
         st.account_number,
         st.student_number,
         $fullname_concat AS fullname,
-        si.status,
-        si.grade_level AS info_grade_level
+        -- si.status, -- REMOVED STATUS
+        si.grade_level AS info_grade_level,
+        es.section_name  -- ADDED SECTION NAME
     FROM student_tuition st
     JOIN student_information si ON st.student_number = si.student_number
     JOIN sections es ON st.enrolled_section = es.section_id
@@ -211,8 +214,7 @@ $current_sort_order = $_GET['sort_order'] ?? $default_sort_order;
                                     <option value="account_number" <?= $sort_by == 'account_number' ? 'selected' : '' ?>>Account No.</option>
                                     <option value="student_number" <?= $sort_by == 'student_number' ? 'selected' : '' ?>>Student ID</option>
                                     <option value="grade_level" <?= $sort_by == 'grade_level' ? 'selected' : '' ?>>Grade Level</option>
-                                    <option value="status" <?= $sort_by == 'status' ? 'selected' : '' ?>>Status</option>
-                                </select>
+                                    <option value="section_name" <?= $sort_by == 'section_name' ? 'selected' : '' ?>>Section Name</option> </select>
 
                                 <select id="sort_order" name="sort_order" class="form-select rounded-4 auto-submit-dropdown" style="max-width: 120px;">
                                     <option value="ASC" <?= $sort_order == 'ASC' ? 'selected' : '' ?>>Ascending</option>
@@ -277,9 +279,8 @@ $current_sort_order = $_GET['sort_order'] ?? $default_sort_order;
                             <th>Account Number <?= get_sort_link('account_number', $current_sort_by, $current_sort_order, $search, $school_year) ?></th>
                             <th>Student Number <?= get_sort_link('student_number', $current_sort_by, $current_sort_order, $search, $school_year) ?></th>
                             <th>Fullname <?= get_sort_link('fullname', $current_sort_by, $current_sort_order, $search, $school_year) ?></th>
-                            <th>Status <?= get_sort_link('status', $current_sort_by, $current_sort_order, $search, $school_year) ?></th>
-                            <th>Info Grade Level <?= get_sort_link('grade_level', $current_sort_by, $current_sort_order, $search, $school_year) ?></th>
-                        </tr>
+                            <th>Grade Level <?= get_sort_link('grade_level', $current_sort_by, $current_sort_order, $search, $school_year) ?></th>
+                            <th>Section Name <?= get_sort_link('section_name', $current_sort_by, $current_sort_order, $search, $school_year) ?></th> </tr>
                         </thead>
                         <tbody>
                             <?php if (mysqli_num_rows($result) > 0): ?>
@@ -288,9 +289,8 @@ $current_sort_order = $_GET['sort_order'] ?? $default_sort_order;
                                     <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['account_number']) ?></p></td>
                                     <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['student_number']) ?></p></td>
                                     <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['fullname']) ?></p></td>
-                                    <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['status']) ?></p></td>
                                     <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['info_grade_level']) ?></p></td>
-                                </tr>
+                                    <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['section_name']) ?></p></td> </tr>
                                 <?php endwhile; ?>
                             <?php else: ?>
                                 <tr>
