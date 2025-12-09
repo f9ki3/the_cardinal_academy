@@ -22,8 +22,8 @@ if ($admission_id > 0) {
     $lrn_from_db = $data['lrn'] ?? ''; 
 }
 
-// Determine if the LRN is initially empty
-$is_lrn_empty = empty($lrn_from_db);
+// Determine if the LRN is initially empty based on database value
+$is_lrn_empty = empty(trim($lrn_from_db));
 ?>
 
 <!DOCTYPE html>
@@ -92,7 +92,7 @@ $is_lrn_empty = empty($lrn_from_db);
 
     <div class="col-12 col-md-6">
       <label class="form-label text-muted">LRN</label>
-      <input type="text" name="lrn" id="lrn-input" class="form-control" value="<?= htmlspecialchars($data['lrn'] ?? '') ?>" oninput="checkLrnAndToggleProceed()">
+      <input type="text" name="lrn" class="form-control" value="<?= htmlspecialchars($data['lrn'] ?? '') ?>">
     </div>
     
     <div class="col-md-6">
@@ -285,7 +285,6 @@ $is_lrn_empty = empty($lrn_from_db);
       <button type="button" 
               onclick="proceedToPayment()" 
               class="btn btn-danger rounded-4 mt-3 w-100"
-              id="proceed-btn"
               <?= $is_lrn_empty ? 'disabled' : '' ?>>
         Proceed
       </button>
@@ -327,50 +326,20 @@ $is_lrn_empty = empty($lrn_from_db);
 </html>
 
 <script>
-/**
- * Toggles the disabled state of the 'Proceed' button based on the LRN input value.
- */
-function checkLrnAndToggleProceed() {
-    const lrnInput = document.getElementById('lrn-input');
-    const proceedBtn = document.getElementById('proceed-btn');
-    
-    // Trim to check for empty or just whitespace
-    const lrnValue = lrnInput.value.trim();
-
-    // Disable the button if LRN is empty, otherwise enable it
-    proceedBtn.disabled = lrnValue === '';
-}
-
-/**
- * Handles the navigation to the payment plan page.
- * It now checks both LRN and Grade Level before proceeding.
- */
 function proceedToPayment() {
-    const lrnInput = document.getElementById('lrn-input');
-    const lrn = lrnInput.value.trim();
-
-    if (!lrn) {
-        alert("Please enter the LRN before proceeding to the payment plan.");
-        lrnInput.focus();
-        return;
-    }
-
+    // Only check for Grade Level before proceeding, LRN is assumed valid if the button is enabled by PHP.
     const gradeSelect = document.querySelector('select[name="grade_level"]');
     const grade = gradeSelect.value;
     const admissionId = <?= json_encode($admission_id) ?>;
 
     if (!grade) {
         alert("Please select a grade level before proceeding.");
-        gradeSelect.focus();
+        // Optional: Add focus if desired
+        // gradeSelect.focus();
         return;
     }
 
-    // Proceed to payment_plan.php
     const url = `payment_plan.php?id=${admissionId}&grade=${encodeURIComponent(grade)}`;
     window.location.href = url;
 }
-
-// Initial call to ensure the button state is correct immediately after page load 
-// in case the LRN was empty but the PHP condition was missed or bypassed.
-document.addEventListener('DOMContentLoaded', checkLrnAndToggleProceed);
 </script>
