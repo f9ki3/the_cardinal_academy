@@ -65,7 +65,7 @@
 
 
           <div class="col-12 col-md-4">
-            <label for="gender" class="form-label text-muted">Gender</label>
+            <label for="gender" class="form-label text-muted">Gender*</label>
             <select name="gender" id="gender" class="form-select">
               <option value="">Select gender</option>
               <option>Male</option>
@@ -76,7 +76,7 @@
 
 
          <div class="col-12 col-md-4">
-            <label for="student_id" class="form-label text-muted">Student Number</label>
+            <label for="student_id" class="form-label text-muted">Student Number*</label>
             <input type="text" name="student_id" id="student_id" class="form-control" 
                 placeholder="e.g., 2025-812981" 
                 >
@@ -84,13 +84,13 @@
         </div>
 
           <div class="col-12 col-md-4">
-            <label class="form-label text-muted">Last Name</label>
+            <label class="form-label text-muted">Last Name*</label>
             <input type="text" name="last_name" class="form-control" placeholder="Enter last name">
             <div id="last_name-error" class="invalid-feedback d-none">Last Name is required.</div>
           </div>
 
           <div class="col-12 col-md-4">
-            <label class="form-label text-muted">First Name</label>
+            <label class="form-label text-muted">First Name*</label>
             <input type="text" name="first_name" class="form-control" placeholder="Enter first name">
             <div id="first_name-error" class="invalid-feedback d-none">First Name is required.</div>
           </div>
@@ -101,31 +101,84 @@
           </div>
 
           <div class="col-12 col-md-4">
-            <label class="form-label text-muted">Date of Birth</label>
-            <input type="date" name="birth_date" class="form-control">
-            <div id="birth_date-error" class="invalid-feedback d-none">Date of Birth is required.</div>
+              <label class="form-label text-muted">Date of Birth*</label>
+              <input type="date" name="birth_date" id="birth_date_input" class="form-control" onchange="calculateAge()">
+              <div id="birth_date-error" class="invalid-feedback d-none">Date of Birth is required.</div>
           </div>
 
           <div class="col-12 col-md-4">
-            <label class="form-label text-muted">Place of Birth</label>
-            <input type="text" name="birth_place" class="form-control" placeholder="Enter place of birth">
-            <div id="birth_place-error" class="invalid-feedback d-none">Place of Birth is required.</div>
+              <label class="form-label text-muted">Place of Birth*</label>
+              <input type="text" name="birth_place" class="form-control" placeholder="Enter place of birth">
+              <div id="birth_place-error" class="invalid-feedback d-none">Place of Birth is required.</div>
           </div>
 
           <div class="col-12 col-md-4">
-            <label class="form-label text-muted">Age</label>
-            <input type="number" name="age" class="form-control" placeholder="Enter age">
-            <div id="age-error" class="invalid-feedback d-none">Age must be at least 4.</div>
+              <label class="form-label text-muted">Age*</label>
+              <input type="text" name="age" id="age_input" class="form-control" placeholder="Age will be computed" readonly>
+              <div id="age-error" class="invalid-feedback d-none">Age must be at least 4.</div>
           </div>
 
+          <script>
+          /**
+           * Calculates the age based on the date of birth input and updates the age input field.
+           */
+          function calculateAge() {
+              const dobInput = document.getElementById('birth_date_input');
+              const ageInput = document.getElementById('age_input');
+              
+              // Clear previous value
+              ageInput.value = '';
+
+              const dobValue = dobInput.value;
+              if (!dobValue) {
+                  return; // Exit if no date is selected
+              }
+
+              try {
+                  const birthDate = new Date(dobValue);
+                  const today = new Date();
+
+                  // Calculate the difference in years
+                  let age = today.getFullYear() - birthDate.getFullYear();
+                  const monthDiff = today.getMonth() - birthDate.getMonth();
+
+                  // Check if the current date has passed the birth date for this year
+                  // If current month is before birth month, OR (months are the same AND current day is before birth day), subtract one year.
+                  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                      age--;
+                  }
+
+                  // Display the calculated age if it's a valid, non-negative number
+                  if (age >= 0) {
+                      ageInput.value = age;
+                  } else {
+                      // DOB is in the future
+                      ageInput.value = 'Invalid Date';
+                  }
+                  
+              } catch (e) {
+                  ageInput.value = 'Error';
+                  console.error("Age calculation error:", e);
+              }
+          }
+
+          // Optional: Ensure the function runs if the DOB field has a pre-filled value (e.g., on an edit page)
+          document.addEventListener('DOMContentLoaded', () => {
+              const dobInput = document.getElementById('birth_date_input');
+              if (dobInput && dobInput.value) {
+                  calculateAge();
+              }
+          });
+          </script>
+
           <div class="col-12 col-md-4">
-            <label class="form-label text-muted">Religion</label>
+            <label class="form-label text-muted">Religion*</label>
             <input type="text" name="religion" class="form-control" placeholder="Enter religion">
             <div id="religion-error" class="invalid-feedback d-none">Religion is required.</div>
           </div> 
 
           <div class="col-12 col-md-4">
-            <label for="guardian_phone" class="form-label text-muted">Guardian Phone Number</label>
+            <label for="guardian_phone" class="form-label text-muted">Guardian Phone Number*</label>
             <input type="text" name="guardian_phone" id="guardian_phone" class="form-control" 
                     placeholder="e.g. 09123456789" 
                     maxlength="11"
@@ -135,7 +188,7 @@
           </div>
 
           <div class="col-12 col-md-4">
-            <label class="form-label text-muted">Email</label>
+            <label class="form-label text-muted">Email*</label>
             <input type="email" name="email" class="form-control" placeholder="Note: active email for queue number">
             <div id="email-error" class="invalid-feedback d-none">Email is required.</div>
           </div>
