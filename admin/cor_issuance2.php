@@ -222,7 +222,7 @@ $current_sort_order = $_GET['sort_order'] ?? $default_sort_order;
 
                                   <select id="sort_order" name="sort_order" class="form-select rounded-4 auto-submit-dropdown" style="max-width: 120px;">
                                       <option value="ASC" <?= $sort_order == 'ASC' ? 'selected' : '' ?>>Ascending</option>
-                                      <option value="DESC" <?= $sort_order == 'DESC' ? 'selected' : '' ?>>Desc</option>
+                                      <option value="DESC" <?= $sort_order == 'DESC' ? 'selected' : '' ?>>Descending</option>
                                   </select>
 
                                   <select name="school_year" id="school_year" class="form-select rounded-4 auto-submit-dropdown" style="min-width: 120px;">
