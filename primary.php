@@ -131,10 +131,79 @@
 
 
           <div class="col-12 col-md-6">
-            <label class="form-label text-muted">Date of Birth</label>
-            <input type="date" name="birth_date" class="form-control">
-            <div id="birth_date-error" class="invalid-feedback d-none">Date of Birth is required.</div>
+              <label class="form-label text-muted">Date of Birth</label>
+              <input type="date" name="birth_date" id="birth_date_input" class="form-control" onchange="calculateAge()">
+              <div id="birth_date-error" class="invalid-feedback d-none">Date of Birth is required.</div>
           </div>
+
+          <div class="col-12 col-md-6">
+              <label class="form-label text-muted">Age</label>
+              <input type="text" name="age" id="age_input" class="form-control" placeholder="Please fill up birthday" readonly>
+              <div id="age-error" class="invalid-feedback d-none">Age must be at least 4.</div>
+          </div>
+
+          <script>
+          /**
+           * Calculates the age based on the date of birth input and updates the age input field.
+           */
+          function calculateAge() {
+              const dobInput = document.getElementById('birth_date_input');
+              const ageInput = document.getElementById('age_input');
+              
+              // Clear previous value
+              ageInput.value = '';
+
+              const dobValue = dobInput.value;
+              if (!dobValue) {
+                  return; // Exit if no date is selected
+              }
+
+              try {
+                  const birthDate = new Date(dobValue);
+                  const today = new Date();
+
+                  // Calculate the difference in milliseconds
+                  let age = today.getFullYear() - birthDate.getFullYear();
+                  const monthDiff = today.getMonth() - birthDate.getMonth();
+
+                  // If the current month is less than the birth month, or if the months are the same 
+                  // but the current day is less than the birth day, subtract one year.
+                  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                      age--;
+                  }
+
+                  // Display the calculated age
+                  if (age >= 0) {
+                      ageInput.value = age;
+                  } else {
+                      // Handle case where DOB is in the future (shouldn't happen with correct validation)
+                      ageInput.value = 'Invalid Date';
+                  }
+
+                  // You might want to re-run validation logic here if required:
+                  // validateAge(age); 
+                  
+              } catch (e) {
+                  // Fallback for unexpected date format errors
+                  ageInput.value = 'Error';
+                  console.error("Age calculation error:", e);
+              }
+          }
+
+          // Optional: Run on page load if the field is pre-populated (e.g., for editing)
+          document.addEventListener('DOMContentLoaded', () => {
+              // Attach the function to the 'change' event in case the inline 'onchange' is missed 
+              // and also run on load if a value exists.
+              const dobInput = document.getElementById('birth_date_input');
+              if (dobInput) {
+                  dobInput.addEventListener('change', calculateAge);
+                  // Initial run if a value is present (e.g., on edit page load)
+                  if (dobInput.value) {
+                      calculateAge();
+                  }
+              }
+          });
+          </script>
 
           <div class="col-12 col-md-6">
             <label class="form-label text-muted">Place of Birth</label>
@@ -142,22 +211,10 @@
             <div id="birth_place-error" class="invalid-feedback d-none">Place of Birth is required.</div>
           </div>
 
-          <div class="col-12 col-md-4">
-            <label class="form-label text-muted">Age</label>
-            <input type="number" name="age" class="form-control" placeholder="Enter age">
-            <div id="age-error" class="invalid-feedback d-none">Age must be at least 4.</div>
-          </div>
-
-          <div class="col-12 col-md-4">
+          <div class="col-12 col-md-6">
             <label class="form-label text-muted">Religion</label>
             <input type="text" name="religion" class="form-control" placeholder="Enter religion">
             <div id="religion-error" class="invalid-feedback d-none">Religion is required.</div>
-          </div>
-
-          <div class="col-12 col-md-4">
-            <label class="form-label text-muted">Email</label>
-            <input type="email" name="email" class="form-control" placeholder="Note: active email for queue number">
-            <div id="email-error" class="invalid-feedback d-none">Email is required.</div>
           </div>
 
           <div class="col-12 col-md-3">
@@ -288,21 +345,23 @@
           </div>
 
           <div class="col-12 col-md-4">
-            <label class="form-label text-muted">Guardian’s Name (Required)</label>
+            <label class="form-label text-muted">Contact Person (Required)</label>
             <input type="text" required name="guardian_name" class="form-control" placeholder="Enter guardian's name">
           </div>
 
           <div class="col-12 col-md-4">
-            <label class="form-label text-muted">Guardian’s Occupation</label>
+            <label class="form-label text-muted">Contact Person's Occupation</label>
             <input type="text" required name="guardian_occupation" class="form-control" placeholder="Note: N/A if None">
           </div>
 
           <div class="col-12 col-md-4">
-            <label class="form-label text-muted">Guardian’s Contact Number</label>
-            <input type="text" required name="guardian_contact" class="form-control" 
+            <label class="form-label text-muted">Contact Person's Email</label>
+            <input type="email" name="email" class="form-control" placeholder="Note: active email for queue number">
+            <input type="hidden" required name="guardian_contact" class="form-control" 
                 placeholder="e.g. 09123456789" 
                 maxlength="11"
                 oninput="this.value = this.value.replace(/\D/g, '').slice(0, 11)" 
+                value="09123456789"
                 required
             >
           </div>
@@ -461,7 +520,6 @@ const fields = [
   { id: 'age', message: 'Age must be at least 4', min: 4 },
   { id: 'religion', message: 'Religion is required' },
   { id: 'phone', message: 'Phone number must be exactly 11 digits', pattern: /^\d{11}$/ },
-  { id: 'email', message: 'Email is required' },
   { id: 'Region', message: 'Region is required' },
   { id: 'Province', message: 'Province is required' },
   { id: 'Municipal', message: 'Municipal is required' },
