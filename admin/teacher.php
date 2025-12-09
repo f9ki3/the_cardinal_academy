@@ -234,7 +234,7 @@ $current_sort_order = $_GET['sort_order'] ?? $default_sort_order;
                 <table class="table table-striped table-hover" style="cursor: pointer">
                   <thead>
                     <tr>
-                      <th width="10%">
+                      <th width="5%">
                         ID
                         <?= get_sort_link('user_id', $current_sort_by, $current_sort_order, $search) ?>
                       </th>
@@ -250,11 +250,11 @@ $current_sort_order = $_GET['sort_order'] ?? $default_sort_order;
                         Subject
                         <?= get_sort_link('subject', $current_sort_by, $current_sort_order, $search) ?>
                       </th>
-                      <th width="10%">
+                      <th width="20%">
                         Created At
                         <?= get_sort_link('created_at', $current_sort_by, $current_sort_order, $search) ?>
                       </th>
-                      <th width="10%">Action</th>
+                      <th width="15%">Action</th>
                     </tr>
                   </thead>
                   <tbody>
