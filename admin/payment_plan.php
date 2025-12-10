@@ -65,16 +65,19 @@ if (!empty($grade_level)) {
             <select id="enrolled_section" name="enrolled_section" class="form-select" required>
               <option value="">-- Select Section --</option>
             <?php
-                // Get current and next school year (format: YYYY-YYYY)
-                $currentYear = date("Y");
+                // Get current year and calculate the current school year (e.g., 2025-2026)
+                $currentYear = date("Y"); 
                 $nextYear = $currentYear + 1;
+                
+                // Current School Year to filter by
                 $currentSchoolYear = $currentYear . "-" . $nextYear;
-                $nextSchoolYear = $nextYear . "-" . ($nextYear + 1);
+                // Note: $nextSchoolYear is NOT used, ensuring only the current year is queried.
 
+                // MODIFIED SQL: Filtered to only $currentSchoolYear
                 $sql = "SELECT section_id, section_name, grade_level, room, strand, teacher_id, capacity, enrolled, school_year 
                         FROM sections 
                         WHERE grade_level = '$grade_level'
-                        AND school_year IN ('$currentSchoolYear', '$nextSchoolYear')
+                        AND school_year = '$currentSchoolYear' 
                         ORDER BY grade_level, section_name";
 
                 $result = mysqli_query($conn, $sql);
@@ -175,10 +178,9 @@ if (!empty($grade_level)) {
 
 
             <?php
-             // Fetch uniforms from DB
             // Fetch uniforms from DB
-            $sql = "SELECT id, grade_level, gender, classification, type, size, price FROM uniforms ORDER BY grade_level, classification, type";
-            $result = mysqli_query($conn, $sql);
+            $sql_uniforms = "SELECT id, grade_level, gender, classification, type, size, price FROM uniforms ORDER BY grade_level, classification, type";
+            $result_uniforms = mysqli_query($conn, $sql_uniforms);
             ?>
 
             <div class="col-md-6">
@@ -187,7 +189,6 @@ if (!empty($grade_level)) {
 
                   <ul class="list-group list-unstyled list-group-flush">
 
-                    <!-- Group: Fees & Discounts -->
                     <li class="list-group-items-iii p-2 bg-light text-muted fw-bold">
                       Fees & Discounts
                     </li>
@@ -208,12 +209,10 @@ if (!empty($grade_level)) {
                       <span class="fw-bold">₱0</span>
                     </li>
 
-                    <!-- Horizontal line separator -->
                     <li class="list-group-items-iii p-0">
                       <hr class="my-2">
                     </li>
 
-                    <!-- Group: Initial Payments -->
                     <li class="list-group-items-iii p-2 bg-light text-muted fw-bold">
                       Initial Payments
                     </li>
@@ -230,7 +229,6 @@ if (!empty($grade_level)) {
                       <span>₱0</span>
                     </li>
 
-                    <!-- Group: Total -->
                     <li class="list-group-items-iii d-flex justify-content-between align-items-center p-2 mt-2 border-top">
                       <span class="fw-bold">Amount to Pay Today</span>
                       <span class="fw-bold">₱0</span>
@@ -240,7 +238,6 @@ if (!empty($grade_level)) {
 
 
 
-                  <!-- Checkbox -->
                   <div class="form-check ms-3 mt-3">
                     <input class="form-check-input" type="checkbox" id="reviewed-check">
                     <label class="form-check-label text-muted" for="reviewed-check">
@@ -251,7 +248,6 @@ if (!empty($grade_level)) {
                     <div class="col-12 col-md-6">
                       
 
-                      <!-- Enroll Button -->
                       <button id="enroll-btn" type="submit" name="action" value="enroll" 
                               class="btn btn-danger text-light rounded-4 mt-3 w-100" disabled>
                         <span class="btn-text">Enroll</span>
@@ -278,21 +274,19 @@ if (!empty($grade_level)) {
                 </div>
               </div>
 
-            <!-- Uniforms Section -->
             <div class="col-md-6">
               <div class="border mt-3 rounded-4 p-3">
                 <h6 class="mb-3 fw-bold">Uniform Details</h6>
 
-                <!-- Add Uniform Row -->
                 <div class="row g-2 align-items-end">
                   <div class="col-md-5">
                     <label class="form-label text-muted small mb-1">Uniform</label>
                     <select class="form-select form-select-sm" id="uniformName">
                       <option value="">-- Select Uniform --</option>
-                      <?php while ($row = mysqli_fetch_assoc($result)) : ?>
+                      <?php while ($row = mysqli_fetch_assoc($result_uniforms)) : ?>
                         <option 
                           value="<?= $row['id'] ?>" 
-                          data-name="<?= htmlspecialchars($row['grade_level'] . ' - ' . $row['classification'] . ' - ' . $row['type']) ?>"
+                          data-name="<?= htmlspecialchars($row['grade_level'] . ' - ' . $row['classification'] . ' - . ' . $row['type']) ?>"
                           data-size="<?= htmlspecialchars($row['size']) ?>"
                           data-gender="<?= htmlspecialchars($row['gender']) ?>"
                           data-price="<?= $row['price'] ?>"
@@ -322,10 +316,8 @@ if (!empty($grade_level)) {
                   </div>
                 </div>
 
-                <!-- Added Uniforms List -->
                 <ul class="list-group list-group-flush mt-3 p-0" id="uniformList"></ul>
 
-                <!-- Bootstrap Icons (if not already included) -->
                 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
 
                 <script>
@@ -336,6 +328,8 @@ if (!empty($grade_level)) {
                         total += value;
                       });
                       document.getElementById("uniform").value = "₱" + total.toFixed(2);
+                      // Call updateSummary here
+                      window.updateSummary();
                     }
 
                     function updateUniformCartText() {
@@ -425,14 +419,12 @@ if (!empty($grade_level)) {
                         li.querySelector(".btn-delete").addEventListener("click", function() {
                           li.remove();
                           calculateUniformTotal();
-                          updateSummary();
                           updateUniformCartText();
                         });
                       }
 
                       // recalc total + update summary + textarea
                       calculateUniformTotal();
-                      updateSummary();
                       updateUniformCartText();
 
                       // reset qty
@@ -459,7 +451,7 @@ if (!empty($grade_level)) {
                 // Auto update price when uniform is selected
                 $('#uniformName').on('change', function () {
                   let price = $(this).find(':selected').data('price');
-                  $('#uniformPrice').val(price ? price : '');
+                  $('#uniformPrice').val(price ? "₱" + parseFloat(price).toFixed(2) : '');
                 });
               });
             </script>
@@ -537,6 +529,9 @@ document.addEventListener("DOMContentLoaded", function() {
     if (discount > tuitionFee) discount = tuitionFee; // avoid exceeding tuition
 
     discountAmount.value = formatCurrency(discount);
+
+    // Trigger full summary update after discount calculation
+    window.updateSummary();
   }
 
   discountType.addEventListener("change", updateDiscount);
@@ -573,20 +568,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const tuition = parsePeso(tuitionInput.value);
     const misc = parsePeso(miscInput.value);
     const uniform = parsePeso(uniformInput.value);
-    let discount = 0;
-
-    // Calculate discount
-    if (discountType.value === "percent") {
-      let percent = parseFloat(discountValue.value) || 0;
-      if (percent > 100) percent = 100;
-      discount = (tuition * percent) / 100;
-    } else if (discountType.value === "fixed") {
-      discount = parseFloat(discountValue.value) || 0;
-      if (discount > tuition) discount = tuition;
-    }
-
-    discountAmount.value = formatPeso(discount);
-
+    let discount = parsePeso(discountAmount.value); // Use the already calculated discount amount
+    
     const down = parseFloat(downInput.value) || 0;
 
     // Compute Tuition + Misc - Discount (just for display)
@@ -631,20 +614,11 @@ document.addEventListener("DOMContentLoaded", function () {
   };
 
 
-  // Enable/disable discount input
-  discountType.addEventListener("change", () => {
-    discountValue.disabled = discountType.value === "";
-    if (discountType.value === "") {
-      discountValue.value = 0;
-    }
-    updateSummary();
-  });
-
   // Listen to changes
-  [plan, regFeeInput, tuitionInput, miscInput, uniformInput, discountType, discountValue, downInput]
-    .forEach(el => el.addEventListener("input", updateSummary));
+  [plan, regFeeInput, tuitionInput, miscInput, uniformInput, downInput]
+    .forEach(el => el.addEventListener("input", window.updateSummary));
 
   // Initial update
-  updateSummary();
+  window.updateSummary();
 });
 </script>
