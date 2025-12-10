@@ -177,12 +177,6 @@ if ($student_id > 0) {
                     <label class="form-label text-muted">Email</label>
                     <input type="email" name="email" class="form-control" value="<?= htmlspecialchars($data['email'] ?? '') ?>">
                     </div>
-
-                    <div class="col-md-6">
-                    <label class="form-label text-muted">Facebook</label>
-                    <input type="text" name="facebook" class="form-control" value="<?= htmlspecialchars($data['facebook'] ?? '') ?>">
-                    </div>
-
                     <!-- Address Details -->
                     <div class="col-md-3">
                     <label class="form-label text-muted">Region</label>
