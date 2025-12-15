@@ -2,19 +2,59 @@
 include 'session_login.php';
 include '../db_connection.php';
 
-$section_id = isset($_GET['id']) ? (int) $_GET['id'] : 0;
+// --- 1. Get Section ID from URL ---
+$sectionId = isset($_GET['id']) ? (int) $_GET['id'] : 0;
 
-$male_stmt = $conn->prepare("SELECT firstname, lastname FROM master_list WHERE section_id = ? AND gender = 'Male' ORDER BY lastname ASC");
-$male_stmt->bind_param("i", $section_id);
+/*
+|--------------------------------------------------------------------------
+| Updated SQL Queries for Male and Female Students
+|--------------------------------------------------------------------------
+| (These queries remain the same as the previous response)
+*/
+
+// --- 2. Query for Male Students ---
+$male_sql = "
+    SELECT
+        si.firstname,
+        si.middlename,
+        si.lastname
+    FROM
+        student_information si
+    JOIN
+        student_tuition st ON si.student_number = st.student_number
+    JOIN
+        sections s ON st.enrolled_section = s.section_id
+    WHERE
+        s.section_id = ? AND si.gender = 'Male'
+    ORDER BY
+        si.lastname ASC
+";
+$male_stmt = $conn->prepare($male_sql);
+$male_stmt->bind_param("i", $sectionId);
 $male_stmt->execute();
 $male_result = $male_stmt->get_result();
 
-$female_stmt = $conn->prepare("SELECT firstname, lastname FROM master_list WHERE section_id = ? AND gender = 'Female' ORDER BY lastname ASC");
-$female_stmt->bind_param("i", $section_id);
+// --- 3. Query for Female Students ---
+$female_sql = "
+    SELECT
+        si.firstname,
+        si.middlename,
+        si.lastname
+    FROM
+        student_information si
+    JOIN
+        student_tuition st ON si.student_number = st.student_number
+    JOIN
+        sections s ON st.enrolled_section = s.section_id
+    WHERE
+        s.section_id = ? AND si.gender = 'Female'
+    ORDER BY
+        si.lastname ASC
+";
+$female_stmt = $conn->prepare($female_sql);
+$female_stmt->bind_param("i", $sectionId);
 $female_stmt->execute();
 $female_result = $female_stmt->get_result();
-
-
 
 $students_result = $conn->query("
     SELECT user_id,
@@ -27,13 +67,11 @@ $students_result = $conn->query("
     ORDER  BY full_name ASC
 ");
 
-/* ── 1. Validate & fetch ─────────────────────────────────────────── */
+/* ── 4. Validate & fetch Section Details ─────────────────────────── */
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     header('Location: sections.php?status=error');
     exit;
 }
-
-$sectionId = (int) $_GET['id'];
 
 $sql = "
     SELECT s.*,
@@ -73,7 +111,6 @@ if (!$section) {
     <div class="col-12">
       <div class="rounded p-4 bg-white">
 
-        <!-- Section Info -->
         <div class="mb-4 mt-4">
         <div class="row align-items-center mb-4">
             
@@ -86,15 +123,11 @@ if (!$section) {
                 <a href="view_section.php?id=<?= $sectionId ?>&nav_drop=true" class="btn btn-sm btn-danger text-light border rounded rounded-4">
                   <i class="bi bi-calendar2-week me-1"></i> Class Masterlist
                 </a>
+                
                 <a href="class_schedule.php?id=<?= $sectionId ?>&nav_drop=true" class="btn btn-sm border text-muted rounded rounded-4">
                   <i class="bi bi-calendar2-week me-1"></i> Class Schedule
                 </a>
 
-                <button data-bs-toggle="modal" data-bs-target="#addstudent" class="btn btn-sm border text-muted rounded rounded-4">
-                <i class="bi bi-plus me-1"></i> Add Student to list
-                </button>
-
-                <!-- Print Button -->
                 <button class="btn btn-sm border text-muted rounded rounded-4" onclick="window.print()">
                     <i class="bi bi-printer me-1"></i> Print
                 </button>
@@ -118,7 +151,6 @@ if (!$section) {
               </div>
 
             </div>
-            <!-- Modal -->
             <div class="modal fade" id="addstudent" tabindex="-1" aria-labelledby="addStudentLabel" aria-hidden="true">
                     <div class="modal-dialog">
                         <div class="modal-content">
@@ -130,8 +162,7 @@ if (!$section) {
 
                         <form action="add_student_to_list.php" method="POST">
                             <div class="modal-body">
-                            <!-- Search / select -->
-                             <input type="text" value="<?= htmlspecialchars($sectionId) ?>" name="section_id" hidden>
+                            <input type="text" value="<?= htmlspecialchars($sectionId) ?>" name="section_id" hidden>
                             <div class="mb-3">
                                 <label for="studentInput" class="form-label">Select or Search Student</label>
                                 <input  class="form-control"
@@ -152,7 +183,6 @@ if (!$section) {
                                 </datalist>
                             </div>
 
-                            <!-- Auto-filled fields -->
                             <div class="row g-2">
                                 <div class="col-md-6 mb-3">
                                 <label class="form-label">First Name</label>
@@ -168,7 +198,6 @@ if (!$section) {
                                 </div>
                             </div>
 
-                            <!-- hidden ID -->
                             <input type="hidden" id="studentId" name="student_id">
                             </div>
 
@@ -208,7 +237,6 @@ if (!$section) {
         <hr>
         <div style="font-size:12px;">
   <div class="row">
-    <!-- Row 1 -->
     <div class="col-md-4 mb-2"><strong>Adviser:</strong> <?= htmlspecialchars($section['adviser'] ?? 'N/A') ?></div>
     <div class="col-md-4 mb-2"><strong>Section Name:</strong> <?= htmlspecialchars($section['section_name']) ?></div>
     <div class="col-md-4 mb-2"><strong>Grade Level:</strong> <?= htmlspecialchars($section['grade_level']) ?></div>
@@ -216,7 +244,6 @@ if (!$section) {
         <div class="col-md-4"><strong>Strand:</strong> <?= htmlspecialchars($section['strand']) ?></div>
     <?php endif; ?>
 
-    <!-- Row 2 -->
     <div class="col-md-4 mb-2"><strong>School Year:</strong> <?= htmlspecialchars($section['school_year']) ?></div>
     <div class="col-md-2 mb-2"><strong>Room:</strong> <?= htmlspecialchars($section['room'] ?: '—') ?></div>
     <div class="col-md-2 mb-2"><strong>Capacity:</strong> <?= htmlspecialchars($section['capacity']) ?></div>
@@ -224,9 +251,7 @@ if (!$section) {
   <hr>
 </div>
 
-<!-- Student Lists -->
 <div class="row text-muted" style="font-size:12px;">
-  <!-- Male Students -->
   <div class="col-md-6 mb-4">
     <h5 class="mb-3">Male Students</h5>
     <table class="table table-sm table-striped align-middle">
@@ -245,9 +270,13 @@ if (!$section) {
         ?>
           <tr class="text-muted">
             <td class="text-center"><?= $counter++ ?></td>
-            <td><?= htmlspecialchars($row['firstname'] . ' ' . $row['lastname']) ?></td>
+            <td><?= htmlspecialchars($row['firstname'] . ' ' . $row['middlename'] . ' ' . $row['lastname']) ?></td>
             <td class="text-center">
               <div class="d-flex justify-content-center">
+                
+                <?php /* REMOVE FUNCTIONALITY: COMMENTED OUT */ ?>
+                <?php
+                /*
                 <form method="POST" action="remove_student_from_list.php" class="d-inline">
                   <input type="hidden" name="section_id" value="<?= $sectionId ?>">
                   <input type="hidden" name="firstname" value="<?= htmlspecialchars($row['firstname']) ?>">
@@ -255,6 +284,10 @@ if (!$section) {
                   <input type="hidden" name="gender" value="Male">
                   <button type="submit" class="btn d-print-none btn-sm rounded border rounded-4">Remove</button>
                 </form>
+                */
+                ?>
+                <?php /* END REMOVE FUNCTIONALITY */ ?>
+
               </div>
             </td>
           </tr>
@@ -270,7 +303,6 @@ if (!$section) {
     </table>
   </div>
 
-  <!-- Female Students -->
   <div class="col-md-6 mb-4">
     <h5 class="mb-3">Female Students</h5>
     <table class="table table-sm table-striped align-middle">
@@ -289,9 +321,13 @@ if (!$section) {
         ?>
           <tr class="text-muted">
             <td class="text-center"><?= $counter++ ?></td>
-            <td><?= htmlspecialchars($row['firstname'] . ' ' . $row['lastname']) ?></td>
+            <td><?= htmlspecialchars($row['firstname'] . ' ' . $row['middlename'] . ' ' . $row['lastname']) ?></td>
             <td class="text-center">
               <div class="d-flex justify-content-center">
+                 
+                <?php /* REMOVE FUNCTIONALITY: COMMENTED OUT */ ?>
+                <?php
+                /*
                 <form method="POST" action="remove_student_from_list.php" class="d-inline">
                   <input type="hidden" name="section_id" value="<?= $sectionId ?>">
                   <input type="hidden" name="firstname" value="<?= htmlspecialchars($row['firstname']) ?>">
@@ -299,6 +335,10 @@ if (!$section) {
                   <input type="hidden" name="gender" value="Female">
                   <button type="submit" class="btn d-print-none btn-sm rounded border rounded-4">Remove</button>
                 </form>
+                */
+                ?>
+                <?php /* END REMOVE FUNCTIONALITY */ ?>
+                
               </div>
             </td>
           </tr>
