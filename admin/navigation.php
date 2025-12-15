@@ -12,10 +12,34 @@ function canAccess($role, $allowedRoles) {
     return in_array($role, $allowedRoles);
 }
 
-// --- HARDCODED COUNTER VALUES ---
-$admission_count = 15;  // Example: 15 pending admission applications
-$enrollment_count = 5; // Example: 5 students pending final enrollment
-// -----------------------------------
+/* |--------------------------------------------------------------------------
+| DYNAMIC COUNTER IMPLEMENTATION
+|--------------------------------------------------------------------------
+| Fetches the count of pending admissions and approved/for_review enrollments.
+*/
+
+// --- 1. Admission Counter (admission_status = 'pending') ---
+$admission_sql = "SELECT COUNT(*) AS count FROM admission_form WHERE admission_status = 'pending'";
+$admission_result = $conn->query($admission_sql);
+$admission_count = 0;
+if ($admission_result && $row = $admission_result->fetch_assoc()) {
+    $admission_count = (int) $row['count'];
+}
+
+// --- 2. Enrollment Counter (admission_status = 'approved' OR 'for_review') ---
+$enrollment_sql = "
+    SELECT COUNT(*) AS count 
+    FROM admission_form 
+    WHERE admission_status = 'approved' OR admission_status = 'for_review'
+";
+// Note: This query assumes students move from admission_form to a separate enrollment table 
+// *after* they are fully enrolled. If you use the same table, these statuses
+// likely represent students *ready* to enroll or *in the process* of enrolling.
+$enrollment_result = $conn->query($enrollment_sql);
+$enrollment_count = 0;
+if ($enrollment_result && $row = $enrollment_result->fetch_assoc()) {
+    $enrollment_count = (int) $row['count'];
+}
 
 // Define allowed roles for each page
 $access = [
@@ -85,7 +109,7 @@ $access = [
                 </li>";
             }
 
-            // --- Links with Counter Implementation ---
+            // --- Links with Counter Implementation (Now dynamic) ---
             renderLink('admission.php', 'bi bi-journal-plus', 'Admission', $role, $access['admission'], $admission_count);
             renderLink('enrollment.php', 'bi bi-person-plus', 'Enrollment', $role, $access['enrollment'], $enrollment_count);
             // ----------------------------------------
