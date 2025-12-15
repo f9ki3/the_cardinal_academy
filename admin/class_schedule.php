@@ -66,9 +66,9 @@ $schedule = $sched_stmt->get_result();
                 <h4 class="mb-0 d-print-none">Class Schedule</h4>
               </div>
               <div class="col-md-8 d-flex flex-wrap gap-2 justify-content-md-end d-print-none">
-                <!-- <a href="view_section.php?id=&nav_drop=true" class="btn btn-sm text-muted border rounded rounded-4">
+                <a href="view_section.php?id=&nav_drop=true" class="btn btn-sm text-muted border rounded rounded-4">
                   <i class="bi bi-calendar2-week me-1"></i> Class Masterlist
-                </a> -->
+                </a>
                 <a href="class_schedule.php?id=<?= $sectionId ?>&nav_drop=true" class="btn btn-sm border btn-danger text-light rounded rounded-4">
                   <i class="bi bi-calendar2-week me-1"></i> Class Schedule
                 </a>
