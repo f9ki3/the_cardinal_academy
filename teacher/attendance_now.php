@@ -106,7 +106,6 @@ if ($stmt->execute()) {
         $notif_stmt->execute();
         $notif_stmt->close();
 
-        // Increment notification count
         $update_notif = $conn->prepare("UPDATE users SET notification = notification + 1 WHERE user_id = ?");
         $update_notif->bind_param("i", $parent_id);
         $update_notif->execute();
@@ -123,39 +122,44 @@ if ($stmt->execute()) {
         }
         $phone_stmt->close();
 
-        // 9️⃣ Send SMS notification (only if phone number exists)
+        // 9️⃣ Send SMS notification (STRICT DOCUMENTATION COMPLIANCE)
         if (!empty($phone_number)) {
-            $sms_url = 'https://sms.iprogtech.com/api/v1/sms_messages';
+            // Clean phone number (ensure only digits)
+            $clean_phone = preg_replace('/[^0-9]/', '', $phone_number);
 
-            $sms_message = "Attendance Alerts: $first_name $last_name has timed in at $time_in_display for the subject $course_name.";
+            $url = 'https://www.iprogsms.com/api/v1/sms_messages';
+            
+            // Your API Token
+            $api_token = 'f30f8713dd8a43abd1683be77964f8463cc32322';
+            
+            // Construct Message
+            $sms_message = sprintf("Attendance Alert: %s %s has timed in at %s for the subject %s.", $first_name, $last_name, $time_in_display, $course_name);
 
-            // ✅ SMS data in JSON format
-            $sms_data = [
-                "api_token" => "1b10cd2edce5586d01b037c643075e19dd49270f",
-                "phone_number" => $phone_number,
-                "message" => $sms_message
+            // Data array exactly as requested in documentation
+            $data = [
+                'api_token' => $api_token,
+                'message' => $sms_message,
+                'phone_number' => $clean_phone
             ];
 
-            // ✅ Append query parameters for redundancy (as required by your format)
-            $query_url = $sms_url . '?api_token=' . urlencode($sms_data['api_token'])
-                . '&message=' . urlencode($sms_data['message'])
-                . '&phone_number=' . urlencode($sms_data['phone_number']);
-
-            // ✅ Initialize cURL
-            $ch = curl_init($query_url);
+            $ch = curl_init($url);
             curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
             curl_setopt($ch, CURLOPT_POST, true);
+            
+            // ⚠️ CRITICAL CHANGE: Use http_build_query as per documentation
+            curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($data));
+            
+            // ⚠️ CRITICAL CHANGE: Set correct header
             curl_setopt($ch, CURLOPT_HTTPHEADER, [
-                'Content-Type: application/json'
+                'Content-Type: application/x-www-form-urlencoded'
             ]);
-            curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($sms_data));
 
             $response = curl_exec($ch);
 
             if (curl_errno($ch)) {
-                error_log("SMS sending failed: " . curl_error($ch));
+                error_log("SMS Error: " . curl_error($ch));
             } else {
-                error_log("SMS sent successfully: " . $response);
+                error_log("SMS Response: " . $response);
             }
 
             curl_close($ch);
