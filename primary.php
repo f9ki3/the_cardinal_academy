@@ -222,37 +222,37 @@
         </div>
       </fieldset>
       
-      <fieldset id="step2" style="display: none">
+      <fieldset id="stp2" style="display: none">
         <h4><strong>Step 3</strong>: Parents and Guardian Profile</h4>
         
-        <div class="row g-3 mb-4">
+          <div class="row g-3 mb-4">
             
             <div class="col-12 col-md-3">
                 <label class="form-label text-muted">Father’s Name</label>
-                <input type="text" name="father_name" class="form-control parent-field" data-related-check="fatherNotApplicable" placeholder="Enter father's name">
+                <input type="text" name="father_name" id="father_name" class="form-control parent-field" data-related-check="fatherNotApplicable" placeholder="Enter father's name">
+                <div id="father_name-error" class="invalid-feedback d-none">Father's Name is required if not N/A.</div>
             </div>
 
             <div class="col-12 col-md-4">
                 <label class="form-label text-muted">Father’s Occupation</label>
-                <input type="text" name="father_occupation" class="form-control parent-field" data-related-check="fatherNotApplicable" placeholder="Enter Occupation">
+                <input type="text" name="father_occupation" id="father_occupation" class="form-control parent-field" data-related-check="fatherNotApplicable" placeholder="Enter Occupation">
+                <div id="father_occupation-error" class="invalid-feedback d-none">Father's Occupation is required if not N/A.</div>
             </div>
 
-            <div class="col-12 col-md-4">
+            <div class="col-12 col-md-3">
                 <label class="form-label text-muted">Father’s Contact Number</label>
-                <input type="text" name="father_contact" class="form-control parent-field" data-related-check="fatherNotApplicable"
+                <input type="text" name="father_contact" id="father_contact" class="form-control parent-field" data-related-check="fatherNotApplicable"
                     placeholder="e.g. 09123456789" 
                     maxlength="11"
                     oninput="this.value = this.value.replace(/\D/g, '').slice(0, 11)" 
                 >
+                <div id="father_contact-error" class="invalid-feedback d-none">Father's Contact must be 11 digits if not N/A.</div>
             </div>
             
-            <div class="col-12 col-md-1 parent-na-col order-1 order-md-last">
-                <small class="text-muted d-block mb-1" style="line-height: 1;">
-                    **Father N/A?**
-                </small>
+            <div class="col-12 col-md-2 d-flex flex-column align-items-center justify-content-center order-1 order-md-last text-center">
+                <label class="form-label text-muted">Father's Not Applicable</label>
                 <div class="form-check">
                     <input class="form-check-input not-applicable-check" type="checkbox" id="fatherNotApplicable">
-                    <label class="form-check-label text-muted" for="fatherNotApplicable" style="font-size: 0.8rem;">N/A</label>
                 </div>
             </div>
         </div>
@@ -261,30 +261,30 @@
             
             <div class="col-12 col-md-3">
                 <label class="form-label text-muted">Mother’s Name</label>
-                <input type="text" name="mother_name" class="form-control parent-field" data-related-check="motherNotApplicable" placeholder="Enter mother's name">
+                <input type="text" name="mother_name" id="mother_name" class="form-control parent-field" data-related-check="motherNotApplicable" placeholder="Enter mother's name">
+                <div id="mother_name-error" class="invalid-feedback d-none">Mother's Name is required if not N/A.</div>
             </div>
 
             <div class="col-12 col-md-4">
                 <label class="form-label text-muted">Mother’s Occupation</label>
-                <input type="text" name="mother_occupation" class="form-control parent-field" data-related-check="motherNotApplicable" placeholder="Enter Occupation">
+                <input type="text" name="mother_occupation" id="mother_occupation" class="form-control parent-field" data-related-check="motherNotApplicable" placeholder="Enter Occupation">
+                <div id="mother_occupation-error" class="invalid-feedback d-none">Mother's Occupation is required if not N/A.</div>
             </div>
 
-            <div class="col-12 col-md-4">
+            <div class="col-12 col-md-3">
                 <label class="form-label text-muted">Mother’s Contact Number</label>
-                <input type="text" name="mother_contact" class="form-control parent-field" data-related-check="motherNotApplicable"
+                <input type="text" name="mother_contact" id="mother_contact" class="form-control parent-field" data-related-check="motherNotApplicable"
                     placeholder="e.g. 09123456789" 
                     maxlength="11"
                     oninput="this.value = this.value.replace(/\D/g, '').slice(0, 11)" 
                 >
+                <div id="mother_contact-error" class="invalid-feedback d-none">Mother's Contact must be 11 digits if not N/A.</div>
             </div>
 
-            <div class="col-12 col-md-1 parent-na-col order-1 order-md-last">
-                <small class="text-muted d-block mb-1" style="line-height: 1;">
-                    **Mother N/A?**
-                </small>
+            <div class="col-12 col-md-2 d-flex flex-column align-items-center justify-content-center order-1 order-md-last text-center">
+                <label class="form-label text-muted">Mother’s Not Applicable</label>
                 <div class="form-check">
                     <input class="form-check-input not-applicable-check" type="checkbox" id="motherNotApplicable">
-                    <label class="form-check-label text-muted" for="motherNotApplicable" style="font-size: 0.8rem;">N/A</label>
                 </div>
             </div>
         </div>

@@ -230,39 +230,35 @@
       </fieldset>
       <fieldset id="step2" style="display: none">
         <h4><strong>Step 3</strong>: Parents and Guardian Profile</h4>
-        <div class="row g-3">
-          
-          <div class="row g-3 mb-4">
+        
+        <div class="row g-3 mb-4">
             
             <div class="col-12 col-md-3">
                 <label class="form-label text-muted">Father’s Name</label>
                 <input type="text" name="father_name" id="father_name" class="form-control parent-field" data-related-check="fatherNotApplicable" placeholder="Enter father's name">
-                <div id="father_name-error" class="invalid-feedback d-none">Father's Name is required.</div>
+                <div id="father_name-error" class="invalid-feedback d-none">Father's Name is required if not N/A.</div>
             </div>
 
             <div class="col-12 col-md-4">
                 <label class="form-label text-muted">Father’s Occupation</label>
                 <input type="text" name="father_occupation" id="father_occupation" class="form-control parent-field" data-related-check="fatherNotApplicable" placeholder="Enter Occupation">
-                <div id="father_occupation-error" class="invalid-feedback d-none">Father's Occupation is required.</div>
+                <div id="father_occupation-error" class="invalid-feedback d-none">Father's Occupation is required if not N/A.</div>
             </div>
 
-            <div class="col-12 col-md-4">
+            <div class="col-12 col-md-3">
                 <label class="form-label text-muted">Father’s Contact Number</label>
                 <input type="text" name="father_contact" id="father_contact" class="form-control parent-field" data-related-check="fatherNotApplicable"
                     placeholder="e.g. 09123456789" 
                     maxlength="11"
                     oninput="this.value = this.value.replace(/\D/g, '').slice(0, 11)" 
                 >
-                <div id="father_contact-error" class="invalid-feedback d-none">Father's Contact Number is required and must be 11 digits.</div>
+                <div id="father_contact-error" class="invalid-feedback d-none">Father's Contact must be 11 digits if not N/A.</div>
             </div>
             
-            <div class="col-12 col-md-1 parent-na-col order-1 order-md-last">
-                <small class="text-muted d-block mb-1" style="line-height: 1;">
-                    **Father N/A?**
-                </small>
+            <div class="col-12 col-md-2 d-flex flex-column align-items-center justify-content-center order-1 order-md-last text-center">
+                <label class="form-label text-muted">Father's Not Applicable</label>
                 <div class="form-check">
                     <input class="form-check-input not-applicable-check" type="checkbox" id="fatherNotApplicable">
-                    <label class="form-check-label text-muted" for="fatherNotApplicable" style="font-size: 0.8rem;">N/A</label>
                 </div>
             </div>
         </div>
@@ -272,73 +268,77 @@
             <div class="col-12 col-md-3">
                 <label class="form-label text-muted">Mother’s Name</label>
                 <input type="text" name="mother_name" id="mother_name" class="form-control parent-field" data-related-check="motherNotApplicable" placeholder="Enter mother's name">
-                <div id="mother_name-error" class="invalid-feedback d-none">Mother's Name is required.</div>
+                <div id="mother_name-error" class="invalid-feedback d-none">Mother's Name is required if not N/A.</div>
             </div>
 
             <div class="col-12 col-md-4">
                 <label class="form-label text-muted">Mother’s Occupation</label>
                 <input type="text" name="mother_occupation" id="mother_occupation" class="form-control parent-field" data-related-check="motherNotApplicable" placeholder="Enter Occupation">
-                <div id="mother_occupation-error" class="invalid-feedback d-none">Mother's Occupation is required.</div>
+                <div id="mother_occupation-error" class="invalid-feedback d-none">Mother's Occupation is required if not N/A.</div>
             </div>
 
-            <div class="col-12 col-md-4">
+            <div class="col-12 col-md-3">
                 <label class="form-label text-muted">Mother’s Contact Number</label>
-                <input type="text" name="mother_contact" id="mother_contact" class="form-control parent-field" data-related-check="motherNotApplicable"
+                <input type="text", name="mother_contact" id="mother_contact" class="form-control parent-field" data-related-check="motherNotApplicable"
                     placeholder="e.g. 09123456789" 
-                    maxlength="11"
+                    maxlength="11",
                     oninput="this.value = this.value.replace(/\D/g, '').slice(0, 11)" 
                 >
-                <div id="mother_contact-error" class="invalid-feedback d-none">Mother's Contact Number is required and must be 11 digits.</div>
+                <div id="mother_contact-error" class="invalid-feedback d-none">Mother's Contact must be 11 digits if not N/A.</div>
             </div>
 
-            <div class="col-12 col-md-1 parent-na-col order-1 order-md-last">
-                <small class="text-muted d-block mb-1" style="line-height: 1;">
-                    **Mother N/A?**
-                </small>
+            <div class="col-12 col-md-2 d-flex flex-column align-items-center justify-content-center order-1 order-md-last text-center">
+                <label class="form-label text-muted">Mother's Not Applicable</label>
                 <div class="form-check">
                     <input class="form-check-input not-applicable-check" type="checkbox" id="motherNotApplicable">
-                    <label class="form-check-label text-muted" for="motherNotApplicable" style="font-size: 0.8rem;">N/A</label>
                 </div>
             </div>
         </div>
 
-          <div class="col-12 col-md-4">
-            <label class="form-label text-muted">Contact Person*</label>
-            <input type="text" name="guardian_name" id="guardian_name" class="form-control" placeholder="Enter guardian's name">
-            <div id="guardian_name-error" class="invalid-feedback d-none">Contact Person's Name is required.</div>
-          </div>
+        <div class="row g-3">
 
-          <div class="col-12 col-md-4">
-            <label class="form-label text-muted">Contact Person's Occupation*</label>
-            <input type="text" name="guardian_occupation" id="guardian_occupation" class="form-control" placeholder="Note: N/A if None">
-            <div id="guardian_occupation-error" class="invalid-feedback d-none">Contact Person's Occupation is required.</div>
-          </div>
+            <div class="col-12 col-md-3">
+                <label class="form-label text-muted">Contact Person*</label>
+                <input type="text" required name="guardian_name" id="guardian_name" class="form-control" placeholder="Enter guardian's name">
+            </div>
 
-          <div class="col-12 col-md-4">
-            <label class="form-label text-muted">Contact Person's Email*</label>
-            <input type="email" name="email" id="email" class="form-control" placeholder="Note: active email for queue number">
-            <div id="email-error" class="invalid-feedback d-none">Contact Person's Email is required.</div>
-            <input type="hidden" name="guardian_contact" id="guardian_contact" class="form-control" 
-                value="09123456789"
-            >
-          </div>
+            <div class="col-12 col-md-3">
+                <label class="form-label text-muted">Contact Person's Occupation*</label>
+                <input type="text" required name="guardian_occupation" class="form-control" placeholder="Note: N/A if None">
+            </div>
 
-          <div class="mt-4">
+            <div class="col-12 col-md-3">
+                <label class="form-label text-muted">Contact Person's Contact Number*</label>
+                <input type="text" name="guardian_contact" id="guardian_contact" class="form-control" 
+                    placeholder="e.g. 09123456789" 
+                    maxlength="11"
+                    oninput="this.value = this.value.replace(/\D/g, '').slice(0, 11)" 
+                    required
+                >
+            </div>
+            
+            <div class="col-12 col-md-3">
+                <label class="form-label text-muted">Contact Person's Email*</label>
+                <input type="email" name="email" class="form-control" placeholder="Note: active email for queue number" required>
+                </div>
+            
+        </div>
+
+        <div class="mt-4">
             <p class="text-muted" style="font-size: 15px; text-align: justify; line-height: 1.6;">
-              As a student of The Cardinal Academy and as the parent/guardian of the above-named student, we affirm our commitment to abide by all school rules, acknowledge and support them, commit to respecting them, and accept full responsibility for upholding them.
+                As a student of The Cardinal Academy and as the parent/guardian of the above-named student, we affirm our commitment to abide by all school rules, acknowledge and support them, commit to respecting them, and accept full responsibility for upholding them.
             </p>
             <div class="form-check d-flex align-items-center justify-content-start">
-              <input class="form-check-input me-2" type="checkbox" id="agreementCheckbox">
-              <label class="form-check-label text-muted" for="agreementCheckbox">
-                I agree that all data provided is true and correct.
-              </label>
+                <input id="agreementCheckbox" class="form-check-input me-2" type="checkbox">
+                <label class="form-check-label text-muted" for="agreementCheckbox">
+                    I agree that all data provided is true and correct.
+                </label>
             </div>
-          </div>
+        </div>
 
 
-          <div class="col-12 col-md-2">
-            <button type="button"  id="submitBtn" onclick="validateStep2()" disabled class="btn bg-danger text-light rounded-4 mt-3 w-100">Submit</button>
-          </div>
+        <div class="col-12 col-md-2">
+            <button type="submit" id="submitBtn" disabled class="btn bg-danger text-light rounded-4 mt-3 w-100">Submit</button>
         </div>
 
       </fieldset>
