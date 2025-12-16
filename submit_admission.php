@@ -1,7 +1,4 @@
 <?php
-// Set the default timezone to Asia/Manila (Philippines)
-date_default_timezone_set('Asia/Manila');
-
 include 'db_connection.php';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -13,8 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // --- Collect form data ---
     $status = sanitize($_POST['status'] ?? '');
     $lrn = sanitize($_POST['lrn'] ?? '');
-    $street_address = sanitize($_POST['street_address'] ?? ''); // Assuming 'residential_address' from HTML is now split into street/house/etc.
-    $house_address = sanitize($_POST['house_address'] ?? ''); // New field
+    $residential_address = sanitize($_POST['residential_address'] ?? '');
     $grade_level = sanitize($_POST['grade_level'] ?? '');
     $strand = sanitize($_POST['strand'] ?? '');
     $gender = sanitize($_POST['gender'] ?? '');
@@ -35,7 +31,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $admission_status = 'pending';
     $que_code = 'Q' . str_pad(mt_rand(0, 999999), 6, '0', STR_PAD_LEFT);
 
-    // Parents and Guardian Data
     $father_name = sanitize($_POST['father_name'] ?? '');
     $father_occupation = sanitize($_POST['father_occupation'] ?? '');
     $father_contact = sanitize($_POST['father_contact'] ?? '');
@@ -46,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $guardian_occupation = sanitize($_POST['guardian_occupation'] ?? '');
     $guardian_contact = sanitize($_POST['guardian_contact'] ?? '');
 
-    // --- Validation (Ensuring age is at least 5 for Intermediate, based on HTML min age) ---
+    // --- Validation ---
     $errors = [];
     if (empty($status)) $errors[] = "Status is required.";
     if (empty($grade_level)) $errors[] = "Grade level is required.";
@@ -54,12 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($last_name)) $errors[] = "Last name is required.";
     if (empty($first_name)) $errors[] = "First name is required.";
     if (empty($birth_date)) $errors[] = "Date of birth is required.";
-    // Intermediate minimum age is typically 9, but using 5 based on previous HTML context
-    if (!is_numeric($age) || (int)$age < 5) $errors[] = "Age must be at least 5."; 
-    if (empty($guardian_name)) $errors[] = "Contact Person's Name is required.";
-    if (empty($email)) $errors[] = "Email is required.";
-    if (empty($phone) || !preg_match('/^\d{11}$/', $phone)) $errors[] = "Phone number must be exactly 11 digits.";
-
+    if (!is_numeric($age) || (int)$age < 4) $errors[] = "Age must be at least 4.";
 
     if (!empty($errors)) {
         echo "<h3>Form submission failed with the following errors:</h3><ul>";
@@ -68,8 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Reconstruct the full residential address using all parts
-    $full_residential_address = trim("$house_address, $street_address, $barangay, $municipal, $province, $region");
+    $residential_address = "$barangay, $municipal, $province, $region, $residential_address";
 
     // --- Prepare Admission Insert dynamically ---
     $columns = [
@@ -88,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $params = [
         $lrn, $first_name, $middle_name, $last_name, $status, $gender, $grade_level, $profile_picture,
-        $birth_date, $religion, $birth_place, $age, $email, $phone, $full_residential_address,
+        $birth_date, $religion, $birth_place, $age, $email, $phone, $residential_address,
         $region, $province, $municipal, $barangay,
         $father_name, $father_occupation, $father_contact,
         $mother_name, $mother_occupation, $mother_contact,
