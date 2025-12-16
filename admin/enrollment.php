@@ -89,7 +89,8 @@ $query = "SELECT
 $result = mysqli_query($conn, $query);
 
 // Helper function to build query string for pagination/sorting links
-function build_query_string($page = null, $search = null, $sort_by = null, $sort_order = null) {
+// FIX: Added $is_new_sort parameter to control page reset
+function build_query_string($page = null, $search = null, $sort_by = null, $sort_order = null, $is_new_sort = false) {
     $params = [];
     // Use current values as defaults
     $current_search = isset($_GET['search']) ? $_GET['search'] : '';
@@ -102,15 +103,21 @@ function build_query_string($page = null, $search = null, $sort_by = null, $sort
     $params['sort_by'] = $sort_by !== null ? $sort_by : $current_sort_by;
     $params['sort_order'] = $sort_order !== null ? $sort_order : $current_sort_order;
     
-    // Reset page to 1 if sorting parameters are explicitly passed, indicating a new sort action
-    if ($sort_by !== null || $sort_order !== null) {
+    // FIX: Only reset page to 1 if $is_new_sort is explicitly true
+    if ($is_new_sort === true) {
         $params['page'] = 1;
+    }
+    
+    // Optional: Clean up empty search parameter
+    if (empty($params['search'])) {
+        unset($params['search']);
     }
 
     return '?' . http_build_query($params);
 }
 
 // Function to generate the sort link for a column header
+// FIX: Updated call to build_query_string to signal a new sort
 function get_sort_link($column_name, $current_sort_by, $current_sort_order, $search) {
     $new_order = 'ASC';
     // If we are currently sorting by this column, flip the order
@@ -118,8 +125,9 @@ function get_sort_link($column_name, $current_sort_by, $current_sort_order, $sea
         $new_order = ($current_sort_order === 'ASC') ? 'DESC' : 'ASC';
     }
 
-    // Build the query string for the new sort
-    $query_string = build_query_string(1, $search, $column_name, $new_order);
+    // Build the query string for the new sort, passing true for $is_new_sort
+    // Passing 'null' for page lets the function determine the current page number, which will then be reset by the 'true' flag.
+    $query_string = build_query_string(null, $search, $column_name, $new_order, true);
 
     // Determine the icon to display
     $icon = 'bi-chevron-expand'; // Default icon
@@ -228,7 +236,8 @@ $current_sort_order = $_GET['sort_order'] ?? $default_sort_order;
                   
                   autoSubmitDropdowns.forEach(dropdown => {
                       dropdown.addEventListener('change', function() {
-                          // Submit the form to trigger the sort/filter
+                          // Crucially, when sorting/filtering via dropdowns, we must reset the page to 1
+                          filterForm.querySelector('input[name="page"]').value = 1; 
                           filterForm.submit();
                       });
                   });
@@ -325,7 +334,7 @@ $current_sort_order = $_GET['sort_order'] ?? $default_sort_order;
     <ul class="pagination justify-content-start pagination-sm">
       <?php if ($page > 1): ?>
         <li class="page-item">
-          <a class="page-link text-muted" href="<?= build_query_string($page - 1, $search, $sort_by, $sort_order) ?>">Previous</a>
+          <a class="page-link text-muted" href="<?= build_query_string($page - 1, $search, $sort_by, $sort_order, false) ?>">Previous</a>
         </li>
       <?php endif; ?>
 
@@ -343,13 +352,13 @@ $current_sort_order = $_GET['sort_order'] ?? $default_sort_order;
 
       <?php for ($i = $start; $i <= $end; $i++): ?>
         <li class="page-item">
-          <a class="page-link text-muted <?= $i == $page ? 'fw-bold' : '' ?>" href="<?= build_query_string($i, $search, $sort_by, $sort_order) ?>"><?= $i ?></a>
+          <a class="page-link text-muted <?= $i == $page ? 'fw-bold' : '' ?>" href="<?= build_query_string($i, $search, $sort_by, $sort_order, false) ?>"><?= $i ?></a>
         </li>
       <?php endfor; ?>
 
       <?php if ($page < $total_pages): ?>
         <li class="page-item">
-          <a class="page-link text-muted" href="<?= build_query_string($page + 1, $search, $sort_by, $sort_order) ?>">Next</a>
+          <a class="page-link text-muted" href="<?= build_query_string($page + 1, $search, $sort_by, $sort_order, false) ?>">Next</a>
         </li>
       <?php endif; ?>
     </ul>
@@ -378,12 +387,13 @@ $current_sort_order = $_GET['sort_order'] ?? $default_sort_order;
         const id = tr.getAttribute('data-id');
         
         // Prevent navigation if the click target is the 'Enroll' button or its parent link/anchor
-        if (event.target.closest('a') && event.target.closest('a').classList.contains('btn-primary')) {
-             // Let the anchor link handle the navigation (to enroll_action.php)
+        // The check for 'btn-primary' is specific and might need adjusting if the button class changes.
+        if (event.target.closest('a')) {
+             // Let the anchor link handle the navigation (to enroll_action.php, or whatever the link is)
              return; 
         }
 
-        // Navigate to view_enrollment.php if the click is not on a specific link/button
+        // Navigate to view_enrollment.php if the click is not on a specific link/button/anchor
         if (!event.target.closest('a')) {
              window.location.href = `view_enrollment.php?id=${id}`;
         }
