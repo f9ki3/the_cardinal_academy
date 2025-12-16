@@ -111,17 +111,17 @@ if ($admission_id > 0) {
               <input type="text" class="form-control" value="<?= htmlspecialchars($data['place_of_birth'] ?? '') ?>" disabled>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-6">
               <label class="form-label text-muted">Age</label>
               <input type="text" class="form-control" value="<?= htmlspecialchars($data['age'] ?? '') ?>" disabled>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-6">
               <label class="form-label text-muted">Religion</label>
               <input type="text" class="form-control" value="<?= htmlspecialchars($data['religion'] ?? '') ?>" disabled>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-4 d-none">
               <label class="form-label text-muted">Phone number</label>
               <input type="text" class="form-control" value="<?= htmlspecialchars($data['phone'] ?? '') ?>" disabled>
             </div>
@@ -167,20 +167,26 @@ if ($admission_id > 0) {
               <input type="text" class="form-control" value="<?= htmlspecialchars($data['mother_contact'] ?? '') ?>" disabled>
             </div>
 
-            <div class="col-md-4">
-              <label class="form-label text-muted">Contact Persons</label>
+            <div class="col-md-3">
+              <label class="form-label text-muted">Contact Person</label>
               <input type="text" class="form-control" value="<?= htmlspecialchars($data['guardian_name'] ?? '') ?>" disabled>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-3">
               <label class="form-label text-muted">Contact Person's Occupation</label>
               <input type="text" class="form-control" value="<?= htmlspecialchars($data['guardian_occupation'] ?? '') ?>" disabled>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-3">
               <label class="form-label text-muted">Contact Person's Email</label>
               <input type="text" class="form-control" value="<?= htmlspecialchars($data['email'] ?? '') ?>" disabled>
             </div>
+
+            <div class="col-md-3">
+              <label class="form-label text-muted">Phone Number </label>
+              <input type="text" class="form-control" value="<?= htmlspecialchars($data['guardian_contact'] ?? '') ?>" disabled>
+            </div>
+
              <div class="col-12 col-md-2">
                 <button id="approve-btn" type="submit" name="action" value="approved" class="btn btn-danger text-light rounded-4 mt-3 w-100">
                   <span class="btn-text">Approve</span>

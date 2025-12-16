@@ -158,25 +158,21 @@ if ($student_id > 0) {
                     <input type="text" name="place_of_birth" class="form-control" value="<?= htmlspecialchars($data['place_of_birth'] ?? '') ?>">
                     </div>
 
-                    <div class="col-md-3">
+                    <div class="col-md-6">
                     <label class="form-label text-muted">Age</label>
                     <input type="number" name="age" class="form-control" value="<?= htmlspecialchars($data['age'] ?? '') ?>">
                     </div>
 
-                    <div class="col-md-3">
+                    <div class="col-md-6">
                     <label class="form-label text-muted">Religion</label>
                     <input type="text" name="religion" class="form-control" value="<?= htmlspecialchars($data['religion'] ?? '') ?>">
                     </div>
 
-                    <div class="col-md-3">
+                    <div class="col-md-3 d-none">
                     <label class="form-label text-muted">Phone</label>
                     <input type="text" name="phone" class="form-control" value="<?= htmlspecialchars($data['phone'] ?? '') ?>">
                     </div>
 
-                    <div class="col-md-3">
-                    <label class="form-label text-muted">Email</label>
-                    <input type="email" name="email" class="form-control" value="<?= htmlspecialchars($data['email'] ?? '') ?>">
-                    </div>
                     <!-- Address Details -->
                     <div class="col-md-3">
                     <label class="form-label text-muted">Region</label>
@@ -279,18 +275,23 @@ if ($student_id > 0) {
                     <input type="text" name="mother_contact" class="form-control" value="<?= htmlspecialchars($data['mother_contact'] ?? '') ?>">
                     </div>
 
-                    <div class="col-md-4">
-                    <label class="form-label text-muted">Guardian’s Name</label>
+                    <div class="col-md-3">
+                    <label class="form-label text-muted">Contact Person</label>
                     <input type="text" name="guardian_name" class="form-control" value="<?= htmlspecialchars($data['guardian_name'] ?? '') ?>">
                     </div>
 
-                    <div class="col-md-4">
-                    <label class="form-label text-muted">Guardian’s Occupation</label>
+                    <div class="col-md-3">
+                    <label class="form-label text-muted">Contact Person's Occupation</label>
                     <input type="text" name="guardian_occupation" class="form-control" value="<?= htmlspecialchars($data['guardian_occupation'] ?? '') ?>">
                     </div>
 
-                    <div class="col-md-4">
-                    <label class="form-label text-muted">Guardian’s Contact</label>
+                    <div class="col-md-3">
+                    <label class="form-label text-muted">Contact Person's Email</label>
+                    <input type="email" name="email" class="form-control" value="<?= htmlspecialchars($data['email'] ?? '') ?>">
+                    </div>
+
+                    <div class="col-md-3">
+                    <label class="form-label text-muted">Phone Number</label>
                     <input type="text" name="guardian_contact" class="form-control" value="<?= htmlspecialchars($data['guardian_contact'] ?? '') ?>">
                     </div>
 
