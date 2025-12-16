@@ -210,6 +210,21 @@ $hideLogInButton = true;
               <?php endif; ?>
             <?php endif; ?>
 
+            <?php if (isset($_GET['status']) && $_GET['status'] == 1): ?>
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Authentication Failed:</strong> Invalid credentials or login error.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
+            <?php elseif (isset($_GET['status']) && $_GET['status'] == 'expired'): ?>
+                <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <i class="bi bi-clock-history me-2"></i>
+                    <strong>Code Expired:</strong> Your verification code expired (3 minute limit). Please log in again.
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
+            <?php endif; ?>
+
             <div class="mb-3">
               <label for="username" class="form-label">Username or Email</label>
               <input type="text" name="username" id="username" class="form-control" required />
