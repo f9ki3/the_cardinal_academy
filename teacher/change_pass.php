@@ -38,28 +38,44 @@
     </div>
 
     <div class="row">
-        <div class="col-4">
+        <div class="col-3">
             <div class="mb-3">
                 <label for="birthdate" class="form-label">Birthdate</label>
                 <input type="date" class="form-control" id="birthdate" name="birthdate"
-                       value="<?php echo htmlspecialchars($user['birthdate']); ?>">
+                       value="<?php echo htmlspecialchars((string)($user['birthdate'] ?? '')); ?>">
             </div>
         </div>
-        <div class="col-4">
+        <div class="col-3">
             <div class="mb-3">
                 <label for="gender" class="form-label">Gender</label>
                 <select class="form-control" id="gender" name="gender">
                     <option value="">Select gender</option>
-                    <option value="male" <?php echo ($user['gender'] === 'male') ? 'selected' : ''; ?>>Male</option>
-                    <option value="female" <?php echo ($user['gender'] === 'female') ? 'selected' : ''; ?>>Female</option>
-                    <option value="other" <?php echo ($user['gender'] === 'other') ? 'selected' : ''; ?>>Other</option>
+                    <option value="male" <?php echo ((string)($user['gender'] ?? '') === 'male') ? 'selected' : ''; ?>>Male</option>
+                    <option value="female" <?php echo ((string)($user['gender'] ?? '') === 'female') ? 'selected' : ''; ?>>Female</option>
+                    <option value="other" <?php echo ((string)($user['gender'] ?? '') === 'other') ? 'selected' : ''; ?>>Other</option>
                 </select>
             </div>
         </div>
-        <div class="col-4">
+        <div class="col-3">
             <div class="mb-3">
                 <label for="profile" class="form-label">Profile Picture</label>
                 <input type="file" class="form-control" id="profile" name="profile">
+            </div>
+        </div>
+        <div class="col-3">
+            <div class="mb-3">
+                <label for="authentication" class="form-label">Authentication</label>
+                <select class="form-select" id="authentication" name="authentication">
+                    
+                    <option value="True" <?php echo (isset($user['authentication']) && $user['authentication'] === 'True') ? 'selected' : ''; ?>>
+                        On
+                    </option>
+                    
+                    <option value="False" <?php echo (!isset($user['authentication']) || $user['authentication'] !== 'True') ? 'selected' : ''; ?>>
+                        Off
+                    </option>
+                    
+                </select>
             </div>
         </div>
     </div>

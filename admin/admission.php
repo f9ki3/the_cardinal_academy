@@ -276,8 +276,7 @@ $current_sort_order = $_GET['sort_order'] ?? $default_sort_order;
                       <th scope="col" style="width: 15%;">LRN <?= get_sort_link('lrn', $current_sort_by, $current_sort_order, $search) ?></th>
                       <th scope="col" style="width: 20%;">Fullname <?= get_sort_link('fullname', $current_sort_by, $current_sort_order, $search) ?></th>
                       <th scope="col" style="width: 23%;">Address <?= get_sort_link('address', $current_sort_by, $current_sort_order, $search) ?></th>
-                      <th scope="col" style="width: 10%;">Grade Level <?= get_sort_link('grade_level', $current_sort_by, $current_sort_order, $search) ?></th>
-                      <th scope="col" style="width: 10%;">Status</th>
+                      <th scope="col" style="width: 15%;">Grade Level <?= get_sort_link('grade_level', $current_sort_by, $current_sort_order, $search) ?></th>
                     </tr>
                   </thead>
                   <tbody>
@@ -290,7 +289,6 @@ $current_sort_order = $_GET['sort_order'] ?? $default_sort_order;
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['fullname']) ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['address']) ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['grade_level']) ?></p></td>
-                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['status']) ?></p></td>
                         </tr>
 
                       <?php endwhile; ?>

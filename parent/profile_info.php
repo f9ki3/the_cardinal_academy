@@ -10,7 +10,8 @@ $query = "SELECT
             phone_number, 
             profile,
             birthdate,
-            address
+            address, 
+            authentication
           FROM users 
           WHERE user_id = ?";
 
