@@ -319,7 +319,7 @@
 
 
         <div class="col-12 col-md-2">
-            <button type="button" id="submitBtn" onclick="validateStep2()" disabled class="btn bg-danger text-light rounded-4 mt-3 w-100">Submit</button>
+            <button type="submit" id="submitBtn" onclick="validateStep2()" disabled class="btn bg-danger text-light rounded-4 mt-3 w-100">Submit</button>
         </div>
 
     </fieldset>
