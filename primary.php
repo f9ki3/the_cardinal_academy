@@ -225,7 +225,7 @@
       <fieldset id="step2" style="display: none">
         <h4><strong>Step 3</strong>: Parents and Guardian Profile</h4>
         
-          <div class="row g-3 mb-4">
+        <div class="row g-3 mb-4">
             
             <div class="col-12 col-md-3">
                 <label class="form-label text-muted">Father’s Name</label>
@@ -273,18 +273,18 @@
 
             <div class="col-12 col-md-3">
                 <label class="form-label text-muted">Mother’s Contact Number</label>
-                <input type="text" name="mother_contact" id="mother_contact" class="form-control parent-field" data-related-check="motherNotApplicable"
+                <input type="text", name="mother_contact" id="mother_contact" class="form-control parent-field" data-related-check="motherNotApplicable"
                     placeholder="e.g. 09123456789" 
-                    maxlength="11"
+                    maxlength="11",
                     oninput="this.value = this.value.replace(/\D/g, '').slice(0, 11)" 
                 >
                 <div id="mother_contact-error" class="invalid-feedback d-none">Mother's Contact must be 11 digits if not N/A.</div>
             </div>
 
-                </small>
+            <div class="col-12 col-md-2 d-flex flex-column align-items-center justify-content-center order-1 order-md-last text-center">
+                <label class="form-label text-muted">Mother's Not Applicable</label>
                 <div class="form-check">
                     <input class="form-check-input not-applicable-check" type="checkbox" id="motherNotApplicable">
-                    <label class="form-check-label text-muted" for="motherNotApplicable" style="font-size: 0.8rem;">N/A</label>
                 </div>
             </div>
         </div>
@@ -314,7 +314,7 @@
             <div class="col-12 col-md-3">
                 <label class="form-label text-muted">Contact Person's Email*</label>
                 <input type="email" name="email" class="form-control" placeholder="Note: active email for queue number" required>
-            </div>
+                </div>
             
         </div>
 
