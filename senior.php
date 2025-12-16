@@ -337,45 +337,71 @@
         <h4><strong>Step 3</strong>: Parents and Guardian Profile</h4>
         <div class="row g-3">
 
-          <div class="col-12 col-md-4">
-            <label class="form-label text-muted">Father’s Name*</label>
-            <input type="text" name="father_name" class="form-control" placeholder="Enter father's name">
-          </div>
+          <div class="row g-3 mb-4">
+            
+            <div class="col-12 col-md-3">
+                <label class="form-label text-muted">Father’s Name</label>
+                <input type="text" name="father_name" class="form-control parent-field" data-related-check="fatherNotApplicable" placeholder="Enter father's name">
+            </div>
 
-          <div class="col-12 col-md-4">
-            <label class="form-label text-muted">Father’s Occupation*</label>
-            <input type="text" name="father_occupation" class="form-control" placeholder="Note: N/A if None">
-          </div>
+            <div class="col-12 col-md-4">
+                <label class="form-label text-muted">Father’s Occupation</label>
+                <input type="text" name="father_occupation" class="form-control parent-field" data-related-check="fatherNotApplicable" placeholder="Enter Occupation">
+            </div>
 
-          <div class="col-12 col-md-4">
-            <label class="form-label text-muted">Father’s Contact Number*</label>
-            <input type="text" name="father_contact" class="form-control" 
-                placeholder="e.g. 09123456789" 
-                maxlength="11"
-                oninput="this.value = this.value.replace(/\D/g, '').slice(0, 11)" 
-                required
-            >
-          </div>
+            <div class="col-12 col-md-4">
+                <label class="form-label text-muted">Father’s Contact Number</label>
+                <input type="text" name="father_contact" class="form-control parent-field" data-related-check="fatherNotApplicable"
+                    placeholder="e.g. 09123456789" 
+                    maxlength="11"
+                    oninput="this.value = this.value.replace(/\D/g, '').slice(0, 11)" 
+                    required
+                >
+            </div>
+            
+            <div class="col-12 col-md-1 parent-na-col order-1 order-md-last">
+                <small class="text-muted d-block mb-1" style="line-height: 1;">
+                    **Father N/A?**
+                </small>
+                <div class="form-check">
+                    <input class="form-check-input not-applicable-check" type="checkbox" id="fatherNotApplicable">
+                    <label class="form-check-label text-muted" for="fatherNotApplicable" style="font-size: 0.8rem;">N/A</label>
+                </div>
+            </div>
+        </div>
 
-          <div class="col-12 col-md-4">
-            <label class="form-label text-muted">Mother’s Name*</label>
-            <input type="text" name="mother_name" class="form-control" placeholder="Enter mother's name">
-          </div>
+        <div class="row g-3 mb-4">
+            
+            <div class="col-12 col-md-3">
+                <label class="form-label text-muted">Mother’s Name</label>
+                <input type="text" name="mother_name" class="form-control parent-field" data-related-check="motherNotApplicable" placeholder="Enter mother's name">
+            </div>
 
-          <div class="col-12 col-md-4">
-            <label class="form-label text-muted">Mother’s Occupation*</label>
-            <input type="text" name="mother_occupation" class="form-control" placeholder="Note: N/A if None">
-          </div>
+            <div class="col-12 col-md-4">
+                <label class="form-label text-muted">Mother’s Occupation</label>
+                <input type="text" name="mother_occupation" class="form-control parent-field" data-related-check="motherNotApplicable" placeholder="Enter Occupation">
+            </div>
 
-          <div class="col-12 col-md-4">
-            <label class="form-label text-muted">Mother’s Contact Number*</label>
-            <input type="text" name="mother_contact" class="form-control" 
-                placeholder="e.g. 09123456789" 
-                maxlength="11"
-                oninput="this.value = this.value.replace(/\D/g, '').slice(0, 11)" 
-                required
-            >
-          </div>
+            <div class="col-12 col-md-4">
+                <label class="form-label text-muted">Mother’s Contact Number</label>
+                <input type="text" name="mother_contact" class="form-control parent-field" data-related-check="motherNotApplicable"
+                    placeholder="e.g. 09123456789" 
+                    maxlength="11"
+                    oninput="this.value = this.value.replace(/\D/g, '').slice(0, 11)" 
+                    required
+                >
+            </div>
+
+            <div class="col-12 col-md-1 parent-na-col order-1 order-md-last">
+                <small class="text-muted d-block mb-1" style="line-height: 1;">
+                    **Mother N/A?**
+                </small>
+                <div class="form-check">
+                    <input class="form-check-input not-applicable-check" type="checkbox" id="motherNotApplicable">
+                    <label class="form-check-label text-muted" for="motherNotApplicable" style="font-size: 0.8rem;">N/A</label>
+                </div>
+            </div>
+        </div>
 
           <div class="col-12 col-md-4">
             <label class="form-label text-muted">Contact Person*</label>
@@ -431,19 +457,58 @@
 </html>
 
 <script>
-  const checkbox = document.getElementById('check');
-  const button = document.getElementById('submitBtn');
+// --- Parent/Guardian N/A Toggle Logic ---
+document.addEventListener('DOMContentLoaded', function() {
+    const fatherCheckbox = document.getElementById('fatherNotApplicable');
+    const motherCheckbox = document.getElementById('motherNotApplicable');
+    const agreementCheckbox = document.getElementById('check');
+    const submitBtn = document.getElementById('submitBtn');
+    
+    if (fatherCheckbox) {
+        fatherCheckbox.addEventListener('change', function() {
+            toggleParentFields('father', this.checked);
+        });
+    }
+    
+    if (motherCheckbox) {
+        motherCheckbox.addEventListener('change', function() {
+            toggleParentFields('mother', this.checked);
+        });
+    }
 
-  checkbox.addEventListener('change', function () {
-    button.disabled = !this.checked;
-  });
-</script>
+    if (agreementCheckbox && submitBtn) {
+        agreementCheckbox.addEventListener('change', function() {
+            submitBtn.disabled = !this.checked;
+        });
+    }
+});
 
-<script>
-  function hide_step1(){
+function toggleParentFields(parentType, isChecked) {
+    const nameInput = document.querySelector(`input[name="${parentType}_name"]`);
+    const occupationInput = document.querySelector(`input[name="${parentType}_occupation"]`);
+    const contactInput = document.querySelector(`input[name="${parentType}_contact"]`);
+    const fields = [nameInput, occupationInput, contactInput];
+
+    fields.forEach(field => {
+        if (!field) return;
+        
+        if (isChecked) {
+            field.setAttribute('data-original-value', field.value);
+            field.disabled = true;
+            field.value = '';
+        } else {
+            field.disabled = false;
+            const originalValue = field.getAttribute('data-original-value') || '';
+            field.value = originalValue;
+            field.removeAttribute('data-original-value');
+        }
+    });
+}
+
+function hide_step1(){
     $('#step1').hide()
     $('#step2').show()
-  }
+}
 </script>
 <script>
 document.addEventListener("DOMContentLoaded", function () {
