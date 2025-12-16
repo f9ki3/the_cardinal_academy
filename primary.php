@@ -222,7 +222,7 @@
         </div>
       </fieldset>
       
-      <fieldset id="stp2" style="display: none">
+      <fieldset id="step2" style="display: none">
         <h4><strong>Step 3</strong>: Parents and Guardian Profile</h4>
         
           <div class="row g-3 mb-4">
@@ -281,10 +281,10 @@
                 <div id="mother_contact-error" class="invalid-feedback d-none">Mother's Contact must be 11 digits if not N/A.</div>
             </div>
 
-            <div class="col-12 col-md-2 d-flex flex-column align-items-center justify-content-center order-1 order-md-last text-center">
-                <label class="form-label text-muted">Mother’s Not Applicable</label>
+                </small>
                 <div class="form-check">
                     <input class="form-check-input not-applicable-check" type="checkbox" id="motherNotApplicable">
+                    <label class="form-check-label text-muted" for="motherNotApplicable" style="font-size: 0.8rem;">N/A</label>
                 </div>
             </div>
         </div>
