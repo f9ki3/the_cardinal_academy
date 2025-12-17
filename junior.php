@@ -56,7 +56,8 @@
 <div class="container py-5">
   <div class="bg-white p-4 rounded-4 shadow-sm">
 
-    <form action="submit_admission.php" method="POST" enctype="multipart/form-data">
+    <form id="enrollmentForm" action="submit_admission.php" method="POST" enctype="multipart/form-data">
+      
       <fieldset id="step1">
         <h4 class="text-center"><strong>Step 2</strong>: Learner Profile</h4>
         <p class="text-center m-0 mb-4">Status: please choose status if your new or old student.</p>
@@ -228,6 +229,7 @@
 
         </div>
       </fieldset>
+      
       <fieldset id="step2" style="display: none">
         <h4><strong>Step 3</strong>: Parents and Guardian Profile</h4>
         
@@ -279,9 +281,9 @@
 
             <div class="col-12 col-md-3">
                 <label class="form-label text-muted">Mother’s Contact Number</label>
-                <input type="text", name="mother_contact" id="mother_contact" class="form-control parent-field" data-related-check="motherNotApplicable"
+                <input type="text" name="mother_contact" id="mother_contact" class="form-control parent-field" data-related-check="motherNotApplicable"
                     placeholder="e.g. 09123456789" 
-                    maxlength="11",
+                    maxlength="11"
                     oninput="this.value = this.value.replace(/\D/g, '').slice(0, 11)" 
                 >
                 <div id="mother_contact-error" class="invalid-feedback d-none">Mother's Contact must be 11 digits if not N/A.</div>
@@ -300,11 +302,13 @@
             <div class="col-12 col-md-3">
                 <label class="form-label text-muted">Contact Person*</label>
                 <input type="text" required name="guardian_name" id="guardian_name" class="form-control" placeholder="Enter guardian's name">
+                <div id="guardian_name-error" class="invalid-feedback d-none">Contact Person's Name is required.</div>
             </div>
 
             <div class="col-12 col-md-3">
-                <label class="form-label text-muted">Contact Person's Occupation*</label>
-                <input type="text" required name="guardian_occupation" class="form-control" placeholder="Note: N/A if None">
+                <label class="form-label text-muted">Contact Person's Occupation <small class="text-muted">(optional)</small></label>
+                <input type="text" name="guardian_occupation" id="guardian_occupation" class="form-control" placeholder="Empty if N/A">
+                <div id="guardian_occupation-error" class="invalid-feedback d-none">Contact Person's Occupation is required.</div>
             </div>
 
             <div class="col-12 col-md-3">
@@ -315,12 +319,14 @@
                     oninput="this.value = this.value.replace(/\D/g, '').slice(0, 11)" 
                     required
                 >
+                <div id="guardian_contact-error" class="invalid-feedback d-none">Contact Person's Contact must be 11 digits.</div>
             </div>
             
             <div class="col-12 col-md-3">
                 <label class="form-label text-muted">Contact Person's Email*</label>
-                <input type="email" name="email" class="form-control" placeholder="Note: active email for queue number" required>
-                </div>
+                <input type="email" name="email" id="email" class="form-control" placeholder="Note: active email for queue number" required>
+                <div id="email-error" class="invalid-feedback d-none">Contact Person's Email is required.</div>
+            </div>
             
         </div>
 
@@ -337,8 +343,9 @@
         </div>
 
 
-        <div class="col-12 col-md-2">
-            <button type="submit" id="submitBtn" disabled class="btn bg-danger text-light rounded-4 mt-3 w-100">Submit</button>
+        <div class="col-12 d-flex justify-content-center gap-2 mt-3">
+            <button type="button" class="btn btn-secondary text-light rounded-4 px-5" onclick="showStep1()">Back</button>
+            <button type="button" id="submitBtn" onclick="validateStep2()" disabled class="btn bg-danger text-light rounded-4 px-5">Submit</button>
         </div>
 
       </fieldset>
@@ -423,15 +430,17 @@ function calculateAge() {
 }
 
 
-// --- Step Navigation Function ---
+// --- Step Navigation Functions ---
 function showStep2() {
     document.getElementById('step1').style.display = 'none';
     document.getElementById('step2').style.display = 'block';
     window.scrollTo(0, 0); // Scroll to top for new step
 }
 
-function hide_step1() {
-  showStep2();
+function showStep1() {
+    document.getElementById('step2').style.display = 'none';
+    document.getElementById('step1').style.display = 'block';
+    window.scrollTo(0, 0); // Scroll to top for step 1
 }
 
 
@@ -464,6 +473,8 @@ function toggleParentFields(parentType, isChecked) {
         
         if (isChecked) {
             field.setAttribute('data-original-value', field.value);
+            // Mark as N/A so validation can skip it
+            field.setAttribute('data-na-status', 'true');
             field.disabled = true;
             field.value = '';
             field.classList.remove('is-invalid');
@@ -474,13 +485,12 @@ function toggleParentFields(parentType, isChecked) {
             }
         } else {
             field.disabled = false;
+            field.setAttribute('data-na-status', 'false');
             const originalValue = field.getAttribute('data-original-value') || '';
             field.value = originalValue;
             field.removeAttribute('data-original-value');
         }
     });
-    
-    checkFormValidity();
 }
 
 
@@ -493,6 +503,7 @@ function validateStep1() {
     { id: 'first_name', message: 'First Name is required' },
     { id: 'birth_date_input', message: 'Date of Birth is required', name: 'birth_date' },
     { id: 'birth_place', message: 'Place of Birth is required' },
+    // MIN AGE 12 for Grade 7+
     { id: 'age_input', message: 'Age must be at least 12 for Grade 7.', name: 'age', min: 12 }, 
     { id: 'religion', message: 'Religion is required' },
     { id: 'phone', message: 'Phone number must be exactly 11 digits', pattern: /^\d{11}$/ },
@@ -566,7 +577,7 @@ function validateStep1() {
   }
 }
 
-// --- Step 2 Validation Logic ---
+// --- Step 2 Validation Logic (Submit) ---
 function validateStep2() {
     const requiredParentFields = [
       { id: 'father_name', message: "Father's Name is required." },
@@ -575,8 +586,11 @@ function validateStep2() {
       { id: 'mother_name', message: "Mother's Name is required." },
       { id: 'mother_occupation', message: "Mother's Occupation is required." },
       { id: 'mother_contact', message: "Mother's Contact must be 11 digits.", pattern: /^\d{11}$/ },
+      
+      // Guardian Fields
       { id: 'guardian_name', message: "Contact Person's Name is required." },
-      { id: 'guardian_occupation', message: "Contact Person's Occupation is required." },
+      // Occupation is OPTIONAL now
+      { id: 'guardian_contact', message: "Contact Person's Contact must be 11 digits.", pattern: /^\d{11}$/ },
       { id: 'email', message: "Contact Person's Email is required." }
     ];
 
@@ -614,7 +628,6 @@ function validateStep2() {
             }
         }
 
-
         if (showError) {
             isValid = false;
             el.classList.add('is-invalid');
@@ -635,34 +648,36 @@ function validateStep2() {
         }
     });
 
-    if (!document.getElementById('agreementCheckbox').checked) {
-        isValid = false;
-        alert("Please agree that all data provided is true and correct.");
-    }
-
     if (isValid) {
-        document.querySelector('form').submit();
+        document.getElementById('enrollmentForm').submit();
     } else if (firstErrorElement) {
         firstErrorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
 }
 
 
-// --- PSGC API Logic and Submission Check ---
+// --- Button State Management (Agreement & Required Fields) ---
 document.addEventListener("DOMContentLoaded", function () {
   
   const submitBtn = document.getElementById('submitBtn');
   const agreementCheckbox = document.getElementById('agreementCheckbox');
   const guardianNameInput = document.getElementById('guardian_name');
+  const guardianContactInput = document.getElementById('guardian_contact');
+  const guardianEmailInput = document.getElementById('email');
 
-  // --- Submission Check (Simplified to control button based on agreement) ---
   function checkFormValidity() {
-    // Only check if agreement is checked, as input validation is now handled by validateStep2()
+    const isNameFilled = guardianNameInput.value.trim() !== '';
+    const isContactFilled = guardianContactInput.value.trim().length === 11;
+    const isEmailFilled = guardianEmailInput.value.trim() !== '';
     const isAgreementChecked = agreementCheckbox.checked;
-    submitBtn.disabled = !isAgreementChecked;
+
+    // Submit enabled only if strict guardian fields + agreement are set
+    submitBtn.disabled = !(isNameFilled && isContactFilled && isEmailFilled && isAgreementChecked);
   }
 
   guardianNameInput.addEventListener('input', checkFormValidity);
+  guardianContactInput.addEventListener('input', checkFormValidity);
+  guardianEmailInput.addEventListener('input', checkFormValidity);
   agreementCheckbox.addEventListener('change', checkFormValidity);
   
   checkFormValidity();
