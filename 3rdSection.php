@@ -1,131 +1,140 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Cardinal Academy Legacy</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 
-  <!-- Bootstrap & Fonts -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Roboto&display=swap" rel="stylesheet" />
+<style>
+  /* Scoped Styles for Legacy Section */
+  .legacy-section {
+    background-color: #fcfbf9; /* Warm off-white background */
+    color: #1f1f1f;
+    font-family: 'Inter', sans-serif;
+    padding: 5rem 0;
+    overflow-x: hidden;
+  }
 
-  <style>
-    :root {
-      --color-cardinal-red: #b62e34;
-      --color-bg: #f4eded;
-      --font-primary: 'Playfair Display', serif;
-      --font-secondary: 'Roboto', sans-serif;
-    }
+  .legacy-section .font-display {
+    font-family: 'Playfair Display', serif;
+  }
 
-    body {
-      background-color: var(--color-bg);
-      font-family: var(--font-secondary);
-      color: #333;
-      margin: 0;
-      padding: 0;
-    }
+  .legacy-section .kicker {
+    font-family: 'Inter', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #b62e34; /* Cardinal Red */
+    margin-bottom: 1rem;
+    display: block;
+  }
 
-    .header-title {
-      font-family: var(--font-primary);
-      color: var(--color-cardinal-red);
-      font-size: 1.5rem;
-    }
+  .legacy-section .display-title {
+    font-weight: 700;
+    font-size: 3rem;
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+    color: #000;
+  }
 
-    .header-subtitle {
-      font-style: italic;
-      font-size: 1.125rem;
-    }
+  .legacy-section .subtitle {
+    font-style: italic;
+    color: #666;
+    font-size: 1.25rem;
+    margin-bottom: 3rem;
+  }
 
-    .cardinal-image {
-      width: 20%;
-      min-width: 200px;
-      object-fit: cover;
-      aspect-ratio: 4 / 3;
-      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.15);
-    }
+  .legacy-section .divider {
+    width: 60px;
+    height: 3px;
+    background-color: #b62e34;
+    margin: 0 auto 2rem auto;
+  }
 
-    .float-right {
-      float: right;
-      border-radius: 16px 0 0 16px;
-    }
+  /* Text Column Styling */
+  .narrative-text {
+    padding: 0 1rem;
+  }
+  
+  .narrative-text h2 {
+    font-size: 2.25rem;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+  }
 
-    .float-left {
-      float: left;
-      border-radius: 0 16px 16px 0;
-    }
+  .narrative-text p {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: #444;
+  }
 
-    .cardinal-text {
-      font-size: 1rem;
-      line-height: 1.6;
-      max-width: 700px;
-      margin: 0 auto;
-      font-family: var(--font-secondary);
-      color: #222;
-      text-align: center;
-      clear: both;
-    }
+  /* Image Styling */
+  .legacy-img-wrapper {
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+    transition: transform 0.4s ease;
+  }
 
-    h2 {
-      font-family: var(--font-primary);
-      font-weight: 700;
-      font-size: 4rem;
-      color: #000;
-      margin-top: 2rem;
-      text-align: center;
-    }
+  .legacy-img-wrapper:hover {
+    transform: translateY(-5px);
+  }
 
-    .future-heading {
-      font-family: var(--font-primary);
-      font-size: 3rem;
-      color: var(--color-cardinal-red);
-      text-align: center;
-    }
+  .legacy-img {
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    display: block;
+  }
 
-    @media (max-width: 768px) {
-      .float-right,
-      .float-left {
-        float: none !important;
-        display: block;
-        margin: 1rem auto;
-        border-radius: 16px;
-        width: 100% !important;
-      }
-    }
-  </style>
-</head>
-<body class="m-0 p-0">
+  /* Desktop Vertical Offset for Visual Interest */
+  @media (min-width: 992px) {
+    .offset-up { margin-top: -3rem; }
+    .offset-down { margin-top: 3rem; }
+  }
+</style>
 
-
-  <!-- Tracing the Legacy Header -->
-  <div class="w-100 py-4 px-0">
-    <div class="text-center mb-4">
-      <p class="header-title fs-1">Tracing the Legacy:</p>
-      <p class="header-subtitle fs-3">The History and Growth of The Cardinal Academy, Inc.</p>
+<section class="legacy-section">
+  <div class="container">
+    
+    <div class="row justify-content-center text-center mb-5">
+      <div class="col-lg-8 font-display">
+        <span class="kicker">Est. Tradition & Excellence</span>
+        <h1 class="display-title">Tracing the Legacy</h1>
+        <div class="divider"></div>
+        <p class="subtitle">The History and Growth of The Cardinal Academy, Inc.</p>
+      </div>
     </div>
 
-    <!-- The Cardinal Section -->
-    <div class="my-1">
-      <img
-        src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/64f76556-6343-428a-a8cd-31cb4b43c36a.png"
-        alt="Aerial view right side"
-        class="cardinal-image float-right"
-      />
-      <div class="cardinal-text">
-        <h2>The Cardinal</h2>
-        <p class="fs-5 text">
-          The word <strong style="color: var(--color-cardinal-red);">CARDINAL</strong> means “prime, chief, principal,” or etymologically, <em>cardo</em>—translated as hinge, meaning that which others depend upon. A hinge also serves as a connector or a bridge. From its name alone, The Cardinal Academy, Inc.’s mission, vision, and philosophy may be derived.
+    <div class="row align-items-center gx-5 gy-5">
+      
+      <div class="col-lg-3 col-md-6 order-2 order-lg-1">
+        <figure class="legacy-img-wrapper offset-down">
+          <img
+            src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/0feb84da-1af7-471d-901a-e5901527503e.png"
+            alt="Campus Aerial Left"
+            class="legacy-img"
+          />
+        </figure>
+      </div>
+
+      <div class="col-lg-6 order-1 order-lg-2 text-center narrative-text">
+        <h2 class="font-display">The Cardinal</h2>
+        <p>
+          The word <strong style="color: #b62e34;">CARDINAL</strong> means “prime, chief, principal,” or etymologically, <em>cardo</em>—translated as a hinge, meaning that upon which others depend. 
+        </p>
+        <p>
+          A hinge serves not only as a pivotal point but as a connector and a bridge. From its name alone, The Cardinal Academy, Inc.’s mission, vision, and philosophy may be derived: to be the foundation upon which future leaders are built.
         </p>
       </div>
-      <img
-        src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/0feb84da-1af7-471d-901a-e5901527503e.png"
-        alt="Aerial view left side"
-        class="cardinal-image float-left"
-      />
+
+      <div class="col-lg-3 col-md-6 order-3 order-lg-3">
+        <figure class="legacy-img-wrapper offset-up">
+          <img
+            src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/64f76556-6343-428a-a8cd-31cb4b43c36a.png"
+            alt="Campus Aerial Right"
+            class="legacy-img"
+          />
+        </figure>
+      </div>
+
     </div>
-
-    <footer class="text-center py-5"></footer>
   </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+</section>
