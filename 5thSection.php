@@ -1,79 +1,110 @@
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
 
-<section class="container mt-5">
+<style>
+  .hover-card {
+    background: #fff;
+    border: 1px solid #eaeaea;
+    border-radius: 16px;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    height: 100%; /* Ensures all cards are same height */
+    position: relative;
+    overflow: hidden;
+  }
 
-  <!-- Heading -->
-  <header class="mb-4 d-flex justify-content-end">
-    <h1 class="fw-bold">Why <span class="text-danger">Choose</span> TCA</h1>
+  /* Red top accent line */
+  .hover-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: #dc3545;
+    transform: scaleX(0);
+    transition: transform 0.3s ease;
+    transform-origin: left;
+  }
+
+  .hover-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+    border-color: transparent;
+  }
+
+  .hover-card:hover::before {
+    transform: scaleX(1);
+  }
+
+  .icon-circle {
+    width: 64px;
+    height: 64px;
+    background-color: #fff5f5; /* Very light red */
+    color: #dc3545;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+  }
+</style>
+
+<section class="container py-5">
+
+  <header class="text-center mb-5" style="max-width: 700px; margin: 0 auto;">
+    <h6 class="text-uppercase text-danger fw-bold small ls-2">Academic Excellence</h6>
+    <h1 class="fw-bold display-6 mb-3">Why Choose TCA?</h1>
+    <p class="text-muted">A comprehensive learning environment designed to nurture potential and build future leaders.</p>
   </header>
 
-  <div class="row gx-5 align-items-start">
+  <div class="row g-4">
 
-    <!-- Left Column (Cards) -->
-    <div class="col-12 col-md-5 d-flex flex-column gap-4">
-
-      <!-- Card 1 -->
-      <div class="card bg-danger text-white p-3 d-flex flex-row gap-3">
-        <div class="bg-white rounded d-flex justify-content-center align-items-center" style="width:72px; height:72px; font-size:36px;">
-          <i class="fa-solid fa-user-graduate text-black"></i>
+    <div class="col-md-4">
+      <div class="hover-card p-4">
+        <div class="icon-circle">
+          <i class="fa-solid fa-user-graduate"></i>
         </div>
-        <div>
-          <h2 class="h5">Courses Offered</h2>
-          <ul class="list-unstyled small mb-0 text-white">
-            <li><i class="fa-solid fa-check  me-2"></i> Preschool (Nursery & Kindergarten)</li>
-            <li><i class="fa-solid fa-check  me-2"></i> Grade School</li>
-            <li><i class="fa-solid fa-check  me-2"></i> Junior High School</li>
-            <li><i class="fa-solid fa-check  me-2"></i> Senior High School</li>
-          </ul>
-        </div>
+        <h3 class="h5 fw-bold text-dark">Complete Education</h3>
+        <p class="text-muted small mb-3">From early childhood to young adulthood.</p>
+        <hr class="opacity-25 my-3">
+        <ul class="list-unstyled small text-secondary mb-0 d-flex flex-column gap-2">
+          <li><i class="fa-solid fa-check text-danger me-2"></i>Preschool (Nursery & Kinder)</li>
+          <li><i class="fa-solid fa-check text-danger me-2"></i>Grade School</li>
+          <li><i class="fa-solid fa-check text-danger me-2"></i>Junior & Senior High School</li>
+        </ul>
       </div>
-
-      <!-- Card 2 -->
-      <div class="card bg-danger text-white p-3 d-flex flex-row gap-3">
-        <div class="bg-white fw-bold fs-4 rounded d-flex justify-content-center align-items-center text-black" style="width:72px; height:72px;">
-          K-12
-        </div>
-        <div>
-          <h2 class="h5">Senior High School</h2>
-          <ul class="list-unstyled small mb-0 text-white">
-            <li><i class="fa-solid fa-check  me-2"></i> <strong>Academic:</strong> ABM | GAS | HUMSS | STEM</li>
-            <li><i class="fa-solid fa-check  me-2"></i> <strong>TVL:</strong> EIM (NC II) | ICT - CSS (NC II)</li>
-          </ul>
-        </div>
-      </div>
-
-      <!-- Card 3 -->
-      <div class="card bg-danger text-white p-3 d-flex flex-row gap-3">
-        <div class="bg-white rounded d-flex justify-content-center align-items-center" style="width:72px; height:72px; font-size:36px;">
-          <i class="fa-solid fa-award text-black"></i>
-        </div>
-        <div>
-          <h2 class="h5">Special Program</h2>
-          <ul class="list-unstyled small mb-0 text-white">
-            <li><i class="fa-solid fa-check  me-2"></i> PEAC Certified</li>
-            <li><i class="fa-solid fa-check me-2"></i> PRIME English Programs</li>
-            <li><i class="fa-solid fa-check  me-2"></i> PRIME Mathematics Programs</li>
-          </ul>
-        </div>
-      </div>
-
     </div>
 
-    <!-- Middle Column (Icon and Divider) -->
-    <div class="d-none d-md-flex flex-column align-items-center col-md-1 px-0">
-      <!-- Cone Icon -->
-      <i class="fa-solid fa-traffic-cone text-black fs-2 mb-3"></i>
-      <!-- Vertical Line -->
-      <div style="width: 2px; height: 100%; background-color: #000; border-radius: 1px;"></div>
+    <div class="col-md-4">
+      <div class="hover-card p-4">
+        <div class="icon-circle">
+          <i class="fa-solid fa-layer-group"></i>
+        </div>
+        <h3 class="h5 fw-bold text-dark">Specialized Tracks</h3>
+        <p class="text-muted small mb-3">Focused pathways for Senior High School.</p>
+        <hr class="opacity-25 my-3">
+        <ul class="list-unstyled small text-secondary mb-0 d-flex flex-column gap-2">
+          <li><i class="fa-solid fa-check text-danger me-2"></i><strong>Academic:</strong> ABM, GAS, HUMSS, STEM</li>
+          <li><i class="fa-solid fa-check text-danger me-2"></i><strong>TVL:</strong> EIM (NC II)</li>
+          <li><i class="fa-solid fa-check text-danger me-2"></i><strong>TVL:</strong> ICT - CSS (NC II)</li>
+        </ul>
+      </div>
     </div>
 
-    <!-- Right Column (Image) -->
-    <div class="col-12 col-md-6">
-      <img
-        src="https://storage.googleapis.com/workspace-0f70711f-8b4e-4d94-86f1-2a93ccde5887/image/cbcb7b9f-2626-4fc2-982a-959ee33d92d5.png"
-        alt="Students outdoors"
-        class="img-fluid rounded"
-      />
+    <div class="col-md-4">
+      <div class="hover-card p-4">
+        <div class="icon-circle">
+          <i class="fa-solid fa-award"></i>
+        </div>
+        <h3 class="h5 fw-bold text-dark">Quality Assurance</h3>
+        <p class="text-muted small mb-3">Certified programs ensuring global standards.</p>
+        <hr class="opacity-25 my-3">
+        <ul class="list-unstyled small text-secondary mb-0 d-flex flex-column gap-2">
+          <li><i class="fa-solid fa-check text-danger me-2"></i>PEAC Certified</li>
+          <li><i class="fa-solid fa-check text-danger me-2"></i>PRIME English Programs</li>
+          <li><i class="fa-solid fa-check text-danger me-2"></i>PRIME Mathematics Programs</li>
+        </ul>
+      </div>
     </div>
 
   </div>
