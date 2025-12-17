@@ -2,8 +2,9 @@
   $hideHome = true;
   $pageTitle = 'Services';
   $breadcrumbs = [
-  ['label' => 'Home', 'url' => 'index.php'],
-  ['label' => 'Contact']];
+      ['label' => 'Home', 'url' => 'index.php'],
+      ['label' => 'Contact', 'url' => '#']
+  ];
 ?>
 
 <!DOCTYPE html>
@@ -13,139 +14,245 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>The Cardinal Academy Inc.</title>
 
-  <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Bootstrap Icons -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-  <!-- Google Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 
   <style>
+    :root {
+      /* Matching the red from your new UI snippet */
+      --primary-red: #dc3545; 
+      --bg-color: #f8fafc;
+      --text-dark: #1e293b;
+      --text-muted: #6c757d;
+    }
+
     body {
       font-family: 'Inter', sans-serif;
-      background: #f4eaea;
-      color: #111;
+      background-color: var(--bg-color);
+      color: var(--text-dark);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
     }
 
-    header img {
-      width: 100%;  /* Make sure it fills the width of the container */
-      max-height: 425px;  /* Limit the height of the image */
-      object-fit: cover;  /* Ensure the image covers the space without distortion */
+    /* --- Hero Section (Full Width + Dimmer) --- */
+    .hero-section {
+      position: relative;
+      width: 100%;
+      height: 450px;
+      overflow: hidden;
+      margin-bottom: 2rem;
     }
 
-    .section-title {
-      text-align: center;
-      font-weight: 700;
-      font-size: 1.5rem;
-      margin-bottom: 21px;
+    .hero-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      animation: subtleZoom 20s infinite alternate; 
     }
 
-    .card-custom {
-  background: white;
-  padding: 16px;
-  border-radius: 12px;
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.07);
-  min-height: 430px; /* slightly taller */
-}
-    .icon-wrapper {
-      background-color: #e6e1e9;
-      width: 60px;  /* Reduced icon size */
-      height: 60px;
+    .hero-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.3); /* The dimmer */
+      z-index: 1;
+    }
+
+    @keyframes subtleZoom {
+      from { transform: scale(1); }
+      to { transform: scale(1.05); }
+    }
+
+    /* --- Breadcrumbs --- */
+    .breadcrumb-item a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    .breadcrumb-item.active {
+      color: var(--primary-red);
+      font-weight: 600;
+    }
+
+    /* --- New Card UI Styles --- */
+    .hover-card {
+      background: #fff;
+      border: 1px solid #eaeaea;
+      border-radius: 16px;
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      height: 100%; 
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Red top accent line */
+    .hover-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: var(--primary-red);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+      transform-origin: left;
+    }
+
+    .hover-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+      border-color: transparent;
+    }
+
+    .hover-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .icon-circle {
+      width: 64px;
+      height: 64px;
+      background-color: #fff5f5; /* Very light red */
+      color: var(--primary-red);
       border-radius: 50%;
-      margin: 0 auto 16px auto;
       display: flex;
-      justify-content: center;
       align-items: center;
-      font-size: 28px;  /* Reduced font size */
-      color: #222;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 1.5rem;
     }
 
-    .card-custom h3 {
-      font-size: 1.25rem; /* Reduced heading size */
-      margin-bottom: 16px;
+    /* Helper for links inside the lists */
+    .clean-link {
+      text-decoration: none;
+      color: inherit;
+      transition: color 0.2s;
     }
-
-    .card-custom p {
-      font-size: 0.9rem; /* Reduced text size */
-      margin-bottom: 12px;
+    .clean-link:hover {
+      color: var(--primary-red);
+      text-decoration: underline;
     }
-    .nav-link{
-      color:#da3030;
-      
-
-    }
+    
+    /* Typography Helpers */
+    .ls-2 { letter-spacing: 2px; }
   </style>
 </head>
 <body>
 
 <?php include 'navigation.php'; ?>
 
-
-<header>
-  <img src="static/images/Front gate.jpg" class="img-fluid" alt="Main gate of The Cardinal Academy Inc.">
+<header class="hero-section">
+  <div class="hero-overlay"></div>
+  <img src="static/images/Front gate.jpg" class="hero-img" alt="Main gate of The Cardinal Academy Inc.">
 </header>
 
-<!-- Main Section -->
-<main class="container mt-4 mb-4">
-  <h2 class="section-title">Support your child’s educational journey.</h2>
+<main class="container py-4">
 
-  <div class="row g-4">
-    <!-- Card 1 -->
-    <div class="col-12 col-md-6 col-lg-4">
-      <div class="card-custom text-center h-100">
-        <div class="icon-wrapper">
-          <i class="bi bi-house-door-fill"></i>
+  <nav aria-label="breadcrumb" class="mb-5">
+    <ol class="breadcrumb">
+      <?php foreach($breadcrumbs as $crumb): ?>
+        <?php if(isset($crumb['url']) && $crumb['label'] !== 'Contact'): ?>
+          <li class="breadcrumb-item"><a href="<?= $crumb['url'] ?>"><?= $crumb['label'] ?></a></li>
+        <?php else: ?>
+          <li class="breadcrumb-item active" aria-current="page"><?= $crumb['label'] ?></li>
+        <?php endif; ?>
+      <?php endforeach; ?>
+    </ol>
+  </nav>
+
+  <header class="text-center mb-5" style="max-width: 700px; margin: 0 auto;">
+    <h6 class="text-uppercase text-danger fw-bold small ls-2">Support & Connect</h6>
+    <h1 class="fw-bold display-6 mb-3">Your Journey Starts Here</h1>
+    <p class="text-muted">Empowering the next generation through excellence in education and strong community connection.</p>
+  </header>
+
+  <div class="row g-4 mb-5">
+
+    <div class="col-md-4">
+      <div class="hover-card p-4">
+        <div class="icon-circle">
+          <i class="fa-solid fa-map-location-dot"></i>
         </div>
-        <h3 class="h5 fw-bold mb-3">Visit Us</h3>
-        <p class="text-muted mb-4">
-          Located in the heart of Meycauayan, The Cardinal Academy Inc. offers a welcoming environment where young minds are inspired to learn, grow, and thrive.
-        </p>
-        <a href="https://maps.app.goo.gl/RE39p3J86kGWTGsx8" class="d-block fw-bold text-decoration-none">
-          Sullera St., Pandayan, City of Meycauayan, Bulacan 3020
-        </a>
+        <h3 class="h5 fw-bold text-dark">Visit Campus</h3>
+        <p class="text-muted small mb-3">A welcoming environment where young minds thrive.</p>
+        <hr class="opacity-25 my-3">
+        <ul class="list-unstyled small text-secondary mb-0 d-flex flex-column gap-2">
+          <li>
+            <i class="fa-solid fa-location-arrow text-danger me-2"></i>
+            <a href="https://maps.app.goo.gl/RE39p3J86kGWTGsx8" class="clean-link">Sullera St., Pandayan</a>
+          </li>
+          <li>
+            <i class="fa-solid fa-city text-danger me-2"></i>
+            City of Meycauayan, Bulacan
+          </li>
+          <li>
+            <i class="fa-regular fa-clock text-danger me-2"></i>
+            Mon - Fri: 8:00 AM - 5:00 PM
+          </li>
+        </ul>
       </div>
     </div>
 
-    <!-- Card 2 -->
-    <div class="col-12 col-md-6 col-lg-4">
-      <div class="card-custom text-center h-100">
-        <div class="icon-wrapper">
-          <i class="bi bi-facebook"></i>
+    <div class="col-md-4">
+      <div class="hover-card p-4">
+        <div class="icon-circle">
+          <i class="fa-brands fa-facebook-f"></i>
         </div>
-        <h3 class="h5 fw-bold mb-3">Check Us</h3>
-        <p class="text-muted mb-4">
-          Stay connected and informed through our official Facebook page, where The Cardinal Academy Inc. shares updates, announcements, and moments that shape our vibrant school community.
-        </p>
-        <a href="https://www.facebook.com/thecardinalacademy1985" target="_blank" class="d-block fw-bold text-decoration-none">
-          The Cardinal Academy Inc.
-        </a>
+        <h3 class="h5 fw-bold text-dark">Stay Connected</h3>
+        <p class="text-muted small mb-3">Real-time updates, announcements, and highlights.</p>
+        <hr class="opacity-25 my-3">
+        <ul class="list-unstyled small text-secondary mb-0 d-flex flex-column gap-2">
+          <li>
+            <i class="fa-solid fa-thumbs-up text-danger me-2"></i>
+            <a href="https://www.facebook.com/thecardinalacademy1985" target="_blank" class="clean-link">Official Facebook Page</a>
+          </li>
+          <li>
+            <i class="fa-solid fa-rss text-danger me-2"></i>
+            Latest School News
+          </li>
+          <li>
+            <i class="fa-solid fa-images text-danger me-2"></i>
+            Event Galleries
+          </li>
+        </ul>
       </div>
     </div>
 
-    <!-- Card 3 -->
-    <div class="col-12 col-md-6 col-lg-4">
-      <div class="card-custom text-center h-100">
-        <div class="icon-wrapper">
-          <i class="bi bi-envelope-fill"></i>
+    <div class="col-md-4">
+      <div class="hover-card p-4">
+        <div class="icon-circle">
+          <i class="fa-solid fa-headset"></i>
         </div>
-        <h3 class="h5 fw-bold mb-3">Contact Us</h3>
-        <p class="text-muted mb-3">
-          Our dedicated team is always ready to assist you—connect with us for guidance, support, and answers to all your inquiries about your child’s educational journey.
-        </p>
-        <a href="tel:09673342307" class="d-block fw-bold text-decoration-none mb-2">09673342307</a>
-        <a href="mailto:tcainc.edu@gmail.com" class="d-block fw-bold text-decoration-none">tcainc.edu@gmail.com</a>
+        <h3 class="h5 fw-bold text-dark">Get in Touch</h3>
+        <p class="text-muted small mb-3">Our dedicated team is ready to assist you.</p>
+        <hr class="opacity-25 my-3">
+        <ul class="list-unstyled small text-secondary mb-0 d-flex flex-column gap-2">
+          <li>
+            <i class="fa-solid fa-phone text-danger me-2"></i>
+            <a href="tel:09673342307" class="clean-link">0967 334 2307</a>
+          </li>
+          <li>
+            <i class="fa-solid fa-envelope text-danger me-2"></i>
+            <a href="mailto:tcainc.edu@gmail.com" class="clean-link">tcainc.edu@gmail.com</a>
+          </li>
+          <li>
+            <i class="fa-solid fa-info-circle text-danger me-2"></i>
+            Admissions Inquiries
+          </li>
+        </ul>
       </div>
     </div>
+
   </div>
 </main>
 
+<?php include 'footer1.php'; ?>
 
-  <!-- Footer -->
-  <?php 
-  include 'footer1.php';
-  ?>
-
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
