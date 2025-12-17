@@ -38,14 +38,6 @@
       #step2 {
         display: none;
       }
-      /* Style for N/A checkbox column */
-      .parent-na-col {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-      }
     </style>
 </head>
 
@@ -55,7 +47,8 @@
 <div class="container py-5">
   <div class="bg-white p-4 rounded-4 shadow-sm">
 
-    <form action="submit_admission.php" method="POST" enctype="multipart/form-data">
+    <form id="enrollmentForm" action="submit_admission.php" method="POST" enctype="multipart/form-data">
+      
       <fieldset id="step1">
         <h4 class="text-center"><strong>Step 2</strong>: Learner Profile</h4>
         <p class="text-center m-0 mb-4">Status: please choose status if your new or old student.</p>
@@ -77,7 +70,7 @@
           </div>
 
 
-          <div class="col-12 col-md-6">
+          <div class="col-12 col-md-4">
             <label for="grade_level" class="form-label text-muted">Grade Level*</label>
             <select name="grade_level" id="grade_level" class="form-select">
               <option value="">Select grade level </option>
@@ -88,7 +81,7 @@
             <div id="grade_level-error" class="invalid-feedback d-none">Grade Level is required.</div>
           </div>
 
-          <div class="col-12 col-md-6">
+          <div class="col-12 col-md-4">
             <label for="lrn" class="form-label text-muted">Learner Reference Number (LRN)</label>
             <input type="text" name="lrn" id="lrn" 
                   placeholder="Note: If not sure LRN leave empty." 
@@ -97,7 +90,8 @@
                   oninput="this.value = this.value.replace(/\D/g, '').slice(0, 12)">
             <div id="lrn-error" class="invalid-feedback d-none">LRN must be a 12-digit number.</div>
           </div>
-          <div class="col-12 col-md-6">
+
+          <div class="col-12 col-md-4">
             <label for="gender" class="form-label text-muted">Gender*</label>
             <select name="gender" id="gender" class="form-select">
               <option value="">Select gender</option>
@@ -107,15 +101,15 @@
             <div id="gender-error" class="invalid-feedback d-none">Gender is required.</div>
           </div>
 
-        <div class="col-12 col-md-6">
-        <label for="phone" class="form-label text-muted">Phone Number*</label>
-        <input type="text" name="phone" id="phone" class="form-control" 
-                placeholder="e.g. 09123456789" 
-                maxlength="11"
-                oninput="this.value = this.value.replace(/\D/g, '').slice(0, 11)" 
-                required>
-        <div id="phone-error" class="invalid-feedback d-none">Phone number must be exactly 11 digits.</div>
-        </div>
+          <div class="col-12 col-md-6 d-none">
+            <label for="phone" class="form-label text-muted">Phone Number*</label>
+            <input type="text" value="09123456789" name="phone" id="phone" class="form-control" 
+                    placeholder="e.g. 09123456789" 
+                    maxlength="11"
+                    oninput="this.value = this.value.replace(/\D/g, '').slice(0, 11)" 
+                    required>
+            <div id="phone-error" class="invalid-feedback d-none">Phone number must be exactly 11 digits.</div>
+          </div>
 
 
           <div class="col-12 col-md-4">
@@ -215,14 +209,13 @@
           </div>
           
           <div class="col-12 text-center">
-          <button type="button" class="btn btn-danger text-light mt-3 rounded-4 px-5" onclick="validateStep1()">Next</button>
-        </div>
-
+            <button type="button" class="btn btn-danger text-light mt-3 rounded-4 px-5" onclick="validateStep1()">Next</button>
+          </div>
 
         </div>
       </fieldset>
       
-      <fieldset id="step2" style="display: none">
+      <fieldset id="step2">
         <h4><strong>Step 3</strong>: Parents and Guardian Profile</h4>
         
         <div class="row g-3 mb-4">
@@ -273,9 +266,9 @@
 
             <div class="col-12 col-md-3">
                 <label class="form-label text-muted">Mother’s Contact Number</label>
-                <input type="text", name="mother_contact" id="mother_contact" class="form-control parent-field" data-related-check="motherNotApplicable"
+                <input type="text" name="mother_contact" id="mother_contact" class="form-control parent-field" data-related-check="motherNotApplicable"
                     placeholder="e.g. 09123456789" 
-                    maxlength="11",
+                    maxlength="11"
                     oninput="this.value = this.value.replace(/\D/g, '').slice(0, 11)" 
                 >
                 <div id="mother_contact-error" class="invalid-feedback d-none">Mother's Contact must be 11 digits if not N/A.</div>
@@ -294,11 +287,13 @@
             <div class="col-12 col-md-3">
                 <label class="form-label text-muted">Contact Person*</label>
                 <input type="text" required name="guardian_name" id="guardian_name" class="form-control" placeholder="Enter guardian's name">
+                <div id="guardian_name-error" class="invalid-feedback d-none">Contact Person's Name is required.</div>
             </div>
 
             <div class="col-12 col-md-3">
-                <label class="form-label text-muted">Contact Person's Occupation*</label>
-                <input type="text" required name="guardian_occupation" class="form-control" placeholder="Note: N/A if None">
+                <label class="form-label text-muted">Contact Person's Occupation <small class="text-muted">(optional)</small></label>
+                <input type="text" name="guardian_occupation" id="guardian_occupation" class="form-control" placeholder="Empty if N/A">
+                <div id="guardian_occupation-error" class="invalid-feedback d-none">Contact Person's Occupation is required.</div>
             </div>
 
             <div class="col-12 col-md-3">
@@ -309,12 +304,14 @@
                     oninput="this.value = this.value.replace(/\D/g, '').slice(0, 11)" 
                     required
                 >
+                <div id="guardian_contact-error" class="invalid-feedback d-none">Contact Person's Contact must be 11 digits.</div>
             </div>
             
             <div class="col-12 col-md-3">
                 <label class="form-label text-muted">Contact Person's Email*</label>
-                <input type="email" name="email" class="form-control" placeholder="Note: active email for queue number" required>
-                </div>
+                <input type="email" name="email" id="email" class="form-control" placeholder="Note: active email for queue number" required>
+                <div id="email-error" class="invalid-feedback d-none">Contact Person's Email is required.</div>
+            </div>
             
         </div>
 
@@ -330,9 +327,9 @@
             </div>
         </div>
 
-
-        <div class="col-12 col-md-2">
-            <button type="submit" id="submitBtn" disabled class="btn bg-danger text-light rounded-4 mt-3 w-100">Submit</button>
+        <div class="col-12 d-flex justify-content-center gap-2 mt-3">
+            <button type="button" class="btn btn-secondary text-light rounded-4 px-5" onclick="showStep1()">Back</button>
+            <button type="button" id="submitBtn" onclick="validateStep2()" disabled class="btn bg-danger text-light rounded-4 px-5">Submit</button>
         </div>
 
       </fieldset>
@@ -410,16 +407,17 @@ function calculateAge() {
 }
 
 
-// --- Step Navigation Function ---
+// --- Step Navigation Functions ---
 function showStep2() {
     document.getElementById('step1').style.display = 'none';
     document.getElementById('step2').style.display = 'block';
     window.scrollTo(0, 0); // Scroll to top for new step
 }
 
-// Renamed and corrected navigation function
-function hide_step1() {
-  showStep2();
+function showStep1() {
+    document.getElementById('step2').style.display = 'none';
+    document.getElementById('step1').style.display = 'block';
+    window.scrollTo(0, 0); // Scroll to top for step 1
 }
 
 
@@ -432,7 +430,7 @@ function validateStep1() {
     { id: 'first_name', message: 'First Name is required', name: 'first_name' },
     { id: 'birth_date_input', message: 'Date of Birth is required', name: 'birth_date' },
     { id: 'birth_place', message: 'Place of Birth is required', name: 'birth_place' },
-    // MINIMUM AGE CHECK SET TO 5
+    // MINIMUM AGE CHECK SET TO 5 for Primary
     { id: 'age_input', message: 'Age must be at least 5.', name: 'age', min: 5 }, 
     { id: 'religion', message: 'Religion is required', name: 'religion' },
     { id: 'phone', message: 'Phone number must be exactly 11 digits', pattern: /^\d{11}$/ },
@@ -447,8 +445,7 @@ function validateStep1() {
 
   // LRN is optional, but if entered, it must be 12 digits
   const lrnInput = document.getElementById('lrn');
-  const lrnValue = lrnInput.value.trim();
-  if (lrnValue !== '') {
+  if (lrnInput && lrnInput.value.trim() !== '') {
     fields.push({ id: 'lrn', message: 'LRN must be a 12-digit number', pattern: /^\d{12}$/ });
   }
 
@@ -458,7 +455,7 @@ function validateStep1() {
   fields.forEach(field => {
     // Determine the element by ID or Name
     const el = document.getElementsByName(field.name || field.id)[0] || document.getElementById(field.id);
-    // Determine the error div (using ID or Name in the error structure)
+    // Determine the error div
     const errorDiv = document.getElementById(`${field.id}-error` || `${field.name}-error`);
 
     if (!el || el.disabled) return;
@@ -513,18 +510,83 @@ function validateStep1() {
   }
 }
 
-// --- Parent/Guardian Checkbox Logic and Submission ---
+// --- Step 2 Validation (Submit) Logic ---
+function validateStep2() {
+    const fields = [
+        { id: 'guardian_name', message: "Contact Person's Name is required." },
+        // Occupation REMOVED from required check
+        { id: 'guardian_contact', message: "Contact Person's Contact must be 11 digits.", pattern: /^\d{11}$/ },
+        { id: 'email', message: "Contact Person's Email is required." }
+    ];
+
+    let isValid = true;
+    let firstErrorElement = null;
+
+    fields.forEach(field => {
+        const el = document.getElementById(field.id);
+        const errorDiv = document.getElementById(`${field.id}-error`);
+        
+        if(!el) return;
+
+        let value = el.value.trim();
+        let showError = false;
+
+        if (value === '') {
+            showError = true;
+        }
+
+        if (field.pattern && !field.pattern.test(value)) {
+            showError = true;
+        }
+
+        if (showError) {
+            isValid = false;
+            el.classList.add('is-invalid');
+            if (errorDiv) {
+                errorDiv.textContent = field.message;
+                errorDiv.classList.remove('d-none');
+                errorDiv.style.display = 'block';
+            }
+            if (!firstErrorElement) firstErrorElement = el;
+        } else {
+            el.classList.remove('is-invalid');
+            if (errorDiv) {
+                errorDiv.classList.add('d-none');
+                errorDiv.style.display = 'none';
+            }
+        }
+    });
+
+    if (isValid) {
+        // If all valid, submit the form programmatically
+        document.getElementById('enrollmentForm').submit();
+    } else if (firstErrorElement) {
+        firstErrorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+}
+
+
+// --- Parent/Guardian Checkbox Logic and Enablement ---
 document.addEventListener('DOMContentLoaded', function() {
     const submitBtn = document.getElementById('submitBtn');
+    
     const guardianNameInput = document.getElementById('guardian_name');
+    const guardianContactInput = document.getElementById('guardian_contact');
+    const guardianEmailInput = document.getElementById('email');
     const agreementCheckbox = document.getElementById('agreementCheckbox');
+    
     const notApplicableCheckboxes = document.querySelectorAll('.not-applicable-check');
     
     // --- 1. Function to check form validity and enable/disable submit button ---
     function checkFormValidity() {
-        const isGuardianNameFilled = guardianNameInput.value.trim() !== '';
+        const isNameFilled = guardianNameInput.value.trim() !== '';
+        // Removed OccFilled check
+        const isContactFilled = guardianContactInput.value.trim().length === 11;
+        const isEmailFilled = guardianEmailInput.value.trim() !== '';
         const isAgreementChecked = agreementCheckbox.checked;
-        submitBtn.disabled = !(isGuardianNameFilled && isAgreementChecked);
+
+        // Button is disabled if ANY of these are false (Occupation ignored)
+        submitBtn.disabled = !(isNameFilled && isContactFilled && isEmailFilled && isAgreementChecked);
     }
     
     // --- 2. Function to handle 'Not Applicable' functionality ---
@@ -537,18 +599,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (this.checked) {
                     field.disabled = true;
                     field.value = '';
-                    field.required = false;
                 } else {
                     field.disabled = false;
-                    // Note: Re-enabling fields should consider if they were originally marked required in HTML
                 }
             });
-            checkFormValidity();
         });
     });
 
     // --- 3. Attach listeners for form flow and validation ---
     guardianNameInput.addEventListener('input', checkFormValidity);
+    guardianContactInput.addEventListener('input', checkFormValidity);
+    guardianEmailInput.addEventListener('input', checkFormValidity);
     agreementCheckbox.addEventListener('change', checkFormValidity);
     
     // Address fields setup (moved from inline script)
@@ -557,6 +618,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initial checks
     checkFormValidity();
+    
     const dobInput = document.getElementById('birth_date_input');
     if (dobInput) {
         dobInput.addEventListener('change', calculateAge);

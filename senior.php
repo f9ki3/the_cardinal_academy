@@ -122,21 +122,9 @@
         </div>
 
 
-
-          <div class="col-12 col-md-6">
-            <label for="gender" class="form-label text-muted">Gender*</label>
-            <select name="gender" id="gender" class="form-select">
-              <option value="">Select gender</option>
-              <option>Male</option>
-              <option>Female</option>
-            </select>
-            <div id="gender-error" class="invalid-feedback d-none">Gender is required.</div>
-          </div>
-
-
-        <div class="col-12 col-md-6">
+        <div class="col-12 col-md-6 d-none">
         <label for="phone" class="form-label text-muted">Phone Number*</label>
-        <input type="text" name="phone" id="phone" class="form-control" 
+        <input type="text" value="09123456789" name="phone" id="phone" class="form-control" 
                 placeholder="e.g. 09123456789" 
                 maxlength="11"
                 oninput="this.value = this.value.replace(/\D/g, '').slice(0, 11)" 
@@ -163,13 +151,25 @@
           </div>
 
 
+
+          <div class="col-12 col-md-6">
+            <label for="gender" class="form-label text-muted">Gender*</label>
+            <select name="gender" id="gender" class="form-select">
+              <option value="">Select gender</option>
+              <option>Male</option>
+              <option>Female</option>
+            </select>
+            <div id="gender-error" class="invalid-feedback d-none">Gender is required.</div>
+          </div>
+
+
           <div class="col-12 col-md-6">
               <label class="form-label text-muted">Date of Birth*</label>
               <input type="date" name="birth_date" id="birth_date_input" class="form-control" onchange="calculateAge()">
               <div id="birth_date-error" class="invalid-feedback d-none">Date of Birth is required.</div>
           </div>
 
-          <div class="col-12 col-md-6">
+          <div class="col-12 col-md-4">
               <label class="form-label text-muted">Age*</label>
               <input type="text" name="age" id="age_input" class="form-control" placeholder="Please fill up birthday" readonly>
               <div id="age-error" class="invalid-feedback d-none">Age must be at least 4.</div>
@@ -238,13 +238,13 @@
           });
           </script>
 
-          <div class="col-12 col-md-6">
+          <div class="col-12 col-md-4">
             <label class="form-label text-muted">Place of Birth*</label>
             <input type="text" name="birth_place" class="form-control" placeholder="Enter place of birth">
             <div id="birth_place-error" class="invalid-feedback d-none">Place of Birth is required.</div>
           </div>
 
-          <div class="col-12 col-md-6">
+          <div class="col-12 col-md-4">
             <label class="form-label text-muted">Religion*</label>
             <input type="text" name="religion" class="form-control" placeholder="Enter religion">
             <div id="religion-error" class="invalid-feedback d-none">Religion is required.</div>

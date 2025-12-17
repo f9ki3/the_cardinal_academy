@@ -47,7 +47,8 @@
 <div class="container py-5">
   <div class="bg-white p-4 rounded-4 shadow-sm">
 
-    <form action="submit_admission.php" method="POST" enctype="multipart/form-data">
+    <form id="enrollmentForm" action="submit_admission.php" method="POST" enctype="multipart/form-data">
+      
       <fieldset id="step1">
         <h4 class="text-center"><strong>Step 2</strong>: Learner Profile</h4>
         <p class="text-center m-0 mb-4">Status: please choose status if your new or old student.</p>
@@ -69,7 +70,7 @@
           </div>
 
 
-          <div class="col-12 col-md-4">
+          <div class="col-12 col-md-6">
             <label for="grade_level" class="form-label text-muted">Grade Level* </label>
             <select name="grade_level" id="grade_level" class="form-select">
               <option value="">Select grade level </option>
@@ -79,7 +80,7 @@
             <div id="grade_level-error" class="invalid-feedback d-none">Grade Level is required.</div>
           </div>
 
-          <div class="col-12 col-md-4">
+          <div class="col-12 col-md-6">
             <label for="gender" class="form-label text-muted">Gender*</label>
             <select name="gender" id="gender" class="form-select">
               <option value="">Select gender</option>
@@ -90,9 +91,9 @@
           </div>
 
 
-        <div class="col-12 col-md-4">
+        <div class="col-12 col-md-4 d-none">
         <label for="phone" class="form-label text-muted">Phone Number*</label>
-        <input type="text" name="phone" id="phone" class="form-control" 
+        <input type="text" value="09123456789" name="phone" id="phone" class="form-control" 
                 placeholder="e.g. 09123456789" 
                 maxlength="11"
                 oninput="this.value = this.value.replace(/\D/g, '').slice(0, 11)" 
@@ -218,14 +219,14 @@
 
             <div class="col-12 col-md-4">
                 <label class="form-label text-muted">Father’s Occupation</label>
-                <input type="text" name="father_occupation" id="father_occupation" class="form-control parent-field" data-related-check="fatherNotApplicable" placeholder="Enter Occupation">
+                <input type="text" name="father_occupation" id="father_occupation" class="form-control parent-field" data-related-check="fatherNotApplicable" placeholder="Empty if N/A">
                 <div id="father_occupation-error" class="invalid-feedback d-none">Father's Occupation is required if not N/A.</div>
             </div>
 
             <div class="col-12 col-md-3">
                 <label class="form-label text-muted">Father’s Contact Number</label>
                 <input type="text" name="father_contact" id="father_contact" class="form-control parent-field" data-related-check="fatherNotApplicable"
-                    placeholder="e.g. 09123456789" 
+                    placeholder="Empty if N/A" 
                     maxlength="11"
                     oninput="this.value = this.value.replace(/\D/g, '').slice(0, 11)" 
                 >
@@ -250,14 +251,14 @@
 
             <div class="col-12 col-md-4">
                 <label class="form-label text-muted">Mother’s Occupation</label>
-                <input type="text" name="mother_occupation" id="mother_occupation" class="form-control parent-field" data-related-check="motherNotApplicable" placeholder="Enter Occupation">
+                <input type="text" name="mother_occupation" id="mother_occupation" class="form-control parent-field" data-related-check="motherNotApplicable" placeholder="Empty if N/A">
                 <div id="mother_occupation-error" class="invalid-feedback d-none">Mother's Occupation is required if not N/A.</div>
             </div>
 
             <div class="col-12 col-md-3">
                 <label class="form-label text-muted">Mother’s Contact Number</label>
                 <input type="text" name="mother_contact" id="mother_contact" class="form-control parent-field" data-related-check="motherNotApplicable"
-                    placeholder="e.g. 09123456789" 
+                    placeholder="Empty if N/A" 
                     maxlength="11"
                     oninput="this.value = this.value.replace(/\D/g, '').slice(0, 11)" 
                 >
@@ -281,8 +282,8 @@
             </div>
 
             <div class="col-12 col-md-3">
-                <label class="form-label text-muted">Contact Person's Occupation*</label>
-                <input type="text" required name="guardian_occupation" id="guardian_occupation" class="form-control" placeholder="Note: N/A if None">
+                <label class="form-label text-muted">Contact Person's Occupation <small class="text-muted">(optional)</small></label>
+                <input type="text" name="guardian_occupation" id="guardian_occupation" class="form-control" placeholder="Empty if N/A">
                 <div id="guardian_occupation-error" class="invalid-feedback d-none">Contact Person's Occupation is required.</div>
             </div>
 
@@ -317,9 +318,9 @@
             </div>
         </div>
 
-
-        <div class="col-12 col-md-2">
-            <button type="submit" id="submitBtn" onclick="validateStep2()" disabled class="btn bg-danger text-light rounded-4 mt-3 w-100">Submit</button>
+        <div class="col-12 d-flex justify-content-center gap-2 mt-3">
+            <button type="button" class="btn btn-secondary text-light rounded-4 px-5" onclick="showStep1()">Back</button>
+            <button type="button" id="submitBtn" onclick="validateStep2()" disabled class="btn bg-danger text-light rounded-4 px-5">Submit</button>
         </div>
 
     </fieldset>
@@ -405,11 +406,17 @@ function calculateAge() {
 }
 
 
-// --- Step Navigation Function ---
+// --- Step Navigation Functions ---
 function showStep2() {
     document.getElementById('step1').style.display = 'none';
     document.getElementById('step2').style.display = 'block';
     window.scrollTo(0, 0); // Scroll to top for new step
+}
+
+function showStep1() {
+    document.getElementById('step2').style.display = 'none';
+    document.getElementById('step1').style.display = 'block';
+    window.scrollTo(0, 0); // Scroll to top for step 1
 }
 
 
@@ -442,7 +449,6 @@ function validateStep1() {
   let firstErrorElement = null;
 
   fields.forEach(field => {
-    // Try to get element by name first, then by ID
     const el = document.getElementsByName(field.name || field.id)[0] || document.getElementById(field.id);
     const errorDiv = document.getElementById(`${field.id}-error` || `${field.name}-error`);
 
@@ -463,7 +469,6 @@ function validateStep1() {
       showError = true;
     }
 
-    // Special check for select elements which may have 'Select...' as value
     if (field.type === 'select' && value.includes('Select')) {
         showError = true;
     }
@@ -495,19 +500,86 @@ function validateStep1() {
   }
 }
 
+// --- Step 2 Validation (Submit) Logic ---
+function validateStep2() {
+    const fields = [
+        { id: 'guardian_name', message: "Contact Person's Name is required." },
+        // REMOVED Occupation validation from here
+        { id: 'guardian_contact', message: "Contact Person's Contact must be 11 digits.", pattern: /^\d{11}$/ },
+        { id: 'email', message: "Contact Person's Email is required." }
+    ];
+
+    let isValid = true;
+    let firstErrorElement = null;
+
+    fields.forEach(field => {
+        const el = document.getElementById(field.id);
+        const errorDiv = document.getElementById(`${field.id}-error`);
+        
+        if(!el) return;
+
+        let value = el.value.trim();
+        let showError = false;
+
+        if (value === '') {
+            showError = true;
+        }
+
+        if (field.pattern && !field.pattern.test(value)) {
+            showError = true;
+        }
+
+        if (showError) {
+            isValid = false;
+            el.classList.add('is-invalid');
+            if (errorDiv) {
+                errorDiv.textContent = field.message;
+                errorDiv.classList.remove('d-none');
+                errorDiv.style.display = 'block';
+            }
+            if (!firstErrorElement) firstErrorElement = el;
+        } else {
+            el.classList.remove('is-invalid');
+            if (errorDiv) {
+                errorDiv.classList.add('d-none');
+                errorDiv.style.display = 'none';
+            }
+        }
+    });
+
+    if (isValid) {
+        // If all valid, submit the form programmatically
+        document.getElementById('enrollmentForm').submit();
+    } else if (firstErrorElement) {
+        firstErrorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+}
+
 
 // --- Guardian Profile Validation and Checkbox Logic ---
 document.addEventListener('DOMContentLoaded', function() {
     const submitBtn = document.getElementById('submitBtn');
+    
+    // Inputs to check for enablement
     const guardianNameInput = document.getElementById('guardian_name');
+    const guardianOccInput = document.getElementById('guardian_occupation');
+    const guardianContactInput = document.getElementById('guardian_contact');
+    const guardianEmailInput = document.getElementById('email');
     const agreementCheckbox = document.getElementById('agreementCheckbox');
+    
     const notApplicableCheckboxes = document.querySelectorAll('.not-applicable-check');
     
     // --- 1. Function to check form validity and enable/disable submit button ---
     function checkFormValidity() {
-        const isGuardianNameFilled = guardianNameInput.value.trim() !== '';
+        const isNameFilled = guardianNameInput.value.trim() !== '';
+        // Removed OccFilled check, it is optional
+        const isContactFilled = guardianContactInput.value.trim().length === 11;
+        const isEmailFilled = guardianEmailInput.value.trim() !== '';
         const isAgreementChecked = agreementCheckbox.checked;
-        submitBtn.disabled = !(isGuardianNameFilled && isAgreementChecked);
+
+        // Button is disabled if ANY of these are false
+        // Occupation is NOT included in this check anymore
+        submitBtn.disabled = !(isNameFilled && isContactFilled && isEmailFilled && isAgreementChecked);
     }
     
     // --- 2. Function to handle 'Not Applicable' functionality ---
@@ -528,6 +600,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // --- 3. Attach listeners for button enablement check ---
     guardianNameInput.addEventListener('input', checkFormValidity);
+    guardianOccInput.addEventListener('input', checkFormValidity);
+    guardianContactInput.addEventListener('input', checkFormValidity);
+    guardianEmailInput.addEventListener('input', checkFormValidity);
     agreementCheckbox.addEventListener('change', checkFormValidity);
 
     // Initial checks

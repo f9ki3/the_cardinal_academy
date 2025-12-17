@@ -79,7 +79,7 @@
           </div>
 
 
-          <div class="col-12 col-md-6">
+          <div class="col-12 col-md-4">
             <label for="grade_level" class="form-label text-muted">Grade Level* </label>
             <select name="grade_level" id="grade_level" class="form-select">
               <option value="">Select grade level </option>
@@ -91,7 +91,7 @@
             <div id="grade_level-error" class="invalid-feedback d-none">Grade Level is required.</div>
           </div>
 
-        <div class="col-12 col-md-6">
+        <div class="col-12 col-md-4">
           <label for="lrn" class="form-label text-muted">Learner Reference Number (LRN)</label>
           <input type="text" name="lrn" id="lrn" 
                 placeholder="Note: if not sure LRN leave empty." 
@@ -102,7 +102,7 @@
         </div>
 
 
-          <div class="col-12 col-md-6">
+          <div class="col-12 col-md-4">
             <label for="gender" class="form-label text-muted">Gender*</label>
             <select name="gender" id="gender" class="form-select">
               <option value="">Select gender</option>
@@ -113,9 +113,9 @@
           </div>
 
 
-        <div class="col-12 col-md-6">
+        <div class="col-12 d-none col-md-6">
         <label for="phone" class="form-label text-muted">Phone Number*</label>
-        <input type="text" name="phone" id="phone" class="form-control" 
+        <input type="text" value="09123456789" name="phone" id="phone" class="form-control" 
                 placeholder="e.g. 09123456789" 
                 maxlength="11"
                 oninput="this.value = this.value.replace(/\D/g, '').slice(0, 11)" 

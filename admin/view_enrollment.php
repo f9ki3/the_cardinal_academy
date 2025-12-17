@@ -7,7 +7,7 @@ $admission_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
 // Fetch admission data
 $data = [];
-$lrn_from_db = ''; // Initialize LRN variable
+$lrn_from_db = ''; 
 
 if ($admission_id > 0) {
     $query = "SELECT * FROM admission_form WHERE id = ?";
@@ -18,7 +18,6 @@ if ($admission_id > 0) {
     $data = $result->fetch_assoc();
     $stmt->close();
     
-    // Store LRN for PHP condition check
     $lrn_from_db = $data['lrn'] ?? ''; 
 }
 
@@ -52,31 +51,27 @@ $is_lrn_empty = empty(trim($lrn_from_db));
     <input type="hidden" name="admission_id" value="<?= htmlspecialchars($data['id'] ?? '') ?>">
 
      <div class="col-12 pt-3">
-                  <?php
-                    // Check if 'status' parameter exists in the URL
-                    if (isset($_GET['status'])) {
-                        $status = $_GET['status'];
-
-                        // Display Bootstrap alert based on the status
-                        if ($status === 'success') {
-                            echo '<div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    ✅ Enrollment form updated successfully!
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                  </div>';
-                        } elseif ($status === 'error') {
-                            echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    ❌ Something went wrong. Please try again.
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                  </div>';
-                        } elseif ($status === 'review') {
-                            echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">
-                                    ⚠️ Application is under review.
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                  </div>';
-                        }
-                    }
-                    ?>
-
+        <?php
+        if (isset($_GET['status'])) {
+            $status = $_GET['status'];
+            if ($status === 'success') {
+                echo '<div class="alert alert-success alert-dismissible fade show" role="alert">
+                        ✅ Enrollment form updated successfully!
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                      </div>';
+            } elseif ($status === 'error') {
+                echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        ❌ Something went wrong. Please try again.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                      </div>';
+            } elseif ($status === 'review') {
+                echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        ⚠️ Application is under review.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                      </div>';
+            }
+        }
+        ?>
       </div>
       
 
@@ -92,7 +87,16 @@ $is_lrn_empty = empty(trim($lrn_from_db));
 
     <div class="col-12 col-md-6">
       <label class="form-label text-muted">LRN</label>
-      <input type="text" name="lrn" class="form-control" value="<?= htmlspecialchars($data['lrn'] ?? '') ?>">
+      <?php 
+        // Logic: If LRN is empty in DB AND Grade is Kinder/Nursery, Default to 11 zeros
+        $display_lrn = $data['lrn'] ?? '';
+        $current_grade = $data['grade_level'] ?? '';
+        
+        if (empty($display_lrn) && ($current_grade === 'Kinder' || $current_grade === 'Nursery')) {
+            $display_lrn = '00000000000';
+        }
+      ?>
+      <input type="text" name="lrn" id="lrn_input" class="form-control" value="<?= htmlspecialchars($display_lrn) ?>">
     </div>
     
     <div class="col-md-6">
@@ -102,7 +106,7 @@ $is_lrn_empty = empty(trim($lrn_from_db));
 
     <div class="col-md-6">
       <label class="form-label text-muted">Grade Level</label>
-      <select class="form-select" name="grade_level" required>
+      <select class="form-select" name="grade_level" id="grade_level_select" required>
         <option value="">Select Grade Level</option>
         <?php
         $grades = [
@@ -122,7 +126,7 @@ $is_lrn_empty = empty(trim($lrn_from_db));
 
     <div class="col-md-6">
       <label class="form-label text-muted">Strand</label>
-      <input type="text" name="lastname" class="form-control" value="<?= htmlspecialchars(!empty($data['strand']) ? $data['strand'] : 'N/A') ?>">
+      <input type="text" name="strand" class="form-control" value="<?= htmlspecialchars(!empty($data['strand']) ? $data['strand'] : 'N/A') ?>">
     </div>
 
     <div class="col-md-4">
@@ -303,17 +307,13 @@ $is_lrn_empty = empty(trim($lrn_from_db));
       document.querySelector('form').addEventListener('submit', function () {
         const btn = document.getElementById('update-btn');
         const spinner = document.getElementById('update-spinner');
-
-        // Disable button and show spinner
         btn.disabled = true;
         spinner.classList.remove('d-none');
       });
     </script>
 
-
   </div>
 </fieldset>
-
 
       </div>
       </form>
@@ -322,20 +322,34 @@ $is_lrn_empty = empty(trim($lrn_from_db));
 </div>
 
 <?php include 'footer.php'; ?>
-</body>
-</html>
 
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const gradeSelect = document.getElementById('grade_level_select');
+    const lrnInput = document.getElementById('lrn_input');
+
+    // Listener for when user changes the grade dropdown
+    gradeSelect.addEventListener('change', function() {
+        const selectedGrade = this.value;
+        if (selectedGrade === 'Kinder' || selectedGrade === 'Nursery') {
+            lrnInput.value = '00000000000'; // 11 zeros
+        } else {
+            // Optional: clear if they switch away? 
+            // Usually simpler to just leave it unless it equals the zeros.
+            if(lrnInput.value === '00000000000') {
+                lrnInput.value = '';
+            }
+        }
+    });
+});
+
 function proceedToPayment() {
-    // Only check for Grade Level before proceeding, LRN is assumed valid if the button is enabled by PHP.
     const gradeSelect = document.querySelector('select[name="grade_level"]');
     const grade = gradeSelect.value;
     const admissionId = <?= json_encode($admission_id) ?>;
 
     if (!grade) {
         alert("Please select a grade level before proceeding.");
-        // Optional: Add focus if desired
-        // gradeSelect.focus();
         return;
     }
 
@@ -343,3 +357,5 @@ function proceedToPayment() {
     window.location.href = url;
 }
 </script>
+</body>
+</html>
