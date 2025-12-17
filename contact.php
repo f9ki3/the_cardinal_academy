@@ -1,9 +1,19 @@
 <?php
+  // ==========================================
+  // PAGE CONFIGURATION & LOGIC
+  // ==========================================
+  
+  // This variable is likely used inside 'navigation.php' to potentially hide the home link or change the nav style
   $hideHome = true;
+  
+  // Sets the title for the browser tab (though currently hardcoded in <title> tag below, this variable is good practice)
   $pageTitle = 'Services';
+  
+  // Define breadcrumb navigation links array
+  // This allows for dynamic generation of the breadcrumb trail later in the HTML
   $breadcrumbs = [
       ['label' => 'Home', 'url' => 'index.php'],
-      ['label' => 'Contact', 'url' => '#']
+      ['label' => 'Contact', 'url' => '#'] // Current page usually points to '#' or stays empty
   ];
 ?>
 
@@ -12,6 +22,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  
   <title>The Cardinal Academy Inc.</title>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -20,9 +31,9 @@
 
   <style>
     :root {
-      /* Matching the red from your new UI snippet */
-      --primary-red: #dc3545; 
-      --bg-color: #f8fafc;
+      /* CSS Variables for consistent color theming */
+      --primary-red: #dc3545;  /* Bootstrap Danger color */
+      --bg-color: #f8fafc;     /* Light grey/blue background */
       --text-dark: #1e293b;
       --text-muted: #6c757d;
     }
@@ -31,43 +42,46 @@
       font-family: 'Inter', sans-serif;
       background-color: var(--bg-color);
       color: var(--text-dark);
-      -webkit-font-smoothing: antialiased;
-      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased; /* Makes fonts look sharper on Mac/iOS */
+      overflow-x: hidden; /* Prevents horizontal scrollbars */
     }
 
-    /* --- Hero Section (Full Width + Dimmer) --- */
+    /* --- Hero Section (Image Header) --- */
     .hero-section {
       position: relative;
       width: 100%;
       height: 450px;
-      overflow: hidden;
+      overflow: hidden; /* Ensures image zoom doesn't break layout */
       margin-bottom: 2rem;
     }
 
+    /* The main header image with animation */
     .hero-img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: cover; /* Ensures image covers area without stretching */
       display: block;
-      animation: subtleZoom 20s infinite alternate; 
+      animation: subtleZoom 20s infinite alternate; /* Slowly zooms in and out */
     }
 
+    /* Dark overlay to make text potentially readable if you add text over the image later */
     .hero-overlay {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0, 0, 0, 0.3); /* The dimmer */
+      background-color: rgba(0, 0, 0, 0.3); /* 30% opacity black */
       z-index: 1;
     }
 
+    /* Animation Keyframes for the hero image */
     @keyframes subtleZoom {
       from { transform: scale(1); }
       to { transform: scale(1.05); }
     }
 
-    /* --- Breadcrumbs --- */
+    /* --- Breadcrumbs Customization --- */
     .breadcrumb-item a {
       color: var(--text-muted);
       text-decoration: none;
@@ -79,18 +93,18 @@
       font-weight: 600;
     }
 
-    /* --- New Card UI Styles --- */
+    /* --- Info Cards UI --- */
     .hover-card {
       background: #fff;
       border: 1px solid #eaeaea;
       border-radius: 16px;
-      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-      height: 100%; 
+      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Smooth spring-like transition */
+      height: 100%; /* Ensures all cards in a row are same height */
       position: relative;
       overflow: hidden;
     }
 
-    /* Red top accent line */
+    /* The sliding red line animation on top of the card */
     .hover-card::before {
       content: '';
       position: absolute;
@@ -99,25 +113,28 @@
       width: 100%;
       height: 4px;
       background: var(--primary-red);
-      transform: scaleX(0);
+      transform: scaleX(0); /* Initially hidden (width 0) */
       transition: transform 0.3s ease;
       transform-origin: left;
     }
 
+    /* Hover State for Cards */
     .hover-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08);
+      transform: translateY(-8px); /* Moves card up */
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.08); /* Adds shadow */
       border-color: transparent;
     }
 
+    /* Trigger the red line animation on hover */
     .hover-card:hover::before {
-      transform: scaleX(1);
+      transform: scaleX(1); /* Expands red line to full width */
     }
 
+    /* Circular Icon Container */
     .icon-circle {
       width: 64px;
       height: 64px;
-      background-color: #fff5f5; /* Very light red */
+      background-color: #fff5f5; /* Very light red background */
       color: var(--primary-red);
       border-radius: 50%;
       display: flex;
@@ -127,7 +144,7 @@
       margin-bottom: 1.5rem;
     }
 
-    /* Helper for links inside the lists */
+    /* Styling for links inside the contact lists */
     .clean-link {
       text-decoration: none;
       color: inherit;
@@ -138,7 +155,7 @@
       text-decoration: underline;
     }
     
-    /* Typography Helpers */
+    /* Utility: Letter Spacing */
     .ls-2 { letter-spacing: 2px; }
   </style>
 </head>
@@ -146,10 +163,10 @@
 
 <?php include 'navigation.php'; ?>
 
-<header class="hero-section">
+<!-- <header class="hero-section">
   <div class="hero-overlay"></div>
   <img src="static/images/Front gate.jpg" class="hero-img" alt="Main gate of The Cardinal Academy Inc.">
-</header>
+</header> -->
 
 <main class="container py-4">
 
