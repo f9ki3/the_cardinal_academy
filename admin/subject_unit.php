@@ -234,11 +234,11 @@ $current_sort_order = $_GET['sort_order'] ?? $default_sort_order;
                             Subject Code
                             <?= get_sort_link('subject_code', $current_sort_by, $current_sort_order, $search) ?>
                         </th>
-                        <th width="40%">
+                        <th width="30%">
                             Description
                             <?= get_sort_link('description', $current_sort_by, $current_sort_order, $search) ?>
                         </th>
-                        <th width="10%">
+                        <th width="15%">
                             Grade Level
                             <?= get_sort_link('grade_level', $current_sort_by, $current_sort_order, $search) ?>
                         </th>
@@ -259,15 +259,15 @@ $current_sort_order = $_GET['sort_order'] ?? $default_sort_order;
                             <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['grade_level']) ?></p></td>
                             <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['hours']) ?></p></td>
                             <td>
-                            <a href="delete_subject.php?id=<?= urlencode($row['id']) ?>&search=<?= urlencode($search) ?>&sort_by=<?= urlencode($current_sort_by) ?>&sort_order=<?= urlencode($current_sort_order) ?>&page=<?= urlencode($page) ?>&nav_drop=true" 
-                            class="btn border rounded rounded-4 btn-sm" 
-                            onclick="return confirm('Are you sure you want to delete this subject?');">
-                            Remove
-                            </a>
 
                            <a href="edit_subject.php?id=<?= urlencode($row['id']) ?>&nav_drop=true" 
                             class="btn border rounded rounded-4 btn-sm">
                             Edit
+                            </a>
+                            <a href="delete_subject.php?id=<?= urlencode($row['id']) ?>&search=<?= urlencode($search) ?>&sort_by=<?= urlencode($current_sort_by) ?>&sort_order=<?= urlencode($current_sort_order) ?>&page=<?= urlencode($page) ?>&nav_drop=true" 
+                            class="btn border rounded rounded-4 btn-sm" 
+                            onclick="return confirm('Are you sure you want to delete this subject?');">
+                            Remove
                             </a>
 
                             </td>
