@@ -4,22 +4,23 @@ include '../db_connection.php';
 
 // Validate ID from GET
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-    header('Location: subject_unit.php?status=error');
+    header('Location: sectioning.php?status=error&nav_drop=true');
     exit;
 }
 
 $section_id = (int) $_GET['id'];
 
-// 1. Update users: Set section_id to NULL for all students in this section
-$update_stmt = $conn->prepare("UPDATE users SET section_id = NULL WHERE acc_type = 'student' AND section_id = ?");
-$update_stmt->bind_param("i", $section_id);
+// 1. Delete related records from master_list table
+$delete_master_list = $conn->prepare("DELETE FROM master_list WHERE section_id = ?");
+$delete_master_list->bind_param("i", $section_id);
+$delete_master_list->execute();
 
-if (!$update_stmt->execute()) {
-    header("Location: sectioning.php?status=update_error&nav_drop=true");
-    exit;
-}
+// 2. Delete related records from class_schedule table
+$delete_schedule = $conn->prepare("DELETE FROM class_schedule WHERE section_id = ?");
+$delete_schedule->bind_param("i", $section_id);
+$delete_schedule->execute();
 
-// 2. Delete the section from sections table
+// 3. Delete the section from sections table
 $delete_stmt = $conn->prepare("DELETE FROM sections WHERE section_id = ?");
 $delete_stmt->bind_param("i", $section_id);
 

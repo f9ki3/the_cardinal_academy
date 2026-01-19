@@ -259,17 +259,11 @@ $current_sort_order = $_GET['sort_order'] ?? $default_sort_order;
                             <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['grade_level']) ?></p></td>
                             <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['hours']) ?></p></td>
                             <td>
-
-                           <a href="edit_subject.php?id=<?= urlencode($row['id']) ?>&nav_drop=true" 
-                            class="btn border rounded rounded-4 btn-sm">
-                            Edit
-                            </a>
                             <a href="delete_subject.php?id=<?= urlencode($row['id']) ?>&search=<?= urlencode($search) ?>&sort_by=<?= urlencode($current_sort_by) ?>&sort_order=<?= urlencode($current_sort_order) ?>&page=<?= urlencode($page) ?>&nav_drop=true" 
                             class="btn border rounded rounded-4 btn-sm" 
                             onclick="return confirm('Are you sure you want to delete this subject?');">
                             Remove
                             </a>
-
                             </td>
                         </tr>
                         <?php endwhile; ?>
@@ -349,12 +343,12 @@ $current_sort_order = $_GET['sort_order'] ?? $default_sort_order;
     const rows = document.querySelectorAll('.clickable-row');
     rows.forEach(row => {
       row.addEventListener('click', (event) => {
-        // Prevent navigation if the Edit/Remove link/button was clicked
+        // Prevent navigation if the Remove link/button was clicked
         if (event.target.closest('a') || event.target.closest('button')) {
             return;
         }
         const id = row.getAttribute('data-id');
-        window.location.href = `view_subject.php?id=${id}&nav_drop=true`; // Assuming there is a view_subject.php
+        window.location.href = `edit_subject.php?id=${id}&nav_drop=true`;
       });
     });
   });

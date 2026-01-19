@@ -322,15 +322,7 @@ if (!in_array($default_school_year, $school_years)) {
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['capacity']) ?></p></td>
                           <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['school_year']) ?></p></td>
                           <td>
-                            <a href="edit_section.php?id=<?= urlencode($row['section_id']) ?>&nav_drop=true" class="btn border rounded rounded-4 btn-sm">Edit</a>
-                            <a href="delete_section.php?id=<?= urlencode($row['section_id']) ?>&<?= http_build_query([
-                                'search' => $search, 
-                                'sort_by' => $current_sort_by, 
-                                'sort_order' => $current_sort_order, 
-                                'page' => $page, 
-                                'school_year' => $school_year, // Pass the school year to maintain filter context after delete
-                                'nav_drop' => 'true'
-                            ]) ?>"
+                            <a href="delete_section.php?id=<?= urlencode($row['section_id']) ?>&search=<?= urlencode($search) ?>&sort_by=<?= urlencode($current_sort_by) ?>&sort_order=<?= urlencode($current_sort_order) ?>&page=<?= urlencode($page) ?>&school_year=<?= urlencode($school_year) ?>&nav_drop=true"
                               class="btn border rounded rounded-4 btn-sm"
                               onclick="return confirm('Are you sure you want to delete this section?');">
                               Remove
