@@ -71,6 +71,12 @@ $profile_image = !empty($user['profile']) ? '../static/uploads/' . htmlspecialch
         </li>
 
         <li class="nav-item">
+        <a href="grades.php" class="nav-link d-flex align-items-center px-3 py-2 rounded-3">
+            <i class="bi bi-mortarboard me-2"></i> <span>Grades</span>
+        </a>
+        </li>
+
+        <li class="nav-item">
         <a href="medical.php" class="nav-link d-flex align-items-center px-3 py-2 rounded-3">
             <i class="bi bi-heart-pulse me-2"></i> <span>Medical</span>
         </a>
