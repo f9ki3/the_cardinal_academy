@@ -14,7 +14,7 @@ $subjects = $subjStmt->fetch_all(MYSQLI_ASSOC);
 
 // Validate section ID
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
-    header('Location: sections.php?status=error');
+    header('Location: class_schedule.php?status=error');
     exit;
 }
 $sectionId = (int) $_GET['id'];
