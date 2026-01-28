@@ -37,7 +37,8 @@ $searchEsc = mysqli_real_escape_string($conn, $search);
 // --- Helper functions for dynamic links --------------------------------------
 
 // Helper function to build query string for pagination/sorting links
-function build_query_string($page = null, $search = null, $sort_by = null, $sort_order = null) {
+// Set $reset_page_for_sort = true only when building a sort header link (so page resets to 1).
+function build_query_string($page = null, $search = null, $sort_by = null, $sort_order = null, $reset_page_for_sort = false) {
     $params = [];
     // Use current values as defaults
     $current_search = $_GET['search'] ?? '';
@@ -50,8 +51,8 @@ function build_query_string($page = null, $search = null, $sort_by = null, $sort
     $params['sort_by'] = $sort_by !== null ? $sort_by : $current_sort_by;
     $params['sort_order'] = $sort_order !== null ? $sort_order : $current_sort_order;
     
-    // Reset page to 1 if sorting parameters are explicitly passed
-    if ($sort_by !== null || $sort_order !== null) {
+    // Reset page to 1 only when user is changing sort (sort header click), not for pagination links
+    if ($reset_page_for_sort) {
         $params['page'] = 1;
     }
 
@@ -66,8 +67,8 @@ function get_sort_link($column_name, $current_sort_by, $current_sort_order, $sea
         $new_order = ($current_sort_order === 'ASC') ? 'DESC' : 'ASC';
     }
 
-    // Build the query string for the new sort (always set page to 1 for a new sort)
-    $query_string = build_query_string(1, $search, $column_name, $new_order);
+    // Build the query string for the new sort (reset page to 1 when changing sort)
+    $query_string = build_query_string(1, $search, $column_name, $new_order, true);
 
     // Determine the icon to display
     $icon = 'bi-chevron-expand'; // Default icon
