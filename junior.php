@@ -155,16 +155,189 @@
               <div id="age_input-error" class="invalid-feedback d-none">Age must be at least 12 for Grade 7.</div>
           </div>
 
+          
+          <!-- ✅ Put these in your <head> (or before closing </head>) -->
+          <link
+            href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css"
+            rel="stylesheet"
+          />
+          <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+
+          <!-- ✅ Your form field (NO hardcoded options; will be populated from city.json) -->
           <div class="col-12 col-md-6">
             <label class="form-label text-muted">Place of Birth*</label>
-            <input type="text" name="birth_place" id="birth_place" class="form-control" placeholder="Enter place of birth">
-            <div id="birth_place-error" class="invalid-feedback d-none">Place of Birth is required.</div>
+
+            <select id="birth_place" name="birth_place" class="form-select" required>
+              <option value="" selected disabled>Type to search...</option>
+            </select>
+
+            <div class="invalid-feedback">
+              Place of Birth is required.
+            </div>
           </div>
+
+          <script>
+            /**
+             * ✅ Uses ./city.json in this format:
+             * [
+             *   { "name": "Caloocan", "province": "MM", "city": true },
+             *   { "name": "Pateros", "province": "MM" },
+             *   { "name": "Bangued", "province": "ABR" }
+             * ]
+             *
+             * ✅ Result:
+             * - Dropdown is searchable (Tom Select)
+             * - Options grouped by province code
+             * - Label shows: "Name — PROV (City/Municipality)"
+             */
+
+            (function initBirthPlaceSelect() {
+              const el = document.getElementById("birth_place");
+              if (!el) return;
+
+              // Optional: map province code -> display name (add more if you want)
+              const PROVINCE_LABEL = {
+                MM: "Metro Manila",
+                ABR: "Abra",
+                // add more codes here...
+              };
+
+              fetch("./city.json", { cache: "no-store" })
+                .then((res) => {
+                  if (!res.ok) throw new Error(`Failed to load city.json (${res.status})`);
+                  return res.json();
+                })
+                .then((rows) => {
+                  // ✅ sanitize + normalize
+                  const items = (Array.isArray(rows) ? rows : [])
+                    .filter((x) => x && typeof x.name === "string" && typeof x.province === "string")
+                    .map((x) => ({
+                      name: x.name.trim(),
+                      province: x.province.trim(),
+                      city: Boolean(x.city),
+                    }))
+                    .filter((x) => x.name && x.province);
+
+                  // ✅ build province optgroups
+                  const provinces = [...new Set(items.map((i) => i.province))].sort();
+
+                  // clear placeholder options (Tom Select will use its own)
+                  el.innerHTML = "";
+
+                  // create optgroups
+                  const groupEls = {};
+                  for (const prov of provinces) {
+                    const og = document.createElement("optgroup");
+                    const provLabel = PROVINCE_LABEL[prov] ? `${PROVINCE_LABEL[prov]} (${prov})` : prov;
+                    og.label = provLabel;
+                    el.appendChild(og);
+                    groupEls[prov] = og;
+                  }
+
+                  // add options into optgroups
+                  // Sort by province then by name
+                  items
+                    .sort((a, b) => {
+                      const p = a.province.localeCompare(b.province);
+                      if (p !== 0) return p;
+                      return a.name.localeCompare(b.name);
+                    })
+                    .forEach((item) => {
+                      const opt = document.createElement("option");
+
+                      // ✅ unique value (prevents collisions on same city name in diff provinces)
+                      // you can change this to just item.name if you prefer
+                      opt.value = `${item.name}|${item.province}`;
+
+                      const typeLabel = item.city ? "City" : "Municipality";
+                      opt.textContent = `${item.name} — ${item.province} (${typeLabel})`;
+
+                      groupEls[item.province].appendChild(opt);
+                    });
+
+                  // ✅ Init Tom Select
+                  new TomSelect(el, {
+                    create: false,
+                    maxItems: 1,
+                    allowEmptyOption: true,
+                    placeholder: "Type to search...",
+                    searchField: ["text"],
+                    sortField: [
+                      { field: "$order" },
+                      { field: "text", direction: "asc" },
+                    ],
+                    render: {
+                      no_results: function (data, escape) {
+                        return `<div class="no-results p-2">No match for "<strong>${escape(
+                          data.input
+                        )}</strong>"</div>`;
+                      },
+                    },
+                  });
+
+                  // ✅ If you want the submitted value to be ONLY the name (not "name|province"),
+                  // add a hidden input and mirror the selected name there.
+                  // Otherwise remove this block.
+                  const hidden = document.createElement("input");
+                  hidden.type = "hidden";
+                  hidden.name = "birth_place_name";
+                  hidden.id = "birth_place_name";
+                  el.insertAdjacentElement("afterend", hidden);
+
+                  el.addEventListener("change", () => {
+                    const val = el.value || "";
+                    const [name] = val.split("|");
+                    hidden.value = name || "";
+                  });
+                })
+                .catch((err) => {
+                  console.error(err);
+                  // Fallback: keep a single disabled option so the field doesn't look broken
+                  el.innerHTML = `<option value="" selected disabled>Failed to load cities</option>`;
+                });
+            })();
+          </script>
 
           <div class="col-12 col-md-6">
             <label class="form-label text-muted">Religion*</label>
-            <input type="text" name="religion" id="religion" class="form-control" placeholder="Enter religion">
-            <div id="religion-error" class="invalid-feedback d-none">Religion is required.</div>
+
+            <select name="religion" id="religion" class="form-select" required>
+              <option value="">Select religion...</option>
+
+              <!-- Christian -->
+              <option value="Roman Catholic">Roman Catholic</option>
+              <option value="Protestant">Protestant</option>
+              <option value="Evangelical">Evangelical</option>
+              <option value="Iglesia ni Cristo">Iglesia ni Cristo</option>
+              <option value="Aglipayan (Philippine Independent Church)">Aglipayan (Philippine Independent Church)</option>
+              <option value="Jehovah's Witnesses">Jehovah's Witnesses</option>
+              <option value="Seventh-day Adventist">Seventh-day Adventist</option>
+              <option value="The Church of Jesus Christ of Latter-day Saints (Mormon)">The Church of Jesus Christ of Latter-day Saints (Mormon)</option>
+              <option value="Born Again Christian">Born Again Christian</option>
+              <option value="Orthodox Christian">Orthodox Christian</option>
+
+              <!-- Islam -->
+              <option value="Islam (Sunni)">Islam (Sunni)</option>
+              <option value="Islam (Shia)">Islam (Shia)</option>
+
+              <!-- Eastern Religions -->
+              <option value="Buddhism">Buddhism</option>
+              <option value="Hinduism">Hinduism</option>
+              <option value="Taoism">Taoism</option>
+              <option value="Confucianism">Confucianism</option>
+
+              <!-- Indigenous / Others -->
+              <option value="Indigenous Beliefs">Indigenous Beliefs</option>
+              <option value="Agnostic">Agnostic</option>
+              <option value="Atheist">Atheist</option>
+
+              <!-- Must be last -->
+              <option value="Others">Others</option>
+            </select>
+
+            <div id="religion-error" class="invalid-feedback">
+              Religion is required.
+            </div>
           </div>
 
           <div class="col-12 col-md-3">
