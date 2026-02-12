@@ -153,15 +153,40 @@ if (!empty($grade_level)) {
             </div>
 
             <div class="col-md-3">
-                <label class="form-label text-muted">Discount Type</label>
-                <select name="discount_type" id="discount_type" class="form-control">
-                  <option value="">None</option>
-                  <option value="percent">Percent (%)</option>
-                  <option value="fixed">Fixed Amount (₱)</option>
-                </select>
-              </div>
+              <label for="program_type" class="form-label text-muted">
+                Discount Category*
+              </label>
 
-              <div class="col-md-3">
+              <select 
+                id="program_type" 
+                name="program_type" 
+                class="form-select" 
+                required
+              >
+                <option value="">Select program...</option>
+                <option value="ESC Voucher">ESC Voucher</option>
+                <option value="Loyalty Voucher">Loyalty Voucher</option>
+                <option value="Prime English">Prime English</option>
+                <option value="Prime Mathematics">Prime Mathematics</option>
+                <option value="Others or Special Cases">Others</option>
+              </select>
+
+              <div class="invalid-feedback">
+                Please select a program type.
+              </div>
+            </div>
+
+
+            <div class="col-md-2">
+                <label class="form-label text-muted">Discount Type</label>
+              <select name="discount_type" id="discount_type" class="form-control">
+                <option value="">None</option>
+                <option value="percent">Percent (%)</option>
+                <option value="fixed">Fixed Amount (₱)</option>
+              </select>
+            </div>
+
+              <div class="col-md-2">
                 <label class="form-label text-muted">Discount Value</label>
                 <input type="number" name="discount_value" disabled id="discount_value" class="form-control" value="0" min="0" step="0.01">
               </div>
@@ -171,7 +196,7 @@ if (!empty($grade_level)) {
                 <input type="text" name="discount_amount" id="discount_amount" readonly class="form-control" value="₱0.00">
               </div>
 
-            <div class="col-md-3">
+            <div class="col-md-2">
               <label class="form-label text-muted">Downpayment</label>
               <input type="number" name="down" id="down" class="form-control" value="0" min="0" step="0.01">
             </div>

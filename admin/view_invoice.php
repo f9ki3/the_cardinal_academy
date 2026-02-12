@@ -98,7 +98,7 @@ $total = number_format((float)$data['balance'] + (float)$data['payment'], 2);
             <!-- Top Header (Web Only) -->
             <div class="row mt-4 align-items-center mb-4">
               <div class="col-md-4 mb-2">
-                <h4 class="mb-0 d-print-none">Official Receipt</h4>
+                <h4 class="mb-0 d-print-none">Invoice Receipt</h4>
               </div>
               <div class="col-md-8 d-flex justify-content-md-end gap-2 d-print-none">
                 <button class="btn btn-sm border text-muted rounded-4" onclick="window.print()">
@@ -119,8 +119,9 @@ $total = number_format((float)$data['balance'] + (float)$data['payment'], 2);
               <h5 class="fw-bold mt-2 mb-0">The Cardinal Academy, Inc.</h5>
               <small>Sullera Street, Pandayan, Meycauayan, Bulacan</small><br>
               <small>Phone: (0912) 345-6789 | Email: info@cardinalacademy.edu.ph</small>
+              <h4 class="mt-3">NON-VAT</h4>
               <hr>
-              <h4 class="mt-3">Official Receipt</h4>
+              <h4 class="mt-3">Invoice Receipt</h4>
             </div>
 
             <!-- Transaction Details -->
@@ -130,11 +131,10 @@ $total = number_format((float)$data['balance'] + (float)$data['payment'], 2);
                 <div class="col-12 col-md-6">
                   <p class="mb-1"><strong>Date:</strong> <?php echo $date; ?></p>
                   <p class="mb-1"><strong>Student Name:</strong> <?php echo $fullname; ?></p>
-                  <p class="mb-1"><strong>Residential Address:</strong> <?php echo $full_address; ?></p>
+                  <!-- <p class="mb-1"><strong>Residential Address:</strong> <?php echo $full_address; ?></p> -->
                 </div>
                 <div class="col-12 col-md-6">
                   <p class="mb-1"><strong>Invoice Number:</strong> <?php echo $invoice; ?></p>
-                  <p class="mb-1"><strong>Reference Number:</strong> <?php echo $reference_number; ?></p>
                   <p class="mb-1"><strong>Account Number:</strong> <?php echo $account_no; ?></p>
                 </div>
               </div>
@@ -143,16 +143,15 @@ $total = number_format((float)$data['balance'] + (float)$data['payment'], 2);
               <h5 class="fw-bold mb-3 d-print-block">Summary</h5>
               <div class="row">
                 <div class="col-12 col-md-6">
-                   <p class="mb-1"><strong>Tuition Fee:</strong> ₱<?php echo $tuition_fee; ?></p>
-                  <p class="mb-1"><strong>Payment Plan:</strong> <?php echo $plan; ?></p>
-                  <p class="mb-1"><strong>Payment Type:</strong> <?php echo $type; ?></p>
+                   <!-- <p class="mb-1"><strong>Tuition Fee:</strong> ₱<?php echo $tuition_fee; ?></p> -->
+                  <!-- <p class="mb-1"><strong>Payment Plan:</strong> <?php echo $plan; ?></p> -->
+                  <p class="mb-1"><strong>Payment Type:</strong> <?php echo $type; ?> | Ref:<?php echo $reference_number; ?></p>
                   <p class="mb-1"><strong>Transaction Fee:</strong> ₱<?php echo $fee; ?></p>
-                 
+                  <p class="mb-1"><strong>Payment:</strong> ₱<?php echo $payment; ?></p>
                 </div>
                 <div class="col-12 col-md-6">
-                   <p class="mb-1"><strong>Balance:</strong> ₱<?php echo $total; ?></p>
-                   <p class="mb-1"><strong>Payment:</strong> ₱<?php echo $payment; ?></p>
-                   <p class="mb-1"><strong>Remaining:</strong> ₱<?php echo $balance; ?></p>
+                   <!-- <p class="mb-1"><strong>Balance:</strong> ₱<?php echo $total; ?></p> -->
+                   <!-- <p class="mb-1"><strong>Remaining:</strong> ₱<?php echo $balance; ?></p> -->
                 </div>
               </div>
             </div>
