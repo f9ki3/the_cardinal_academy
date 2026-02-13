@@ -174,19 +174,19 @@ $conn->close();
                                     <div class="col-4">
                                         <div class="text-center p-3 bg-accent-blue text-primary rounded w-100">
                                             <div class="fs-2 fw-bold"><?= $student['total_assignments'] ?? 0 ?></div>
-                                            <div class="small">Assignments</div>
+                                            <div class="small">Posted Assignments</div>
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <div class="text-center p-3 bg-accent-blue text-primary rounded w-100">
                                             <div class="fs-2 fw-bold"><?= $student['total_submitted'] ?? 0 ?></div>
-                                            <div class="small">Submitted</div>
+                                            <div class="small">Submitted Assignment</div>
                                         </div>
                                     </div>
                                     <div class="col-4">
                                         <div class="text-center p-3 bg-accent-blue text-primary rounded w-100">
                                             <div class="fs-2 fw-bold"><?= $student['total_posts'] ?? 0 ?></div>
-                                            <div class="small">Posts</div>
+                                            <div class="small">Posted Lesson</div>
                                         </div>
                                     </div>
                                 </div>

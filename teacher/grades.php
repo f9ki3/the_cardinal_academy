@@ -6,27 +6,47 @@ include 'session_login.php';
 include '../db_connection.php';
 
 $course_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
-$user_id = $_SESSION['user_id'] ?? 0;
+$user_id   = $_SESSION['user_id'] ?? 0;
 
-// Get logged-in teacher info
-$full_name = 'User Name';
+// -------------------------------
+// Logged-in teacher info (email only if you want)
+// -------------------------------
 $email = 'user@example.com';
 if ($user_id > 0) {
-    $stmt = $conn->prepare("SELECT first_name, last_name, email FROM users WHERE user_id = ?");
+    $stmt = $conn->prepare("SELECT email FROM users WHERE user_id = ?");
     if ($stmt) {
         $stmt->bind_param("i", $user_id);
         $stmt->execute();
-        $result_user = $stmt->get_result();
-        if ($result_user && $result_user->num_rows > 0) {
-            $user = $result_user->fetch_assoc();
-            $full_name = htmlspecialchars($user['first_name'] . ' ' . $user['last_name']);
-            $email = htmlspecialchars($user['email']);
+        $res = $stmt->get_result();
+        if ($res && $res->num_rows > 0) {
+            $u = $res->fetch_assoc();
+            $email = htmlspecialchars($u['email'] ?? 'user@example.com');
         }
         $stmt->close();
     }
 }
 
+// -------------------------------
+// Course name (DISPLAY THIS INSTEAD OF TEACHER NAME)
+// -------------------------------
+$course_name = "Course";
+if ($course_id > 0) {
+    $stmt = $conn->prepare("SELECT course_name FROM courses WHERE id = ?");
+    if ($stmt) {
+        $stmt->bind_param("i", $course_id);
+        $stmt->execute();
+        $res_course = $stmt->get_result();
+        if ($res_course && $res_course->num_rows > 0) {
+            $c = $res_course->fetch_assoc();
+            $course_name = htmlspecialchars($c['course_name'] ?? 'Course');
+        }
+        $stmt->close();
+    }
+}
+
+// -------------------------------
 // Fetch students & grades
+// -------------------------------
 $students = [];
 if ($course_id > 0) {
     $stmt = $conn->prepare("
@@ -36,6 +56,7 @@ if ($course_id > 0) {
         FROM course_students cs
         INNER JOIN users u ON cs.student_id = u.user_id
         WHERE cs.course_id = ?
+        ORDER BY u.last_name ASC, u.first_name ASC
     ");
     if ($stmt) {
         $stmt->bind_param("i", $course_id);
@@ -83,12 +104,9 @@ if ($course_id > 0) {
     font-weight: 600;
 }
 /* Stripe effect */
-.table-excel tr:nth-child(odd) {
-    background-color: #ffffff; /* white stripe */
-}
-.table-excel tr:nth-child(even) {
-    background-color: #f9f9f9; /* light gray stripe */
-}
+.table-excel tr:nth-child(odd) { background-color: #ffffff; }
+.table-excel tr:nth-child(even) { background-color: #f9f9f9; }
+
 .table-excel input.grade-input {
     width: 100%;
     border: none;
@@ -100,7 +118,7 @@ if ($course_id > 0) {
 
 /* Highlighted row */
 .table-excel tbody tr.highlighted {
-    background-color: #dc3545; /* Bootstrap danger */
+    background-color: #dc3545;
     color: #fff;
     font-weight: 700;
 }
@@ -113,6 +131,7 @@ if ($course_id > 0) {
 /* Rounded profile */
 .rounded-circle:hover { background-color: rgb(240, 249, 255) !important; }
 </style>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 $(document).ready(function () {
@@ -137,7 +156,7 @@ $(document).ready(function () {
             student_id: $(this).data("student"),
             field: $(this).data("field"),
             value: $(this).val(),
-            course_id: <?= $course_id ?>
+            course_id: <?= (int)$course_id ?>
         });
     });
 
@@ -149,18 +168,16 @@ $(document).ready(function () {
         const $td = $input.closest("td");
         const $tr = $td.closest("tr");
 
-        // use tbody rows to compute indices (ignores thead)
         const $tbody = $tr.closest("tbody");
         const $rows = $tbody.children("tr");
 
         const colIndex = $td.index();
-        const rowIndex = $rows.index($tr); // index within tbody
+        const rowIndex = $rows.index($tr);
 
         let inputEl = $input[0];
         let caretPos = inputEl.selectionStart;
         let valLen = inputEl.value.length;
 
-        // helper: focus target cell input (if exists)
         function focusCell($row, col) {
             if (!$row || $row.length === 0) return false;
             const $cell = $row.children().eq(col);
@@ -170,7 +187,6 @@ $(document).ready(function () {
                 $rows.removeClass("highlighted");
                 $row.addClass("highlighted");
                 $nextInput.focus();
-                // place caret at end
                 const el = $nextInput[0];
                 el.setSelectionRange(el.value.length, el.value.length);
                 return true;
@@ -178,43 +194,28 @@ $(document).ready(function () {
             return false;
         }
 
-        // LEFT
         if (e.key === "ArrowLeft") {
-            // allow normal caret movement unless caret at position 0 (start)
             if (caretPos > 0) return;
-            // move left to previous td that contains an input
             for (let c = colIndex - 1; c >= 0; c--) {
                 if (focusCell($tr, c)) { e.preventDefault(); return; }
             }
             e.preventDefault();
         }
-
-        // RIGHT
         else if (e.key === "ArrowRight") {
-            // allow caret movement unless at end
             if (caretPos < valLen) return;
-            // move right to next td that contains an input
             const lastCol = $tr.children().length - 1;
             for (let c = colIndex + 1; c <= lastCol; c++) {
                 if (focusCell($tr, c)) { e.preventDefault(); return; }
             }
             e.preventDefault();
         }
-
-        // UP
         else if (e.key === "ArrowUp") {
-            // find previous row with an input in same column (if missing skip)
             for (let r = rowIndex - 1; r >= 0; r--) {
                 const $targetRow = $rows.eq(r);
                 if (focusCell($targetRow, colIndex)) { e.preventDefault(); return; }
-                // if not found in same col, optionally try searching nearby cols:
-                // (commented out — your cells for grades are consistent so usually not needed)
-                // for (let c = colIndex - 1; c >= 0; c--) if (focusCell($targetRow, c)) { e.preventDefault(); return; }
             }
             e.preventDefault();
         }
-
-        // DOWN
         else if (e.key === "ArrowDown") {
             const rowCount = $rows.length;
             for (let r = rowIndex + 1; r < rowCount; r++) {
@@ -223,7 +224,6 @@ $(document).ready(function () {
             }
             e.preventDefault();
         }
-
     });
 
     // =============================
@@ -330,8 +330,14 @@ $(document).ready(function () {
     <!-- Tabs -->
     <div class="tabs mb-4">
         <?php
-        $tabs = ['Stream'=>'course.php','Attendance'=>'attendance.php','Assignment'=>'assignment.php',
-                 'Students'=>'student.php','Grades'=>'grades.php','Settings'=>'settings.php'];
+        $tabs = [
+            'Stream'=>'course.php',
+            'Attendance'=>'attendance.php',
+            'Assignment'=>'assignment.php',
+            'Students'=>'student.php',
+            'Grades'=>'grades.php',
+            'Settings'=>'settings.php'
+        ];
         foreach($tabs as $name=>$url){
             $active = ($name==='Grades')?'active':'';
             echo "<div class='tab {$active}'><a href='{$url}?id={$course_id}'>{$name}</a></div>";
@@ -345,12 +351,13 @@ $(document).ready(function () {
         <div style="position: absolute; top:0; left:0; right:0; bottom:0; background-color: rgba(0,0,0,0.5); border-radius:1rem;"></div>
         <div class="row position-relative" style="z-index:1;">
             <div class="col-12 col-md-10">
-                <h1 class="fw-bolder"><?= $full_name ?></h1>
+                <!-- ✅ DISPLAY COURSE NAME HERE -->
+                <h1 class="fw-bolder"><?= $course_name ?></h1>
+                <!-- Optional: keep teacher email below -->
                 <p><?= $email ?></p>
             </div>
             <div class="col-12 col-md-2 d-flex align-items-center justify-content-md-end mt-2 mt-md-0">
-                <!-- Print Button -->
-                <a href="print_grades.php?id=<?= $course_id ?>" target="_blank" class="btn btn-danger rounded-4 d-flex align-items-center">
+                <a href="print_grades.php?id=<?= (int)$course_id ?>" target="_blank" class="btn btn-danger rounded-4 d-flex align-items-center">
                     <i class="bi bi-printer-fill me-2"></i> Print Grades
                 </a>
             </div>
@@ -375,22 +382,21 @@ $(document).ready(function () {
         <tbody>
             <?php foreach ($students as $student): ?>
             <tr>
-                <td class="text-start"><?= $student['student_number'] ?></td>
-                <td class="text-start"><?= $student['first_name'] . ' ' . $student['last_name'] ?></td>
+                <td class="text-start"><?= htmlspecialchars($student['student_number']) ?></td>
+                <td class="text-start"><?= htmlspecialchars($student['first_name'] . ' ' . $student['last_name']) ?></td>
 
                 <?php for ($i=1; $i<=4; $i++): ?>
                 <td>
                     <input type="text"
                            class="grade-input"
-                           value="<?= $student['q'.$i] ?>"
-                           data-student="<?= $student['user_id'] ?>"
+                           value="<?= htmlspecialchars($student['q'.$i] ?? '0') ?>"
+                           data-student="<?= (int)$student['user_id'] ?>"
                            data-field="q<?= $i ?>"
                            maxlength="3"
                            oninput="this.value=this.value.replace(/[^0-9]/g,''); if(this.value>100)this.value=100;">
                 </td>
                 <?php endfor; ?>
 
-                <!-- GWA + STATUS (Live JS Updated) -->
                 <td class="gwa-cell">0.00</td>
                 <td class="status-cell fw-bold">-</td>
             </tr>
