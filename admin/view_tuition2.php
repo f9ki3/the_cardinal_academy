@@ -2,138 +2,252 @@
 include 'session_login.php';
 include '../db_connection.php';
 
-// Retrieve tuition_id from URL and validate
-$tuition_id = isset($_GET['tuition_id']) ? intval($_GET['tuition_id']) : 0;
-if ($tuition_id <= 0) {
-    echo json_encode(["error" => "Invalid tuition ID."]);
-    exit;
+// ----------------------
+// Helpers
+// ----------------------
+function h($val): string {
+  return htmlspecialchars((string)($val ?? ''), ENT_QUOTES, 'UTF-8');
+}
+function money($n): string {
+  return "₱" . number_format((float)$n, 2);
+}
+function safe_json_array($raw): array {
+  if (!is_string($raw) || trim($raw) === '') return [];
+  $decoded = json_decode($raw, true);
+  return (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) ? $decoded : [];
 }
 
-// Prepare SQL to fetch tuition along with student, section, and teacher info
+// Retrieve tuition_id from URL and validate
+$tuition_id = isset($_GET['tuition_id']) ? (int)$_GET['tuition_id'] : 0;
+if ($tuition_id <= 0) {
+  http_response_code(400);
+  die("<div style='padding:16px;font-family:Arial'>Invalid tuition ID.</div>");
+}
+
+// ----------------------
+// Fetch tuition + student + section + teacher
+// NOTE: Use LEFT JOIN for section/user so page still works if missing
+// ----------------------
 $sql = "
-SELECT 
-    st.id AS tuition_id,
-    st.student_number,
-    st.account_number,
-    si.lrn,
-    si.firstname,
-    si.middlename,
-    si.lastname,
-    si.grade_level AS student_grade_level,
-    si.status,
-    si.gender,
-    si.profile_picture,
-    si.email,
-    si.birthday,
-    CONCAT(
-        COALESCE(si.residential_address, ''), ', ',
-        COALESCE(si.barangay, ''), ', ',
-        COALESCE(si.municipal, ''), ', ',
-        COALESCE(si.province, '')
-    ) AS residential_address,
-    st.payment_plan,
-    st.registration_fee,
-    st.tuition_fee,
-    st.miscellaneous,
-    st.uniform,
-    st.uniform_cart,
-    st.discount_type,
-    st.discount_value,
-    st.discount_amount,
-    st.downpayment,
-    st.enrolled_date,
-    sec.section_id,
-    sec.section_name,
-    sec.grade_level AS section_grade_level,
-    sec.teacher_id,
-    sec.room,
-    sec.strand AS section_strand,
-    sec.capacity,
-    sec.enrolled,
-    sec.school_year,
-    u.first_name AS teacher_firstname,
-    u.last_name AS teacher_lastname
+SELECT
+  st.id AS tuition_id,
+  st.student_number,
+  st.account_number,
+
+  si.lrn,
+  si.firstname,
+  si.middlename,
+  si.lastname,
+  si.grade_level AS student_grade_level,
+  si.status,
+  si.gender,
+  si.profile_picture,
+  si.email,
+  si.birthday,
+
+  CONCAT(
+    COALESCE(si.residential_address, ''), 
+    CASE WHEN COALESCE(si.barangay,'') <> '' THEN CONCAT(', ', si.barangay) ELSE '' END,
+    CASE WHEN COALESCE(si.municipal,'') <> '' THEN CONCAT(', ', si.municipal) ELSE '' END,
+    CASE WHEN COALESCE(si.province,'') <> '' THEN CONCAT(', ', si.province) ELSE '' END
+  ) AS residential_address,
+
+  st.payment_plan,
+  COALESCE(st.registration_fee,0) AS registration_fee,
+  COALESCE(st.tuition_fee,0) AS tuition_fee,
+  COALESCE(st.miscellaneous,0) AS miscellaneous,
+  COALESCE(st.uniform,0) AS uniform,
+  st.uniform_cart,
+  st.discount_type,
+  COALESCE(st.discount_value,0) AS discount_value,
+  COALESCE(st.discount_amount,0) AS discount_amount, -- may be stale; we will recompute
+  COALESCE(st.downpayment,0) AS downpayment,
+
+  COALESCE(st.interest,0) AS interest,               -- required for base
+  COALESCE(st.payment_total,0) AS payment_total,     -- may be stale; we will recompute
+
+  st.enrolled_date,
+
+  COALESCE(sec.section_id,0) AS section_id,
+  sec.section_name,
+  sec.grade_level AS section_grade_level,
+  sec.teacher_id,
+  sec.room,
+  sec.strand AS section_strand,
+  sec.capacity,
+  sec.enrolled,
+  sec.school_year,
+
+  u.first_name AS teacher_firstname,
+  u.last_name AS teacher_lastname
 FROM student_tuition st
 INNER JOIN student_information si ON st.student_number = si.student_number
-INNER JOIN sections sec ON st.enrolled_section = sec.section_id
-INNER JOIN users u ON sec.teacher_id = u.user_id
+LEFT JOIN sections sec ON st.enrolled_section = sec.section_id
+LEFT JOIN users u ON sec.teacher_id = u.user_id
 WHERE st.id = ?
+LIMIT 1
 ";
 
 $stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $tuition_id);
-
-if (!$stmt->execute()) {
-    echo json_encode(["error" => "Failed to execute query."]);
-    exit;
+if (!$stmt) {
+  http_response_code(500);
+  die("<div style='padding:16px;font-family:Arial'>SQL prepare failed.</div>");
 }
-
+$stmt->bind_param("i", $tuition_id);
+$stmt->execute();
 $result = $stmt->get_result();
 
-if ($result && $row = $result->fetch_assoc()) {
-    $tuition = [
-        "tuition_id"           => $row['tuition_id'],
-        "student_number"       => $row['student_number'],
-        "account_number"       => $row['account_number'],
-        "lrn"                  => $row['lrn'],
-        "firstname"            => $row['firstname'],
-        "middlename"           => $row['middlename'],
-        "lastname"             => $row['lastname'],
-        "student_grade_level"  => $row['student_grade_level'],
-        "status"               => $row['status'],
-        "email"                => $row['email'],
-        "gender"               => $row['gender'],
-        "profile_picture"      => $row['profile_picture'],
-        "birthday"             => $row['birthday'],
-        "residential_address"  => $row['residential_address'],
-        "payment_plan"         => $row['payment_plan'],
-        "registration_fee"     => (float)$row['registration_fee'],
-        "tuition_fee"          => (float)$row['tuition_fee'],
-        "miscellaneous"        => (float)$row['miscellaneous'],
-        "uniform"              => (float)$row['uniform'],
-        "uniform_cart"         => json_decode($row['uniform_cart'], true),
-        "discount_type"        => $row['discount_type'],
-        "discount_value"       => (float)$row['discount_value'],
-        "discount_amount"      => (float)$row['discount_amount'],
-        "downpayment"          => (float)$row['downpayment'],
-        "enrolled_date"        => $row['enrolled_date'],
-        "section_id"           => $row['section_id'],
-        "section_name"         => $row['section_name'],
-        "section_grade_level"  => $row['section_grade_level'],
-        "teacher_id"           => $row['teacher_id'],
-        "room"                 => $row['room'],
-        "section_strand"       => $row['section_strand'],
-        "capacity"             => $row['capacity'],
-        "enrolled"             => $row['enrolled'],
-        "school_year"          => $row['school_year'],
-        "teacher_firstname"    => $row['teacher_firstname'],
-        "teacher_lastname"     => $row['teacher_lastname']
-    ];
-
-    // ✅ Get total payments from payment table
-    $stmt2 = $conn->prepare("SELECT SUM(payment) AS total_payment FROM payment WHERE tuition_id = ?");
-    $stmt2->bind_param("i", $tuition_id);
-    $stmt2->execute();
-    $result2 = $stmt2->get_result();
-    $payment_row = $result2->fetch_assoc();
-    $total_payment = $payment_row['total_payment'] ?? 0;
-
-    // ✅ Calculate balance
-    $balance = $tuition['tuition_fee'] + $tuition['miscellaneous'] - $tuition['discount_value'] - $tuition['downpayment'];
-    $remaining_balance = $balance - $total_payment;
-
-    // Add to response
-    $tuition['total_payment'] = (float)$total_payment;
-    $tuition['remaining_balance'] = (float)$remaining_balance;
-
-    // echo json_encode($tuition);
-} else {
-    echo json_encode(["error" => "Tuition record not found."]);
+if (!$result || !($row = $result->fetch_assoc())) {
+  http_response_code(404);
+  die("<div style='padding:16px;font-family:Arial'>Tuition record not found.</div>");
 }
+
+// Build tuition array
+$tuition = [
+  "tuition_id"          => (int)$row['tuition_id'],
+  "student_number"      => $row['student_number'],
+  "account_number"      => $row['account_number'],
+  "lrn"                 => $row['lrn'],
+  "firstname"           => $row['firstname'],
+  "middlename"          => $row['middlename'],
+  "lastname"            => $row['lastname'],
+  "student_grade_level" => $row['student_grade_level'],
+  "status"              => $row['status'],
+  "email"               => $row['email'],
+  "gender"              => $row['gender'],
+  "profile_picture"     => $row['profile_picture'],
+  "birthday"            => $row['birthday'],
+  "residential_address" => $row['residential_address'],
+
+  "payment_plan"        => $row['payment_plan'],
+  "registration_fee"    => (float)$row['registration_fee'],
+  "tuition_fee"         => (float)$row['tuition_fee'],
+  "miscellaneous"       => (float)$row['miscellaneous'],
+  "uniform"             => (float)$row['uniform'],
+  "uniform_cart"        => safe_json_array($row['uniform_cart'] ?? ''),
+
+  "discount_type"       => (string)($row['discount_type'] ?? ''),
+  "discount_value"      => (float)($row['discount_value'] ?? 0),
+  "discount_amount_db"  => (float)($row['discount_amount'] ?? 0),  // stored, may be stale
+
+  "downpayment"         => (float)$row['downpayment'],
+
+  "interest"            => (float)$row['interest'],
+  "payment_total_db"    => (float)($row['payment_total'] ?? 0),     // stored, may be stale
+
+  "enrolled_date"       => $row['enrolled_date'],
+
+  "section_id"          => (int)$row['section_id'],
+  "section_name"        => $row['section_name'],
+  "section_grade_level" => $row['section_grade_level'],
+  "teacher_id"          => $row['teacher_id'],
+  "room"                => $row['room'],
+  "section_strand"      => $row['section_strand'],
+  "capacity"            => $row['capacity'],
+  "enrolled"            => $row['enrolled'],
+  "school_year"         => $row['school_year'],
+  "teacher_firstname"   => $row['teacher_firstname'],
+  "teacher_lastname"    => $row['teacher_lastname'],
+];
+
+// ----------------------
+// ✅ Total payments from payment table
+// ----------------------
+$stmt2 = $conn->prepare("SELECT COALESCE(SUM(payment), 0) AS total_payment FROM payment WHERE tuition_id = ?");
+if (!$stmt2) {
+  http_response_code(500);
+  die("<div style='padding:16px;font-family:Arial'>Payment query prepare failed.</div>");
+}
+$stmt2->bind_param("i", $tuition_id);
+$stmt2->execute();
+$result2 = $stmt2->get_result();
+$payment_row = $result2 ? $result2->fetch_assoc() : null;
+$total_payment = (float)($payment_row['total_payment'] ?? 0);
+
+// ----------------------
+// ✅ FOLLOW THE PREVIOUS LOGIC (discount base includes interest)
+// Base = tuition + misc + interest
+// Discount:
+// - percent: base * discount_value/100 (cap 0..100)
+// - fixed: min(discount_value, base)
+// Payment Total (gross due) = base - discount
+// Balance after downpayment = payment_total - downpayment
+// Remaining after recorded payments = balance_after_down - total_payment
+// ----------------------
+$tuitionFee  = (float)$tuition['tuition_fee'];
+$misc        = (float)$tuition['miscellaneous'];
+$interest    = max(0, (float)$tuition['interest']);
+$downpayment = max(0, (float)$tuition['downpayment']);
+
+$base = max(0, $tuitionFee + $misc + $interest);
+
+// compute discount from type/value (ignore stored discount_amount if stale)
+$discountType  = strtolower(trim((string)$tuition['discount_type']));
+$discountValue = (float)$tuition['discount_value'];
+
+$discount = 0.0;
+if ($discountType === 'percent') {
+  if ($discountValue < 0) $discountValue = 0;
+  if ($discountValue > 100) $discountValue = 100;
+  $discount = ($base * $discountValue) / 100.0;
+} elseif ($discountType === 'fixed') {
+  if ($discountValue < 0) $discountValue = 0;
+  $discount = min($discountValue, $base);
+} else {
+  $discount = 0.0;
+}
+$discount = max(0, min($discount, $base));
+
+$payment_total = max(0, $base - $discount);
+
+// balance after downpayment (this is the real tuition balance to be paid in installments)
+$balance_after_down = max(0, $payment_total - $downpayment);
+
+// remaining after recorded payments
+$remaining_balance = max(0, $balance_after_down - max(0, $total_payment));
+
+// ----------------------
+// ✅ Installments
+// - Annual: 1
+// - Semestral: 2
+// - Quarterly: 4
+// - Monthly: 9 (or 4 for SHS 11/12)
+// ----------------------
+$paymentPlan = strtolower(trim((string)($tuition['payment_plan'] ?? 'annual')));
+$gradeLabel  = (string)($tuition['section_grade_level'] ?? $tuition['student_grade_level'] ?? '');
+
+$isSeniorHigh = false;
+if (preg_match('/(\d+)/', $gradeLabel, $m)) {
+  $n = (int)$m[1];
+  if ($n >= 11) $isSeniorHigh = true;
+}
+
+if (in_array($paymentPlan, ['semestral', 'semester', 'semestre', 'semestiral'], true)) {
+  $installments = 2;
+} elseif ($paymentPlan === 'quarterly') {
+  $installments = 4;
+} elseif ($paymentPlan === 'monthly') {
+  $installments = $isSeniorHigh ? 4 : 9;
+} elseif ($paymentPlan === 'annual') {
+  $installments = 1;
+} else {
+  $installments = 1;
+}
+
+// per installment based on balance AFTER downpayment (matches "pay the remaining")
+$per_plan_payment = ($installments > 0) ? ($balance_after_down / $installments) : $balance_after_down;
+
+// expose values to view
+$tuition['total_payment']        = $total_payment;
+$tuition['base']                 = $base;
+$tuition['discount_amount']      = $discount;
+$tuition['payment_total']        = $payment_total;
+$tuition['balance_after_down']   = $balance_after_down;
+$tuition['remaining_balance']    = $remaining_balance;
+
+$stmt->close();
+$stmt2->close();
 ?>
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -147,59 +261,73 @@ if ($result && $row = $result->fetch_assoc()) {
   <?php include 'navigation.php'; ?>
   <div class="content flex-grow-1">
     <?php include 'nav_top.php'; ?>
+
     <div class="container my-4">
-        <div class="row g-4">
+      <div class="row g-4">
         <div class="col-12">
           <div class="rounded p-3 bg-white">
-            <div class="container ">
+            <div class="container">
 
               <div class="row">
-                    <div class="col-12 col-md-12">
-                     <div class="row pb-3">
-                      <div class="col-12 d-flex flex-column col-md-6">
-                          <span class="me-3 text-muted">Account No: <?php echo $tuition['account_number']; ?></span>
-                          <span class="me-3 text-muted">Student: <?= htmlspecialchars($tuition['firstname'] . ' ' . $tuition['middlename'] . ' ' . $tuition['lastname']) ?></span>
-                          <span class="me-3 text-muted">Residential Address:  <?= htmlspecialchars($tuition['residential_address'] ?? 'N/A') ?></span>
-                      </div>
-                      <div class="col-12 d-flex flex-column col-md-6">
-                          <span class="me-3 text-muted">Student No: <?= htmlspecialchars($tuition['student_number'] ?? 'N/A') ?></span>
-                          <span class="me-3 text-muted">Transaction Date: <?php echo $tuition['enrolled_date']; ?> </span>
-                          </span><span class="me-3 text-muted">Tuition Fee: PHP <?php echo $balance ?></span>
-                      </div>
-
-                     </div>
+                <div class="col-12 col-md-12">
+                  <div class="row pb-3">
+                    <div class="col-12 d-flex flex-column col-md-6">
+                      <span class="me-3 text-muted">Account No: <?= h($tuition['account_number']) ?></span>
+                      <span class="me-3 text-muted">Student: <?= h(trim($tuition['firstname'].' '.$tuition['middlename'].' '.$tuition['lastname'])) ?></span>
+                      <span class="me-3 text-muted">Residential Address: <?= h($tuition['residential_address'] ?? 'N/A') ?></span>
                     </div>
+                    <div class="col-12 d-flex flex-column col-md-6">
+                      <span class="me-3 text-muted">Student No: <?= h($tuition['student_number'] ?? 'N/A') ?></span>
+                      <span class="me-3 text-muted">Transaction Date: <?= h($tuition['enrolled_date']) ?></span>
+                      <!-- ✅ show balance after downpayment (true "tuition balance") -->
+                      <span class="me-3 text-muted">Tuition Balance: <?= money($balance_after_down) ?></span>
+                    </div>
+                  </div>
+                </div>
 
-                    <hr>
-                    <div class="col-12 col-md-8">
-                        <!-- Table Area -->
-                        <div class=" rounded rounded-4">
-                      <div class="d-flex justify-content-between align-items-center mb-3">
-                        <h6 class="mb-0 text-muted">Recent Payments - <?php echo $tuition['payment_plan']; ?></h6>
-                        <!-- Button trigger modal -->
-                         
-                          <!-- <a href="#" class="btn btn-danger btn-sm rounded rounded-4 px-4 disabled">
-                            <i class="bi bi-check-circle me-2"></i> Paid
-                          </a> -->
-                          <button id="payment_btn" class="btn btn-danger btn-sm border rounded rounded-4 px-4" data-bs-toggle="modal" data-bs-target="#payModal">
-                            <i class="bi bi-cash me-2"></i> Pay
-                          </button>
+                <hr>
 
-                        <!-- Modal -->
-                        <div class="modal fade" id="payModal" tabindex="-1" aria-labelledby="payModalLabel" aria-hidden="true">
+                <div class="col-12 col-md-8">
+                  <div class="rounded rounded-4">
+                    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                      <div>
+                        <h6 class="mb-0 text-muted">
+                          Recent Payments - <?= h($tuition['payment_plan']) ?>
+                          <span class="text-muted small ms-2">
+                            ( <?= money($per_plan_payment) ?> each)
+                          </span>
+                        </h6>
+                        <!-- <div class="small text-muted mt-1">
+                          Base: <?= money($base) ?> |
+                          Discount: -<?= money($discount) ?> |
+                          Payment Total: <?= money($payment_total) ?> |
+                          Downpayment: -<?= money($downpayment) ?>
+                        </div> -->
+                      </div>
+
+                      <button id="payment_btn"
+                              class="btn btn-danger btn-sm border rounded-4 px-4"
+                              data-bs-toggle="modal"
+                              data-bs-target="#payModal">
+                        <i class="bi bi-cash me-2"></i> Pay
+                      </button>
+
+                      <!-- Modal -->
+                      <div class="modal fade" id="payModal" tabindex="-1" aria-labelledby="payModalLabel" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered">
-                            <div class="modal-content rounded-4 ">
+                          <div class="modal-content rounded-4">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="payModalLabel">Enter Payment Details</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              <h5 class="modal-title" id="payModalLabel">Enter Payment Details</h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                             </div>
-                           <form action="pay_bill.php" method="POST" enctype="multipart/form-data">
+
+                            <form action="pay_bill.php" method="POST" enctype="multipart/form-data">
                               <div class="modal-body">
                                 <div class="row">
                                   <div class="col-md-6 mb-2">
                                     <label for="reference" class="text-muted">Reference Number</label>
-                                    <input type="number" disabled step="0.01" class="form-control" id="reference" name="reference" required>
-                                    <input type="hidden" step="0.01" class="form-control" id="tuition_id" value="<?php echo $tuition_id?>" name="tuition_id" >
+                                    <input type="number" disabled class="form-control" id="reference" name="reference">
+                                    <input type="hidden" class="form-control" id="tuition_id" value="<?= (int)$tuition_id ?>" name="tuition_id">
                                   </div>
                                   <div class="col-md-6 mb-2">
                                     <label for="payment_type" class="text-muted">Payment Type</label>
@@ -213,29 +341,27 @@ if ($result && $row = $result->fetch_assoc()) {
 
                                 <div class="mb-2">
                                   <label for="payment" class="text-muted">Payment</label>
-                                  <input placeholder="Note: please enter payment." 
-                                        type="text" 
-                                        inputmode="decimal" 
-                                        pattern="^\d*\.?\d{0,2}$" 
-                                        class="form-control" 
-                                        id="payment" 
-                                        name="payment" 
-                                        required 
+                                  <input placeholder="Note: please enter payment."
+                                        type="text"
+                                        inputmode="decimal"
+                                        pattern="^\d*\.?\d{0,2}$"
+                                        class="form-control"
+                                        id="payment"
+                                        name="payment"
+                                        required
                                         maxlength="10">
                                   <small class="text-danger d-none" id="invalid-warning"></small>
                                 </div>
-                                
-                                <!-- Transaction Fee Field -->
+
                                 <label class="text-muted">Transaction Fee</label>
                                 <input type="number" id="transaction_fee_input" name="transaction_fee" readonly class="form-control" disabled value="0.00">
 
                                 <div class="mt-3">
                                   <h5>Payment Summary</h5>
-                                  <input type="hidden" name="student_id" value="">
-                                  
+
                                   <div class="d-flex justify-content-between">
                                     <span class="text-muted">Payment:</span>
-                                    <span class='text-muted' id="payment_display">PHP 0.00</span>
+                                    <span class="text-muted" id="payment_display">PHP 0.00</span>
                                   </div>
 
                                   <div class="d-flex justify-content-between">
@@ -256,286 +382,192 @@ if ($result && $row = $result->fetch_assoc()) {
 
                               <div class="modal-footer">
                                 <button type="submit" class="btn btn-danger text-light px-4" id="submit-btn" disabled>Submit</button>
-                                <script>
-                                document.getElementById('confirm-check').addEventListener('change', function () {
-                                    document.getElementById('submit-btn').disabled = !this.checked;
-                                });
-                                </script>
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                               </div>
                             </form>
 
                             <script>
-                            document.addEventListener("DOMContentLoaded", function () {
-                              const paymentType = document.getElementById("payment_type");
-                              const reference = document.getElementById("reference");
-                              const transactionFeeInput = document.getElementById("transaction_fee_input");
-                              const paymentInput = document.getElementById("payment");
+                              document.getElementById('confirm-check').addEventListener('change', function () {
+                                document.getElementById('submit-btn').disabled = !this.checked;
+                              });
 
-                              const paymentSummaryEl = document.getElementById("payment_display");
-                              const transactionFeeEl = document.getElementById("transaction_fee");
+                              document.addEventListener("DOMContentLoaded", function () {
+                                const paymentType = document.getElementById("payment_type");
+                                const reference = document.getElementById("reference");
+                                const transactionFeeInput = document.getElementById("transaction_fee_input");
+                                const paymentInput = document.getElementById("payment");
 
-                              function updateSummary() {
-                                let paymentValue = parseFloat(paymentInput.value) || 0;
-                                let transactionFee = (paymentType.value === "GCash" || paymentType.value === "Bank Transfer") 
-                                                      ? parseFloat(transactionFeeInput.value) 
-                                                      : 0;
+                                const paymentSummaryEl = document.getElementById("payment_display");
+                                const transactionFeeEl = document.getElementById("transaction_fee");
 
-                                // Update Summary fields
-                                paymentSummaryEl.textContent = "PHP " + paymentValue.toFixed(2);
-                                transactionFeeEl.textContent = "PHP " + transactionFee.toFixed(2);
-                              }
+                                function updateSummary() {
+                                  let paymentValue = parseFloat(paymentInput.value) || 0;
+                                  let transactionFee = (paymentType.value === "GCash" || paymentType.value === "Bank Transfer")
+                                    ? parseFloat(transactionFeeInput.value || "0")
+                                    : 0;
 
-                              // Handle payment type changes
-                              paymentType.addEventListener("change", function () {
-                                if (this.value === "Cash") {
-                                  reference.disabled = true;
-                                  reference.required = false;
-                                  transactionFeeInput.disabled = true;
-                                  transactionFeeInput.value = "0.00";
-                                } else {
-                                  reference.disabled = false;
-                                  reference.required = true;
-                                  transactionFeeInput.disabled = false;
-                                  transactionFeeInput.value = "15.00";
+                                  paymentSummaryEl.textContent = "PHP " + paymentValue.toFixed(2);
+                                  transactionFeeEl.textContent = "PHP " + transactionFee.toFixed(2);
                                 }
+
+                                paymentType.addEventListener("change", function () {
+                                  if (this.value === "Cash") {
+                                    reference.disabled = true;
+                                    reference.required = false;
+                                    transactionFeeInput.disabled = true;
+                                    transactionFeeInput.value = "0.00";
+                                  } else {
+                                    reference.disabled = false;
+                                    reference.required = true;
+                                    transactionFeeInput.disabled = false;
+                                    transactionFeeInput.value = "15.00";
+                                  }
+                                  updateSummary();
+                                });
+
+                                paymentInput.addEventListener("input", updateSummary);
                                 updateSummary();
                               });
-
-                              // Update on typing payment
-                              paymentInput.addEventListener("input", updateSummary);
-
-                              // Initial load
-                              updateSummary();
-                            });
                             </script>
-
-
-
-                            
-
-
-
-                            </div>
+                          </div>
                         </div>
-                        </div>
-
+                      </div>
                     </div>
-                       <table class="table table-hover table-sm table-striped pt-3 pb-3 text-muted" style="font-size: 12px; cursor: pointer">
-                        <thead>
-                            <tr>
-                                <th>Invoice No.</th>
-                                <th>Date</th>
-                                <th>Payment</th>
-                                <th>Fee</th>
-                                <th>Type</th>
-                            </tr>
-                        </thead>
-                       <tbody>
+
+                    <table class="table table-hover table-sm table-striped pt-3 pb-3 text-muted" style="font-size: 12px; cursor: pointer">
+                      <thead>
+                        <tr>
+                          <th>Invoice No.</th>
+                          <th>Date</th>
+                          <th>Payment</th>
+                          <th>Fee</th>
+                          <th>Type</th>
+                        </tr>
+                      </thead>
+                      <tbody>
                         <?php
-                        $student_id = $tuition_id; // or use from session
+                          $student_id = $tuition_id;
 
-                        $stmt = $conn->prepare("SELECT invoice_number, date, payment, transaction_fee, payment_type FROM payment WHERE tuition_id = ? ORDER BY date DESC");
-                        $stmt->bind_param("i", $student_id);
-                        $stmt->execute();
-                        $result = $stmt->get_result();
+                          $stmt3 = $conn->prepare("SELECT invoice_number, date, payment, transaction_fee, payment_type FROM payment WHERE tuition_id = ? ORDER BY date DESC");
+                          $stmt3->bind_param("i", $student_id);
+                          $stmt3->execute();
+                          $paymentsRes = $stmt3->get_result();
 
-                        if ($result->num_rows > 0) {
-                            while ($row = $result->fetch_assoc()) {
-                                $formatted_invoice = 'INV-' . str_pad($row['invoice_number'], 4, '0', STR_PAD_LEFT);
-                                echo "<tr class='clickable-row' data-id='{$row['invoice_number']}' data-student='{$student_id}'>";
-                                echo "<td class='py-3'>{$formatted_invoice}</td>";
-                                echo "<td class='py-3'>" . $row['date'] . "</td>";
-                                echo "<td class='py-3'>₱" . number_format($row['payment'], 2) . "</td>";
-                                echo "<td class='py-3'>₱" . number_format($row['transaction_fee'], 2) . "</td>";
-                                echo "<td class='py-3'>" . htmlspecialchars($row['payment_type']) . "</td>";
-                                echo "</tr>";
+                          if ($paymentsRes && $paymentsRes->num_rows > 0) {
+                            while ($prow = $paymentsRes->fetch_assoc()) {
+                              $formatted_invoice = 'INV-' . str_pad((string)$prow['invoice_number'], 4, '0', STR_PAD_LEFT);
+                              echo "<tr class='clickable-row' data-id='".h($prow['invoice_number'])."' data-student='".h($student_id)."'>";
+                              echo "<td class='py-3'>".h($formatted_invoice)."</td>";
+                              echo "<td class='py-3'>".h($prow['date'])."</td>";
+                              echo "<td class='py-3'>₱".number_format((float)$prow['payment'], 2)."</td>";
+                              echo "<td class='py-3'>₱".number_format((float)$prow['transaction_fee'], 2)."</td>";
+                              echo "<td class='py-3'>".h($prow['payment_type'])."</td>";
+                              echo "</tr>";
                             }
-                        } else {
-                            echo "<tr><td colspan='7' class='text-center py-3 text-muted'>
-                            <img src='../static/artnotfound.svg'class='mt-3' style='width: 50%; opacity: 70%'>
-                            <p>No data found</p>
-                            </td></tr>";
-                        }
+                          } else {
+                            echo "<tr><td colspan='5' class='text-center py-3 text-muted'>
+                                  <img src='../static/artnotfound.svg' class='mt-3' style='width: 50%; opacity: 70%'>
+                                  <p>No data found</p>
+                                  </td></tr>";
+                          }
 
-                        $stmt->close();
-                        $conn->close();
+                          $stmt3->close();
                         ?>
-                        </tbody>
-                        <script>
-                          document.addEventListener('DOMContentLoaded', function () {
-                              document.querySelectorAll('.clickable-row').forEach(function(row) {
-                                  row.addEventListener('click', function() {
-                                      const invoiceId = this.getAttribute('data-id');
-                                      const studentId = this.getAttribute('data-student');
-                                      window.location.href = 'view_invoice.php?invoice_id=' + encodeURIComponent(invoiceId) + '&tuition_id=' + encodeURIComponent(studentId);
-                                  });
-                              });
-                          });
-                          </script>
-
-
+                      </tbody>
                     </table>
-                    </div>
-                    </div>
-                    <div class="col-12 col-md-4">
-                        <div class="row">
-                        <div class="col-12 mb-3">
-                            <div class=" p-3 rounded shadow rounded-4" style="background-color: accentgreen">
-                            <p class="text-muted">Remaining Balance</p>
-                            <h2 class="fw-bolder"><?php echo "₱" . number_format($remaining_balance, 2); ?></h2>
-                            </div>
-                        </div>
-                        <div class="col-12">
-                            <!-- Radial Percentage Donut -->
-                            <div class="p-3 shadow rounded rounded-4">
-                            <h6 class="mb-3 text-muted">Payment Completion</h6>
-                            <div id="radialChart"></div>
-                            </div>
-                        </div>
-                        </div>
+
+                    <script>
+                      document.addEventListener('DOMContentLoaded', function () {
+                        document.querySelectorAll('.clickable-row').forEach(function(row) {
+                          row.addEventListener('click', function() {
+                            const invoiceId = this.getAttribute('data-id');
+                            const studentId = this.getAttribute('data-student');
+                            window.location.href = 'view_invoice.php?invoice_id=' + encodeURIComponent(invoiceId) + '&tuition_id=' + encodeURIComponent(studentId);
+                          });
+                        });
+                      });
+                    </script>
+
+                  </div>
+                </div>
+
+                <div class="col-12 col-md-4">
+                  <div class="row">
+                    <div class="col-12 mb-3">
+                      <div class="p-3 rounded shadow rounded-4">
+                        <p class="text-muted mb-1">Remaining Balance</p>
+                        <h2 class="fw-bolder mb-0"><?= money($remaining_balance) ?></h2>
+                      </div>
                     </div>
 
+                    <div class="col-12">
+                      <div class="p-3 shadow rounded rounded-4">
+                        <h6 class="mb-3 text-muted">Payment Completion</h6>
+                        <div id="radialChart"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+              </div><!-- row -->
+            </div><!-- container -->
+          </div><!-- rounded -->
+        </div><!-- col -->
+      </div><!-- row -->
+    </div><!-- container -->
   </div>
 </div>
+
 <?php include 'footer.php'; ?>
 </body>
 </html>
 
+<input type="hidden" id="balance" value="<?= h($balance_after_down) ?>">
+<input type="hidden" id="amount_pay" value="<?= h($remaining_balance) ?>">
 
-
-<input type="hidden" id="balance" value="<?php echo $balance; ?>">
-<input type="hidden" id="amount_pay" value="<?php echo $remaining_balance; ?>">
 <script>
-  // Get values from input fields
   const balance = parseFloat(document.getElementById("balance").value) || 0;
   const amountPay = parseFloat(document.getElementById("amount_pay").value) || 0;
 
-  // Calculate percentage
   let percentage = 0;
   if (balance === 0 && amountPay === 0) {
-    percentage = 100; // Treat as fully paid
+    percentage = 100;
   } else if (balance > 0) {
     percentage = 100 - (amountPay / balance) * 100;
-    if (percentage > 100) percentage = 100; // Cap at 100%
-    if (percentage < 0) percentage = 0; // Prevent negative
+    if (percentage > 100) percentage = 100;
+    if (percentage < 0) percentage = 0;
   }
 
-  // Determine label based on percentage
   let chartLabel = 'Progress';
   if (percentage >= 100) {
     chartLabel = 'Completed';
     const paymentBtn = document.getElementById("payment_btn");
-
-    // Change text to "Paid" with icon and disable
-    paymentBtn.innerHTML = '<i class="bi bi-cash me-2"></i> Paid';
-    paymentBtn.disabled = true;
-
-    // Optional: style disabled button
-    paymentBtn.style.cursor = "not-allowed";
+    if (paymentBtn) {
+      paymentBtn.innerHTML = '<i class="bi bi-cash me-2"></i> Paid';
+      paymentBtn.disabled = true;
+      paymentBtn.style.cursor = "not-allowed";
+    }
   }
 
-  // ApexCharts options
   var options = {
-    chart: {
-      type: 'radialBar',
-      height: 250
-    },
+    chart: { type: 'radialBar', height: 250 },
     plotOptions: {
       radialBar: {
-        hollow: {
-          size: '60%',
-        },
+        hollow: { size: '60%' },
         dataLabels: {
-          name: {
-            show: true,
-            fontSize: '16px'
-          },
+          name: { show: true, fontSize: '16px' },
           value: {
             fontSize: '20px',
-            formatter: function (val) {
-              return val.toFixed(1) + "%";
-            }
+            formatter: function (val) { return val.toFixed(1) + "%"; }
           }
         }
       }
     },
-    series: [percentage], // dynamic percentage
+    series: [percentage],
     labels: [chartLabel],
     colors: ['#b72029']
   };
 
-  // Render chart
   var chart = new ApexCharts(document.querySelector("#radialChart"), options);
   chart.render();
 </script>
-
-
-<!-- 
-<script>
-  // Get values from input fields
-  const balance = parseFloat(document.getElementById("balance").value) || 0;
-  const amountPay = parseFloat(document.getElementById("amount_pay").value) || 0;
-
-  // Calculate percentage
-  let percentage = 0;
-  if (balance > 0) {
-    percentage = (100-(amountPay / balance) * 100);
-    if (percentage > 100) percentage = 100; // Cap at 100%
-  }
-
-  // Determine label based on percentage
-  let chartLabel = 'Progress';
-  if (percentage >= 100) {
-    chartLabel = 'Completed';
-    const paymentBtn = document.getElementById("payment_btn");
-
-    // Change text to "Paid" with icon and disable
-    paymentBtn.innerHTML = '<i class="bi bi-cash me-2"></i> Paid';
-    paymentBtn.disabled = true;
-
-    // Optional: style disabled button
-    paymentBtn.style.cursor = "not-allowed";
-
-  }
-
-  // ApexCharts options
-  var options = {
-    chart: {
-      type: 'radialBar',
-      height: 250
-    },
-    plotOptions: {
-      radialBar: {
-        hollow: {
-          size: '60%',
-        },
-        dataLabels: {
-          name: {
-            show: true,
-            fontSize: '16px'
-          },
-          value: {
-            fontSize: '20px',
-            formatter: function (val) {
-              return val.toFixed(1) + "%";
-            }
-          }
-        }
-      }
-    },
-    series: [percentage], // dynamic percentage
-    labels: [chartLabel],
-    colors: ['#b72029']
-  };
-
-  // Render chart
-  var chart = new ApexCharts(document.querySelector("#radialChart"), options);
-  chart.render();
-</script> -->

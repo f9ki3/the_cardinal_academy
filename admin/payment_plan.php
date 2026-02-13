@@ -14,12 +14,10 @@ $scheme_text = ''; // JSON string from TEXT column
 // Detect Grade 11/12 (Senior High) for monthly divisor = 4
 $isSeniorHigh = false;
 if (!empty($grade_level)) {
-  // Extract number from "Grade 11", "11", etc.
   if (preg_match('/(\d+)/', $grade_level, $m)) {
     $num = intval($m[1]);
     if ($num >= 11) $isSeniorHigh = true;
   }
-  // Nursery/Kinder -> not senior
 }
 
 if (!empty($grade_level)) {
@@ -66,13 +64,14 @@ if (!empty($grade_level)) {
             <!-- ✅ Grade Level for JS rules -->
             <input type="hidden" id="grade_level" value="<?= htmlspecialchars($grade_level) ?>">
 
-            <!-- ✅ Scheme JSON (use textarea to preserve JSON safely) -->
+            <!-- ✅ Scheme JSON (textarea is safer than input value) -->
             <textarea id="scheme" hidden><?php echo htmlspecialchars(trim($scheme_text)); ?></textarea>
 
             <!-- ✅ For submission -->
             <input type="hidden" name="payment_total" id="payment_total_value" value="0">
             <input type="hidden" name="installment_count" id="installment_count_value" value="0">
             <input type="hidden" name="installment_amount" id="installment_amount_value" value="0">
+            <input type="hidden" name="interest_amount" id="interest_amount_value" value="0">
 
             <div class="row g-3">
               <input type="hidden" name="id" value="<?= htmlspecialchars($admission_id) ?>">
@@ -104,17 +103,20 @@ if (!empty($grade_level)) {
                     $nextYear = $currentYear + 1;
                     $currentSchoolYear = $currentYear . "-" . $nextYear;
 
-                    $sql = "SELECT section_id, section_name, grade_level, room, strand, capacity, enrolled, school_year
-                            FROM sections
-                            WHERE grade_level = '$grade_level'
-                            AND school_year = '$currentSchoolYear'
-                            ORDER BY grade_level, section_name";
+                    // ✅ safer: prepared statement (avoid injection)
+                    $secSql = "SELECT section_id, section_name, grade_level, room, strand, capacity, enrolled, school_year
+                               FROM sections
+                               WHERE grade_level = ?
+                                 AND school_year = ?
+                               ORDER BY grade_level, section_name";
+                    $secStmt = $conn->prepare($secSql);
+                    $secStmt->bind_param("ss", $grade_level, $currentSchoolYear);
+                    $secStmt->execute();
+                    $result = $secStmt->get_result();
 
-                    $result = mysqli_query($conn, $sql);
-
-                    if ($result && mysqli_num_rows($result) > 0) {
+                    if ($result && $result->num_rows > 0) {
                       $hasAvailable = false;
-                      while ($row = mysqli_fetch_assoc($result)) {
+                      while ($row = $result->fetch_assoc()) {
                         $sectionId   = $row['section_id'];
                         $sectionName = $row['section_name'];
                         $gradeLevel  = $row['grade_level'];
@@ -124,20 +126,21 @@ if (!empty($grade_level)) {
                         $enrolled    = $row['enrolled'];
                         $schoolYear  = $row['school_year'];
 
-                        if ($capacity == $enrolled) continue;
+                        if ((int)$capacity === (int)$enrolled) continue;
 
                         $label = "{$sectionName} ( {$gradeLevel}";
                         if (!empty($room)) $label .= ", Room {$room}";
                         if (($gradeLevel == "11" || $gradeLevel == "12") && !empty($strand)) $label .= ", Strand: {$strand}";
                         $label .= ") - {$enrolled}/{$capacity} students";
 
-                        echo "<option value='{$sectionId}'>{$label} [SY: {$schoolYear}]</option>";
+                        echo "<option value='".htmlspecialchars($sectionId)."'>".htmlspecialchars($label)." [SY: ".htmlspecialchars($schoolYear)."]</option>";
                         $hasAvailable = true;
                       }
                       if (!$hasAvailable) echo "<option value='' disabled selected>-- All sections are full --</option>";
                     } else {
                       echo "<option value='' disabled selected>-- No available section --</option>";
                     }
+                    $secStmt->close();
                   ?>
                 </select>
               </div>
@@ -164,7 +167,7 @@ if (!empty($grade_level)) {
 
               <div class="col-md-3">
                 <label for="program_type" class="form-label text-muted">Discount Category*</label>
-                <select id="program_type" name="program_type" class="form-select" required>
+                <select id="program_type" name="program_type" class="form-select">
                   <option value="">Select program...</option>
                   <option value="ESC Voucher">ESC Voucher</option>
                   <option value="Loyalty Voucher">Loyalty Voucher</option>
@@ -190,7 +193,8 @@ if (!empty($grade_level)) {
               </div>
 
               <div class="col-md-3">
-                <label class="form-label text-muted">Discount Amount (Tuition Fee)</label>
+                <!-- ✅ label is kept, but logic is now total-based -->
+                <label class="form-label text-muted">Discount Amount</label>
                 <input type="text" name="discount_amount" id="discount_amount" readonly class="form-control" value="₱0.00">
               </div>
 
@@ -224,13 +228,13 @@ if (!empty($grade_level)) {
                     </li>
 
                     <li class="list-group-items-iii d-flex justify-content-between align-items-center p-2">
-                      <span class="text-muted">Discount</span>
-                      <span>₱0</span>
+                      <span class="text-muted">Interest</span>
+                      <span id="interest_display">₱0</span>
                     </li>
 
-                    <li class="list-group-items-iii d-flex justify-content-between align-items-center p-2 border-top">
-                      <span class="fw-bold">Tuition + Misc - Discount</span>
-                      <span class="fw-bold">₱0</span>
+                    <li class="list-group-items-iii d-flex justify-content-between align-items-center p-2">
+                      <span class="text-muted">Discount</span>
+                      <span>₱0</span>
                     </li>
 
                     <li class="list-group-items-iii d-flex justify-content-between align-items-center p-2 border-top">
@@ -238,7 +242,6 @@ if (!empty($grade_level)) {
                       <span class="fw-bold" id="payment_total_display">₱0</span>
                     </li>
 
-                    <!-- ✅ NEW: Breakdown display -->
                     <li class="list-group-items-iii d-flex justify-content-between align-items-center p-2">
                       <span class="text-muted">Breakdown</span>
                       <span class="fw-bold" id="breakdown_summary">—</span>
@@ -307,7 +310,7 @@ if (!empty($grade_level)) {
                 </div>
               </div>
 
-              <!-- ✅ UNIFORM SIDE (unchanged) -->
+              <!-- UNIFORM SIDE (kept as-is) -->
               <div class="col-md-6">
                 <div class="border mt-3 rounded-4 p-3">
                   <h6 class="mb-3 fw-bold">Uniform Details</h6>
@@ -458,6 +461,7 @@ if (!empty($grade_level)) {
               <div class="col-md-12">
                 <textarea id="uniform_cart" class="w-100" hidden name="uniform_cart"></textarea>
               </div>
+
             </div>
           </fieldset>
         </div>
@@ -470,7 +474,6 @@ if (!empty($grade_level)) {
 </body>
 </html>
 
-<!-- ✅ ONE unified script: discount + summary + payment total + breakdown -->
 <script>
 document.addEventListener("DOMContentLoaded", function () {
   const gradeLevelEl  = document.getElementById("grade_level");
@@ -492,6 +495,9 @@ document.addEventListener("DOMContentLoaded", function () {
   const paymentTotalDisplay = document.getElementById("payment_total_display");
   const paymentTotalHidden  = document.getElementById("payment_total_value");
 
+  const interestDisplay = document.getElementById("interest_display");
+  const interestHidden  = document.getElementById("interest_amount_value");
+
   const breakdownSummaryEl = document.getElementById("breakdown_summary");
   const breakdownLabelEl   = document.getElementById("breakdown_label");
   const breakdownAmountEl  = document.getElementById("breakdown_amount");
@@ -512,16 +518,10 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Read scheme JSON (must be valid JSON in DB)
   function safeParseScheme() {
     const raw = (schemeEl?.value || schemeEl?.textContent || "").trim();
     if (!raw) return null;
-    try {
-      return JSON.parse(raw);
-    } catch (e) {
-      console.warn("Invalid scheme JSON:", e, raw);
-      return null;
-    }
+    try { return JSON.parse(raw); } catch (e) { console.warn("Invalid scheme JSON:", e, raw); return null; }
   }
 
   function planKeyFromSelect(value) {
@@ -543,8 +543,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   function isSeniorHighGrade(gradeLabel) {
-    const s = String(gradeLabel || "").toLowerCase();
-    const m = s.match(/(\d+)/);
+    const m = String(gradeLabel || "").match(/(\d+)/);
     if (!m) return false;
     const n = parseInt(m[1], 10);
     return n >= 11;
@@ -557,22 +556,18 @@ document.addEventListener("DOMContentLoaded", function () {
     if (planKey === "semestral") return 2;
 
     if (!senior) {
-      // Nursery–Grade 10
       if (planKey === "quarterly") return 4;
       if (planKey === "monthly") return 9;
       return 1;
     } else {
-      // Grade 11–12
       if (planKey === "monthly") return 4;
-      // quarterly shouldn't exist, but fallback:
       if (planKey === "quarterly") return 4;
       return 1;
     }
   }
 
-  function getBreakdownLabel(planKey, divisor) {
+  function getBreakdownLabel(planKey) {
     const senior = isSeniorHighGrade(gradeLevelEl?.value);
-
     if (planKey === "annual") return "";
     if (planKey === "semestral") return "Per Semester";
     if (planKey === "quarterly") return "Per Quarter";
@@ -580,10 +575,31 @@ document.addEventListener("DOMContentLoaded", function () {
     return "Installment";
   }
 
-  function updateDiscount() {
-    const tuitionFee = parsePeso(tuitionInput.value);
-    const type = discountType.value;
+  // ✅ Single source of truth for totals used by BOTH discount + summary
+  function getCurrentTotalsBeforeDiscount() {
+    const tuition = parsePeso(tuitionInput.value);
+    const misc    = parsePeso(miscInput.value);
+    const baseNoInterest = Math.max(0, tuition + misc);
 
+    const planKey = planKeyFromSelect(planSelect.value);
+    const schemePlanTotal = planKey ? getSchemePaymentTotal(planKey) : 0;
+
+    // Interest derived from scheme (scheme includes interest)
+    const interest = planKey ? Math.max(0, schemePlanTotal - baseNoInterest) : 0;
+
+    // ✅ Base for discount when percent/fixed:
+    // discount must apply to tuition + misc + interest
+    // = schemePlanTotal if plan selected
+    // else fallback to tuition+misc (no interest)
+    const baseForDiscount = planKey ? Math.max(0, schemePlanTotal) : baseNoInterest;
+
+    return { planKey, tuition, misc, baseNoInterest, schemePlanTotal, interest, baseForDiscount };
+  }
+
+  function computeDiscountAmount() {
+    const { baseForDiscount } = getCurrentTotalsBeforeDiscount();
+
+    const type = discountType.value;
     let val = parseFloat(discountValue.value) || 0;
     let discount = 0;
 
@@ -591,39 +607,46 @@ document.addEventListener("DOMContentLoaded", function () {
       discountValue.disabled = true;
       discountValue.value = 0;
       discount = 0;
-    } else {
-      discountValue.disabled = false;
-
-      if (type === "percent") {
-        if (val > 100) { val = 100; discountValue.value = 100; }
-        discount = (tuitionFee * val) / 100;
-      } else if (type === "fixed") {
-        if (val > tuitionFee) { val = tuitionFee; discountValue.value = tuitionFee; }
-        discount = val;
-      }
+      return discount;
     }
 
-    if (discount > tuitionFee) discount = tuitionFee;
-    discountAmt.value = formatPeso(discount);
+    discountValue.disabled = false;
 
+    if (type === "percent") {
+      if (val > 100) { val = 100; discountValue.value = 100; }
+      discount = (baseForDiscount * val) / 100;  // ✅ percent from (tuition+misc+interest)
+    } else if (type === "fixed") {
+      if (val > baseForDiscount) { val = baseForDiscount; discountValue.value = baseForDiscount; }
+      discount = val; // ✅ fixed up to (tuition+misc+interest)
+    }
+
+    // Final safety cap
+    if (discount > baseForDiscount) discount = baseForDiscount;
+    if (discount < 0) discount = 0;
+
+    return discount;
+  }
+
+  function updateDiscount() {
+    const discount = computeDiscountAmount();
+    discountAmt.value = formatPeso(discount);
     updateSummary();
   }
 
   function updateSummary() {
     const regFee  = parsePeso(regFeeInput.value);
-    const tuition = parsePeso(tuitionInput.value);
-    const misc    = parsePeso(miscInput.value);
     const uniform = parsePeso(uniformInput.value);
-    const discount = parsePeso(discountAmt.value);
     const down    = parseFloat(downInput.value) || 0;
 
-    const tuitionMiscLessDiscount = Math.max(0, tuition + misc - discount);
+    const { planKey, tuition, misc, schemePlanTotal, interest, baseNoInterest } = getCurrentTotalsBeforeDiscount();
 
-    const planKey = planKeyFromSelect(planSelect.value);
-    const basePlanTotal = planKey ? getSchemePaymentTotal(planKey) : 0;
+    const discount = parsePeso(discountAmt.value);
 
-    // Payment total (you can change this if you don't want discount to affect plan total)
-    const paymentTotal = Math.max(0, basePlanTotal - discount);
+    // ✅ Payment total behavior:
+    // If plan selected, use schemePlanTotal (which already includes interest) then minus discount
+    // If no plan, fallback to (tuition+misc) - discount
+    const gross = planKey ? schemePlanTotal : baseNoInterest;
+    const paymentTotal = Math.max(0, gross - Math.max(0, discount));
 
     // Amount to pay today
     const amountToPayToday = regFee + uniform + down;
@@ -631,12 +654,9 @@ document.addEventListener("DOMContentLoaded", function () {
     // Breakdown divisor
     const divisor = getBreakdownDivisor(planKey);
     const hasBreakdown = (planKey && planKey !== "annual" && divisor > 1 && paymentTotal > 0);
-
-    // installment
     const installment = hasBreakdown ? (paymentTotal / divisor) : 0;
-    const breakdownLabel = getBreakdownLabel(planKey, divisor);
 
-    // Update list values by label
+    // Update list items (your existing UI)
     summaryLis.forEach((li) => {
       const label = li.querySelector("span:first-child")?.textContent?.trim();
       const valueSpan = li.querySelector("span:last-child");
@@ -651,9 +671,6 @@ document.addEventListener("DOMContentLoaded", function () {
           break;
         case "Discount":
           valueSpan.textContent = formatPeso(discount);
-          break;
-        case "Tuition + Misc - Discount":
-          valueSpan.textContent = formatPeso(tuitionMiscLessDiscount);
           break;
         case "Registration Fee":
           valueSpan.textContent = formatPeso(regFee);
@@ -670,9 +687,13 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     });
 
+    // Interest UI + hidden submit (interest does NOT change because discount doesn’t reduce interest)
+    interestDisplay.textContent = formatPeso(interest);
+    interestHidden.value = String(interest.toFixed(2));
+
     // Payment total UI + hidden submit
-    if (paymentTotalDisplay) paymentTotalDisplay.textContent = formatPeso(paymentTotal);
-    if (paymentTotalHidden)  paymentTotalHidden.value = String(paymentTotal.toFixed(2));
+    paymentTotalDisplay.textContent = formatPeso(paymentTotal);
+    paymentTotalHidden.value = String(paymentTotal.toFixed(2));
 
     // Breakdown UI + hidden submit
     if (!planKey) {
@@ -689,28 +710,28 @@ document.addEventListener("DOMContentLoaded", function () {
       installmentAmountHidden.value = String(paymentTotal.toFixed(2));
     } else {
       breakdownSummaryEl.textContent = divisor + " payments";
-      breakdownLabelEl.textContent = breakdownLabel;
+      breakdownLabelEl.textContent = getBreakdownLabel(planKey);
       breakdownAmountEl.textContent = formatPeso(installment);
-
       installmentCountHidden.value = String(divisor);
       installmentAmountHidden.value = String(installment.toFixed(2));
     }
   }
 
-  // Expose for uniform cart script
   window.updateSummary = updateSummary;
 
-  // Events
-  planSelect.addEventListener("change", updateSummary);
+  planSelect.addEventListener("change", function () {
+    // When plan changes, interest changes, so discount base changes too → recompute discount
+    updateDiscount();
+  });
 
   discountType.addEventListener("change", updateDiscount);
   discountValue.addEventListener("input", updateDiscount);
-
   downInput.addEventListener("input", updateSummary);
   uniformInput.addEventListener("input", updateSummary);
 
-  // Init
   discountValue.disabled = !discountType.value;
-  updateDiscount(); // triggers updateSummary
+
+  // Init
+  updateDiscount();
 });
 </script>

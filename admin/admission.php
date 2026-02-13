@@ -1,142 +1,154 @@
 <?php include 'session_login.php'; ?>
-<?php  include '../db_connection.php'; // assumes $conn is defined here?>
-<?php
-// Search and Pagination
-$limit = 10;
-$page = isset($_GET['page']) && is_numeric($_GET['page']) ? (int) $_GET['page'] : 1;
-$search = isset($_GET['search']) ? trim($_GET['search']) : '';
+<?php include '../db_connection.php'; // assumes $conn is defined here ?>
 
-// --- NEW SORTING PARAMETERS ---
-$default_sort_by = 'admission_date';
+<?php
+// -----------------------------------------------------------------------------
+// ✅ Helpers (fixes: htmlspecialchars(null) deprecation)
+// -----------------------------------------------------------------------------
+function h($val): string {
+    return htmlspecialchars((string)($val ?? ''), ENT_QUOTES, 'UTF-8');
+}
+
+// Search and Pagination
+$limit  = 10;
+$page   = (isset($_GET['page']) && is_numeric($_GET['page'])) ? (int)$_GET['page'] : 1;
+$page   = max(1, $page);
+$search = isset($_GET['search']) ? trim((string)$_GET['search']) : '';
+
+// --- SORTING ---
+$default_sort_by    = 'admission_date';
 $default_sort_order = 'DESC';
 
-$sort_by = isset($_GET['sort_by']) ? $_GET['sort_by'] : $default_sort_by; // Default sort
-$sort_order = isset($_GET['sort_order']) ? strtoupper($_GET['sort_order']) : $default_sort_order; // Default order
+$sort_by    = isset($_GET['sort_by']) ? (string)$_GET['sort_by'] : $default_sort_by;
+$sort_order = isset($_GET['sort_order']) ? strtoupper((string)$_GET['sort_order']) : $default_sort_order;
 
 // Validate and map $sort_by to a database column
 $allowed_sort_columns = [
-    'fullname' => 'fullname', // CONCAT() field
-    'grade_level' => 'grade_level',
-    'address' => 'address', // CONCAT() field
+    'fullname'       => 'fullname',       // CONCAT() field
+    'grade_level'    => 'grade_level',
+    'address'        => 'address',        // CONCAT() field
     'admission_date' => 'admission_date', // Default
-    'lrn' => 'lrn', // New sortable column
-    'que_code' => 'que_code' // New sortable column
+    'lrn'            => 'lrn',
+    'que_code'       => 'que_code',
 ];
 $sort_column = $allowed_sort_columns[$sort_by] ?? $default_sort_by;
 
 // Validate $sort_order
 $sort_order = ($sort_order === 'ASC' || $sort_order === 'DESC') ? $sort_order : $default_sort_order;
-// ---------------------------------
 
 $offset = ($page - 1) * $limit;
 
-// Count total results for pagination
-$count_query = "SELECT COUNT(*) as total FROM admission_form 
-                WHERE admission_status = 'pending' AND status = 'New Student' AND (
-                    lrn LIKE '%$search%' 
-                    OR que_code LIKE '%$search%' 
-                    OR CONCAT(firstname, ' ', lastname) LIKE '%$search%'
-                )";
-$count_result = mysqli_query($conn, $count_query);
-$total = mysqli_fetch_assoc($count_result)['total'];
-$total_pages = ceil($total / $limit);
-
-// Fetch paginated data
-// Define the base columns for CONCAT
+// Define CONCAT columns
 $fullname_col = "CONCAT(firstname, ' ', lastname)";
-$address_col = "CONCAT(barangay, ', ', municipal, ', ', province)";
+$address_col  = "CONCAT(barangay, ', ', municipal, ', ', province)";
 
-// Build the ORDER BY clause dynamically
-$order_by_clause = "";
+// Build ORDER BY clause
 if ($sort_column === 'fullname') {
     $order_by_clause = "ORDER BY $fullname_col $sort_order";
 } elseif ($sort_column === 'address') {
-    // Sorting by address CONCAT field
     $order_by_clause = "ORDER BY $address_col $sort_order";
 } else {
-    // Sorting by other single column fields or default
     $order_by_clause = "ORDER BY $sort_column $sort_order";
 }
 
-$query = "SELECT 
-            id,
-            que_code, 
-            lrn, 
-            $fullname_col AS fullname, 
-            $address_col AS address, 
-            grade_level,
-            status,
-            DATE_FORMAT(admission_date, '%Y-%m-%d') AS admission_date_formatted,
-            admission_date
-          FROM admission_form
-          WHERE admission_status = 'pending' AND status = 'New Student' AND (
-              lrn LIKE '%$search%' 
-              OR que_code LIKE '%$search%' 
-              OR $fullname_col LIKE '%$search%'
-          )
-          $order_by_clause
-          LIMIT $limit OFFSET $offset";
+// -----------------------------------------------------------------------------
+// ✅ Use prepared statements (also safer vs SQL injection)
+// -----------------------------------------------------------------------------
+$search_like = "%{$search}%";
 
-$result = mysqli_query($conn, $query);
+// Count total results
+$count_sql = "
+    SELECT COUNT(*) AS total
+    FROM admission_form
+    WHERE admission_status = 'pending'
+      AND status = 'New Student'
+      AND (
+            lrn LIKE ?
+         OR que_code LIKE ?
+         OR CONCAT(firstname, ' ', lastname) LIKE ?
+      )
+";
+$count_stmt = $conn->prepare($count_sql);
+$count_stmt->bind_param("sss", $search_like, $search_like, $search_like);
+$count_stmt->execute();
+$count_result = $count_stmt->get_result();
+$total = 0;
+if ($count_result && ($r = $count_result->fetch_assoc())) {
+    $total = (int)($r['total'] ?? 0);
+}
+$count_stmt->close();
 
-// Helper function to build query string for pagination/sorting links
-// FIX: Added $is_new_sort parameter to control page reset
+$total_pages = (int)ceil($total / $limit);
+
+// Fetch paginated data
+$data_sql = "
+    SELECT
+        id,
+        que_code,
+        lrn,
+        $fullname_col AS fullname,
+        $address_col  AS address,
+        grade_level,
+        status,
+        DATE_FORMAT(admission_date, '%Y-%m-%d') AS admission_date_formatted,
+        admission_date
+    FROM admission_form
+    WHERE admission_status = 'pending'
+      AND status = 'New Student'
+      AND (
+            lrn LIKE ?
+         OR que_code LIKE ?
+         OR $fullname_col LIKE ?
+      )
+    $order_by_clause
+    LIMIT ? OFFSET ?
+";
+$data_stmt = $conn->prepare($data_sql);
+$data_stmt->bind_param("sssii", $search_like, $search_like, $search_like, $limit, $offset);
+$data_stmt->execute();
+$result = $data_stmt->get_result();
+
+// Helper to build query string for pagination/sorting links
 function build_query_string($page = null, $search = null, $sort_by = null, $sort_order = null, $is_new_sort = false) {
     $params = [];
-    // Use current values as defaults
-    $current_search = isset($_GET['search']) ? $_GET['search'] : '';
-    $current_sort_by = isset($_GET['sort_by']) ? $_GET['sort_by'] : 'admission_date';
-    $current_sort_order = isset($_GET['sort_order']) ? $_GET['sort_order'] : 'DESC';
 
-    // Set parameters
-    $params['page'] = $page !== null ? $page : (isset($_GET['page']) ? $_GET['page'] : 1);
-    $params['search'] = $search !== null ? $search : $current_search;
-    $params['sort_by'] = $sort_by !== null ? $sort_by : $current_sort_by;
-    $params['sort_order'] = $sort_order !== null ? $sort_order : $current_sort_order;
-    
-    // FIX: Only reset page to 1 if $is_new_sort is explicitly true
-    if ($is_new_sort === true) {
-        $params['page'] = 1;
-    }
+    $current_search     = isset($_GET['search']) ? (string)$_GET['search'] : '';
+    $current_sort_by    = isset($_GET['sort_by']) ? (string)$_GET['sort_by'] : 'admission_date';
+    $current_sort_order = isset($_GET['sort_order']) ? (string)$_GET['sort_order'] : 'DESC';
 
-    // Optional: Clean up empty search parameter
-    if (empty($params['search'])) {
-        unset($params['search']);
-    }
+    $params['page']       = $page !== null ? $page : (isset($_GET['page']) ? (int)$_GET['page'] : 1);
+    $params['search']     = $search !== null ? (string)$search : $current_search;
+    $params['sort_by']    = $sort_by !== null ? (string)$sort_by : $current_sort_by;
+    $params['sort_order'] = $sort_order !== null ? (string)$sort_order : $current_sort_order;
+
+    if ($is_new_sort === true) $params['page'] = 1;
+
+    if (empty($params['search'])) unset($params['search']);
 
     return '?' . http_build_query($params);
 }
 
-// Function to generate the sort link for a column header
-// FIX: Updated call to build_query_string to signal a new sort
 function get_sort_link($column_name, $current_sort_by, $current_sort_order, $search) {
     $new_order = 'ASC';
-    // If we are currently sorting by this column, flip the order
     if ($current_sort_by === $column_name) {
         $new_order = ($current_sort_order === 'ASC') ? 'DESC' : 'ASC';
     }
 
-    // Build the query string for the new sort, passing true for $is_new_sort
     $query_string = build_query_string(null, $search, $column_name, $new_order, true);
 
-    // Determine the icon to display
-    $icon = 'bi-chevron-expand'; // Default icon
+    $icon = 'bi-chevron-expand';
     if ($current_sort_by === $column_name) {
         $icon = ($current_sort_order === 'ASC') ? 'bi-chevron-up' : 'bi-chevron-down';
     }
 
-    // Return the link and icon for the table header
-    return '<a href="' . htmlspecialchars($query_string) . '" class="text-decoration-none text-body">
-                <i class="bi ' . $icon . ' small"></i>
+    return '<a href="' . h($query_string) . '" class="text-decoration-none text-body">
+              <i class="bi ' . h($icon) . ' small"></i>
             </a>';
 }
 
-// Extract current sort parameters from the URL
-$current_sort_by = $_GET['sort_by'] ?? $default_sort_by;
+$current_sort_by    = $_GET['sort_by'] ?? $default_sort_by;
 $current_sort_order = $_GET['sort_order'] ?? $default_sort_order;
-
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -161,109 +173,86 @@ $current_sort_order = $_GET['sort_order'] ?? $default_sort_order;
                 <div class="col-12 col-md-4">
                   <h4>Student Admissions - New</h4>
                 </div>
+
                 <div class="col-12 col-md-8">
                   <form id="filterForm" method="GET" action="">
-                      <input type="hidden" name="search" value="<?= htmlspecialchars($search) ?>">
-                      <input type="hidden" name="page" value="<?= htmlspecialchars($page) ?>">
+                    <!-- ✅ FIX: never pass null to htmlspecialchars -->
+                    <input type="hidden" name="search" value="<?= h($search) ?>">
+                    <input type="hidden" name="page" value="<?= h($page) ?>">
 
-                      <div class="d-flex align-items-center mb-3">
-                        <label for="sort_column" class="me-2 text-muted text-nowrap d-none d-lg-block">Sort By:</label>
-                        <select id="sort_by" name="sort_by" class="form-select me-2 w-50 rounded rounded-4 auto-submit-dropdown">
-                            <option value="admission_date" <?= $sort_by == 'admission_date' ? 'selected' : '' ?>> Date</option>
-                            <option value="fullname" <?= $sort_by == 'fullname' ? 'selected' : '' ?>>Fullname</option>
-                            <option value="grade_level" <?= $sort_by == 'grade_level' ? 'selected' : '' ?>>Grade Level</option>
-                            <option value="address" <?= $sort_by == 'address' ? 'selected' : '' ?>>Address</option>
+                    <div class="d-flex align-items-center mb-3">
+                      <label for="sort_by" class="me-2 text-muted text-nowrap d-none d-lg-block">Sort By:</label>
+
+                      <select id="sort_by" name="sort_by" class="form-select me-2 w-50 rounded-4 auto-submit-dropdown">
+                        <option value="admission_date" <?= $sort_by === 'admission_date' ? 'selected' : '' ?>>Date</option>
+                        <option value="fullname" <?= $sort_by === 'fullname' ? 'selected' : '' ?>>Fullname</option>
+                        <option value="grade_level" <?= $sort_by === 'grade_level' ? 'selected' : '' ?>>Grade Level</option>
+                        <option value="address" <?= $sort_by === 'address' ? 'selected' : '' ?>>Address</option>
+                        <option value="lrn" <?= $sort_by === 'lrn' ? 'selected' : '' ?>>LRN</option>
+                        <option value="que_code" <?= $sort_by === 'que_code' ? 'selected' : '' ?>>CODE</option>
+                      </select>
+
+                      <select id="sort_order" name="sort_order" class="form-select me-2 w-50 rounded-4 auto-submit-dropdown">
+                        <option value="DESC" <?= $sort_order === 'DESC' ? 'selected' : '' ?>>Descending</option>
+                        <option value="ASC" <?= $sort_order === 'ASC' ? 'selected' : '' ?>>Ascending</option>
+                      </select>
+
+                      <div class="w-75 me-2">
+                        <?php $currentPage = basename((string)($_SERVER['PHP_SELF'] ?? 'admission.php')); ?>
+                        <select id="studentTypeSelect" class="form-select rounded-4" onchange="window.location.href=this.value;">
+                          <option value="admission_old.php" <?= ($currentPage === 'admission_old.php') ? 'selected' : '' ?>>Old Student</option>
+                          <option value="admission.php" <?= ($currentPage === 'admission.php') ? 'selected' : '' ?>>New Student</option>
                         </select>
-                        <select id="sort_order" name="sort_order" class="form-select me-2 w-50 rounded rounded-4 auto-submit-dropdown">
-                                <option value="DESC" <?= $sort_order == 'DESC' ? 'selected' : '' ?>>Descending</option>
-                                <option value="ASC" <?= $sort_order == 'ASC' ? 'selected' : '' ?>>Ascending</option>
-                            </select>
-                        <div class="w-75 me-2">
-                              <?php
-                              // Determine the current page filename
-                              $currentPage = basename($_SERVER['PHP_SELF']);
-                              ?>
-                              <select id="studentTypeSelect" class="form-select rounded rounded-4" onchange="window.location.href=this.value;">
-                                  <option
-                                      value="admission_old.php"
-                                      <?= ($currentPage == 'admission_old.php') ? 'selected' : '' ?>
-                                  >
-                                      Old Student
-                                  </option>
-                                  <option
-                                      value="admission.php"
-                                      <?= ($currentPage == 'admission.php') ? 'selected' : '' ?>
-                                  >
-                                      New Student
-                                  </option>
-                              </select>
-                          </div>
-                          <div class="input-group flex-grow-1 me-2">
-                              <input class="form-control rounded rounded-4" type="text" name="search" value="<?= htmlspecialchars($search) ?>" placeholder="Search ...">
-                              <button class="btn border rounded-4 ms-2" type="submit">
-                                  <i class="bi bi-search"></i> Search
-                              </button>
-                          </div>
-
                       </div>
 
+                      <div class="input-group flex-grow-1 me-2">
+                        <input class="form-control rounded-4" type="text" name="search" value="<?= h($search) ?>" placeholder="Search ...">
+                        <button class="btn border rounded-4 ms-2" type="submit">
+                          <i class="bi bi-search"></i> Search
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
 
-                      </form>
-              </div>
+                <script>
+                  document.addEventListener('DOMContentLoaded', function() {
+                    const filterForm = document.getElementById('filterForm');
+                    const autoSubmitDropdowns = document.querySelectorAll('.auto-submit-dropdown');
 
-              <script>
-              // Script for student type dropdown (original)
-              document.addEventListener('DOMContentLoaded', function() {
-                  const studentTypeSelect = document.getElementById('studentTypeSelect');
-                  if (studentTypeSelect) {
-                      studentTypeSelect.addEventListener('change', function() {
-                          if (this.value) {
-                              window.location.href = this.value;
-                          }
-                      });
-                  }
-
-                  // --- NEW SCRIPT FOR AUTO-RELOAD SORTING DROPDOWNS ---
-                  const filterForm = document.getElementById('filterForm');
-                  const autoSubmitDropdowns = document.querySelectorAll('.auto-submit-dropdown');
-                  
-                  autoSubmitDropdowns.forEach(dropdown => {
+                    autoSubmitDropdowns.forEach(dropdown => {
                       dropdown.addEventListener('change', function() {
-                          // Crucially, when sorting/filtering via dropdowns, we must reset the page to 1
-                          filterForm.querySelector('input[name="page"]').value = 1; 
-                          filterForm.submit();
+                        // Reset page to 1 on sort change
+                        const pageInput = filterForm.querySelector('input[name="page"]');
+                        if (pageInput) pageInput.value = 1;
+                        filterForm.submit();
                       });
+                    });
                   });
-                  // ----------------------------------------------------
-              });
-              </script>
-                  
+                </script>
+
                 <div class="col-12 pt-3">
                   <?php
-                    // Check if 'status' parameter exists in the URL
                     if (isset($_GET['status'])) {
-                        $status = $_GET['status'];
-
-                        // Display Bootstrap alert based on the status
-                        if ($status === 'success') {
-                            echo '<div class="alert alert-success alert-dismissible fade show" role="alert">
-                                    ✅ Admission updated successfully!
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                  </div>';
-                        } elseif ($status === 'error') {
-                            echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    ❌ Something went wrong. Please try again.
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                  </div>';
-                        } elseif ($status === 'review') {
-                            echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">
-                                    ⚠️ Application is under review.
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                  </div>';
-                        }
+                      $status = (string)$_GET['status'];
+                      if ($status === 'success') {
+                        echo '<div class="alert alert-success alert-dismissible fade show" role="alert">
+                                ✅ Admission updated successfully!
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                              </div>';
+                      } elseif ($status === 'error') {
+                        echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                ❌ Something went wrong. Please try again.
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                              </div>';
+                      } elseif ($status === 'review') {
+                        echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">
+                                ⚠️ Application is under review.
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                              </div>';
+                      }
                     }
-                    ?>
-
+                  ?>
                 </div>
               </div>
 
@@ -280,17 +269,16 @@ $current_sort_order = $_GET['sort_order'] ?? $default_sort_order;
                     </tr>
                   </thead>
                   <tbody>
-                    <?php if (mysqli_num_rows($result) > 0): ?>
-                      <?php while ($row = mysqli_fetch_assoc($result)): ?>
-                        <tr class="clickable-row" data-id="<?= $row['id'] ?>">
-                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['admission_date_formatted'] ?? 'N/A') ?></p></td>
-                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['que_code'] ?? '-') ?></p></td>
-                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= !empty($row['lrn']) ? htmlspecialchars($row['lrn']) : 'N/A' ?></p></td>
-                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['fullname']) ?></p></td>
-                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['address']) ?></p></td>
-                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= htmlspecialchars($row['grade_level']) ?></p></td>
+                    <?php if ($result && $result->num_rows > 0): ?>
+                      <?php while ($row = $result->fetch_assoc()): ?>
+                        <tr class="clickable-row" data-id="<?= h($row['id'] ?? '') ?>">
+                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= h($row['admission_date_formatted'] ?? 'N/A') ?></p></td>
+                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= h($row['que_code'] ?? '-') ?></p></td>
+                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= !empty($row['lrn']) ? h($row['lrn']) : 'N/A' ?></p></td>
+                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= h($row['fullname'] ?? '') ?></p></td>
+                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= h($row['address'] ?? '') ?></p></td>
+                          <td><p class="text-muted pt-3 pb-3 mb-0"><?= h($row['grade_level'] ?? '') ?></p></td>
                         </tr>
-
                       <?php endwhile; ?>
                     <?php else: ?>
                       <tr>
@@ -302,40 +290,40 @@ $current_sort_order = $_GET['sort_order'] ?? $default_sort_order;
               </div>
 
               <?php if ($total_pages > 1): ?>
-  <nav aria-label="Page navigation">
-    <ul class="pagination justify-content-start pagination-sm">
-      <?php if ($page > 1): ?>
-        <li class="page-item">
-          <a class="page-link text-muted" href="<?= build_query_string($page - 1, $search, $sort_by, $sort_order, false) ?>">Previous</a>
-        </li>
-      <?php endif; ?>
+                <nav aria-label="Page navigation">
+                  <ul class="pagination justify-content-start pagination-sm">
+                    <?php if ($page > 1): ?>
+                      <li class="page-item">
+                        <a class="page-link text-muted" href="<?= h(build_query_string($page - 1, $search, $sort_by, $sort_order, false)) ?>">Previous</a>
+                      </li>
+                    <?php endif; ?>
 
-      <?php
-        // Determine the start and end page numbers to show
-        $max_links = 5;
-        $start = max(1, $page - floor($max_links / 2));
-        $end = min($total_pages, $start + $max_links - 1);
+                    <?php
+                      $max_links = 5;
+                      $start = max(1, $page - (int)floor($max_links / 2));
+                      $end = min($total_pages, $start + $max_links - 1);
+                      if ($end - $start < $max_links - 1) {
+                        $start = max(1, $end - $max_links + 1);
+                      }
+                    ?>
 
-        // Adjust start again if we are near the end
-        if ($end - $start < $max_links - 1) {
-          $start = max(1, $end - $max_links + 1);
-        }
-      ?>
+                    <?php for ($i = $start; $i <= $end; $i++): ?>
+                      <li class="page-item">
+                        <a class="page-link text-muted <?= $i == $page ? 'fw-bold' : '' ?>"
+                           href="<?= h(build_query_string($i, $search, $sort_by, $sort_order, false)) ?>">
+                          <?= h($i) ?>
+                        </a>
+                      </li>
+                    <?php endfor; ?>
 
-      <?php for ($i = $start; $i <= $end; $i++): ?>
-        <li class="page-item">
-          <a class="page-link text-muted <?= $i == $page ? 'fw-bold' : '' ?>" href="<?= build_query_string($i, $search, $sort_by, $sort_order, false) ?>"><?= $i ?></a>
-        </li>
-      <?php endfor; ?>
-
-      <?php if ($page < $total_pages): ?>
-        <li class="page-item">
-          <a class="page-link text-muted" href="<?= build_query_string($page + 1, $search, $sort_by, $sort_order, false) ?>">Next</a>
-        </li>
-      <?php endif; ?>
-    </ul>
-  </nav>
-<?php endif; ?>
+                    <?php if ($page < $total_pages): ?>
+                      <li class="page-item">
+                        <a class="page-link text-muted" href="<?= h(build_query_string($page + 1, $search, $sort_by, $sort_order, false)) ?>">Next</a>
+                      </li>
+                    <?php endif; ?>
+                  </ul>
+                </nav>
+              <?php endif; ?>
 
             </div>
           </div>
@@ -345,20 +333,23 @@ $current_sort_order = $_GET['sort_order'] ?? $default_sort_order;
   </div>
 </div>
 
+<?php
+// close stmt used for data
+if (isset($data_stmt) && $data_stmt) $data_stmt->close();
+?>
+
 <?php include 'footer.php'; ?>
 </body>
 </html>
 
 <script>
-  // Original clickable row script
   document.addEventListener('DOMContentLoaded', function () {
     const rows = document.querySelectorAll('.clickable-row');
     rows.forEach(row => {
       row.addEventListener('click', (event) => {
         const id = row.getAttribute('data-id');
-        // Prevent navigation if the click target is a sorting link or its icon
         if (!event.target.closest('a')) {
-             window.location.href = `view_admission.php?id=${id}`;
+          window.location.href = `view_admission.php?id=${id}`;
         }
       });
     });
