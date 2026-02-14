@@ -165,9 +165,14 @@ $conn->close();
                             <div class="col-lg-6 d-flex flex-column align-items-start align-items-lg-end">
                                 <div class="d-flex w-100 justify-content-between align-items-center mb-3">
                                     <h6 class="fw-semibold text-secondary mb-0">Overall Progress</h6>
-                                    <button class="btn btn-sm btn-outline-primary" onclick="deleteStudent(<?= $student['student_id'] ?>)">
-                                        <i class="bi bi-trash"></i> Unlink
-                                    </button>
+                                    <div>
+                                        <a class="btn btn-sm btn-outline-primary" href="view_calendar.php?student_id=<?= $student['student_id'] ?>">
+                                            <i class="bi bi-calendar"></i> Class Schedule
+                                        </a>
+                                        <button class="btn btn-sm btn-outline-primary" onclick="deleteStudent(<?= $student['student_id'] ?>)">
+                                            <i class="bi bi-trash"></i> Unlink
+                                        </button>
+                                    </div>
                                 </div>
 
                                 <div class="row w-100 g-2 mt-2 justify-content-center justify-content-lg-end">
