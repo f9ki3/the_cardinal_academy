@@ -203,7 +203,9 @@ body {
             <div class="col-md-4 record-item"><label>Action Taken</label><div class="data"><?= htmlspecialchars($record['disciplinary_action']) ?></div></div>
             <div class="col-md-4 record-item"><label>Witnesses</label><div class="data"><?= htmlspecialchars($record['witnesses'] ?? '-') ?></div></div>
 
-            <div class="col-md-4 record-item"><label>Remarks</label><div class="data"><?= htmlspecialchars($record['remarks'] ?? '-') ?></div></div>
+            <div class="col-md-4 record-item"><label>Counseling Remarks</label><div class="data"><?= htmlspecialchars($record['remarks'] ?? '-') ?></div></div>
+
+            <div class="col-md-4 record-item"><label>Disciplinary Incharge</label><div class="data"><?= htmlspecialchars($record['disciplinary_incharge'] ?? '-') ?></div></div>
         </div>
 
         <?php else: ?>
