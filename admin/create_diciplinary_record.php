@@ -93,9 +93,15 @@ select.is-invalid ~ .invalid-feedback { display: block; }
     </div>
 
     <div class="col-12">
-        <label class="form-label">Additional Remarks</label>
+        <label class="form-label">Counseling Remarks</label>
         <textarea class="form-control" name="remarks" id="remarks" rows="3" placeholder="Any additional information or notes..." required></textarea>
         <div class="invalid-feedback">Remarks are required.</div>
+    </div>
+
+    <div class="col-md-6 mb-0 mt-2">
+        <label for="nurse_incharge" class="form-label">Disciplinary Incharge</label>
+        <input type="text" name="disciplinary_incharge" id="nurse_incharge" value="<?= htmlspecialchars($full_name) ?>" class="form-control common-field" required>
+        <div class="invalid-feedback">Disciplinary in charge is required.</div>
     </div>
 
     <div class="col-12 mt-3">

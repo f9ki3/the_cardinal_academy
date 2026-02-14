@@ -354,13 +354,19 @@ body {
                         <div class="col-12 row g-3" id="medicineFields" style="display: none;">
                             <div class="col-12"><h6 class="fw-semibold mt-2">Medicine Request Details</h6></div>
                             
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label for="medicine_requested" class="form-label">Medicine Requested</label>
                                 <input type="text" name="medicine_requested" id="medicine_requested" class="form-control medicine-field">
                                 <div class="invalid-feedback">This field is required for Medicine Request.</div>
                             </div>
+
+                            <div class="col-md-4">
+                                <label for="medicine_qty" class="form-label">Medicine Quantity</label>
+                                <input type="number" name="medicine_qty" id="medicine_qty" value="1" class="form-control medicine-field">
+                                <div class="invalid-feedback">This field is required for Medicine Quantity.</div>
+                            </div>
                             
-                            <div class="col-md-6">
+                            <div class="col-md-4">
                                 <label for="medicine_used" class="form-label">Medicine Used</label>
                                 <input type="text" name="medicine_used" id="medicine_used" class="form-control medicine-field">
                                 <div class="invalid-feedback">This field is required for Medicine Request.</div>
@@ -378,15 +384,25 @@ body {
                         </div>
                     <div class="col-12"><h6 class="fw-semibold fw-semibold mt-2">General Record Details</h6></div>
                     
-                    <div class="col-md-6 mb-0 mt-0">
+                    <div class="col-md-12 mb-0 mt-0">
                         <label for="additional_notes" class="form-label">Additional Notes</label>
                         <textarea name="additional_notes" id="additional_notes" class="form-control common-field" rows="2" required></textarea>
                         <div class="invalid-feedback">Additional Notes are required.</div>
                     </div>
 
-                    <div class="col-md-6 mb-0 mt-0">
+                    <div class="col-md-6 mb-0 mt-2">
                         <label for="nurse_incharge" class="form-label">School Nurse Incharge</label>
                         <input type="text" name="nurse_incharge" id="nurse_incharge" value="<?= htmlspecialchars($full_name) ?>" readonly class="form-control common-field" required>
+                        <div class="invalid-feedback">Nurse in charge is required.</div>
+                    </div>
+
+                    <div class="col-md-6 mb-0 mt-2">
+                        <label for="sent_home" class="form-label">Sent to Home</label>
+                       <select name="sent_home" class="form-select">
+                            <option selected value="no">No</option>
+                            <option value="yes">Yes</option>
+                        </select>
+
                         <div class="invalid-feedback">Nurse in charge is required.</div>
                     </div>
 
@@ -455,7 +471,9 @@ body {
                     <h6 class="fw-bold mt-2 border-bottom pb-2">Medicine Request Details</h6>
                     <div class="row">
                         <div class="col-md-6 record-item"><label>Medicine Requested</label><div class="data data-display" data-field="medecine_request"></div></div>
-                        <div class="col-md-6 record-item"><label>Medicine Used</label><div class="data data-display" data-field="medecine_used"></div></div>
+                        <div class="col-md-6 record-item"><label>Medicine Quantity</label><div class="data data-display" data-field="medecine_qty"></div></div>
+                        <div class="col-md-12 record-item"><label>Medicine Used</label><div class="data data-display" data-field="medecine_used"></div></div>
+                        <div class="col-md-6 record-item"><label>Sent to Home</label><div class="data data-display" data-field="sent_home"></div></div>
                     </div>
                 </div>
 
@@ -470,6 +488,7 @@ body {
                     <h6 class="fw-bold mt-2 border-bottom pb-2">Notes</h6>
                     <div class="col-12 record-item"><label>Additional Notes</label><div class="data data-display" id="view_additional_notes"></div></div>
                 </div>
+
 
                 <div class="col-12 mt-4">
                     <a href="#" id="view_delete_link" class="btn btn-danger rounded-4">Delete Record</a>
