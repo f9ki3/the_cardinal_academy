@@ -27,7 +27,7 @@ $result = $stmt->get_result();
 ?>
 
 <!-- Header with logo and notification -->
-<div class="d-flex border-bottom sticky-top align-items-center justify-content-between px-4 py-3 bg-white">
+<div class="d-flex print-hide border-bottom sticky-top align-items-center justify-content-between px-4 py-3 bg-white">
     <div class="d-flex align-items-center">
         <img src="../static/uploads/logo.png" alt="Logo" style="height: 60px; width: auto;" class="me-3">
         <h3 class="m-0">The Cardinal Academy</h3>
